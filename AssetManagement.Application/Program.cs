@@ -24,7 +24,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseSpaStaticFiles();
 
@@ -46,8 +46,8 @@ app.UseSpa(spa =>
 
     if (app.Environment.IsDevelopment())
     {
-        spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");
-        spa.UseReactDevelopmentServer(npmScript: "dev");
+        //spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");
+        spa.UseReactDevelopmentServer(npmScript: "start");
     }
 });
 
