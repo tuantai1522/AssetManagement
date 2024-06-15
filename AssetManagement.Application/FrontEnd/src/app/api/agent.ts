@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { router } from "../routes/router";
+import useSWR from "swr";
 
 axios.defaults.baseURL = "https://fakestoreapi.com/";
 axios.defaults.headers.post["Content-Type"] = "application/json";
@@ -63,9 +64,21 @@ axios.interceptors.response.use(
   }
 );
 
+const FetchWithSWR = (url: string, params?: URLSearchParams) => {
+  const fetcher = () => axios.get(url, { params }).then(responseBody);
+  const { data, isLoading, error, mutate } = useSWR([url, params], fetcher, {
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+    refreshWhenOffline: false,
+    refreshWhenHidden: false,
+    refreshInterval: 0,
+  });
+  return { data, isLoading, error, mutate }
+}
+
 const requests = {
   get: (url: string, params?: URLSearchParams) =>
-    axios.get(url, { params }).then(responseBody),
+    FetchWithSWR(url, params),
   post: (url: string, body: {}) => axios.post(url, body).then(responseBody),
   postFormData: (url: string, body: any) => {
     const headers = body instanceof FormData
