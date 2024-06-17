@@ -9,6 +9,11 @@ namespace AssetManagement.Application.Extensions;
 
 public static class ServiceExtension
 {
+    public static void ConfigureDatabase(this IServiceCollection services, IConfiguration configuration)
+    {
+
+    }
+
     public static void ConfigureCors(this IServiceCollection services) =>
              services.AddCors(options =>
              {
