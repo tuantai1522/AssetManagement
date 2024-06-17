@@ -29,11 +29,11 @@ public class GlobalExceptionHandler : IExceptionHandler
 
         var problemDetails = new ProblemDetails
         {
-            Detail = exception.Message,
+            //Detail = exception.Message,
             Instance = null
         };
 
-        //problemDetails.Extensions.Add("message", exception.Message);
+        problemDetails.Extensions.Add("message", exception.Message);
 
         switch (exception)
         {
