@@ -6,7 +6,14 @@ module.exports = {
     "./public/index.html",
   ],
   theme: {
-    extend: {},
+      extend: {
+        colors: {
+        'primary' : '#cf2338',
+        'secondary': '#707070',
+      },
+      fontFamily: {
+      },
+    },
   },
   plugins: [],
 }
