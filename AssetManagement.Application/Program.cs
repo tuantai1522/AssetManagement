@@ -20,9 +20,12 @@ builder.Services.AddSpaStaticFiles(configuration =>
     configuration.RootPath = "Frontend";
 });
 
+
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
 var app = builder.Build();
 
-
+app.UseExceptionHandler(_ => { });
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

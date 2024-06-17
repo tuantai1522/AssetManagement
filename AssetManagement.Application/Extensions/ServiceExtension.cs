@@ -1,5 +1,4 @@
-﻿using AssetManagement.Contracts.AutoMapper;
-using AssetManagement.Contracts.Dtos.PaginationDtos;
+﻿using AssetManagement.Contracts.Dtos.PaginationDtos;
 using AssetManagement.Data.Interfaces;
 using AssetManagement.Data.Repositories;
 using Microsoft.OpenApi.Models;
@@ -93,7 +92,7 @@ public static class ServiceExtension
     {
         //Add repository DI
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        //services.AddScoped<IUnitOfWork, UnitOfWork>();
     }
 
 }

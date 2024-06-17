@@ -1,8 +1,10 @@
-﻿using AssetManagement.Contracts.Dtos.WeatherForecastDtos;
+﻿
+using AssetManagement.Contracts.Dtos.WeatherForecastDtos;
 using AssetManagement.Domain.Entities;
 using AutoMapper;
 
-namespace AssetManagement.Contracts.AutoMapper;
+namespace AssetManagement.Application.Extensions;
+
 public class MappingProfile : Profile
 {
     public MappingProfile()

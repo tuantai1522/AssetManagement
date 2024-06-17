@@ -1,5 +1,6 @@
 using AssetManagement.Contracts.Dtos.WeatherForecastDtos;
 using AssetManagement.Domain.Entities;
+using AssetManagement.Domain.Exceptions;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
@@ -43,5 +44,12 @@ namespace AssetManagement.Application.Controllers
             var result = _mapper.Map<List<WeatherForecastResponseDto>>(weatherForecast);
             return result;
         }
+
+        [HttpGet("BadRequest")]
+        public Task GetBadRequest()
+        {
+            throw new BadRequestException("Test");
+        }
+
     }
 }
