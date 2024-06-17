@@ -1,5 +1,7 @@
 ﻿using AssetManagement.Contracts.AutoMapper;
 using AssetManagement.Contracts.Dtos.PaginationDtos;
+using AssetManagement.Data.Interfaces;
+using AssetManagement.Data.Repositories;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text.Json;
@@ -90,7 +92,8 @@ public static class ServiceExtension
     public static void RegisterRepositoryDependencies(this IServiceCollection services)
     {
         //Add repository DI
-
+        services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
     }
 
 }
