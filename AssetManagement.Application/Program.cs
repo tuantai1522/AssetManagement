@@ -1,13 +1,19 @@
+using AssetManagement.Application.Extensions;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.ConfigureCors();
+builder.Services.ConfigureAutoMapper();
+builder.Services.ConfigureSwagger();
+builder.Services.RegisterServiceDependencies();
+builder.Services.RegisterRepositoryDependencies();
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
 
 builder.Services.AddSpaStaticFiles(configuration =>
 {
@@ -31,7 +37,6 @@ app.UseSpaStaticFiles();
 app.UseRouting();
 
 app.UseAuthentication();
-
 app.UseAuthorization();
 
 

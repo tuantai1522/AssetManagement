@@ -9,6 +9,8 @@
     <IsPackable>false</IsPackable>
     <SpaRoot>Frontend\</SpaRoot>
 	<DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
+	<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	<NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
