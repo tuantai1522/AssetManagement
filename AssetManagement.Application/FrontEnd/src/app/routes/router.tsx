@@ -4,6 +4,7 @@ import DefaultLayout from "../layout/DefaultLayout";
 import HomePage from "../../pages/home";
 import NotFound from "../errors/NotFound";
 import ServerErrors from "../errors/ServerErrors";
+import ManagementUserPage from "../../pages/manageUser";
 
 export const router = createBrowserRouter([
     {
@@ -14,12 +15,12 @@ export const router = createBrowserRouter([
                 element: <DefaultLayout/>,
                 children: [
                     { path: "", element: <HomePage/> },
+                    { path: "user-manage", element: <ManagementUserPage/> },
                 ]
             }
         ]
     },
-    
     { path: "not-found", element: <NotFound /> },
     { path: "server-error", element: <ServerErrors /> },
-    { path: "*", element: <Navigate replace to="/not-found" /> },
+    { path: "*", element: <Navigate replace to="/not-found" /> }
 ]);
