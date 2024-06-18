@@ -1,9 +1,8 @@
 
-export default function UserManager() {
+export default function ManagementUserPage() {
 
    return(
     <div>
-      <p>hihi</p>
     </div>
   );
 }

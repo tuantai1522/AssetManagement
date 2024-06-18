@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-class Header2 extends Component {
+class LoginHeader extends Component {
     render() {
         return (
             <div className="bg-primary h-14 flex justify-center text-lg font-semibold">
@@ -15,4 +15,4 @@ class Header2 extends Component {
     }
 }
 
-export default Header2;
+export default LoginHeader;

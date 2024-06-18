@@ -1,7 +1,6 @@
 import { Outlet } from "react-router-dom";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
-import Header2 from "./Header2";
 
 const DefaultLayout = () => {
     return(
