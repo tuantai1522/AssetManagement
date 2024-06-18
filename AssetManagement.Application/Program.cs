@@ -1,7 +1,14 @@
+using AssetManagement.Application.ConfigurationOptions;
 using AssetManagement.Application.Extensions;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 
 var builder = WebApplication.CreateBuilder(args);
+
+//Configure variable
+var appSettings = new AppSetting();
+builder.Configuration.Bind(appSettings);
+
+builder.Services.Configure<AppSetting>(builder.Configuration);
 
 // Add services to the container.
 builder.Services.ConfigureCors();
@@ -9,6 +16,7 @@ builder.Services.ConfigureAutoMapper();
 builder.Services.ConfigureSwagger();
 builder.Services.RegisterServiceDependencies();
 builder.Services.RegisterRepositoryDependencies();
+builder.Services.ConfigureDatabase(appSettings);
 
 builder.Services.AddControllers();
 
