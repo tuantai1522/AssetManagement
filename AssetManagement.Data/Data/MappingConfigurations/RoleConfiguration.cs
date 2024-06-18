@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace AssetManagement.Data.MappingConfigurations
+namespace AssetManagement.Data.Data.MappingConfigurations
 {
     internal class RoleConfiguration : IEntityTypeConfiguration<IdentityRole<Guid>>
     {

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace AssetManagement.Data.MappingConfigurations
+namespace AssetManagement.Data.Data.MappingConfigurations
 {
     public class UserRoleConfiguration : IEntityTypeConfiguration<IdentityUserRole<Guid>>
     {

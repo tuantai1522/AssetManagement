@@ -7,11 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AssetManagement.Domain\AssetManagement.Domain.csproj" />
+    <Compile Remove="Data\Configurations\**" />
+    <EmbeddedResource Remove="Data\Configurations\**" />
+    <None Remove="Data\Configurations\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data\Configurations\" />
+    <ProjectReference Include="..\AssetManagement.Domain\AssetManagement.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
