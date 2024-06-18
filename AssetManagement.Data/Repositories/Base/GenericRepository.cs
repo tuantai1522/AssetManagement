@@ -1,9 +1,9 @@
 ﻿using AssetManagement.Data.Data;
-using AssetManagement.Data.Interfaces;
+using AssetManagement.Data.Interfaces.Base;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace AssetManagement.Data.Repositories;
+namespace AssetManagement.Data.Repositories.Base;
 public class GenericRepository<T> : IGenericRepository<T> where T : class
 {
     protected AssetManagementDbContext _context;

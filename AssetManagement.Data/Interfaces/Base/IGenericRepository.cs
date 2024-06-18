@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace AssetManagement.Data.Interfaces;
+namespace AssetManagement.Data.Interfaces.Base;
 public interface IGenericRepository<T>
 {
     Task<IEnumerable<T>> All();
