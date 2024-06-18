@@ -13,11 +13,11 @@ const Sidebar = () => {
             </div>
             <div className='menu mt-8 flex flex-col gap-1'>
                 <SidebarItem url="/" name="Home"/>
-                <SidebarItem url ="/user-manage" name="Manage User"/>
-                <SidebarItem url ="/user-manage" name="Manage Asset" />
-                <SidebarItem url ="/user-manage" name="Manage Assignment" />
-                <SidebarItem url ="/user-manage" name="Request for Returning" />
-                <SidebarItem url ="/user-manage" name="Report" />
+                <SidebarItem url ="/manage-user" name="Manage User"/>
+                <SidebarItem url ="/manage-user" name="Manage Asset" />
+                <SidebarItem url ="/manage-user" name="Manage Assignment" />
+                <SidebarItem url ="/manage-user" name="Request for Returning" />
+                <SidebarItem url ="/manage-user" name="Report" />
             </div>
         </div>
     );
