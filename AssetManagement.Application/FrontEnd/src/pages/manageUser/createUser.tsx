@@ -6,6 +6,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { FormControl, FormControlLabel, FormLabel, MenuItem, Radio, RadioGroup, Select, TextField, colors } from "@mui/material";
+import AppButton from "../../app/components/buttons/Button";
 
 enum Gender {
     Male = 'Male',
@@ -50,12 +51,12 @@ const schema = yup.object().shape({
         .oneOf(Object.values(Gender)),
     type: yup
         .mixed<Type>()
-        .defined('Please Select Type')
+        .required('Please Select Type')
         .oneOf(Object.values(Type))
 });
 
 const CreateUserPage = (props: Props) => {
-    const { register, handleSubmit, formState: { errors }, control } = useForm({ resolver: yupResolver<IFormInput>(schema), mode: 'all' });
+    const { register, handleSubmit, control } = useForm({ resolver: yupResolver<IFormInput>(schema), mode: 'all' });
 
     const onSubmit = (data: any) => {
         console.log(data);
@@ -158,9 +159,9 @@ const CreateUserPage = (props: Props) => {
                                 render={({ field }) => (
                                     <FormControl fullWidth>
                                         <Select
+                                            size="small"
                                             {...field}
                                             id="type-select"
-                                            displayEmpty
                                             inputProps={{ 'aria-label': 'Without label' }}
                                         >
                                             <MenuItem value={Type.Staff}>Staff</MenuItem>
@@ -173,8 +174,10 @@ const CreateUserPage = (props: Props) => {
                     </div>
 
                     <div className="flex justify-end space-x-4">
-                        <button type="submit" className="bg-red-600 text-white py-2 px-4 rounded">Save</button>
-                        <button type="button" className="bg-gray-200 py-2 px-4 rounded">Cancel</button>
+                        {/* <button type="submit" className="bg-red-600 text-white py-2 px-4 rounded">Save</button>
+                        <button type="button" className="bg-gray-200 py-2 px-4 rounded">Cancel</button> */}
+                        <AppButton content="Save" isFormSubmit={true}/>
+                        <AppButton content="Cancel" styleType="Secondary" onClickOn={() => {}}/>
                     </div>
                 </form>
             </div>
