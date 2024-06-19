@@ -1,13 +1,33 @@
 import { Box, Container, Grid, Typography } from "@mui/material";
-import { FieldValues, useForm } from "react-hook-form";
+import { Controller, Field, FieldValues, useForm } from "react-hook-form";
 
 import AppTextInput from "../../app/components/AppTextInput";
 import AppPasswordInput from "../../app/components/AppPasswordInput";
 
 import LoginHeader from "../../app/layout/LoginHeader";
 
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+
+interface FormValues extends FieldValues {
+  Username: string;
+  Password: string;
+}
+
+const schema = yup.object().shape({
+  Username: yup.string().required("User name is required"),
+  Password: yup.string().required("Password is required"),
+});
+
 const LoginPage = () => {
-  const { control, handleSubmit } = useForm();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isSubmitting, isValid },
+  } = useForm({
+    resolver: yupResolver<FormValues>(schema),
+    mode: "onChange", // This ensures the form is validated on change
+  });
 
   const submitForm = async (data: FieldValues) => {
     const Username = data.Username;
@@ -57,24 +77,54 @@ const LoginPage = () => {
             backgroundColor: "#FAFCFC",
           }}
         >
-          <Grid container alignItems="center" justifyContent="space-between">
+          <Grid container justifyContent="space-between">
             <Grid item xs={5}>
               <Typography variant="subtitle1">Username</Typography>
             </Grid>
             <Grid item xs={7}>
-              <AppTextInput name="Username" control={control} />
+              <Controller
+                name="Username"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <AppTextInput
+                    {...field}
+                    label="Username"
+                    control={control}
+                    placeholder="Enter your username"
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                  />
+                )}
+              />
             </Grid>
           </Grid>
-          <Grid container alignItems="center" justifyContent="space-between">
+          <Grid container justifyContent="space-between">
             <Grid item xs={5}>
               <Typography variant="subtitle1">Password</Typography>
             </Grid>
             <Grid item xs={7}>
-              <AppPasswordInput name="Password" control={control} />
+              <Controller
+                name="Password"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <AppPasswordInput
+                    {...field}
+                    label="Password"
+                    control={control}
+                    placeholder="Enter your password"
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                  />
+                )}
+              />
             </Grid>
           </Grid>
           <Grid container alignItems="center" justifyContent="flex-end">
-            <button className="bg-primary text-white px-2 py-1 rounded hover:bg-red-600">
+            <button
+              className={`bg-primary text-white px-2 py-1 rounded hover:bg-red-600 ${
+                !isValid || isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+            >
               Log in
             </button>
           </Grid>
