@@ -1,3 +1,5 @@
+import Button  from "../buttons/Button";
+
 interface Props {
   message: string;
   titleMessage?: string;
@@ -32,18 +34,15 @@ const ConfirmModal = ({
           <div className="w-full h-full px-12 py-5">
             <p className="mb-6">{message}</p>
             <div className="flex space-x-4">
-              <button
-                className="bg-primary text-white px-4 py-2 rounded hover:bg-red-600"
-                onClick={onConfirm}
-              >
-                {confirmMessage}
-              </button>
-              <button
-                className="border border-black text-gray-700 px-4 py-2 rounded hover:bg-gray-300"
-                onClick={onClose}
-              >
-                {cancelMessage}
-              </button>
+              <Button
+                content={confirmMessage}
+                onClickOn={onConfirm}
+              />
+              <Button
+                styleType="secondary"
+                content={cancelMessage}
+                onClickOn={onClose}
+              />
             </div>
           </div>
         </div>
