@@ -8,7 +8,7 @@ declare module 'yup' {
   }
 
   interface DateSchema {
-    olderThan(age: number, message: string): this;
+    olderThan18(message: string): this;
     notWeekend(message: string): this;
     afterDoB(refField: string, message: string): this;
   }

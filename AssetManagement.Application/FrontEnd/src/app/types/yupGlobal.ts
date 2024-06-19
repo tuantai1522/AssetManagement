@@ -19,9 +19,10 @@ yup.addMethod(yup.string, 'lastName', function (message: string) {
   });
 });
 
-yup.addMethod(yup.date, 'olderThan', function (age: number, message: string) {
+yup.addMethod(yup.date, 'olderThan18', function (message: string) {
   return this.test('older-than', message, function (value) {
     if (!value) return false;
+    const age = 18;
     const birthDate = new Date(value);
     const today = new Date();
     const ageDate = new Date(today.getFullYear() - age, today.getMonth(), today.getDate());

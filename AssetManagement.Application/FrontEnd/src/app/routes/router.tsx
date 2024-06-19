@@ -5,6 +5,7 @@ import HomePage from "../../pages/home";
 import NotFound from "../errors/NotFound";
 import ServerErrors from "../errors/ServerErrors";
 import ManagementUserPage from "../../pages/manageUser";
+import CreateUserPage from "../../pages/manageUser/createUser";
 
 export const router = createBrowserRouter([
     {
@@ -15,7 +16,8 @@ export const router = createBrowserRouter([
                 element: <DefaultLayout/>,
                 children: [
                     { path: "", element: <HomePage/> },
-                    { path: "manage-user", element: <ManagementUserPage/> },
+                    { path: "manage-user", element: <ManagementUserPage /> },
+                    { path: "create-user", element: <CreateUserPage />}
                 ]
             }
         ]
