@@ -6,8 +6,8 @@ import ManagementUserPage from "../manageUser";
 export default function HomePage() {
 
   return (
-    <div>
+    <>
       <ManagementUserPage />
-    </div>
+    </>
   );
 }
