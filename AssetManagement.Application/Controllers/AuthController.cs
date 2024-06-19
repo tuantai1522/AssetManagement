@@ -1,8 +1,7 @@
 using AssetManagement.Application.Common;
 using AssetManagement.Application.Services.Interfaces;
+using AssetManagement.Contracts.Dtos.AuthDtos.Requests;
 using AssetManagement.Contracts.Dtos.LoginDtos;
-using AssetManagement.Domain.Constants;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AssetManagement.Application.Controllers
@@ -28,6 +27,19 @@ namespace AssetManagement.Application.Controllers
                 IsSuccess = true,
                 Error = null,
                 Result = data
+            };
+            return Ok(result);
+        }
+
+        [HttpPost("ChangePassword")]
+        public async Task<ActionResult<LoginResponse>> ChangePassword(ChangePasswordRequest request)
+        {
+            var data = await _authService.ChangePassword(request);
+
+            var result = new BaseResult<LoginResponse>()
+            {
+                IsSuccess = true,
+                Error = null
             };
             return Ok(result);
         }

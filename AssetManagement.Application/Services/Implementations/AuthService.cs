@@ -1,4 +1,5 @@
 using AssetManagement.Application.Services.Interfaces;
+using AssetManagement.Contracts.Dtos.AuthDtos.Requests;
 using AssetManagement.Contracts.Dtos.LoginDtos;
 using AssetManagement.Data.Interfaces;
 using AssetManagement.Domain.Entities;
@@ -40,6 +41,21 @@ namespace AssetManagement.Application.Services.Implementations
             };
             return response;
 
+        }
+
+        public async Task<bool> ChangePassword(ChangePasswordRequest request)
+        {
+            var user = await _userManager.FindByIdAsync(request.UserId.ToString());
+            if (user == null)
+            {
+                throw new NotFoundException("User not found!");
+            }
+            var result = await _userManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
+            if (!result.Succeeded)
+            {
+                throw new BadRequestException(result.Errors.ToString());
+            }
+            return true;
         }
     }
 }
