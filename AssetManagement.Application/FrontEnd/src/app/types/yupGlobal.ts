@@ -1,8 +1,13 @@
 import * as yup from 'yup';
+import dayjs from 'dayjs';
 
 // Regular expressions for validation
-const REGEX_FIRST_NAME = /^[a-zA-Z]+$/; // Only contains alphabet letters
-const REGEX_LAST_NAME = /^[a-zA-Z\s]+$/; // Contains multiple words with alphabet letters only
+// const REGEX_FIRST_NAME = /^[a-zA-Z]+$/; // Only contains alphabet letters
+// const REGEX_LAST_NAME = /^[a-zA-Z\s]+$/; // Contains multiple words with alphabet letters only
+// Regular expressions for validation
+const REGEX_FIRST_NAME = /^[\p{L}]+$/u;
+const REGEX_LAST_NAME = /^[\p{L}\s]+$/u;
+
 
 // Adding custom methods to yup
 yup.addMethod(yup.string, 'firstName', function (message: string) {
@@ -19,34 +24,37 @@ yup.addMethod(yup.string, 'lastName', function (message: string) {
   });
 });
 
-yup.addMethod(yup.date, 'olderThan18', function (message: string) {
+// Method to check if date is older than 18 years
+yup.addMethod(yup.date, 'olderThan18', function (message) {
   return this.test('older-than', message, function (value) {
     if (!value) return false;
     const age = 18;
-    const birthDate = new Date(value);
-    const today = new Date();
-    const ageDate = new Date(today.getFullYear() - age, today.getMonth(), today.getDate());
-    return birthDate <= ageDate;
+    const birthDate = dayjs(value);
+    const today = dayjs();
+    const ageDate = today.subtract(age, 'year');
+    return birthDate.isBefore(ageDate, 'day');
   });
 });
 
+// Method to check if date is not on a weekend
 yup.addMethod(yup.date, 'notWeekend', function (message) {
   return this.test('notWeekend', message, function (value) {
     if (!value) return false;
-    const day = new Date(value).getDay();
-    // getDay() returns 0 for Sunday and 6 for Saturday
+    const day = dayjs(value).day();
+    // day() returns 0 for Sunday and 6 for Saturday
     return day !== 0 && day !== 6;
   });
 });
 
-yup.addMethod(yup.date, 'afterDoB', function (refField: string, message: string) {
-  return this.test('after', message, function (value) {
-    const { parent } = this;
+// Method to check if date is after a specific reference date
+yup.addMethod(yup.date, 'afterDoB', function (refField, message) {
+  return this.test('after', message, function (value, context) {
+    const { parent } = context;
     const refValue = parent[refField];
     if (!value || !refValue) return false;
-    const refDate = new Date(refValue);
-    const joinedDate = new Date(refDate.getFullYear() + 18, refDate.getMonth(), refDate.getDate());
-    return value > joinedDate;
+    const refDate = dayjs(refValue);
+    const joinedDate = refDate.add(18, 'year');
+    return dayjs(value).isAfter(joinedDate, 'day');
   });
 });
 

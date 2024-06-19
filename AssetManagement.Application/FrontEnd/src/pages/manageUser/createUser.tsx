@@ -5,8 +5,10 @@ import AppTextInput from "../../app/components/AppTextInput";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { FormControl, FormControlLabel, FormLabel, MenuItem, Radio, RadioGroup, Select, TextField, colors } from "@mui/material";
+import { FormControl, FormControlLabel, FormHelperText, MenuItem, Radio, RadioGroup, Select } from "@mui/material";
 import AppButton from "../../app/components/buttons/Button";
+import { useNavigate } from "react-router-dom";
+
 
 enum Gender {
     Male = 'Male',
@@ -31,32 +33,36 @@ type Props = {}
 
 const schema = yup.object().shape({
     firstName: yup.string()
-        .max(10, 'must not exceed 10 characters long')
+        .max(10, 'Must not exceed 10 characters long')
         .required("Please Type First Name")
         .firstName('First name must be a single word containing only alphabet letters'),
     lastName: yup.string()
-        .max(30, 'must not exceed 30 characters long')
+        .max(30, 'Must not exceed 30 characters long')
         .required("Please Type Last Name")
         .lastName('Last name must contain only alphabet letters and spaces'),
     dateOfBirth: yup.date()
-        .required("Please Pick Date of Birth")
+        .typeError("Invalid Date Type")
+        .required("Please Select Date of Birth")
         .olderThan18('User is under 18. Please select a\ndifferent date'),
     joinedDate: yup.date()
-        .required("Please Pick Joined Date")
+        .required("Please Select Joined Date")
+        .typeError("Invalid Date Type")
         .afterDoB('dateOfBirth', 'User under the age of 18 may not join\ncompany. Please select a different date')
         .notWeekend('Joined date is Saturday or Sunday.\nPlease select a different date'),
     gender: yup
         .mixed<Gender>()
-        .defined()
-        .oneOf(Object.values(Gender)),
+        .defined(),
     type: yup
         .mixed<Type>()
         .required('Please Select Type')
-        .oneOf(Object.values(Type))
 });
 
 const CreateUserPage = (props: Props) => {
-    const { register, handleSubmit, control } = useForm({ resolver: yupResolver<IFormInput>(schema), mode: 'all' });
+    const navigate = useNavigate();
+    const { register, handleSubmit, control } = useForm({
+        resolver: yupResolver<IFormInput>(schema),
+        mode: 'all'
+    });
 
     const onSubmit = (data: any) => {
         console.log(data);
@@ -90,20 +96,24 @@ const CreateUserPage = (props: Props) => {
                     <div className="flex items-center gap-5 pl-2">
                         <label className="w-[6rem]">Date of Birth</label>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            {/* <DatePicker className="grow" /> */}
                             <Controller
                                 control={control}
                                 name="dateOfBirth"
-                                render={({ field }) => (
+                                render={({ field, fieldState: { error } }) => (
                                     <DatePicker
                                         {...field}
+                                        format="DD/MM/YYYY"
+                                        disableFuture
                                         className="grow"
                                         slotProps={{
                                             textField: {
                                                 size: 'small',
                                                 id: 'dateOfBirth-dpk-create-form',
-                                            }
+                                                helperText: error ? error.message : '',
+                                                error: !!error
+                                            },
                                         }}
+
                                     />
                                 )}
                             />
@@ -118,7 +128,7 @@ const CreateUserPage = (props: Props) => {
                                 name="gender"
                                 defaultValue={Gender.Female} // Set default value here
                                 render={({ field }) => (
-                                    <RadioGroup row {...field} color="warning">
+                                    <RadioGroup row {...field} color="warning" id="gender-radio-create-form">
                                         <FormControlLabel value={Gender.Female} control={<Radio sx={{ '&.Mui-checked': { color: '#cf2338' } }} />} label="Female" />
                                         <FormControlLabel value={Gender.Male} control={<Radio sx={{ '&.Mui-checked': { color: '#cf2338' } }} />} label="Male" />
                                     </RadioGroup>
@@ -130,18 +140,21 @@ const CreateUserPage = (props: Props) => {
                     <div className="flex items-center gap-5 pl-2">
                         <label className="w-[6rem]">Joined Date</label>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            {/* <DatePicker className="grow" /> */}
                             <Controller
                                 control={control}
                                 name="joinedDate"
-                                render={({ field }) => (
+                                render={({ field, fieldState: { error } }) => (
                                     <DatePicker
                                         {...field}
+                                        format="DD/MM/YYYY"
+                                        disableFuture
                                         className="grow"
                                         slotProps={{
                                             textField: {
                                                 size: 'small',
                                                 id: 'joinedDate-dpk-create-form',
+                                                helperText: error ? error.message : '',
+                                                error: !!error
                                             }
                                         }}
                                     />
@@ -156,17 +169,20 @@ const CreateUserPage = (props: Props) => {
                             <Controller
                                 control={control}
                                 name="type"
-                                render={({ field }) => (
+                                render={({ field, fieldState: { error } }) => (
                                     <FormControl fullWidth>
                                         <Select
                                             size="small"
                                             {...field}
-                                            id="type-select"
-                                            inputProps={{ 'aria-label': 'Without label' }}
+                                            id="type-selection-create-form"
+                                            error={!!error}
                                         >
                                             <MenuItem value={Type.Staff}>Staff</MenuItem>
                                             <MenuItem value={Type.Admin}>Admin</MenuItem>
                                         </Select>
+                                        {error && (
+                                            <FormHelperText id="type-select-error" sx={{ color: "#d32f2f"}}>{error.message}</FormHelperText>
+                                        )}
                                     </FormControl>
                                 )}
                             />
@@ -174,10 +190,8 @@ const CreateUserPage = (props: Props) => {
                     </div>
 
                     <div className="flex justify-end space-x-4">
-                        {/* <button type="submit" className="bg-red-600 text-white py-2 px-4 rounded">Save</button>
-                        <button type="button" className="bg-gray-200 py-2 px-4 rounded">Cancel</button> */}
-                        <AppButton content="Save" isFormSubmit={true}/>
-                        <AppButton content="Cancel" styleType="Secondary" onClickOn={() => {}}/>
+                        <AppButton content="Save" isFormSubmit={true} />
+                        <AppButton content="Cancel" styleType="Secondary" onClickOn={() => {navigate('/manage-user')}} />
                     </div>
                 </form>
             </div>
