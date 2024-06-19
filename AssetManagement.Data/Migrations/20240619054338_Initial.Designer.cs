@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AssetManagement.Data.Migrations
 {
     [DbContext(typeof(AssetManagementDbContext))]
-    [Migration("20240618091807_Initial")]
+    [Migration("20240619054338_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -24,21 +24,6 @@ namespace AssetManagement.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("AppUserIdentityRole<Guid>", b =>
-                {
-                    b.Property<Guid>("AppUserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("IdentityRoleId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("AppUserId", "IdentityRoleId");
-
-                    b.HasIndex("IdentityRoleId");
-
-                    b.ToTable("AppUserIdentityRole<Guid>");
-                });
 
             modelBuilder.Entity("AssetManagement.Domain.Entities.AppUser", b =>
                 {
@@ -67,7 +52,7 @@ namespace AssetManagement.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Gender")
                         .HasColumnType("nvarchar(max)");
@@ -82,7 +67,7 @@ namespace AssetManagement.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("LastUpdatedDateTime")
                         .HasColumnType("datetime2");
@@ -144,6 +129,8 @@ namespace AssetManagement.Data.Migrations
                         .IsUnique()
                         .HasFilter("[UserName] IS NOT NULL");
 
+                    b.HasIndex("FirstName", "LastName");
+
                     b.ToTable("AspNetUsers", (string)null);
 
                     b.HasData(
@@ -151,8 +138,8 @@ namespace AssetManagement.Data.Migrations
                         {
                             Id = new Guid("ed44d5cb-19b2-4fc8-b292-78faf498995b"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "bb24b52d-ecac-4c6d-99bc-3f0147cc2d64",
-                            CreatedDateTime = new DateTime(2024, 6, 18, 9, 18, 4, 874, DateTimeKind.Utc).AddTicks(1812),
+                            ConcurrencyStamp = "a1504760-3be8-4aba-aaf7-38992885b175",
+                            CreatedDateTime = new DateTime(2024, 6, 19, 5, 43, 36, 437, DateTimeKind.Utc).AddTicks(1836),
                             Email = "admin@gmail.com",
                             EmailConfirmed = false,
                             FirstName = "Nghĩa",
@@ -160,21 +147,21 @@ namespace AssetManagement.Data.Migrations
                             IsDisabled = false,
                             IsPasswordChanged = true,
                             LastName = "Đinh Trọng",
-                            LastUpdatedDateTime = new DateTime(2024, 6, 18, 9, 18, 4, 874, DateTimeKind.Utc).AddTicks(1813),
+                            LastUpdatedDateTime = new DateTime(2024, 6, 19, 5, 43, 36, 437, DateTimeKind.Utc).AddTicks(1837),
                             Location = "HCM",
                             LockoutEnabled = true,
                             NormalizedEmail = "ADMIN@GMAIL.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEGgkDAm8IBOrM2XOQIsewPvMyHkm2joi8wUalQf4vBMr4QB0/cEwDCqzK0mOp3WbnA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAECRruClAzVOPteLA9uVBmU3tHZyY7IkgxjRbp5dN6puwy3x1LIhmagFYpwFFkif4jA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "d1f80b6e-0096-4c15-871d-73fbde491ff4",
+                            SecurityStamp = "1336676d-d2f2-413c-9f52-408e39c71400",
                             StaffCode = "SD0001",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
+            modelBuilder.Entity("AssetManagement.Domain.Entities.Role", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -293,18 +280,18 @@ namespace AssetManagement.Data.Migrations
                     b.Property<Guid>("RoleId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("UserId", "RoleId");
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(34)
+                        .HasColumnType("nvarchar(34)");
 
-                    b.HasIndex("RoleId");
+                    b.HasKey("UserId", "RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
 
-                    b.HasData(
-                        new
-                        {
-                            UserId = new Guid("ed44d5cb-19b2-4fc8-b292-78faf498995b"),
-                            RoleId = new Guid("5fc71af5-0216-402b-a5cb-ba17701e2fa3")
-                        });
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUserRole<Guid>");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
@@ -326,24 +313,25 @@ namespace AssetManagement.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("AppUserIdentityRole<Guid>", b =>
+            modelBuilder.Entity("AssetManagement.Domain.Entities.UserRole", b =>
                 {
-                    b.HasOne("AssetManagement.Domain.Entities.AppUser", null)
-                        .WithMany()
-                        .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>");
 
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
-                        .WithMany()
-                        .HasForeignKey("IdentityRoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasIndex("RoleId");
+
+                    b.HasDiscriminator().HasValue("UserRole");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = new Guid("ed44d5cb-19b2-4fc8-b292-78faf498995b"),
+                            RoleId = new Guid("5fc71af5-0216-402b-a5cb-ba17701e2fa3")
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
+                    b.HasOne("AssetManagement.Domain.Entities.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -368,21 +356,6 @@ namespace AssetManagement.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("AssetManagement.Domain.Entities.AppUser", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
                     b.HasOne("AssetManagement.Domain.Entities.AppUser", null)
@@ -390,6 +363,35 @@ namespace AssetManagement.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("AssetManagement.Domain.Entities.UserRole", b =>
+                {
+                    b.HasOne("AssetManagement.Domain.Entities.Role", "Role")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AssetManagement.Domain.Entities.AppUser", "User")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("AssetManagement.Domain.Entities.AppUser", b =>
+                {
+                    b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("AssetManagement.Domain.Entities.Role", b =>
+                {
+                    b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618
         }

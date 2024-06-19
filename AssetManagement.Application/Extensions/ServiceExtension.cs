@@ -1,4 +1,6 @@
 ﻿using AssetManagement.Application.ConfigurationOptions;
+using AssetManagement.Application.Services.Implementations;
+using AssetManagement.Application.Services.Interfaces;
 using AssetManagement.Contracts.Dtos.PaginationDtos;
 using AssetManagement.Data.Data;
 using AssetManagement.Data.Interfaces.Base;
@@ -20,7 +22,7 @@ public static class ServiceExtension
         services.AddDbContextPool<AssetManagementDbContext>(options => { options.UseSqlServer(appsetting.ConnectionStrings.DefaultConnection); });
 
         //add identity
-        services.AddIdentity<AppUser, IdentityRole<Guid>>(options =>
+        services.AddIdentity<AppUser, Role>(options =>
         {
             options.SignIn.RequireConfirmedAccount = false;
             options.SignIn.RequireConfirmedEmail = false;
@@ -114,7 +116,7 @@ public static class ServiceExtension
     public static void RegisterServiceDependencies(this IServiceCollection services)
     {
         //Add service DI
-
+        services.AddScoped<IUserService, UserService>();
     }
 
     public static void RegisterRepositoryDependencies(this IServiceCollection services)
