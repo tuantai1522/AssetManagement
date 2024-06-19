@@ -1,7 +1,13 @@
-﻿using AssetManagement.Contracts.Dtos.PaginationDtos;
-using AssetManagement.Data.Interfaces;
-using AssetManagement.Data.Repositories;
+﻿using AssetManagement.Application.ConfigurationOptions;
+using AssetManagement.Contracts.Dtos.PaginationDtos;
+using AssetManagement.Data.Data;
+using AssetManagement.Data.Interfaces.Base;
+using AssetManagement.Data.Repositories.Base;
+using AssetManagement.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using System;
 using System.Reflection;
 using System.Text.Json;
 
@@ -9,8 +15,26 @@ namespace AssetManagement.Application.Extensions;
 
 public static class ServiceExtension
 {
-    public static void ConfigureDatabase(this IServiceCollection services, IConfiguration configuration)
+    public static void ConfigureDatabase(this IServiceCollection services, AppSetting appsetting)
     {
+        services.AddDbContextPool<AssetManagementDbContext>(options => { options.UseSqlServer(appsetting.ConnectionStrings.DefaultConnection); });
+
+        //add identity
+        services.AddIdentity<AppUser, IdentityRole<Guid>>(options =>
+        {
+            options.SignIn.RequireConfirmedAccount = false;
+            options.SignIn.RequireConfirmedEmail = false;
+            options.SignIn.RequireConfirmedPhoneNumber = false;
+
+            options.User.RequireUniqueEmail = true;
+
+            options.Lockout.AllowedForNewUsers = true;
+            options.Lockout.MaxFailedAccessAttempts = 3;
+            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(2);
+        })
+            .AddSignInManager<SignInManager<AppUser>>()
+            .AddEntityFrameworkStores<AssetManagementDbContext>()
+            .AddDefaultTokenProviders();
 
     }
 
