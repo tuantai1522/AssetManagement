@@ -2,7 +2,7 @@
 
 namespace AssetManagement.Contracts.Dtos.UserDtos.Requests;
 
-public class FilterUserRequestDto
+public class FilterUserRequest
 {
     public string? Name { get; set; }
     public string[]? Types { get; set; }

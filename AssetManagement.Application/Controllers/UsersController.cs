@@ -4,6 +4,8 @@ using AssetManagement.Application.Services.Interfaces;
 using AssetManagement.Contracts.Dtos.PaginationDtos;
 using AssetManagement.Contracts.Dtos.UserDtos.Requests;
 using AssetManagement.Contracts.Dtos.UserDtos.Responses;
+using AssetManagement.Domain.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AssetManagement.Application.Controllers;
@@ -20,14 +22,14 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet()]
-    //[Authorize(Roles = $"{RoleConstant.AdminRole}")]
-    public async Task<ActionResult<BaseResult<List<FilterUserDto>>>> FilterUsersAsync([FromQuery] FilterUserRequestDto request)
+    [Authorize(Roles = $"{RoleConstant.AdminRole}")]
+    public async Task<ActionResult<BaseResult<List<FilterUserResponse>>>> GetAsync([FromQuery] FilterUserRequest request)
     {
         var data = await _userService.FilterUserAsync(request);
         PaginationMetaData metaData = new PaginationMetaData(data.TotalItemCount, data.PageSize, data.CurrentPage);
         Response.AddPaginationHeader(metaData);
 
-        var result = new BaseResult<List<FilterUserDto>>()
+        var result = new BaseResult<List<FilterUserResponse>>()
         {
             IsSuccess = true,
             Error = null,

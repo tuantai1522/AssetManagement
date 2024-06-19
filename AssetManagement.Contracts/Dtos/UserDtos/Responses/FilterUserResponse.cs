@@ -1,5 +1,5 @@
 ﻿namespace AssetManagement.Contracts.Dtos.UserDtos.Responses;
-public class FilterUserDto
+public class FilterUserResponse
 {
     public Guid Id { get; set; }
     public string StaffCode { get; set; } = null!;
