@@ -4,23 +4,41 @@ import DefaultLayout from "../layout/DefaultLayout";
 import HomePage from "../../pages/home";
 import NotFound from "../errors/NotFound";
 import ServerErrors from "../errors/ServerErrors";
+import ManagementUserPage from "../../pages/manageUser";
 import LoginPage from "../../pages/authentication/LoginPage";
 
 export const router = createBrowserRouter([
     {
         path: "/",
-        element: <App/>,
+        element: <App />,
         children: [
             {
-                element: <DefaultLayout/>,
+                //Allow user logined
+                // element: <RequireAuth/>,
                 children: [
-                    { path: "", element: <HomePage/> },
-                    { path: "user-manage", element: <ManagementUserPage/> },
-                ]
-            }
-        ]
+                    {
+                        element: <DefaultLayout />,
+                        children: [{ path: "", element: <HomePage /> }],
+                    },
+                ],
+            },
+            {
+                //Allow only admin
+                // element: <RequireAuth roles={["Admin"]} />,
+                children: [
+                    {
+                        element: <DefaultLayout />,
+                        children: [
+                            { path: "user-manage", element: <ManagementUserPage /> },
+                        ],
+                    },
+                ],
+            },
+        ],
     },
+    //Allow anonymous
+    { path: "login", element: <LoginPage /> },
     { path: "not-found", element: <NotFound /> },
     { path: "server-error", element: <ServerErrors /> },
-    { path: "*", element: <Navigate replace to="/not-found" /> }
+    { path: "*", element: <Navigate replace to="/not-found" /> },
 ]);
