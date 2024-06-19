@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+
+
 //Configure variable
 var appSettings = new AppSetting();
 builder.Configuration.Bind(appSettings);
@@ -19,17 +22,16 @@ builder.Services.RegisterRepositoryDependencies();
 builder.Services.ConfigureDatabase(appSettings);
 
 builder.Services.AddControllers();
-
 builder.Services.AddEndpointsApiExplorer();
-
 
 builder.Services.AddSpaStaticFiles(configuration =>
 {
     configuration.RootPath = "Frontend";
 });
 
-
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
+builder.Services.AddAuthentication(builder.Configuration);
 
 var app = builder.Build();
 
@@ -38,18 +40,22 @@ app.UseExceptionHandler(_ => { });
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.ConfigObject.AdditionalItems.Add("persistAuthorization", "true");
+    });
 }
 
-//app.UseHttpsRedirection();
 
 app.UseSpaStaticFiles();
+app.UseStaticFiles();
 
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseHttpsRedirection();
 
 app.UseEndpoints(endpoints =>
 {

@@ -2,6 +2,7 @@ using AssetManagement.Contracts.Dtos.WeatherForecastDtos;
 using AssetManagement.Domain.Entities;
 using AssetManagement.Domain.Exceptions;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AssetManagement.Application.Controllers
@@ -31,6 +32,7 @@ namespace AssetManagement.Application.Controllers
         /// <response code="200">Successfully get items information.</response>
         /// <response code="500">There is something wrong while execute.</response>
         [HttpGet(Name = "GetWeatherForecast")]
+        [Authorize]
         public List<WeatherForecastResponseDto> Get()
         {
             var weatherForecast = Enumerable.Range(1, 5).Select(index => new WeatherForecast
