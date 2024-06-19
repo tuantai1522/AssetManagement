@@ -9,7 +9,7 @@ interface Props {
   onClickOn?: () => void;
 }
 
-const Button = ({
+const AppButton = ({
   styleType = "primary",
   isFormSubmit = false,
   content,
@@ -62,4 +62,4 @@ const Button = ({
   );
 };
 
-export default Button;
+export default AppButton;

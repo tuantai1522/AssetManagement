@@ -18,6 +18,16 @@ namespace AssetManagement.Data.Data.MappingConfigurations
             builder.HasIndex(user => user.UserName)
                 .IsUnique(true);
 
+            builder.HasIndex(user => new
+            {
+                user.FirstName,
+                user.LastName
+            });
+
+            #endregion
+
+            #region mapping relation
+
             #endregion
 
             #region init data 
@@ -41,7 +51,7 @@ namespace AssetManagement.Data.Data.MappingConfigurations
                 StaffCode = "SD0001",
                 IsDisabled = false,
                 CreatedDateTime = DateTime.UtcNow,
-                LastUpdatedDateTime = DateTime.UtcNow
+                LastUpdatedDateTime = DateTime.UtcNow,
             };
 
             admin.PasswordHash = passwordHasher.HashPassword(admin, "Admin@123");
