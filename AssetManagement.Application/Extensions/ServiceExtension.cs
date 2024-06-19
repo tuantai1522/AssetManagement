@@ -1,14 +1,22 @@
 ﻿using AssetManagement.Application.ConfigurationOptions;
+using AssetManagement.Application.Services.Implementations;
+using AssetManagement.Application.Services.Interfaces;
 using AssetManagement.Contracts.Dtos.PaginationDtos;
 using AssetManagement.Data.Data;
+using AssetManagement.Data.Interfaces;
 using AssetManagement.Data.Interfaces.Base;
+using AssetManagement.Data.Repositories;
 using AssetManagement.Data.Repositories.Base;
 using AssetManagement.Domain.Entities;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Reflection;
+using System.Text;
 using System.Text.Json;
 
 namespace AssetManagement.Application.Extensions;
@@ -114,6 +122,9 @@ public static class ServiceExtension
     public static void RegisterServiceDependencies(this IServiceCollection services)
     {
         //Add service DI
+        services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+
 
     }
 
@@ -122,6 +133,41 @@ public static class ServiceExtension
         //Add repository DI
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         //services.AddScoped<IUnitOfWork, UnitOfWork>();
+    }
+
+    public static void AddAuthentication(this IServiceCollection services,
+                                      IConfiguration config)
+    {
+        var JwtSettings = new JwtSettings();
+        config.Bind(JwtSettings.Section, JwtSettings);
+
+        services.AddSingleton(Options.Create(JwtSettings));
+
+        services
+            // .AddAuthentication(defaultScheme: JwtBearerDefaults.AuthenticationScheme)
+            .AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(option =>
+                {
+                    option.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = JwtSettings.Issuer,
+                        ValidAudience = JwtSettings.Audience,
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(JwtSettings.Secret
+                        ))
+                    };
+                });
+
+        services.AddAuthorization();
+
     }
 
 }
