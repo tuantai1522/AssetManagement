@@ -6,4 +6,5 @@ namespace AssetManagement.Application.Services.Interfaces;
 public interface IUserService
 {
     Task<PagingDto<FilterUserResponse>> FilterUserAsync(FilterUserRequest filter);
+    Task<DisableUserResponse> DisableUserAsync(DisableUserRequest disableUserRequest);
 }

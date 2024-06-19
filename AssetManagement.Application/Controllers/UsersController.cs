@@ -40,9 +40,16 @@ public class UsersController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = $"{RoleConstant.AdminRole}")]
-    public async Task<IActionResult> Disable([FromBody] UserDisableRequest request)
+    public async Task<IActionResult> DisableAsync([FromBody] DisableUserRequest request)
     {
-        throw new NotImplementedException();
+        var data = await _userService.DisableUserAsync(request);
+        var result = new BaseResult<DisableUserResponse>()
+        {
+            IsSuccess = true,
+            Error = null,
+            Result = data
+        };
+        return Ok(result);
     }
 }
 

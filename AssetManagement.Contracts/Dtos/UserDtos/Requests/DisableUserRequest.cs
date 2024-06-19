@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace AssetManagement.Contracts.Dtos.UserDtos.Requests
 {
-    public class UserDisableRequest
+    public class DisableUserRequest
     {
-        public string UserId { get; set; }
+        public required string UserId { get; set; }
     }
 }
