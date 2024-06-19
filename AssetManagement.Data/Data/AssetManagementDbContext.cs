@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace AssetManagement.Data.Data
 {
-    public class AssetManagementDbContext : IdentityDbContext<AppUser, IdentityRole<Guid>, Guid>
+    public class AssetManagementDbContext : IdentityDbContext<AppUser, Role, Guid>
     {
         public AssetManagementDbContext(DbContextOptions<AssetManagementDbContext> options) : base(options)
         {
