@@ -1,12 +1,14 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { router } from "../routes/router";
 import useSWR from "swr";
+import { PaginatedResponse } from "../models/Pagination";
 
 axios.defaults.baseURL = "https://fakestoreapi.com/";
 axios.defaults.headers.post["Content-Type"] = "application/json";
 const responseBody = (response: AxiosResponse) => response.data;
 axios.interceptors.request.use((config) => {
 //   const userToken = store.getState().account.user?.token;
+//Pass token of user to userToken to add Authorization header for every request.
 const userToken = "";
   if (userToken) config.headers.Authorization = `Bearer ${userToken}`;
   return config;
@@ -14,14 +16,15 @@ const userToken = "";
 
 axios.interceptors.response.use(
   async (response) => {
-    // const pagination = response.headers["x-pagination"];
-    // if (pagination) {
-    //   response.data = new PaginatedResponse(
-    //     response.data,
-    //     JSON.parse(pagination)
-    //   );
-    //   return response;
-    // }
+    // Get pagination response from header and data response from api
+    const pagination = response.headers["x-pagination"];
+    if (pagination) {
+      response.data = new PaginatedResponse(
+        response.data,
+        JSON.parse(pagination)
+      );
+      return response;
+    }
     return response;
   },
   (error: AxiosError) => {
