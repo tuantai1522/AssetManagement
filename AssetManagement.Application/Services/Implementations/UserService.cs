@@ -5,6 +5,8 @@ using AssetManagement.Contracts.Dtos.UserDtos.Requests;
 using AssetManagement.Contracts.Dtos.UserDtos.Responses;
 using AssetManagement.Contracts.Enums;
 using AssetManagement.Domain.Entities;
+using AssetManagement.Domain.Exceptions;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -15,12 +17,14 @@ public class UserService : IUserService
     private readonly UserManager<AppUser> _userManager;
     private readonly ILogger<UserService> _logger;
     private readonly ICurrentUser _currentUser;
+    private readonly IMapper _mapper;
 
-    public UserService(UserManager<AppUser> userManager, ILogger<UserService> logger, ICurrentUser currentUser)
+    public UserService(UserManager<AppUser> userManager, ILogger<UserService> logger, ICurrentUser currentUser, IMapper mapper)
     {
         _userManager = userManager;
         _logger = logger;
         _currentUser = currentUser;
+        _mapper = mapper;
     }
 
     public async Task<PagingDto<FilterUserResponse>> FilterUserAsync(FilterUserRequest request)
@@ -121,6 +125,27 @@ public class UserService : IUserService
         }
 
         return orderBy;
+    }
+
+    public async Task<UserInfoResponse> GetUserById(Guid id)
+    {
+        try
+        {
+            var queryable = _userManager.Users;
+            var appUser = await queryable.Where(q => q.Id == id).Include(q => q.UserRoles).ThenInclude(q => q.Role).FirstOrDefaultAsync();
+            if (appUser == null)
+            {
+                throw new NotFoundException("User can not found");
+            }
+            var result = _mapper.Map<UserInfoResponse>(appUser);
+            return result;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("Error when execute {} method.\nDate: {}.\nDetail: {}", nameof(this.GetUserById),
+                DateTime.UtcNow, e.Message);
+            throw new Exception($"Error when execute {nameof(this.GetUserById)} method");
+        }
     }
 }
 
