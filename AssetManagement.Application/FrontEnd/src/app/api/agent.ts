@@ -2,8 +2,9 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import { router } from "../routes/router";
 import useSWR from "swr";
 import { PaginatedResponse } from "../models/Pagination";
+import { BaseResult } from "../models/response/BaseResult";
 
-axios.defaults.baseURL = "https://fakestoreapi.com/";
+axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 axios.defaults.headers.post["Content-Type"] = "application/json";
 const responseBody = (response: AxiosResponse) => response.data;
 axios.interceptors.request.use((config) => {
@@ -28,42 +29,43 @@ axios.interceptors.response.use(
     return response;
   },
   (error: AxiosError) => {
-    const { data, status } = error.response!;
-    switch (status) {
+    debugger;
+    const result = error.response!.data as BaseResult;
+    switch (result.error.status) {
       case 400:
-        if ((data as any).errors) {
-          const modalStateErrors: string[] = [];
-          for (const key in (data as any).errors) {
-            if ((data as any).errors[key]) {
-              modalStateErrors.push((data as any).errors[key]);
-            }
-          }
+        // if ((result.error.message as any).errors) {
+        //   const modalStateErrors: string[] = [];
+        //   for (const key in (result.error.message as any).errors) {
+        //     if ((result.error.message as any).errors[key]) {
+        //       modalStateErrors.push((result.error.message as any).errors[key]);
+        //     }
+        //   }
 
-          console.log(modalStateErrors.toString());
-        }
-        console.log((data as any).message);
+        //   console.log(modalStateErrors.toString());
+        // }
+        console.log(result.error.message);
         break;
       case 401:
-        console.log((data as any).title);
+        console.log(result.error.message);
         break;
       case 403:
-        console.log((data as any).message);
+        console.log(result.error.message);
         break;
       case 404:
-        console.log((data as any).message);
+        console.log(result.error.message);
         break;
       case 409:
-        console.log((data as any).message);
+        console.log(result.error.message);
         break;
       case 500:
         console.log("Catch 500");
-        console.log((data as any).message);
+        console.log(result.error.message);
         router.navigate("/server-error");
         break;
       default:
         break;
-    }
-    return Promise.reject(error.response);
+      }
+    return Promise.reject(result);
   }
 );
 
@@ -102,9 +104,14 @@ const Product = {
   delete: (id: string) => requests.delete(`products/${id}`),
 };
 
+const Authentication = {
+  login: (values: {}) => requests.post("api/auth/login", values),
+  changePassword: (values: {}) => requests.post("api/auth/changepassword", values),
+}
 
 const agent = {
   Product,
+  Authentication
 };
 
 export default agent;
