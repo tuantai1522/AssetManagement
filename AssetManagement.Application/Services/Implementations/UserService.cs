@@ -12,6 +12,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using AssetManagement.Domain.Constants;
+using Microsoft.VisualBasic;
+using Microsoft.AspNetCore.Mvc;
+using AssetManagement.Domain.Enums;
 
 namespace AssetManagement.Application.Services.Implementations;
 public class UserService : IUserService
@@ -20,13 +24,15 @@ public class UserService : IUserService
     private readonly ILogger<UserService> _logger;
     private readonly ICurrentUser _currentUser;
     private readonly IMapper _mapper;
+	private readonly RoleManager<Role> _roleManager;
 
-    public UserService(UserManager<AppUser> userManager, ILogger<UserService> logger, ICurrentUser currentUser, IMapper mapper)
+	public UserService(UserManager<AppUser> userManager, RoleManager<Role> roleManager, ILogger<UserService> logger, ICurrentUser currentUser, IMapper mapper)
     {
         _userManager = userManager;
         _logger = logger;
         _currentUser = currentUser;
         _mapper = mapper;
+        _roleManager = roleManager;
     }
 
     public async Task<PagingDto<FilterUserResponse>> FilterUserAsync(FilterUserRequest request)
@@ -88,27 +94,6 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<DisableUserResponse> DisableUserAsync(DisableUserRequest request)
-    {
-        try
-        {
-            var userToBeDisabled = await _userManager.FindByIdAsync(request.UserId) ?? throw new NotFoundException(ErrorStrings.USER_NOT_FOUND);
-            userToBeDisabled.IsDisabled = true;
-            var result = await _userManager.UpdateAsync(userToBeDisabled);
-            if (result.Succeeded)
-            {
-                return new DisableUserResponse();
-            }
-            throw new Exception(string.Join(". ", result.Errors.Select(p => p.Description)));
-        }
-        catch (Exception e)
-        {
-            _logger.LogError("Error when execute {} method.\nDate: {}.\nDetail: {}", nameof(this.DisableUserAsync),
-                DateTime.UtcNow, e.Message);
-            throw new Exception($"Error when execute {nameof(this.DisableUserAsync)} method");
-        }
-    }
-
     private Func<IQueryable<AppUser>, IOrderedQueryable<AppUser>> GetOrderByExpression(FilterUserRequest filter)
     {
         Func<IQueryable<AppUser>, IOrderedQueryable<AppUser>> orderBy = q =>
@@ -165,10 +150,74 @@ public class UserService : IUserService
         }
         catch (Exception e)
         {
-            _logger.LogError("Error when execute {} method.\nDate: {}.\nDetail: {}", nameof(this.GetUserById),
-                DateTime.UtcNow, e.Message);
-            throw new Exception($"Error when execute {nameof(this.GetUserById)} method");
+			_logger.LogError("Error when execute {} method.\nDate: {}.\nDetail: {}", nameof(this.GetUserById),
+				DateTime.UtcNow, e.Message);
+			throw new Exception($"Error when execute {nameof(this.GetUserById)} method");
+		}
+	}
+    public async Task<DisableUserResponse> DisableUserAsync(DisableUserRequest request)
+    {
+        try
+        {
+            var userToBeDisabled = await _userManager.FindByIdAsync(request.UserId) ?? throw new NotFoundException(ErrorStrings.USER_NOT_FOUND);
+            userToBeDisabled.IsDisabled = true;
+            var result = await _userManager.UpdateAsync(userToBeDisabled);
+            if (result.Succeeded)
+            {
+                return new DisableUserResponse();
+            }
+            throw new Exception(string.Join(". ", result.Errors.Select(p => p.Description)));
         }
+        catch (Exception e)
+        {
+            _logger.LogError("Error when execute {} method.\nDate: {}.\nDetail: {}", nameof(this.DisableUserAsync),
+                DateTime.UtcNow, e.Message);
+            throw new Exception($"Error when execute {nameof(this.DisableUserAsync)} method");
+        }
+    }
+	public async Task<UserInfoResponse> UpdateUserAsync(Guid userId, UpdateUserRequest request)
+    {
+        try
+        {
+			_logger.LogInformation("Updating user with ID: {UserId}", userId);
+			var queryable = _userManager.Users;
+			AppUser userToUpdate = await queryable.Where(q => q.Id == userId).Include(q => q.UserRoles).ThenInclude(q => q.Role).FirstOrDefaultAsync() ?? throw new NotFoundException(ErrorStrings.USER_NOT_FOUND);
+			userToUpdate.DateOfBirth = request.DateOfBirth;
+            userToUpdate.JoinedDate = request.JoinedDate;
+            
+            
+            userToUpdate.Gender = request.Gender;
+
+			IList<String> currentRoles = await _userManager.GetRolesAsync(userToUpdate);
+            if (!currentRoles.Contains(request.Role))
+            {
+                Role? updateRoles = await _roleManager.FindByNameAsync(request.Role);
+
+				if (updateRoles is null)
+                {
+                    throw new BadRequestException(ErrorStrings.ROLE_NOT_EXIST);
+                }
+                userToUpdate.UserRoles = new List<UserRole> { new UserRole() {
+                    UserId = userId,
+                    RoleId = updateRoles.Id
+                } };
+			}
+
+            IdentityResult updateResult = await _userManager.UpdateAsync(userToUpdate);
+            if (!updateResult.Succeeded)
+            {
+                throw new BadRequestException(ErrorStrings.USER_UPDATE);
+            }
+			UserInfoResponse response = _mapper.Map<UserInfoResponse>(userToUpdate);
+			_logger.LogInformation("User updated successfully: {UserId}", userId);
+			return response;
+        }
+        catch (Exception e)
+        {
+			_logger.LogError(e, "Error when executing {Method} method. Date: {Date}. Detail: {Detail}", nameof(this.UpdateUserAsync), DateTime.UtcNow, e.Message);
+
+			throw new Exception(message: $"Error when executing {nameof(this.UpdateUserAsync)} method", e);
+		}
     }
 }
 
