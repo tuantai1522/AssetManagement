@@ -46,9 +46,8 @@ export default function ChangePasswordModal({ isOpen, onClose }: Props) {
         OldPassword: data.oldPassword,
         UserId: "ed44d5cb-19b2-4fc8-b292-78faf498995b",
       };
-      const result: BaseResult = await agent.Authentication.changePassword(
-        requestData
-      );
+      const result: BaseResult<null> =
+        await agent.Authentication.changePassword(requestData);
       if (result.isSuccess) {
         setIsSuccessed(true);
       }

@@ -43,7 +43,7 @@ axios.interceptors.response.use(
     return response;
   },
   (error: AxiosError) => {
-    const result = error.response!.data as BaseResult;
+    const result = error.response!.data as BaseResult<any>;
     switch (result.error.status) {
       case 400:
         // if ((result.error.message as any).errors) {
