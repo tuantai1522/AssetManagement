@@ -1,4 +1,3 @@
-<<<<<<<<< Temporary merge branch 1
 import logo from "../../app/assets/images/logo/logo.svg";
 import agent from "../../app/api/agent";
 import { Product } from "../../app/models/Product";
