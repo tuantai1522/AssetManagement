@@ -31,7 +31,13 @@ export default function AppTextInput(props: Props) {
       {...field}
       id={props.id}
       label={props.label}
-      sx={props.sx ? props.sx : ""}
+      sx={{
+        ...props.sx,
+        "& .Mui-disabled": {
+          color: "slategray", // Change this to the desired slate color
+          backgroundColor: "#eff1f5", // Optional: change the background color of the disabled state
+        },
+      }}
       multiline={props.multiline}
       rows={props.rows}
       maxRows={props.maxRows}

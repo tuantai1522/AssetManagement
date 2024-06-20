@@ -7,6 +7,7 @@ import ServerErrors from "../errors/ServerErrors";
 import ManagementUserPage from "../../pages/manageUser";
 import CreateUserPage from "../../pages/manageUser/createUser";
 import LoginPage from "../../pages/authentication/LoginPage";
+import EditUserPage from "../../pages/manageUser/editUser";
 
 export const router = createBrowserRouter([
     {
@@ -32,6 +33,7 @@ export const router = createBrowserRouter([
                         children: [
                             { path: "manage-user", element: <ManagementUserPage /> },
                             { path: "create-user", element: <CreateUserPage />},
+                            { path: "edit-user", element: <EditUserPage />},
                         ],
                     },
                 ],
