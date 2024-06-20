@@ -51,7 +51,21 @@ public class UsersController : ControllerBase
         };
         return Ok(result);
     }
-    
+
+    [HttpPut]
+    [Authorize(Roles = $"{RoleConstant.AdminRole}")]
+    public async Task<ActionResult<BaseResult<UserInfoResponse>>> CreateUserAsync([FromBody] CreateUserRequest request)
+    {
+        var data = await _userService.CreateUserAsync(request);
+        var result = new BaseResult<UserInfoResponse>()
+        {
+            IsSuccess = true,
+            Error = null,
+            Result = data
+        };
+        return Ok(result);
+    }
+
     [HttpPost]
     [Authorize(Roles = $"{RoleConstant.AdminRole}")]
     public async Task<IActionResult> DisableAsync([FromBody] DisableUserRequest request)
