@@ -26,8 +26,7 @@ public class UserService : IUserService
     private readonly IMapper _mapper;
 	private readonly RoleManager<Role> _roleManager;
 
-    public UserService(UserManager<AppUser> userManager, ILogger<UserService> logger, ICurrentUser currentUser, IMapper mapper, 
-        IHttpContextAccessor contextAccessor, RoleManager<Role> roleManager)
+    public UserService(UserManager<AppUser> userManager, ILogger<UserService> logger, ICurrentUser currentUser, IMapper mapper, RoleManager<Role> roleManager)
     {
         _userManager = userManager;
         _logger = logger;
