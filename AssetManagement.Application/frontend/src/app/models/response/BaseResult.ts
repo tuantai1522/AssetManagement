@@ -1,10 +1,10 @@
-export interface BaseResult{
-    isSuccess: boolean,
-    result: any,
-    error: {
-        type: string,
-        title: string,
-        status: number,
-        message: string,
-    }
+export interface BaseResult<T> {
+  isSuccess: boolean;
+  result: T;
+  error: {
+    type: string;
+    title: string;
+    status: number;
+    message: string;
+  };
 }

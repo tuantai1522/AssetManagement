@@ -25,11 +25,14 @@ namespace AssetManagement.Application.Services.Implementations
             var user = await _userManager.FindByNameAsync(request.Username);
 
             if (user is null)
-                throw new NotFoundException("Can't find user");
+                throw new NotFoundException("Username or password is incorrect. Please try again");
+
+            if (user.IsDisabled)
+                throw new NotFoundException("Your account is disabled. Please contact with IT Team");
 
             var check = await _userManager.CheckPasswordAsync(user, request.Password);
             if (check == false)
-                throw new UnauthorizedException("Username or password is not correct");
+                throw new UnauthorizedException("Username or password is incorrect. Please try again");
 
 
             var roles = await _userManager.GetRolesAsync(user);
@@ -37,6 +40,7 @@ namespace AssetManagement.Application.Services.Implementations
 
             var response = new LoginResponse()
             {
+                IsPasswordChanged = user.IsPasswordChanged,
                 Token = accessToken,
             };
             return response;

@@ -3,15 +3,29 @@ import { router } from "../routes/router";
 import useSWR from "swr";
 import { PaginatedResponse } from "../models/Pagination";
 import { BaseResult } from "../models/response/BaseResult";
+import { User } from "../models/User";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 axios.defaults.headers.post["Content-Type"] = "application/json";
 const responseBody = (response: AxiosResponse) => response.data;
 axios.interceptors.request.use((config) => {
-//   const userToken = store.getState().account.user?.token;
-//Pass token of user to userToken to add Authorization header for every request.
-const userToken = "";
-  if (userToken) config.headers.Authorization = `Bearer ${userToken}`;
+  //   const userToken = store.getState().account.user?.token;
+  //Pass token of user to userToken to add Authorization header for every request.
+
+  // Retrieve user data from localStorage
+  const userJson = localStorage.getItem("user");
+
+  // Check if userJson is null and parse it if not
+  const user: User | null = userJson ? (JSON.parse(userJson) as User) : null;
+
+  if (user) {
+    const userToken = user.token;
+    console.log(userToken);
+
+    if (userToken) config.headers.Authorization = `Bearer ${userToken}`;
+    return config;
+  }
+
   return config;
 });
 
@@ -29,7 +43,6 @@ axios.interceptors.response.use(
     return response;
   },
   (error: AxiosError) => {
-    debugger;
     const result = error.response!.data as BaseResult;
     switch (result.error.status) {
       case 400:
@@ -64,7 +77,7 @@ axios.interceptors.response.use(
         break;
       default:
         break;
-      }
+    }
     return Promise.reject(result);
   }
 );
@@ -78,17 +91,15 @@ const FetchWithSWR = (url: string, params?: URLSearchParams) => {
     refreshWhenHidden: false,
     refreshInterval: 0,
   });
-  return { data, isLoading, error, mutate }
-}
+  return { data, isLoading, error, mutate };
+};
 
 const requests = {
-  get: (url: string, params?: URLSearchParams) =>
-    FetchWithSWR(url, params),
+  get: (url: string, params?: URLSearchParams) => FetchWithSWR(url, params),
   post: (url: string, body: {}) => axios.post(url, body).then(responseBody),
   postFormData: (url: string, body: any) => {
-    const headers = body instanceof FormData
-      ? { 'Content-Type': 'multipart/form-data' }
-      : {};
+    const headers =
+      body instanceof FormData ? { "Content-Type": "multipart/form-data" } : {};
     return axios.post(url, body, { headers }).then(responseBody);
   },
   put: (url: string, body: {}) => axios.put(url, body).then(responseBody),
@@ -106,12 +117,13 @@ const Product = {
 
 const Authentication = {
   login: (values: {}) => requests.post("api/auth/login", values),
-  changePassword: (values: {}) => requests.post("api/auth/changepassword", values),
-}
+  changePassword: (values: {}) =>
+    requests.post("api/auth/changepassword", values),
+};
 
 const agent = {
   Product,
-  Authentication
+  Authentication,
 };
 
 export default agent;
