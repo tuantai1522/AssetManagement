@@ -79,5 +79,20 @@ public class UsersController : ControllerBase
         };
         return Ok(result);
     }
+
+	[HttpPut]
+	[Route("{userId}")]
+	[Authorize(Roles = $"{RoleConstant.AdminRole}")]
+    public async Task<ActionResult<BaseResult<UserInfoResponse>>> UpdateAsync([FromRoute]Guid userId, [FromBody] UpdateUserRequest request)
+    {
+        var data = await _userService.UpdateUserAsync(userId, request);
+        var result = new BaseResult<UserInfoResponse>()
+        {
+            IsSuccess = true,
+            Error = null,
+            Result = data
+        };
+		return Ok(result);
+	}
 }
 

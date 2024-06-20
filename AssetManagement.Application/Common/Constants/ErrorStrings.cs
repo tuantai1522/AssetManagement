@@ -12,5 +12,10 @@
         public const string INVALID_JOINED_DATE_RELATE_TO_WEEKDAY = "Joined date is Saturday or Sunday. Please select a different date";
         public const string INVALID_GENDER = "Invalid gender";
         public const string INVALID_LOCATION = "Invalid location";
+
+        public const string ROLE_NOT_DELETED = "User's Role cannot be deleted";
+        public const string ROLE_NOT_EXIST = "Role does not exist";
+        public const string USER_ROLE_ADD = "Cannot Add Role to User";
+        public const string USER_UPDATE = "Cannot Update User";
     }
 }

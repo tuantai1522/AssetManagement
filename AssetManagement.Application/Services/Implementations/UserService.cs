@@ -11,9 +11,11 @@ using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using AssetManagement.Domain.Constants;
+using Microsoft.AspNetCore.Mvc;
+using AssetManagement.Domain.Enums;
 using System.Globalization;
 using System.Text.RegularExpressions;
-using AssetManagement.Domain.Enums;
 
 namespace AssetManagement.Application.Services.Implementations;
 public class UserService : IUserService
@@ -22,17 +24,14 @@ public class UserService : IUserService
     private readonly ILogger<UserService> _logger;
     private readonly ICurrentUser _currentUser;
     private readonly IMapper _mapper;
-    private readonly IHttpContextAccessor _contextAccessor;
-    private readonly RoleManager<Role> _roleManager;
+	private readonly RoleManager<Role> _roleManager;
 
-    public UserService(UserManager<AppUser> userManager, ILogger<UserService> logger, ICurrentUser currentUser, IMapper mapper, 
-        IHttpContextAccessor contextAccessor, RoleManager<Role> roleManager)
+    public UserService(UserManager<AppUser> userManager, ILogger<UserService> logger, ICurrentUser currentUser, IMapper mapper, RoleManager<Role> roleManager)
     {
         _userManager = userManager;
         _logger = logger;
         _currentUser = currentUser;
         _mapper = mapper;
-        _contextAccessor = contextAccessor;
         _roleManager = roleManager;
     }
 
@@ -183,6 +182,55 @@ public class UserService : IUserService
             _logger.LogError("Error when execute {} method.\nDate: {}.\nDetail: {}", nameof(this.DisableUserAsync),
                 DateTime.UtcNow, e.Message);
             throw new Exception($"Error when execute {nameof(this.DisableUserAsync)} method");
+        }
+    }
+    
+    public async Task<UserInfoResponse> UpdateUserAsync(Guid userId, UpdateUserRequest request)
+    {
+        try
+        {
+			ValidateGender(request.Gender);
+			ValidateDateOfBirth(request.DateOfBirth);
+			ValidateJoinedDate(request.DateOfBirth, request.JoinedDate);
+			await ValidateTypeAsync(request.Role);
+
+			_logger.LogInformation("Updating user with ID: {UserId}", userId);
+            var queryable = _userManager.Users;
+            AppUser userToUpdate = await queryable.Where(q => q.Id == userId).Include(q => q.UserRoles).ThenInclude(q => q.Role).FirstOrDefaultAsync() ?? throw new NotFoundException(ErrorStrings.USER_NOT_FOUND);
+            userToUpdate.DateOfBirth = request.DateOfBirth;
+            userToUpdate.JoinedDate = request.JoinedDate;
+            
+            
+            userToUpdate.Gender = request.Gender;
+
+            IList<String> currentRoles = await _userManager.GetRolesAsync(userToUpdate);
+            if (!currentRoles.Contains(request.Role))
+            {
+                Role? updateRoles = await _roleManager.FindByNameAsync(request.Role);
+
+                if (updateRoles is null)
+                {
+                    throw new BadRequestException(ErrorStrings.ROLE_NOT_EXIST);
+                }
+                userToUpdate.UserRoles = new List<UserRole> { new UserRole() {
+                    UserId = userId,
+                    RoleId = updateRoles.Id
+                } };
+            }
+
+            IdentityResult updateResult = await _userManager.UpdateAsync(userToUpdate);
+            if (!updateResult.Succeeded)
+            {
+                throw new BadRequestException(ErrorStrings.USER_UPDATE);
+            }
+            UserInfoResponse response = _mapper.Map<UserInfoResponse>(userToUpdate);
+            _logger.LogInformation("User updated successfully: {UserId}", userId);
+            return response;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error when executing {Method} method. Date: {Date}. Detail: {Detail}", nameof(this.UpdateUserAsync), DateTime.UtcNow, e.Message);
+            throw new Exception(message: $"Error when executing {nameof(this.UpdateUserAsync)} method", e);
         }
     }
 
