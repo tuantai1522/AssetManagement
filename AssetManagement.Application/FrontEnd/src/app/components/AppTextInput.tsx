@@ -20,10 +20,13 @@ interface Props extends UseControllerProps {
   disabled?: boolean;
   onKeyDown?: any;
   onChange?: any;
-  isApplyHelperText?: boolean | true;
+  isApplyHelperText?: boolean;
 }
 
-export default function AppTextInput(props: Props) {
+export default function AppTextInput({
+  isApplyHelperText = true,
+  ...props
+}: Props) {
   const { fieldState, field } = useController({ ...props, defaultValue: "" });
 
   return (
@@ -44,11 +47,9 @@ export default function AppTextInput(props: Props) {
       value={props.value}
       className={props.className}
       onChange={props.onChange}
-      error={
-        props.isApplyHelperText ? props.error || !!fieldState.error : undefined
-      }
+      error={isApplyHelperText ? props.error || !!fieldState.error : undefined}
       helperText={
-        props.isApplyHelperText
+        isApplyHelperText
           ? props.error
             ? props.helperText
             : fieldState.error?.message

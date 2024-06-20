@@ -12,13 +12,15 @@ public class SetupAuthenticationServiceTest
 {
     protected readonly IFixture _fixture;
     protected IAuthService _authService;
+    protected readonly Mock<UserManager<AppUser>> _userManagerMock;
+    protected readonly Mock<IJwtTokenGenerator> _tokenGeneratorMock;
 
     public SetupAuthenticationServiceTest()
     {
         _fixture = new Fixture().Customize(new AutoMoqCustomization());
         _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
-        var userManagerMock = _fixture.Freeze<Mock<UserManager<AppUser>>>();
-        var tokenGeneratorMock = _fixture.Freeze<Mock<IJwtTokenGenerator>>();
-        _authService = new AuthService(userManagerMock.Object, tokenGeneratorMock.Object);
+        _userManagerMock = _fixture.Freeze<Mock<UserManager<AppUser>>>();
+        _tokenGeneratorMock = _fixture.Freeze<Mock<IJwtTokenGenerator>>();
+        _authService = new AuthService(_userManagerMock.Object, _tokenGeneratorMock.Object);
     }
 }
