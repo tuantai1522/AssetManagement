@@ -9,7 +9,7 @@ const DefaultLayout = () => {
             <div className="flex justify-center">
                 <div className="w-[90%] flex gap-40">
                     <Sidebar></Sidebar>
-                    <div className="mt-20">
+                    <div className="mt-20 flex-1">
                         <Outlet />
                     </div>
                 </div>
