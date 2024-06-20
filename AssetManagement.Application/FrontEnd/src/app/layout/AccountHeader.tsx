@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { IconButton, Menu, MenuItem } from "@mui/material";
 import ChangePasswordModal from "../components/changePassword/ChangePasswordModal";
+import { useNavigate } from "react-router-dom";
 import { User } from "../models/User";
 
 interface Props {
@@ -12,6 +13,8 @@ const AccountHeader = (props: Props) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [isOpenChangePasswordModal, setIsOpenChangePasswordModal] =
     useState<boolean>(false);
+
+  const navigate = useNavigate();
 
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -36,6 +39,11 @@ const AccountHeader = (props: Props) => {
     setIsOpenChangePasswordModal(false);
   };
   //End of handle change password modal
+
+  const handleClickLogout = () => {
+    localStorage.removeItem("user");
+    navigate("/");
+  };
 
   return (
     <>
@@ -71,7 +79,7 @@ const AccountHeader = (props: Props) => {
           <MenuItem onClick={handleClickChangePassword}>
             Change Password
           </MenuItem>
-          <MenuItem onClick={handleClose}>Logout</MenuItem>
+          <MenuItem onClick={handleClickLogout}>Logout</MenuItem>
         </Menu>
       </div>
 
