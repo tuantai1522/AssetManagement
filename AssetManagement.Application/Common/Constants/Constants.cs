@@ -3,6 +3,7 @@
     public static class Constants
     {
         public const string STAFFCODE_PREFIX = "SD";
+        public const string EMAIL_SUFFIX = "@nashtech.com";
         public const string PASSWORD_SEPERATOR = "@";
 
         public const int MINIMUM_AGE = 18;

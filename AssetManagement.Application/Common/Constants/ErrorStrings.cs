@@ -7,7 +7,9 @@
         public const string INVALID_FIRSTNAME = "First name cannot be more than one word";
         public const string INVALID_ROLE = "Type of user is invalid";
         public const string INVALID_DATE_OF_BIRTH = "User is under 18. Please select a different date";
-        public const string INVALID_JOINED_DATE = "User under the age of 18 may not join company. Please select a different date";
+        public const string INVALID_DATE_OF_BIRTH_IN_FUTURE = "Date of birth is in future. Please select a different date";
+        public const string INVALID_JOINED_DATE_RELATE_TO_DOB = "User under the age of 18 may not join company. Please select a different date";
+        public const string INVALID_JOINED_DATE_RELATE_TO_WEEKDAY = "Joined date is Saturday or Sunday. Please select a different date";
         public const string INVALID_GENDER = "Invalid gender";
         public const string INVALID_LOCATION = "Invalid location";
     }

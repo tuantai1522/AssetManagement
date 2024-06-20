@@ -10,18 +10,14 @@ using AssetManagement.Domain.Exceptions;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 using System.Linq.Expressions;
 using AssetManagement.Domain.Constants;
 using Microsoft.VisualBasic;
 using Microsoft.AspNetCore.Mvc;
 using AssetManagement.Domain.Enums;
 using System.Globalization;
-using static System.Net.Mime.MediaTypeNames;
 using System.Text.RegularExpressions;
-using System.Security.Claims;
 using AssetManagement.Domain.Enums;
-using Azure.Core;
 
 namespace AssetManagement.Application.Services.Implementations;
 public class UserService : IUserService
@@ -34,11 +30,10 @@ public class UserService : IUserService
 
 	public UserService(UserManager<AppUser> userManager, RoleManager<Role> roleManager, ILogger<UserService> logger, ICurrentUser currentUser, IMapper mapper)
     private readonly IHttpContextAccessor _contextAccessor;
-    private readonly RoleManager<UserRole> _roleManager;
-    private readonly PasswordHasher<AppUser> _passwordHasher;
+    private readonly RoleManager<Role> _roleManager;
 
     public UserService(UserManager<AppUser> userManager, ILogger<UserService> logger, ICurrentUser currentUser, IMapper mapper, 
-        IHttpContextAccessor contextAccessor, RoleManager<UserRole> roleManager, PasswordHasher<AppUser> passwordHasher)
+        IHttpContextAccessor contextAccessor, RoleManager<Role> roleManager)
     {
         _userManager = userManager;
         _logger = logger;
@@ -46,7 +41,6 @@ public class UserService : IUserService
         _mapper = mapper;
         _contextAccessor = contextAccessor;
         _roleManager = roleManager;
-        _passwordHasher = passwordHasher;
     }
 
     public async Task<PagingDto<FilterUserResponse>> FilterUserAsync(FilterUserRequest request)
@@ -134,35 +128,40 @@ public class UserService : IUserService
         try
         {
             ValidateFirstName(request.FirstName);
-            ValidateType(request.Type);
+            
             ValidateGender(request.Gender);
             ValidateDateOfBirth(request.DateOfBirth);
             ValidateJoinedDate(request.DateOfBirth, request.JoinedDate);
+            await ValidateTypeAsync(request.Type);
 
-            var firstName = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(request.FirstName);
-            var lastName = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(request.LastName);
+            var firstName = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(request.FirstName.ToLower());
+            var lastName = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(request.LastName.ToLower());
             var userName = await GenerateUsernameAsync(firstName, lastName);
             var password = userName + Constants.PASSWORD_SEPERATOR + request.DateOfBirth.ToString("ddmmyyyy");
 
             var user = new AppUser()
             {
                 UserName = userName,
-                NormalizedUserName = userName.Normalize(),
                 FirstName = firstName,
                 LastName = lastName,
-                Gender = Enum.Parse(typeof(Gender), request.Gender).ToString(),
-                Location = (await GetAndValidateLocationAsync()).ToString(),
+                Email = userName + Constants.EMAIL_SUFFIX, 
+                Gender = request.Gender,
+                Location = await GetAndValidateLocationAsync(),
+                DateOfBirth = request.DateOfBirth,
+                JoinedDate = request.JoinedDate,
                 IsPasswordChanged = false,
                 StaffCode = await GenerateStaffCodeAsync(),
                 IsDisabled = false,
                 CreatedDateTime = DateTime.UtcNow,
                 LastUpdatedDateTime = DateTime.UtcNow,
             };
-            var hashedPassword = _passwordHasher.HashPassword(user, password);
-            user.PasswordHash = hashedPassword;
 
-            var result = await _userManager.CreateAsync(user);
-            if (result.Succeeded) return _mapper.Map<UserInfoResponse>(user);
+            var result = await _userManager.CreateAsync(user, password);
+            if (result.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(user, request.Type);
+                return _mapper.Map<UserInfoResponse>(user);
+            }
             throw new Exception(string.Join(". ", result.Errors.Select(p => p.Description)));
         }
         catch (Exception e)
@@ -307,15 +306,16 @@ public class UserService : IUserService
         if (firstName.Split(' ').Length > Constants.NUMBER_OF_WORDS_IN_FIRSTNAME) throw new BadRequestException(ErrorStrings.INVALID_FIRSTNAME);
     }
 
-    private void ValidateType(string type)
+    private async Task<Role> ValidateTypeAsync(string type)
     {
-        if (_roleManager.Roles.Where(r => r.Role.Name.Normalize() == type.Normalize()).FirstOrDefaultAsync() == null)
-            throw new BadRequestException(ErrorStrings.INVALID_ROLE);
+        var role = await _roleManager.Roles.Where(r => r.Name!.ToLower() == type.ToLower()).FirstOrDefaultAsync();
+        if (role == null) throw new BadRequestException(ErrorStrings.INVALID_ROLE);
+        return role;
     }
 
     private void ValidateGender(string gender)
     {
-        if (!Enum.IsDefined(typeof(Gender), gender)) throw new BadRequestException(ErrorStrings.INVALID_GENDER);
+        if (!Enum.TryParse(gender, out Gender resultGender)) throw new BadRequestException(ErrorStrings.INVALID_GENDER);
     }
 
     private async Task<string> GenerateStaffCodeAsync()
@@ -335,26 +335,27 @@ public class UserService : IUserService
         return newStaffCode;
     }
 
-    private async Task<Location> GetAndValidateLocationAsync()
+    private async Task<string> GetAndValidateLocationAsync()
     {
-        var currentAdminId = _contextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.ToString()
-            ?? throw new UnauthorizedException(ErrorStrings.UNAUTHORIZED_USER);
-        var adminUser = await _userManager.FindByIdAsync(currentAdminId) ?? throw new NotFoundException(ErrorStrings.USER_NOT_FOUND);
-        if (adminUser.Location == null || Enum.TryParse(adminUser.Location, out Location location)) throw new Exception(ErrorStrings.INVALID_LOCATION);
-        return location;
+        var currentAdminId = _currentUser.UserId;
+        var adminUser = await _userManager.FindByIdAsync(currentAdminId.ToString()) ?? throw new NotFoundException(ErrorStrings.USER_NOT_FOUND);
+        if (adminUser.Location == null) throw new Exception(ErrorStrings.INVALID_LOCATION);
+        return adminUser.Location;
     }
 
     private void ValidateDateOfBirth(DateTime dateOfBirth)
     {
         var now = DateTime.Now;
-        if (now < dateOfBirth || dateOfBirth.AddYears(Constants.MINIMUM_AGE) > now) throw new BadRequestException(ErrorStrings.INVALID_DATE_OF_BIRTH);
+        if (now < dateOfBirth) throw new BadRequestException(ErrorStrings.INVALID_DATE_OF_BIRTH_IN_FUTURE);
+        if (dateOfBirth.AddYears(Constants.MINIMUM_AGE) > now) throw new BadRequestException(ErrorStrings.INVALID_DATE_OF_BIRTH);
     }
 
     private void ValidateJoinedDate(DateTime dateOfBirth, DateTime joinedDate)
     {
-        var now = DateTime.Now;
-        if (now < joinedDate || dateOfBirth.AddYears(Constants.MINIMUM_AGE) > dateOfBirth)
-            throw new BadRequestException(ErrorStrings.INVALID_JOINED_DATE);
+        if ((joinedDate.DayOfWeek == DayOfWeek.Saturday) || (joinedDate.DayOfWeek == DayOfWeek.Sunday)) 
+            throw new BadRequestException(ErrorStrings.INVALID_JOINED_DATE_RELATE_TO_WEEKDAY);
+        if (dateOfBirth.AddYears(Constants.MINIMUM_AGE) > joinedDate)
+            throw new BadRequestException(ErrorStrings.INVALID_JOINED_DATE_RELATE_TO_DOB);
     }
 
     private async Task<string> GenerateUsernameAsync(string firstName, string lastName)
