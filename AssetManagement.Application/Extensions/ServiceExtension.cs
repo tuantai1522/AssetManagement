@@ -128,7 +128,6 @@ public static class ServiceExtension
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 
-
         services.AddScoped<IUserService, UserService>();
 
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

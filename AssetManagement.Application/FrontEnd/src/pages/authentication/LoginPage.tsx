@@ -1,5 +1,7 @@
 import { Box, Container, Grid, Typography } from "@mui/material";
-import { Controller, Field, FieldValues, useForm } from "react-hook-form";
+import { Controller, FieldValues, useForm } from "react-hook-form";
+
+import { jwtDecode } from "jwt-decode";
 
 import AppTextInput from "../../app/components/AppTextInput";
 import AppPasswordInput from "../../app/components/AppPasswordInput";
@@ -8,6 +10,14 @@ import LoginHeader from "../../app/layout/LoginHeader";
 
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import LoginRequest from "../../app/models/request/LoginRequest";
+import agent from "../../app/api/agent";
+import { BaseResult } from "../../app/models/response/BaseResult";
+import { useState } from "react";
+import { User } from "../../app/models/User";
+import { Token } from "../../app/models/Token";
+import { useNavigate } from "react-router-dom";
+import { LoginResponse } from "../../app/models/response/LoginReponse";
 
 interface FormValues extends FieldValues {
   Username: string;
@@ -20,9 +30,13 @@ const schema = yup.object().shape({
 });
 
 const LoginPage = () => {
+  const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();
+
   const {
     control,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting, isValid },
   } = useForm({
     resolver: yupResolver<FormValues>(schema),
@@ -30,11 +44,40 @@ const LoginPage = () => {
   });
 
   const submitForm = async (data: FieldValues) => {
-    const Username = data.Username;
-    const Password = data.Password;
-    console.log(Username, Password);
+    try {
+      const Username = data.Username;
+      const Password = data.Password;
 
-    //send to server
+      const requestData: LoginRequest = {
+        Username: Username,
+        Password: Password,
+      };
+
+      //send to server
+      const response: BaseResult<LoginResponse> =
+        await agent.Authentication.login(requestData);
+
+      if (response.isSuccess) {
+        const token = response.result.token;
+
+        const decoded: Token = jwtDecode(token);
+
+        const user: User = {
+          id: decoded.sub,
+          userName: decoded.unique_name,
+          role: decoded.role,
+          token: token,
+          isPasswordChanged: response.result.isPasswordChanged,
+        };
+        localStorage.setItem("user", JSON.stringify(user));
+
+        navigate("/");
+      }
+    } catch (error: any) {
+      if (!error.isSuccess) {
+        setErrorMessage(error.error.message);
+      }
+    }
   };
 
   return (
@@ -77,50 +120,81 @@ const LoginPage = () => {
             backgroundColor: "#FAFCFC",
           }}
         >
-          <Grid container justifyContent="space-between">
-            <Grid item xs={5}>
-              <Typography variant="subtitle1">Username</Typography>
+          <Grid container>
+            <Grid container alignItems="center">
+              <Grid item xs={5}>
+                <Typography variant="subtitle1">Username</Typography>
+              </Grid>
+              <Grid item xs={7}>
+                <Controller
+                  name="Username"
+                  control={control}
+                  render={({ field }) => (
+                    <AppTextInput
+                      {...field}
+                      id="Username"
+                      control={control}
+                      isApplyHelperText={false}
+                    />
+                  )}
+                />
+              </Grid>
             </Grid>
-            <Grid item xs={7}>
-              <Controller
-                name="Username"
-                control={control}
-                render={({ field, fieldState }) => (
-                  <AppTextInput
-                    {...field}
-                    label="Username"
-                    control={control}
-                    placeholder="Enter your username"
-                    error={!!fieldState.error}
-                    helperText={fieldState.error?.message}
-                  />
+            <Grid container alignItems="center">
+              <Grid item xs={5}></Grid>
+              <Grid item xs={7}>
+                {errors.Username && (
+                  <Typography color="error" variant="caption">
+                    {errors.Username.message as string}
+                  </Typography>
                 )}
-              />
+              </Grid>
             </Grid>
           </Grid>
-          <Grid container justifyContent="space-between">
-            <Grid item xs={5}>
-              <Typography variant="subtitle1">Password</Typography>
+
+          <Grid container>
+            <Grid container alignItems="center">
+              <Grid item xs={5}>
+                <Typography variant="subtitle1">Password</Typography>
+              </Grid>
+              <Grid item xs={7}>
+                <Controller
+                  name="Password"
+                  control={control}
+                  render={({ field }) => (
+                    <AppPasswordInput
+                      {...field}
+                      id="Password"
+                      control={control}
+                      isApplyHelperText={false}
+                    />
+                  )}
+                />
+              </Grid>
             </Grid>
-            <Grid item xs={7}>
-              <Controller
-                name="Password"
-                control={control}
-                render={({ field, fieldState }) => (
-                  <AppPasswordInput
-                    {...field}
-                    label="Password"
-                    control={control}
-                    placeholder="Enter your password"
-                    error={!!fieldState.error}
-                    helperText={fieldState.error?.message}
-                  />
+            <Grid container alignItems="center">
+              <Grid item xs={5}></Grid>
+              <Grid item xs={7}>
+                {errors.Password && (
+                  <Typography color="error" variant="caption">
+                    {errors.Password.message as string}
+                  </Typography>
                 )}
-              />
+              </Grid>
             </Grid>
           </Grid>
+
+          {errorMessage && (
+            <Grid container alignItems="center" justifyContent="center">
+              <Typography color="red" component="p">
+                {errorMessage}
+              </Typography>
+            </Grid>
+          )}
+
           <Grid container alignItems="center" justifyContent="flex-end">
             <button
+              disabled={!isValid || isSubmitting}
               className={`bg-primary text-white px-2 py-1 rounded hover:bg-red-600 ${
                 !isValid || isSubmitting ? "opacity-50 cursor-not-allowed" : ""
               }`}

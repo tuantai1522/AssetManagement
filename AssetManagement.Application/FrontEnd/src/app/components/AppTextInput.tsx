@@ -2,6 +2,7 @@ import { TextField } from "@mui/material";
 import { useController, UseControllerProps } from "react-hook-form";
 
 interface Props extends UseControllerProps {
+  id?: string;
   label?: string;
   placeholder?: string;
   size?: "small" | "medium";
@@ -18,6 +19,8 @@ interface Props extends UseControllerProps {
   sx?: any;
   disabled?: boolean;
   onKeyDown?: any;
+  onChange?: any;
+  isApplyHelperText?: boolean | true;
 }
 
 export default function AppTextInput(props: Props) {
@@ -40,8 +43,17 @@ export default function AppTextInput(props: Props) {
       onKeyDown={props.onKeyDown}
       value={props.value}
       className={props.className}
-      error={props.error || !!fieldState.error}
-      helperText={props.error ? props.helperText : fieldState.error?.message}
+      onChange={props.onChange}
+      error={
+        props.isApplyHelperText ? props.error || !!fieldState.error : undefined
+      }
+      helperText={
+        props.isApplyHelperText
+          ? props.error
+            ? props.helperText
+            : fieldState.error?.message
+          : undefined
+      }
       {...(props.InputProps && `inputProps=${props.InputProps}`)}
     />
   );
