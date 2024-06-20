@@ -190,7 +190,12 @@ public class UserService : IUserService
     {
         try
         {
-            _logger.LogInformation("Updating user with ID: {UserId}", userId);
+			ValidateGender(request.Gender);
+			ValidateDateOfBirth(request.DateOfBirth);
+			ValidateJoinedDate(request.DateOfBirth, request.JoinedDate);
+			await ValidateTypeAsync(request.Role);
+
+			_logger.LogInformation("Updating user with ID: {UserId}", userId);
             var queryable = _userManager.Users;
             AppUser userToUpdate = await queryable.Where(q => q.Id == userId).Include(q => q.UserRoles).ThenInclude(q => q.Role).FirstOrDefaultAsync() ?? throw new NotFoundException(ErrorStrings.USER_NOT_FOUND);
             userToUpdate.DateOfBirth = request.DateOfBirth;
@@ -226,7 +231,6 @@ public class UserService : IUserService
         catch (Exception e)
         {
             _logger.LogError(e, "Error when executing {Method} method. Date: {Date}. Detail: {Detail}", nameof(this.UpdateUserAsync), DateTime.UtcNow, e.Message);
-
             throw new Exception(message: $"Error when executing {nameof(this.UpdateUserAsync)} method", e);
         }
     }
