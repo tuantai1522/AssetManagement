@@ -1,7 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { router } from "../routes/router";
 import useSWR from "swr";
-
 axios.defaults.baseURL = "https://fakestoreapi.com/";
 axios.defaults.headers.post["Content-Type"] = "application/json";
 const responseBody = (response: AxiosResponse) => response.data;
@@ -99,9 +98,14 @@ const Product = {
   delete: (id: string) => requests.delete(`products/${id}`),
 };
 
+const User = {
+  details: (id: string) => requests.get(`/api/users/${id}`),
+};
+
 
 const agent = {
   Product,
+  User
 };
 
 export default agent;
