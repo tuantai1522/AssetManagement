@@ -88,7 +88,7 @@ public class UserService : IUserService
     {
         try
         {
-            var userToBeDisabled = await _userManager.FindByIdAsync(request.UserId) ?? throw new ArgumentException(ErrorStrings.UserNotFound);
+            var userToBeDisabled = await _userManager.FindByIdAsync(request.UserId) ?? throw new ArgumentException(ErrorStrings.USER_NOT_FOUND);
             userToBeDisabled.IsDisabled = true;
             var result = await _userManager.UpdateAsync(userToBeDisabled);
             if (result.Succeeded)
