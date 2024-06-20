@@ -1,6 +1,8 @@
 ﻿using AssetManagement.Application.ConfigurationOptions;
 using AssetManagement.Application.Services.Implementations;
 using AssetManagement.Application.Services.Interfaces;
+using AssetManagement.Application.Services.Implementations;
+using AssetManagement.Application.Services.Interfaces;
 using AssetManagement.Contracts.Dtos.PaginationDtos;
 using AssetManagement.Data.Data;
 using AssetManagement.Data.Interfaces;
@@ -18,6 +20,7 @@ using System;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
+using AssetManagement.Application.Common.Credential;
 
 namespace AssetManagement.Application.Extensions;
 
@@ -28,7 +31,7 @@ public static class ServiceExtension
         services.AddDbContextPool<AssetManagementDbContext>(options => { options.UseSqlServer(appsetting.ConnectionStrings.DefaultConnection); });
 
         //add identity
-        services.AddIdentity<AppUser, IdentityRole<Guid>>(options =>
+        services.AddIdentity<AppUser, Role>(options =>
         {
             options.SignIn.RequireConfirmedAccount = false;
             options.SignIn.RequireConfirmedEmail = false;
@@ -126,6 +129,10 @@ public static class ServiceExtension
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 
 
+        services.AddScoped<IUserService, UserService>();
+
+        services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+        services.AddScoped<ICurrentUser, CurrentUser>();
     }
 
     public static void RegisterRepositoryDependencies(this IServiceCollection services)
