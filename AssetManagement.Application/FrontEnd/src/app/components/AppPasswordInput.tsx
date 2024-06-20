@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useController, UseControllerProps } from "react-hook-form";
 
 interface Props extends UseControllerProps {
+  id?: string;
   label?: string;
   placeholder?: string;
   size?: "small" | "medium";
@@ -31,6 +32,7 @@ export default function AppPasswordInput(props: Props) {
     <TextField
       {...props}
       {...field}
+      id={props.id}
       label={props.label}
       sx={props.sx ? props.sx : ""}
       multiline={props.multiline}
