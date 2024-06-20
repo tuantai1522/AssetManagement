@@ -1,5 +1,5 @@
 ﻿
-using AssetManagement.Contracts.Dtos.WeatherForecastDtos;
+using AssetManagement.Contracts.Dtos.UserDtos.Responses;
 using AssetManagement.Domain.Entities;
 using AutoMapper;
 
@@ -9,7 +9,8 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        //WeatherForcast
-        CreateMap<WeatherForecast, WeatherForecastResponseDto>();
+        CreateMap<AppUser, UserInfoResponse>()
+            .ForMember(dest => dest.FullName, src => src.MapFrom(src => string.Concat(src.LastName, " ", src.FirstName)))
+            .ForMember(dest => dest.Types, src => src.MapFrom(src => src.UserRoles.Select(x => x.Role.Name)));
     }
 }
