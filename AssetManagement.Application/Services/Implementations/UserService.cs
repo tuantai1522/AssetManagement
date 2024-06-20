@@ -92,7 +92,7 @@ public class UserService : IUserService
     {
         try
         {
-            var userToBeDisabled = await _userManager.FindByIdAsync(request.UserId) ?? throw new ArgumentException(ErrorStrings.USER_NOT_FOUND);
+            var userToBeDisabled = await _userManager.FindByIdAsync(request.UserId) ?? throw new NotFoundException(ErrorStrings.USER_NOT_FOUND);
             userToBeDisabled.IsDisabled = true;
             var result = await _userManager.UpdateAsync(userToBeDisabled);
             if (result.Succeeded)
@@ -105,7 +105,7 @@ public class UserService : IUserService
         {
             _logger.LogError("Error when execute {} method.\nDate: {}.\nDetail: {}", nameof(this.DisableUserAsync),
                 DateTime.UtcNow, e.Message);
-            throw new Exception($"Error when execute {nameof(this.FilterUserAsync)} method");
+            throw new Exception($"Error when execute {nameof(this.DisableUserAsync)} method");
         }
     }
 
