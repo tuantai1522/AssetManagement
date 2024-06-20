@@ -51,5 +51,12 @@ public class UsersController : ControllerBase
         };
         return Ok(result);
     }
+    
+    [HttpPost]
+    [Authorize(Roles = $"{RoleConstant.AdminRole}")]
+    public async Task<IActionResult> Disable([FromBody] UserDisableRequest request)
+    {
+        throw new NotImplementedException();
+    }
 }
 
