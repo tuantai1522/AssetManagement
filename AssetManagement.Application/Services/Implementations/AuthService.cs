@@ -53,7 +53,7 @@ namespace AssetManagement.Application.Services.Implementations
             var result = await _userManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
             if (!result.Succeeded)
             {
-                throw new BadRequestException(result.Errors.ToString());
+                throw new BadRequestException(result.Errors.FirstOrDefault()?.Description);
             }
             return true;
         }

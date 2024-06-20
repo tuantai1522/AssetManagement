@@ -17,8 +17,8 @@ namespace AssetManagement.Application.Controllers
             _authService = authService;
         }
 
-        [HttpPost("LoginUser")]
-        public async Task<ActionResult<LoginResponse>> LoginUser(LoginRequest request)
+        [HttpPost("Login")]
+        public async Task<ActionResult<BaseResult<LoginResponse>>> Login(LoginRequest request)
         {
             var data = await _authService.Login(request);
 
@@ -32,7 +32,7 @@ namespace AssetManagement.Application.Controllers
         }
 
         [HttpPost("ChangePassword")]
-        public async Task<ActionResult<LoginResponse>> ChangePassword(ChangePasswordRequest request)
+        public async Task<ActionResult<BaseResult<LoginResponse>>> ChangePassword(ChangePasswordRequest request)
         {
             var data = await _authService.ChangePassword(request);
 

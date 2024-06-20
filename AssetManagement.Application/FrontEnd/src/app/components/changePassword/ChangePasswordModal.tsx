@@ -4,6 +4,9 @@ import Button from "../buttons/Button";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useState } from "react";
+import { ChangePasswordRequest } from "../../models/request/ChangePasswordRequest";
+import agent from "../../api/agent";
+import { BaseResult } from "../../models/response/BaseResult";
 
 interface Props {
   isOpen: boolean;
@@ -36,13 +39,30 @@ export default function ChangePasswordModal({ isOpen, onClose }: Props) {
     mode: "onSubmit",
   });
 
-  const onSubmit = async () => {
-    setIsSuccessed(false);
-    setError("oldPassword", {
-      type: "validate",
-      message: "Password is incorrect",
-    });
-  };
+  async function onSubmit(data: FormValues) {
+    try {
+      const requestData: ChangePasswordRequest = {
+        NewPassword: data.newPassword,
+        OldPassword: data.oldPassword,
+        UserId: "ed44d5cb-19b2-4fc8-b292-78faf498995b",
+      };
+      const result: BaseResult = await agent.Authentication.changePassword(
+        requestData
+      );
+      if (result.isSuccess) {
+        setIsSuccessed(true);
+      }
+    } catch (error: any) {
+      console.log(error);
+      if (!error.isSuccess) {
+        setIsSuccessed(false);
+        setError("oldPassword", {
+          type: "validate",
+          message: "Password is incorrect",
+        });
+      }
+    }
+  }
 
   const handleOnClose = () => {
     onClose();
@@ -59,7 +79,10 @@ export default function ChangePasswordModal({ isOpen, onClose }: Props) {
           <div className="bg-slate-100 rounded-t-lg border-b border-black px-12 py-5">
             <h2 className="text-2xl font-bold text-primary">Change password</h2>
           </div>
-          <div className="w-full h-full px-12 py-5">
+          <form
+            className="w-full h-full px-12 py-5"
+            onSubmit={handleSubmit(onSubmit as any)}
+          >
             {isSuccessed ? (
               <div className="flex items-center h-14 mb-6">
                 <p className="font-normal">
@@ -103,7 +126,7 @@ export default function ChangePasswordModal({ isOpen, onClose }: Props) {
                 />
               ) : (
                 <>
-                  <Button content="Save" onClickOn={onSubmit} />
+                  <Button content="Save" isFormSubmit={true} />
                   <Button
                     styleType="secondary"
                     content="Cancel"
@@ -112,7 +135,7 @@ export default function ChangePasswordModal({ isOpen, onClose }: Props) {
                 </>
               )}
             </div>
-          </div>
+          </form>
         </div>
       </div>
     </>
