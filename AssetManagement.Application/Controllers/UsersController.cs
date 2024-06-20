@@ -52,7 +52,7 @@ public class UsersController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPut]
+    [HttpPost("create")]
     [Authorize(Roles = $"{RoleConstant.AdminRole}")]
     public async Task<ActionResult<BaseResult<UserInfoResponse>>> CreateUserAsync([FromBody] CreateUserRequest request)
     {

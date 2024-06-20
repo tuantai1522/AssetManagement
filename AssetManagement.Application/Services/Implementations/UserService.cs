@@ -12,12 +12,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using AssetManagement.Domain.Constants;
-using Microsoft.VisualBasic;
 using Microsoft.AspNetCore.Mvc;
 using AssetManagement.Domain.Enums;
 using System.Globalization;
 using System.Text.RegularExpressions;
-using AssetManagement.Domain.Enums;
 
 namespace AssetManagement.Application.Services.Implementations;
 public class UserService : IUserService
@@ -28,10 +26,6 @@ public class UserService : IUserService
     private readonly IMapper _mapper;
 	private readonly RoleManager<Role> _roleManager;
 
-	public UserService(UserManager<AppUser> userManager, RoleManager<Role> roleManager, ILogger<UserService> logger, ICurrentUser currentUser, IMapper mapper)
-    private readonly IHttpContextAccessor _contextAccessor;
-    private readonly RoleManager<Role> _roleManager;
-
     public UserService(UserManager<AppUser> userManager, ILogger<UserService> logger, ICurrentUser currentUser, IMapper mapper, 
         IHttpContextAccessor contextAccessor, RoleManager<Role> roleManager)
     {
@@ -39,7 +33,6 @@ public class UserService : IUserService
         _logger = logger;
         _currentUser = currentUser;
         _mapper = mapper;
-        _contextAccessor = contextAccessor;
         _roleManager = roleManager;
     }
 
@@ -169,27 +162,6 @@ public class UserService : IUserService
             _logger.LogError("Error when execute {} method.\nDate: {}.\nDetail: {}", nameof(this.CreateUserAsync),
                 DateTime.UtcNow, e.Message);
             throw new Exception($"Error when execute {nameof(this.CreateUserAsync)} method");
-        }
-    }
-
-    public async Task<DisableUserResponse> DisableUserAsync(DisableUserRequest request)
-    {
-        try
-        {
-            var userToBeDisabled = await _userManager.FindByIdAsync(request.UserId) ?? throw new NotFoundException(ErrorStrings.USER_NOT_FOUND);
-            userToBeDisabled.IsDisabled = true;
-            var result = await _userManager.UpdateAsync(userToBeDisabled);
-            if (result.Succeeded)
-            {
-                return new DisableUserResponse();
-            }
-            throw new Exception(string.Join(". ", result.Errors.Select(p => p.Description)));
-        }
-        catch (Exception e)
-        {
-            _logger.LogError("Error when execute {} method.\nDate: {}.\nDetail: {}", nameof(this.DisableUserAsync),
-                DateTime.UtcNow, e.Message);
-            throw new Exception($"Error when execute {nameof(this.DisableUserAsync)} method");
         }
     }
 
