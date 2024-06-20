@@ -54,7 +54,21 @@ namespace AssetManagement.Application.Services.Implementations
             {
                 throw new NotFoundException("User not found!");
             }
-            var result = await _userManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
+            var result = new IdentityResult();
+            if (!user.IsPasswordChanged)
+            {
+                //First change password
+                var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+                result = await _userManager.ResetPasswordAsync(user, resetToken, request.NewPassword);
+                //Update isPasswordChanged
+                user.IsPasswordChanged = true;
+                await _userManager.UpdateAsync(user);
+            }
+            else
+            {
+                result = await _userManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
+            }
+
             if (!result.Succeeded)
             {
                 throw new BadRequestException(result.Errors.FirstOrDefault()?.Description);

@@ -10,14 +10,14 @@ import LoginHeader from "../../app/layout/LoginHeader";
 
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import LoginRequest from "../../app/models/request/LoginRequest";
+import LoginRequest from "../../app/models/login/LoginRequest";
 import agent from "../../app/api/agent";
-import { BaseResult } from "../../app/models/response/BaseResult";
+import { BaseResult } from "../../app/models/BaseResult";
 import { useState } from "react";
 import { User } from "../../app/models/User";
 import { Token } from "../../app/models/Token";
 import { useNavigate } from "react-router-dom";
-import { LoginResponse } from "../../app/models/response/LoginReponse";
+import { LoginResponse } from "../../app/models/login/LoginReponse";
 
 interface FormValues extends FieldValues {
   Username: string;

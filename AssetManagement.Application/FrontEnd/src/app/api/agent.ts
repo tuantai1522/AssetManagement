@@ -2,16 +2,13 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import { router } from "../routes/router";
 import useSWR from "swr";
 import { PaginatedResponse } from "../models/Pagination";
-import { BaseResult } from "../models/response/BaseResult";
+import { BaseResult } from "../models/BaseResult";
 import { User } from "../models/User";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 axios.defaults.headers.post["Content-Type"] = "application/json";
 const responseBody = (response: AxiosResponse) => response.data;
 axios.interceptors.request.use((config) => {
-  //   const userToken = store.getState().account.user?.token;
-  //Pass token of user to userToken to add Authorization header for every request.
-
   // Retrieve user data from localStorage
   const userJson = localStorage.getItem("user");
 
@@ -43,7 +40,7 @@ axios.interceptors.response.use(
     return response;
   },
   (error: AxiosError) => {
-    const result = error.response!.data as BaseResult;
+    const result = error.response!.data as BaseResult<any>;
     switch (result.error.status) {
       case 400:
         // if ((result.error.message as any).errors) {
