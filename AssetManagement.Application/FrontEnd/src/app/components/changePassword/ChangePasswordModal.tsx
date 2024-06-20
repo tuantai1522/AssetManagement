@@ -1,36 +1,40 @@
-import { FieldValues, useForm } from "react-hook-form";
+import { Controller, FieldValues, useForm } from "react-hook-form";
 import AppPasswordInput from "../AppPasswordInput";
 import Button from "../buttons/Button";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useState } from "react";
-import { ChangePasswordRequest } from "../../models/request/ChangePasswordRequest";
+import { ChangePasswordRequest } from "../../models/changePassword/ChangePasswordRequest";
 import agent from "../../api/agent";
-import { BaseResult } from "../../models/response/BaseResult";
+import { BaseResult } from "../../models/BaseResult";
+import { User } from "../../models/User";
 
 interface Props {
+  user: User | null;
   isOpen: boolean;
   onClose: () => void;
 }
 
 interface FormValues extends FieldValues {
-  oldPassword: string;
+  oldPassword?: string;
   newPassword: string;
 }
 
-export default function ChangePasswordModal({ isOpen, onClose }: Props) {
+export default function ChangePasswordModal({ user, isOpen, onClose }: Props) {
   const [isSuccessed, setIsSuccessed] = useState<boolean | undefined>(
     undefined
   );
+
   //Validation
   const schema = yup.object().shape({
-    oldPassword: yup.string().required("Old password is required"),
+    oldPassword: !user?.isPasswordChanged
+      ? yup.string().optional()
+      : yup.string().required("Old password is required"),
     newPassword: yup.string().required("New password is required"),
   });
 
   const {
     control,
-    register,
     handleSubmit,
     setError,
     formState: { isSubmitting, errors },
@@ -41,15 +45,22 @@ export default function ChangePasswordModal({ isOpen, onClose }: Props) {
 
   async function onSubmit(data: FormValues) {
     try {
+      debugger;
+      if (!user) return;
       const requestData: ChangePasswordRequest = {
         NewPassword: data.newPassword,
-        OldPassword: data.oldPassword,
-        UserId: "ed44d5cb-19b2-4fc8-b292-78faf498995b",
+        OldPassword: data.oldPassword || "",
+        UserId: user.id,
       };
-      const result: BaseResult<null> =
-        await agent.Authentication.changePassword(requestData);
+      const result: BaseResult<any> = await agent.Authentication.changePassword(
+        requestData
+      );
       if (result.isSuccess) {
         setIsSuccessed(true);
+        if (!user.isPasswordChanged) {
+          user.isPasswordChanged = true;
+          localStorage.setItem("user", JSON.stringify(user));
+        }
       }
     } catch (error: any) {
       console.log(error);
@@ -90,28 +101,44 @@ export default function ChangePasswordModal({ isOpen, onClose }: Props) {
               </div>
             ) : (
               <div className="flex flex-col gap-2 mb-4">
-                <div className="flex justify-between items-center">
-                  <label className="w-32 font-normal">Old password</label>
-                  <AppPasswordInput
-                    id="oldPassword"
-                    control={control}
-                    {...register("oldPassword", {
-                      required: "Old password is required",
-                    })}
-                    error={!!errors.oldPassword}
-                    helperText={errors?.oldPassword?.message as string}
-                  />
-                </div>
+                {!user?.isPasswordChanged ? (
+                  <div className="font-normal">
+                    <p>This is the first time you logged in.</p>
+                    <p>You have to change your password to continue.</p>
+                  </div>
+                ) : (
+                  <div className="flex justify-between items-center">
+                    <label className="w-32 font-normal">Old password</label>
+                    <Controller
+                      name="oldPassword"
+                      control={control}
+                      render={({ field }) => (
+                        <AppPasswordInput
+                          {...field}
+                          id="oldPassword"
+                          control={control}
+                          error={!!errors.oldPassword}
+                          helperText={errors?.oldPassword?.message as string}
+                        />
+                      )}
+                    />
+                  </div>
+                )}
+
                 <div className="flex justify-between items-center">
                   <label className="w-32 font-normal">New password</label>
-                  <AppPasswordInput
-                    id="newPassword"
+                  <Controller
+                    name="newPassword"
                     control={control}
-                    {...register("newPassword", {
-                      required: "New password is required",
-                    })}
-                    error={!!errors.newPassword}
-                    helperText={errors?.newPassword?.message as string}
+                    render={({ field }) => (
+                      <AppPasswordInput
+                        {...field}
+                        id="newPassword"
+                        control={control}
+                        error={!!errors.newPassword}
+                        helperText={errors?.newPassword?.message as string}
+                      />
+                    )}
                   />
                 </div>
               </div>
@@ -125,11 +152,19 @@ export default function ChangePasswordModal({ isOpen, onClose }: Props) {
                 />
               ) : (
                 <>
-                  <Button content="Save" isFormSubmit={true} />
+                  {user?.isPasswordChanged && (
+                    <>
+                      <Button
+                        styleType="secondary"
+                        content="Cancel"
+                        onClickOn={handleOnClose}
+                      />
+                    </>
+                  )}
                   <Button
-                    styleType="secondary"
-                    content="Cancel"
-                    onClickOn={handleOnClose}
+                    isLoading={isSubmitting}
+                    content="Save"
+                    isFormSubmit={true}
                   />
                 </>
               )}

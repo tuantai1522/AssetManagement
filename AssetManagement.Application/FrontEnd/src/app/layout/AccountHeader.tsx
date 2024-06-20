@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { Button, IconButton, Menu, MenuItem } from "@mui/material";
+import { IconButton, Menu, MenuItem } from "@mui/material";
 import ChangePasswordModal from "../components/changePassword/ChangePasswordModal";
 import { useNavigate } from "react-router-dom";
+import { User } from "../models/User";
 
 interface Props {
-  userName: string;
+  user: User | null;
 }
 
 const AccountHeader = (props: Props) => {
@@ -22,6 +23,14 @@ const AccountHeader = (props: Props) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  //Handle change password modal
+  useEffect(() => {
+    if (props.user && !props.user.isPasswordChanged) {
+      setIsOpenChangePasswordModal(true);
+    }
+  }, []);
+
   const handleClickChangePassword = () => {
     setIsOpenChangePasswordModal(true);
   };
@@ -29,6 +38,7 @@ const AccountHeader = (props: Props) => {
   const onCloseChangePasswordModal = () => {
     setIsOpenChangePasswordModal(false);
   };
+  //End of handle change password modal
 
   const handleClickLogout = () => {
     localStorage.removeItem("user");
@@ -38,7 +48,9 @@ const AccountHeader = (props: Props) => {
   return (
     <>
       <div className="text-white flex items-center">
-        <p className="text-white">{props.userName ? props.userName : ""}</p>
+        <p className="text-white">
+          {props.user?.userName ? props.user?.userName : ""}
+        </p>
         <IconButton
           aria-controls={open ? "basic-menu" : undefined}
           aria-haspopup="true"
@@ -72,6 +84,7 @@ const AccountHeader = (props: Props) => {
       </div>
 
       <ChangePasswordModal
+        user={props.user}
         isOpen={isOpenChangePasswordModal}
         onClose={onCloseChangePasswordModal}
       />

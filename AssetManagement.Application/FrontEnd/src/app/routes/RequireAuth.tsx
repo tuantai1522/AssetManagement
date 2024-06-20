@@ -14,7 +14,6 @@ export default function RequireAuth({ roles }: Props) {
   const location = useLocation();
   const navigate = useNavigate();
   useEffect(() => {
-    debugger;
     if (!user) {
       console.log("You need to login to access this page");
       navigate("/login");
