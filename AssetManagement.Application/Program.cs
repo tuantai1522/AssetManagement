@@ -1,4 +1,3 @@
-using AssetManagement.Application.Common.Credential;
 using AssetManagement.Application.ConfigurationOptions;
 using AssetManagement.Application.Extensions;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
@@ -20,11 +19,7 @@ builder.Services.RegisterRepositoryDependencies();
 builder.Services.ConfigureDatabase(appSettings);
 
 builder.Services.AddControllers();
-
 builder.Services.AddEndpointsApiExplorer();
-
-builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 
 
 builder.Services.AddSpaStaticFiles(configuration =>
@@ -32,8 +27,9 @@ builder.Services.AddSpaStaticFiles(configuration =>
     configuration.RootPath = "Frontend";
 });
 
-
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
+builder.Services.AddAuthentication(builder.Configuration);
 
 var app = builder.Build();
 
@@ -42,18 +38,22 @@ app.UseExceptionHandler(_ => { });
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.ConfigObject.AdditionalItems.Add("persistAuthorization", "true");
+    });
 }
 
-//app.UseHttpsRedirection();
 
 app.UseSpaStaticFiles();
+app.UseStaticFiles();
 
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseHttpsRedirection();
 
 app.UseEndpoints(endpoints =>
 {
