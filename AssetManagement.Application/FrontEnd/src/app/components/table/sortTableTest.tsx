@@ -9,7 +9,7 @@ import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import { visuallyHidden } from '@mui/utils';
 
-import { ArrowDropDown} from '@mui/icons-material';
+import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material';
 
 //Data 
 interface Data {
@@ -19,6 +19,7 @@ interface Data {
     fat: number;
     name: string;
     protein: number;
+    [key: string]: any;
 }
 
 function createData(
@@ -67,17 +68,14 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
 
 type Order = 'asc' | 'desc';
 
-function getComparator<Key extends keyof any>(
+function getComparator<Key extends keyof Data>(
     order: Order,
-    orderBy: Key,
-): (
-    a: { [key in Key]: number | string },
-    b: { [key in Key]: number | string },
-) => number {
+    orderBy: Key
+  ): (a: Data, b: Data) => number {
     return order === 'desc'
-        ? (a, b) => descendingComparator(a, b, orderBy)
-        : (a, b) => -descendingComparator(a, b, orderBy);
-}
+      ? (a, b) => descendingComparator(a, b, orderBy)
+      : (a, b) => -descendingComparator(a, b, orderBy);
+  }
 
 // Since 2020 all major browsers ensure sort stability with Array.prototype.sort().
 // stableSort() brings sort stability to non-modern browsers (notably IE11). If you
@@ -101,22 +99,26 @@ function modernSort<T>(array: readonly T[], comparator: (a: T, b: T) => number):
 
 interface HeadCell {
     disablePadding: boolean;
-    id: keyof Data;
+    id: any;
     label: string;
+    fieldName: string;
     numeric: boolean;
     className?: string;
     classNames?: string[];
     style?: any;
-    disableSort?: boolean
+    disableSort?: boolean,
+    rowRatio?: string,
 }
 
 const headCells: readonly HeadCell[] = [
     {
         id: 'name',
         numeric: true,
+        fieldName: "name",
         disablePadding: true,
         label: 'Dessert (100g serving)',
-        className: "font-bold ",
+        className: "font-bold",
+        rowRatio: "w-3/12",
         style: {
             // textDecoration: "underline",
             border: "none",
@@ -125,6 +127,7 @@ const headCells: readonly HeadCell[] = [
     },
     {
         id: 'calories',
+        fieldName: 'calories',
         numeric: true,
         disablePadding: false,
         label: 'Calories',
@@ -134,10 +137,12 @@ const headCells: readonly HeadCell[] = [
             border: "none",
             borderBottom: "none"
         },
-        disableSort: true
+        disableSort: true,
+        rowRatio: "w-2/12",
     },
     {
         id: 'fat',
+        fieldName: 'fat',
         numeric: true,
         disablePadding: false,
         label: 'Fat (g)',
@@ -146,22 +151,12 @@ const headCells: readonly HeadCell[] = [
             // textDecoration: "underline",
             border: "none",
             borderBottom: "none"
-        }
-    },
-    {
-        id: 'carbs',
-        numeric: true,
-        disablePadding: false,
-        label: 'Carbs (g)',
-        className: "font-bold ",
-        style: {
-            // textDecoration: "underline",
-            border: "none",
-            borderBottom: "none"
-        }
+        },
+        rowRatio: "w-2/12",
     },
     {
         id: 'protein',
+        fieldName: 'protein',
         numeric: true,
         disablePadding: false,
         label: 'Protein (g)',
@@ -170,15 +165,31 @@ const headCells: readonly HeadCell[] = [
             // textDecoration: "underline",
             border: "none",
             borderBottom: "none"
-        }
+        },
+        rowRatio: "w-3/12",
     },
+    {
+        id: 'carbs',
+        fieldName: 'carbs',
+        numeric: true,
+        disablePadding: false,
+        label: 'Carbs (g)',
+        className: "font-bold ",
+        style: {
+            // textDecoration: "underline",
+            border: "none",
+            borderBottom: "none"
+        },
+        rowRatio: "w-2/12",
+    },
+    
 ];
 
 interface EnhancedTableProps {
     numSelected: number;
     onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Data) => void;
     order: Order;
-    orderBy: string;
+    orderBy: any;
     rowCount: number;
 }
 
@@ -226,16 +237,15 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 }
 
 export default function EnhancedTable() {
-    const [order, setOrder] = React.useState<Order>('asc');
-    const [orderBy, setOrderBy] = React.useState<keyof Data>('calories');
+    const [order, setOrder] = React.useState<Order>('desc');
+    const [orderBy, setOrderBy] = React.useState<any>('fat');
     const [selected, setSelected] = React.useState<readonly number[]>([]);
     const [page, setPage] = React.useState(0);
-    const [dense, setDense] = React.useState(false);
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [rowsPerPage, setRowsPerPage] = React.useState(15);
 
     const handleRequestSort = (
         event: React.MouseEvent<unknown>,
-        property: keyof Data,
+        property: any,
     ) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
@@ -264,8 +274,8 @@ export default function EnhancedTable() {
     const isSelected = (id: number) => selected.indexOf(id) !== -1;
 
     // Avoid a layout jump when reaching the last page with empty rows.
-    const emptyRows =
-        page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    // const emptyRows =
+    //     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
     const visibleRows = React.useMemo(
         () =>
@@ -278,12 +288,10 @@ export default function EnhancedTable() {
 
     return (
         <Box sx={{ width: '100%' }}>
-            {/* <Paper sx={{ width: '100%', mb: 2 }}> */}
-            {/* <EnhancedTableToolbar numSelected={selected.length} /> */}
             <TableContainer sx={{ width: '100%', mb: 2 }} >
                 <Table
                     sx={{
-                        minWidth: 750,
+                        minWidth: 800,
                         borderCollapse: 'separate',
                         borderSpacing: '20px 0',
                         '& td, & th': {
@@ -299,7 +307,6 @@ export default function EnhancedTable() {
                         }
                     }}
                     aria-labelledby="tableTitle"
-                    // size={dense ? 'small' : 'medium'}
                     size={"small"}
                 >
                     <EnhancedTableHead
@@ -312,9 +319,9 @@ export default function EnhancedTable() {
                     <TableBody>
                         {visibleRows.map((row, index) => {
                             const isItemSelected = isSelected(row.id);
-                            const labelId = `enhanced-table-checkbox-${index}`;
+                            // const labelId = `enhanced-table-checkbox-${index}`;
 
-                            return (
+                            return (<>
                                 <TableRow
                                     hover
                                     onClick={(event) => handleClick(event, row.id)}
@@ -325,32 +332,25 @@ export default function EnhancedTable() {
                                     selected={isItemSelected}
                                     sx={{ cursor: 'pointer' }}
                                 >
-                                    <TableCell
-                                        // component="th"
-                                        id={labelId}
-                                        // scope="row"
-                                        // padding="none"
-                                        // sx={{ margin: "2rem" }}
-                                        className='w-3/12'
-                                    >
-                                        {row.name}
-                                    </TableCell>
-                                    <TableCell align="left"
-                                        className='w-2/12'
-                                    >{row.calories}</TableCell>
-                                    <TableCell align="left"
-                                        className='w-2/12'
-                                    >{row.fat}</TableCell>
-                                    <TableCell align="left"
-                                        className='w-2/12'>{row.carbs}
-                                    </TableCell>
-                                    <TableCell align="left"
-                                        className='w-3/12'
-                                    >{row.protein}</TableCell>
+                                    {headCells.map((head, index) => {
+                                        const fieldName = head.fieldName;
+                                        const value = row[fieldName];
+
+                                        return (
+                                            <TableCell
+                                                align="left"
+                                                className={head.rowRatio ?? ""}
+                                                key={index}
+                                            >
+                                                {value}
+                                            </TableCell>
+                                        );
+                                    })}
                                 </TableRow>
+                            </>
                             );
                         })}
-                        {emptyRows > 0 && (
+                        {/* {emptyRows > 0 && (
                             <TableRow
                                 style={{
                                     height: (dense ? 33 : 53) * emptyRows,
@@ -358,7 +358,7 @@ export default function EnhancedTable() {
                             >
                                 <TableCell colSpan={6} />
                             </TableRow>
-                        )}
+                        )} */}
                     </TableBody>
                 </Table>
             </TableContainer>
@@ -371,11 +371,6 @@ export default function EnhancedTable() {
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         /> */}
-            {/* </Paper> */}
-            {/* <FormControlLabel
-        control={<Switch checked={dense} onChange={handleChangeDense} />}
-        label="Dense padding"
-      /> */}
         </Box>
     );
 }
