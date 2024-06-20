@@ -4,9 +4,6 @@ using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-
-
 //Configure variable
 var appSettings = new AppSetting();
 builder.Configuration.Bind(appSettings);
@@ -24,8 +21,6 @@ builder.Services.ConfigureDatabase(appSettings);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 
 builder.Services.AddSpaStaticFiles(configuration =>
 {
