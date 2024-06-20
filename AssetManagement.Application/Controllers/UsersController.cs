@@ -37,5 +37,19 @@ public class UsersController : ControllerBase
         };
         return Ok(result);
     }
+
+    [HttpGet("{id}")]
+    [Authorize(Roles = $"{RoleConstant.AdminRole}")]
+    public async Task<ActionResult<BaseResult<UserInfoResponse>>> GetUserInfoAsync([FromRoute] Guid id)
+    {
+        var data = await _userService.GetUserById(id);
+        var result = new BaseResult<UserInfoResponse>()
+        {
+            IsSuccess = true,
+            Error = null,
+            Result = data
+        };
+        return Ok(result);
+    }
 }
 
