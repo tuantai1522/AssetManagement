@@ -1,3 +1,4 @@
+using AssetManagement.Application.Common.Credential;
 using AssetManagement.Application.ConfigurationOptions;
 using AssetManagement.Application.Extensions;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
