@@ -3,10 +3,14 @@ using AssetManagement.Application.Services.Interfaces;
 using AssetManagement.Contracts.Dtos.PaginationDtos;
 using AssetManagement.Contracts.Dtos.UserDtos.Requests;
 using AssetManagement.Contracts.Dtos.UserDtos.Responses;
+using AssetManagement.Application.Common.Constants;
 using AssetManagement.Contracts.Enums;
 using AssetManagement.Domain.Entities;
+using AssetManagement.Domain.Exceptions;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace AssetManagement.Application.Services.Implementations;
@@ -15,12 +19,14 @@ public class UserService : IUserService
     private readonly UserManager<AppUser> _userManager;
     private readonly ILogger<UserService> _logger;
     private readonly ICurrentUser _currentUser;
+    private readonly IMapper _mapper;
 
-    public UserService(UserManager<AppUser> userManager, ILogger<UserService> logger, ICurrentUser currentUser)
+    public UserService(UserManager<AppUser> userManager, ILogger<UserService> logger, ICurrentUser currentUser, IMapper mapper)
     {
         _userManager = userManager;
         _logger = logger;
         _currentUser = currentUser;
+        _mapper = mapper;
     }
 
     public async Task<PagingDto<FilterUserResponse>> FilterUserAsync(FilterUserRequest request)
@@ -82,6 +88,27 @@ public class UserService : IUserService
         }
     }
 
+    public async Task<DisableUserResponse> DisableUserAsync(DisableUserRequest request)
+    {
+        try
+        {
+            var userToBeDisabled = await _userManager.FindByIdAsync(request.UserId) ?? throw new NotFoundException(ErrorStrings.USER_NOT_FOUND);
+            userToBeDisabled.IsDisabled = true;
+            var result = await _userManager.UpdateAsync(userToBeDisabled);
+            if (result.Succeeded)
+            {
+                return new DisableUserResponse();
+            }
+            throw new Exception(string.Join(". ", result.Errors.Select(p => p.Description)));
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("Error when execute {} method.\nDate: {}.\nDetail: {}", nameof(this.DisableUserAsync),
+                DateTime.UtcNow, e.Message);
+            throw new Exception($"Error when execute {nameof(this.DisableUserAsync)} method");
+        }
+    }
+
     private Func<IQueryable<AppUser>, IOrderedQueryable<AppUser>> GetOrderByExpression(FilterUserRequest filter)
     {
         Func<IQueryable<AppUser>, IOrderedQueryable<AppUser>> orderBy = q =>
@@ -121,6 +148,27 @@ public class UserService : IUserService
         }
 
         return orderBy;
+    }
+
+    public async Task<UserInfoResponse> GetUserById(Guid id)
+    {
+        try
+        {
+            var queryable = _userManager.Users;
+            var appUser = await queryable.Where(q => q.Id == id).Include(q => q.UserRoles).ThenInclude(q => q.Role).FirstOrDefaultAsync();
+            if (appUser == null)
+            {
+                throw new NotFoundException("User can not found");
+            }
+            var result = _mapper.Map<UserInfoResponse>(appUser);
+            return result;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("Error when execute {} method.\nDate: {}.\nDetail: {}", nameof(this.GetUserById),
+                DateTime.UtcNow, e.Message);
+            throw new Exception($"Error when execute {nameof(this.GetUserById)} method");
+        }
     }
 }
 

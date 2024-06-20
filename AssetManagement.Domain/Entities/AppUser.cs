@@ -1,7 +1,4 @@
-﻿using AssetManagement.Domain.Enums;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace AssetManagement.Domain.Entities
 {

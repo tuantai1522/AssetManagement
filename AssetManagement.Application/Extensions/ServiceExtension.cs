@@ -1,6 +1,8 @@
 ﻿using AssetManagement.Application.ConfigurationOptions;
 using AssetManagement.Application.Services.Implementations;
 using AssetManagement.Application.Services.Interfaces;
+using AssetManagement.Application.Services.Implementations;
+using AssetManagement.Application.Services.Interfaces;
 using AssetManagement.Contracts.Dtos.PaginationDtos;
 using AssetManagement.Data.Data;
 using AssetManagement.Data.Interfaces;
@@ -18,6 +20,7 @@ using System;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
+using AssetManagement.Application.Common.Credential;
 
 namespace AssetManagement.Application.Extensions;
 
@@ -122,7 +125,14 @@ public static class ServiceExtension
     public static void RegisterServiceDependencies(this IServiceCollection services)
     {
         //Add service DI
+        services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 
+
+        services.AddScoped<IUserService, UserService>();
+
+        services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+        services.AddScoped<ICurrentUser, CurrentUser>();
     }
 
     public static void RegisterRepositoryDependencies(this IServiceCollection services)
