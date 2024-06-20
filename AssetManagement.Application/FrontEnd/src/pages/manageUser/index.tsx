@@ -1,6 +1,3 @@
-import ConfirmModal from "../../app/components/confirmModal";
-import NotifyModal from "../../app/components/notifyModal";
-
 export default function ManagementUserPage() {
   return (
     <div className="flex justify-center items-center h-full">
@@ -11,12 +8,12 @@ export default function ManagementUserPage() {
         onClose={() => {}}
         onConfirm={() => {}}
       /> */}
-      <NotifyModal
+      {/* <NotifyModal
         message="You have succesfully change the password"
         title="Change Password"
         isOpen={true}
         onClose={() => {}}
-      /> 
+      />  */}
     </div>
   );
 }

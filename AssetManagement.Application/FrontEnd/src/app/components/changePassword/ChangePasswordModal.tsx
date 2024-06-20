@@ -3,7 +3,7 @@ import AppPasswordInput from "../AppPasswordInput";
 import Button from "../buttons/Button";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChangePasswordRequest } from "../../models/changePassword/ChangePasswordRequest";
 import agent from "../../api/agent";
 import { BaseResult } from "../../models/BaseResult";
@@ -24,23 +24,51 @@ export default function ChangePasswordModal({ user, isOpen, onClose }: Props) {
   const [isSuccessed, setIsSuccessed] = useState<boolean | undefined>(
     undefined
   );
-
+  //Reset validation and state when component first mounts
+  useEffect(() => {
+    if (!isOpen) {
+      reset();
+      setIsSuccessed(undefined);
+    }
+  }, [isOpen]);
   //Validation
   const schema = yup.object().shape({
     oldPassword: !user?.isPasswordChanged
       ? yup.string().optional()
-      : yup.string().required("Old password is required"),
-    newPassword: yup.string().required("New password is required"),
+      : yup
+          .string()
+          .required("Old password is required")
+          .min(8, "Must contain at least eight characters.")
+          .matches(/[0-9]/, "Must contain at least one number.")
+          .matches(/[A-Z]/, "Must contain at least one uppercase letter.")
+          .matches(/[a-z]/, "Must contain at least one lowercase letter.")
+          .matches(
+            /[#?!@_]/,
+            "Must contain at least one special character (#, ?, !, @, _)."
+          ),
+
+    newPassword: yup
+      .string()
+      .required("New password is required")
+      .min(8, "Must contain at least eight characters.")
+      .matches(/[0-9]/, "Must contain at least one number.")
+      .matches(/[A-Z]/, "Must contain at least one uppercase letter.")
+      .matches(/[a-z]/, "Must contain at least one lowercase letter.")
+      .matches(
+        /[#?!@_]/,
+        "Must contain at least one special character (#, ?, !, @, _)."
+      ),
   });
 
   const {
     control,
     handleSubmit,
     setError,
+    reset,
     formState: { isSubmitting, errors },
   } = useForm({
     resolver: yupResolver<FormValues>(schema),
-    mode: "onSubmit",
+    mode: "all",
   });
 
   async function onSubmit(data: FormValues) {
