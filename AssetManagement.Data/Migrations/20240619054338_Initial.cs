@@ -33,8 +33,8 @@ namespace AssetManagement.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     StaffCode = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FirstName = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Location = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsDisabled = table.Column<bool>(type: "bit", nullable: false),
                     IsPasswordChanged = table.Column<bool>(type: "bit", nullable: false),
@@ -85,30 +85,6 @@ namespace AssetManagement.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AppUserIdentityRole<Guid>",
-                columns: table => new
-                {
-                    AppUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    IdentityRoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AppUserIdentityRole<Guid>", x => new { x.AppUserId, x.IdentityRoleId });
-                    table.ForeignKey(
-                        name: "FK_AppUserIdentityRole<Guid>_AspNetRoles_IdentityRoleId",
-                        column: x => x.IdentityRoleId,
-                        principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AppUserIdentityRole<Guid>_AspNetUsers_AppUserId",
-                        column: x => x.AppUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetUserClaims",
                 columns: table => new
                 {
@@ -154,7 +130,8 @@ namespace AssetManagement.Data.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Discriminator = table.Column<string>(type: "nvarchar(34)", maxLength: 34, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -205,17 +182,12 @@ namespace AssetManagement.Data.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "CreatedDateTime", "DateOfBirth", "Email", "EmailConfirmed", "FirstName", "Gender", "IsDisabled", "IsPasswordChanged", "JoinedDate", "LastName", "LastUpdatedDateTime", "Location", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "StaffCode", "TwoFactorEnabled", "UserName" },
-                values: new object[] { new Guid("ed44d5cb-19b2-4fc8-b292-78faf498995b"), 0, "bb24b52d-ecac-4c6d-99bc-3f0147cc2d64", new DateTime(2024, 6, 18, 9, 18, 4, 874, DateTimeKind.Utc).AddTicks(1812), null, "admin@gmail.com", false, "Nghĩa", "Male", false, true, null, "Đinh Trọng", new DateTime(2024, 6, 18, 9, 18, 4, 874, DateTimeKind.Utc).AddTicks(1813), "HCM", true, null, "ADMIN@GMAIL.COM", "ADMIN", "AQAAAAIAAYagAAAAEGgkDAm8IBOrM2XOQIsewPvMyHkm2joi8wUalQf4vBMr4QB0/cEwDCqzK0mOp3WbnA==", null, false, "d1f80b6e-0096-4c15-871d-73fbde491ff4", "SD0001", false, "admin" });
+                values: new object[] { new Guid("ed44d5cb-19b2-4fc8-b292-78faf498995b"), 0, "a1504760-3be8-4aba-aaf7-38992885b175", new DateTime(2024, 6, 19, 5, 43, 36, 437, DateTimeKind.Utc).AddTicks(1836), null, "admin@gmail.com", false, "Nghĩa", "Male", false, true, null, "Đinh Trọng", new DateTime(2024, 6, 19, 5, 43, 36, 437, DateTimeKind.Utc).AddTicks(1837), "HCM", true, null, "ADMIN@GMAIL.COM", "ADMIN", "AQAAAAIAAYagAAAAECRruClAzVOPteLA9uVBmU3tHZyY7IkgxjRbp5dN6puwy3x1LIhmagFYpwFFkif4jA==", null, false, "1336676d-d2f2-413c-9f52-408e39c71400", "SD0001", false, "admin" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
-                columns: new[] { "RoleId", "UserId" },
-                values: new object[] { new Guid("5fc71af5-0216-402b-a5cb-ba17701e2fa3"), new Guid("ed44d5cb-19b2-4fc8-b292-78faf498995b") });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AppUserIdentityRole<Guid>_IdentityRoleId",
-                table: "AppUserIdentityRole<Guid>",
-                column: "IdentityRoleId");
+                columns: new[] { "RoleId", "UserId", "Discriminator" },
+                values: new object[] { new Guid("5fc71af5-0216-402b-a5cb-ba17701e2fa3"), new Guid("ed44d5cb-19b2-4fc8-b292-78faf498995b"), "UserRole" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -250,6 +222,11 @@ namespace AssetManagement.Data.Migrations
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_FirstName_LastName",
+                table: "AspNetUsers",
+                columns: new[] { "FirstName", "LastName" });
+
+            migrationBuilder.CreateIndex(
                 name: "IX_AspNetUsers_StaffCode",
                 table: "AspNetUsers",
                 column: "StaffCode",
@@ -273,9 +250,6 @@ namespace AssetManagement.Data.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "AppUserIdentityRole<Guid>");
-
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 

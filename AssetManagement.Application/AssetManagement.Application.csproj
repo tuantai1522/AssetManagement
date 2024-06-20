@@ -44,8 +44,6 @@
   <ItemGroup>
     <Folder Include="FrontEnd\src\app\" />
     <Folder Include="Frontend\src\pages\home\" />
-    <Folder Include="Services\Interfaces\" />
-    <Folder Include="Services\Implementations\" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

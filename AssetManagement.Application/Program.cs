@@ -24,6 +24,10 @@ builder.Services.ConfigureDatabase(appSettings);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddScoped<ICurrentUser, CurrentUser>();
+
+
 builder.Services.AddSpaStaticFiles(configuration =>
 {
     configuration.RootPath = "Frontend";

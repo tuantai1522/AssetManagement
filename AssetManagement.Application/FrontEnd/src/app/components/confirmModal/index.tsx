@@ -1,4 +1,4 @@
-import Button  from "../buttons/Button";
+import AppButton from "../buttons/Button";
 
 interface Props {
   message: string;
@@ -34,11 +34,11 @@ const ConfirmModal = ({
           <div className="w-full h-full px-12 py-5">
             <p className="mb-6">{message}</p>
             <div className="flex space-x-4">
-              <Button
+              <AppButton
                 content={confirmMessage}
                 onClickOn={onConfirm}
               />
-              <Button
+              <AppButton
                 styleType="secondary"
                 content={cancelMessage}
                 onClickOn={onClose}

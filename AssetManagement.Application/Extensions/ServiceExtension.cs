@@ -28,7 +28,7 @@ public static class ServiceExtension
         services.AddDbContextPool<AssetManagementDbContext>(options => { options.UseSqlServer(appsetting.ConnectionStrings.DefaultConnection); });
 
         //add identity
-        services.AddIdentity<AppUser, IdentityRole<Guid>>(options =>
+        services.AddIdentity<AppUser, Role>(options =>
         {
             options.SignIn.RequireConfirmedAccount = false;
             options.SignIn.RequireConfirmedEmail = false;
@@ -122,9 +122,6 @@ public static class ServiceExtension
     public static void RegisterServiceDependencies(this IServiceCollection services)
     {
         //Add service DI
-        services.AddScoped<IAuthService, AuthService>();
-        services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
-
 
     }
 

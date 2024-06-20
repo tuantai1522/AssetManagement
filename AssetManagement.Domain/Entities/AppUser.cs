@@ -1,5 +1,7 @@
 ﻿using AssetManagement.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AssetManagement.Domain.Entities
 {
@@ -17,5 +19,6 @@ namespace AssetManagement.Domain.Entities
         public DateTime CreatedDateTime { get; set; } = DateTime.UtcNow;
         public DateTime? LastUpdatedDateTime { get; set; }
 
+        public virtual ICollection<UserRole> UserRoles { get; set; } = [];
     }
 }
