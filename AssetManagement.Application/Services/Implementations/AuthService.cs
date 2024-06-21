@@ -27,13 +27,12 @@ namespace AssetManagement.Application.Services.Implementations
             if (user is null)
                 throw new NotFoundException("Username or password is incorrect. Please try again");
 
-            if (user.IsDisabled)
-                throw new NotFoundException("Your account is disabled. Please contact with IT Team");
-
             var check = await _userManager.CheckPasswordAsync(user, request.Password);
             if (check == false)
                 throw new UnauthorizedException("Username or password is incorrect. Please try again");
 
+            if (user.IsDisabled)
+                throw new NotFoundException("Your account is disabled. Please contact with IT Team");
 
             var roles = await _userManager.GetRolesAsync(user);
             var accessToken = _tokenGenerator.GenerateToken(user, roles.ToList());
