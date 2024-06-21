@@ -18,7 +18,7 @@ const NotifyModal = ({
     <>
       <div className="fixed w-screen h-screen bg-gray-400 top-0 left-0 opacity-50">
       </div>
-      <div className="z-10 shadow-2xl">
+      <div className="z-10 shadow-2xl absolute">
         <div className="bg-white rounded-lg border border-black">
           <div className="bg-slate-100 rounded-t-lg border-b border-black px-12 py-5">
             <h2 className="text-lg font-bold text-primary">{title}</h2>

@@ -1,12 +1,11 @@
-﻿using AssetManagement.Application.Tests.Service;
-using AssetManagement.Contracts.Dtos.UserDtos.Requests;
+﻿using AssetManagement.Contracts.Dtos.UserDtos.Requests;
 using AssetManagement.Contracts.Enums;
 using AssetManagement.Domain.Entities;
 using AutoFixture;
 using MockQueryable.Moq;
 using Moq;
 
-namespace AssetManagement.Application.Tests.Services
+namespace AssetManagement.Application.Tests.Services.UsersTests
 {
     public class FilterProductAsyncTest : UserServiceTestBase
     {

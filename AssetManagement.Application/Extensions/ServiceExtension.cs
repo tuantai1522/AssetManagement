@@ -1,6 +1,5 @@
-﻿using AssetManagement.Application.ConfigurationOptions;
-using AssetManagement.Application.Services.Implementations;
-using AssetManagement.Application.Services.Interfaces;
+﻿using AssetManagement.Application.Common.Credential;
+using AssetManagement.Application.ConfigurationOptions;
 using AssetManagement.Application.Services.Implementations;
 using AssetManagement.Application.Services.Interfaces;
 using AssetManagement.Contracts.Dtos.PaginationDtos;
@@ -16,11 +15,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
-using AssetManagement.Application.Common.Credential;
 
 namespace AssetManagement.Application.Extensions;
 
@@ -33,10 +30,15 @@ public static class ServiceExtension
         //add identity
         services.AddIdentity<AppUser, Role>(options =>
         {
+            options.Password.RequireDigit = true;
+            options.Password.RequireLowercase = true;
+            options.Password.RequireUppercase = true;
+            options.Password.RequireNonAlphanumeric = true;
+            options.Password.RequiredLength = 8;
+
             options.SignIn.RequireConfirmedAccount = false;
             options.SignIn.RequireConfirmedEmail = false;
             options.SignIn.RequireConfirmedPhoneNumber = false;
-
             options.User.RequireUniqueEmail = true;
 
             options.Lockout.AllowedForNewUsers = true;
@@ -159,20 +161,20 @@ public static class ServiceExtension
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
             .AddJwtBearer(option =>
+            {
+                option.TokenValidationParameters = new TokenValidationParameters
                 {
-                    option.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = JwtSettings.Issuer,
-                        ValidAudience = JwtSettings.Audience,
-                        IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(JwtSettings.Secret
-                        ))
-                    };
-                });
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = JwtSettings.Issuer,
+                    ValidAudience = JwtSettings.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(JwtSettings.Secret
+                    ))
+                };
+            });
 
         services.AddAuthorization();
 

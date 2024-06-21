@@ -1,9 +1,9 @@
-﻿using AssetManagement.Application.Common.Credential;
+﻿using AssetManagement.Application.Common.Constants;
+using AssetManagement.Application.Common.Credential;
 using AssetManagement.Application.Services.Interfaces;
 using AssetManagement.Contracts.Dtos.PaginationDtos;
 using AssetManagement.Contracts.Dtos.UserDtos.Requests;
 using AssetManagement.Contracts.Dtos.UserDtos.Responses;
-using AssetManagement.Application.Common.Constants;
 using AssetManagement.Contracts.Enums;
 using AssetManagement.Domain.Entities;
 using AssetManagement.Domain.Exceptions;
@@ -167,23 +167,14 @@ public class UserService : IUserService
 
     public async Task<DisableUserResponse> DisableUserAsync(DisableUserRequest request)
     {
-        try
+        var userToBeDisabled = await _userManager.FindByIdAsync(id.ToString()) ?? throw new NotFoundException(ErrorStrings.USER_NOT_FOUND);
+        userToBeDisabled.IsDisabled = true;
+        var result = await _userManager.UpdateAsync(userToBeDisabled);
+        if (result.Succeeded)
         {
-            var userToBeDisabled = await _userManager.FindByIdAsync(request.UserId) ?? throw new NotFoundException(ErrorStrings.USER_NOT_FOUND);
-            userToBeDisabled.IsDisabled = true;
-            var result = await _userManager.UpdateAsync(userToBeDisabled);
-            if (result.Succeeded)
-            {
-                return new DisableUserResponse();
-            }
-            throw new Exception(string.Join(". ", result.Errors.Select(p => p.Description)));
+            return new DisableUserResponse();
         }
-        catch (Exception e)
-        {
-            _logger.LogError("Error when execute {} method.\nDate: {}.\nDetail: {}", nameof(this.DisableUserAsync),
-                DateTime.UtcNow, e.Message);
-            throw new Exception($"Error when execute {nameof(this.DisableUserAsync)} method");
-        }
+        throw new Exception(string.Join(". ", result.Errors.Select(p => p.Description)));
     }
     
     public async Task<UserInfoResponse> UpdateUserAsync(Guid userId, UpdateUserRequest request)

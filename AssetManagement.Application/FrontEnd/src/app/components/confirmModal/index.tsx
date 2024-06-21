@@ -23,10 +23,8 @@ const ConfirmModal = ({
 
   return (
     <>
-      <div className="fixed w-screen h-screen bg-slate-200 top-0 left-0 opacity-0">
-        
-      </div>
-      <div className="z-10">
+      <div className="fixed w-screen h-screen bg-gray-400 top-0 left-0 opacity-50"></div>
+      <div className="z-10 shadow-2xl absolute">
         <div className="bg-white rounded-lg border border-black w-[32rem]">
           <div className="bg-slate-100 rounded-t-lg border-b border-black px-12 py-5">
             <h2 className="text-lg font-bold text-primary">{titleMessage}</h2>
