@@ -108,6 +108,7 @@ interface HeadCell {
     style?: any;
     disableSort?: boolean,
     rowRatio?: string,
+    bodyStyle?: any
 }
 
 const headCells: readonly HeadCell[] = [
@@ -210,7 +211,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
                         align="left"
                         padding={headCell.disablePadding ? 'none' : 'normal'}
                         sortDirection={orderBy === headCell.id ? order : false}
-                        className='font-bold'
+                        // className='font-bold'
                     >
                         <TableSortLabel
                             active={orderBy === headCell.id}
@@ -341,6 +342,7 @@ export default function EnhancedTable() {
                                                 align="left"
                                                 className={head.rowRatio ?? ""}
                                                 key={index}
+                                                sx={head.bodyStyle}
                                             >
                                                 {value}
                                             </TableCell>
