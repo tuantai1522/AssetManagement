@@ -5,8 +5,10 @@ import HomePage from "../../pages/home";
 import NotFound from "../errors/NotFound";
 import ServerErrors from "../errors/ServerErrors";
 import ManagementUserPage from "../../pages/manageUser";
+import CreateUserPage from "../../pages/manageUser/createUser";
 import LoginPage from "../../pages/authentication/LoginPage";
 import RequireAuth from "./RequireAuth";
+import EditUserPage from "../../pages/manageUser/editUser";
 
 export const router = createBrowserRouter([
   {
@@ -31,6 +33,8 @@ export const router = createBrowserRouter([
             element: <DefaultLayout />,
             children: [
               { path: "user-manage", element: <ManagementUserPage /> },
+              { path: "create-user", element: <CreateUserPage />},
+              { path: "edit-user/:id", element: <EditUserPage />},  
             ],
           },
         ],
