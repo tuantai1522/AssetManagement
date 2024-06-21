@@ -6,7 +6,10 @@ export interface UserListProp {
     data: FilterUser[],
     isLoading: boolean,
     error: any,
-    // setData: (data: FilterUser[]) => void
+    order: Order,
+    setOrder: (order: Order) => void,
+    orderBy: any,
+    setOrderBy: (orderBy: any) => void,
 }
 
 const columns: ColumnDefinition[] = [
@@ -34,11 +37,11 @@ const columns: ColumnDefinition[] = [
         },
 
         rowRatio: "w-2/12",
-        renderCell: <button color="primary" className="active:bg-black" onClick={e => {
-            e.stopPropagation();
-            alert("child");
-        }
-        } > Test</button>
+        // renderCell: <button color="primary" className="active:bg-black" onClick={e => {
+        //     e.stopPropagation();
+        //     alert("child");
+        // }
+        // } > Test</button>
 
     },
     {
@@ -86,22 +89,19 @@ const rows: FilterUser[] = []
 
 export default function UserList(props: UserListProp) {
 
-    // const [users, setUsers] = useState<FilterUser[]>([]);
-
-    const [order, setOrder] = useState<Order>("desc");
-    const [orderBy, setOrderBy] = useState<string>("joinedDate");
-
+    // const [order, setOrder] = useState<Order>("desc");
+    // const [orderBy, setOrderBy] = useState<string>("joinedDate");
 
     return (
         <>
             <AppTable<FilterUser>
-                order={order}
-                setOrder={setOrder}
-                orderByFieldName={orderBy}
-                setOrderByFieldName={setOrderBy}
+                order={props.order}
+                setOrder={props.setOrder}
+                orderByFieldName={props.orderBy}
+                setOrderByFieldName={props.setOrderBy}
                 columns={columns}
                 rows={props.data}
-                handleClick={() => { alert("Test") }}
+                handleClick={() => { }}
             />
         </>
     );

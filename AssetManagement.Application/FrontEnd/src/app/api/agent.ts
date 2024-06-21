@@ -113,7 +113,7 @@ const Product = {
 };
 
 const Users = {
-  filter: () => requests.get("api/Users"),
+  filter: (query?:string) => requests.get(`api/Users?${query}`),
   details: (id: string) => requests.get(`/api/users/${id}`),
 };
 
