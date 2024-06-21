@@ -1,6 +1,7 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { router } from "../routes/router";
 import useSWR from "swr";
+import { User } from "./user ";
 
 axios.defaults.baseURL = "https://fakestoreapi.com/";
 axios.defaults.headers.post["Content-Type"] = "application/json";
@@ -76,7 +77,7 @@ const FetchWithSWR = (url: string, params?: URLSearchParams) => {
   return { data, isLoading, error, mutate }
 }
 
-const requests = {
+export const requests = {
   get: (url: string, params?: URLSearchParams) =>
     FetchWithSWR(url, params),
   post: (url: string, body: {}) => axios.post(url, body).then(responseBody),
@@ -102,6 +103,7 @@ const Product = {
 
 const agent = {
   Product,
+  User,
 };
 
 export default agent;

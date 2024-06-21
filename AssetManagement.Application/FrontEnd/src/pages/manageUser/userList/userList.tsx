@@ -1,6 +1,14 @@
-import { ColumnDefinition } from "../../../app/components/table/sortTable";
+import { useState } from "react";
+import AppTable, { ColumnDefinition, Order } from "../../../app/components/table/sortTable";
+import { FilterUser } from "../../../app/models/User";
+import agent from "../../../app/api/agent";
 
-// export interface 
+export interface UserListProp {
+    data: FilterUser[],
+    isLoading: boolean,
+    error: any,
+    // setData: (data: FilterUser[]) => void
+}
 
 const columns: ColumnDefinition[] = [
     {
@@ -68,3 +76,28 @@ const columns: ColumnDefinition[] = [
     },
 
 ];
+
+const rows: FilterUser[] = []
+
+export default function UserList(props: UserListProp) {
+
+    // const [users, setUsers] = useState<FilterUser[]>([]);
+
+    const [order, setOrder] = useState<Order>("desc");
+    const [orderBy, setOrderBy] = useState<string>("joinedDate");
+
+
+    return (
+        <>
+            <AppTable<FilterUser>
+                order={order}
+                setOrder={setOrder}
+                orderByFieldName={orderBy}
+                setOrderByFieldName={setOrderBy}
+                columns={columns}
+                rows={rows}
+                handleClick={() => { }}
+            />
+        </>
+    );
+}
