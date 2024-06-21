@@ -1,13 +1,15 @@
+import React from "react";
+
 interface Props {
   styleType?: string;
   isFormSubmit?: boolean;
   content?: string;
   isLoading?: boolean;
   className?: string;
-  onClickOn?: () => void;
+  onClickOn?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
-const AppButton = ({
+const AppPaginatedButton = ({
   styleType = "primary",
   isFormSubmit = false,
   content,
@@ -25,7 +27,7 @@ const AppButton = ({
               ? "disabled pointer-events-none opacity-80"
               : "hover:bg-white hover:border-2 hover:border-primary hover:text-primary hover:font-semibold hover:translate-y-[3px]"
           }`}
-          onClick={onClickOn && onClickOn}
+          onClick={onClickOn}
         >
           {isLoading ? (
             <div className="animate-spin h-5 w-5 border-4 border-white rounded-full border-b-primary"></div>
@@ -42,7 +44,7 @@ const AppButton = ({
               ? "disabled pointer-events-none opacity-50"
               : "hover:bg-white hover:border-2 hover:border-primary hover:text-primary hover:font-semibold hover:translate-y-[3px]"
           }`}
-          onClick={onClickOn && onClickOn}
+          onClick={onClickOn}
         >
           {isLoading ? (
             <div className="animate-spin h-5 w-5 border-4 border-gray-400 rounded-full border-b-white"></div>
@@ -56,4 +58,4 @@ const AppButton = ({
   );
 };
 
-export default AppButton;
+export default AppPaginatedButton;

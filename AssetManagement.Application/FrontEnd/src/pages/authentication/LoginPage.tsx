@@ -18,6 +18,8 @@ import { User } from "../../app/models/User";
 import { Token } from "../../app/models/Token";
 import { useNavigate } from "react-router-dom";
 import { LoginResponse } from "../../app/models/login/LoginReponse";
+import AppButton from "../../app/components/buttons/Button";
+import Test from "./Test";
 
 interface FormValues extends FieldValues {
   Username: string;
@@ -193,17 +195,18 @@ const LoginPage = () => {
           )}
 
           <Grid container alignItems="center" justifyContent="flex-end">
-            <button
-              disabled={!isValid || isSubmitting}
-              className={`bg-primary text-white px-2 py-1 rounded hover:bg-red-600 ${
+            <AppButton
+              content="Log in"
+              isFormSubmit={!isValid || isSubmitting ? false : true}
+              className={`bg-primary px-2 py-1 rounded hover:bg-red-600 ${
                 !isValid || isSubmitting ? "opacity-50 cursor-not-allowed" : ""
               }`}
-            >
-              Log in
-            </button>
+            ></AppButton>
           </Grid>
         </Box>
       </Container>
+
+      <Test />
     </>
   );
 };
