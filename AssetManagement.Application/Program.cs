@@ -1,4 +1,3 @@
-using AssetManagement.Application.Common.Credential;
 using AssetManagement.Application.ConfigurationOptions;
 using AssetManagement.Application.Extensions;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
@@ -36,15 +35,13 @@ var app = builder.Build();
 
 app.UseExceptionHandler(_ => { });
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+//
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.ConfigObject.AdditionalItems.Add("persistAuthorization", "true");
-    });
-}
-
+    c.ConfigObject.AdditionalItems.Add("persistAuthorization", "true");
+});
+//
 
 app.UseSpaStaticFiles();
 app.UseStaticFiles();
