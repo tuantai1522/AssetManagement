@@ -117,6 +117,7 @@ const Product = {
 
 const Users = {
   details: (id: string) => requests.get(`/api/users/${id}`),
+  update: (id: string, values: {}) => requests.put(`/api/users/${id}`, values),
 };
 
 const Authentication = {

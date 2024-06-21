@@ -9,43 +9,55 @@ import { Gender, Type } from "../../types/enum";
 import AppTextInput from "../AppTextInput";
 import AppButton from "../buttons/Button";
 import { createFormSchema } from "../../schemas/createFormSchema";
+import { UserInfoResponse } from "../../models/response/UserInfoResponse";
+import { useEffect } from "react";
+import dayjs from "dayjs";
 
 interface IFormInput extends FieldValues {
     firstName: string,
     lastName: string,
     dateOfBirth: Date,
     joinedDate: Date,
-    gender: Gender,
-    type: Type,
+    gender: string,
+    type: string,
 }
 
 interface UserFormProps {
     onSubmit: (data: any) => void;
     isEditing?: boolean;
-    isFirstNameDisabled?: boolean;
-    isLastNameDisabled?: boolean;
-    isDateOfBirthDisabled?: boolean;
-    isGenderDisabled?: boolean;
-    isJoinedDateDisabled?: boolean;
-    isTypeDisabled?: boolean;
+    data?: UserInfoResponse;
 }
 
-const UserForm = ({ 
+const UserForm = ({
     onSubmit,
     isEditing = false,
-    isFirstNameDisabled = false,
-    isLastNameDisabled = false,
-    isDateOfBirthDisabled = false,
-    isGenderDisabled = false,
-    isJoinedDateDisabled = false,
-    isTypeDisabled = false,
+    data
 }: UserFormProps) => {
     const navigate = useNavigate();
-    const { register, handleSubmit, control } = useForm({
+
+    const formatDate = (date: Date) => {
+        return dayjs(date);
+    }
+
+    const { handleSubmit, control, reset } = useForm({
         resolver: yupResolver<IFormInput>(createFormSchema),
         mode: 'all'
     });
 
+    useEffect(() => {
+        if (data && isEditing) {
+            console.log('data: ', data)
+            reset({
+                firstName: data.firstName,
+                lastName: data.lastName,
+                dateOfBirth: formatDate(data.dateOfBirth),
+                joinedDate: formatDate(data.joinedDate),
+                gender: data.gender,
+                type: data.type,
+            });
+        }
+    }, [data, reset]);
+    
     return (
         <div className="bg-white w-[30rem] mx-auto">
             <h2 className="text-2xl font-bold text-primary mb-5">{isEditing ? 'Edit User' : 'Create New User'}</h2>
@@ -55,9 +67,14 @@ const UserForm = ({
                     <AppTextInput
                         id="first-name-text-field-form"
                         control={control}
-                        className="grow"
-                        disabled={isFirstNameDisabled}
-                        {...register('firstName')}
+                        value={data ? data.firstName : undefined}
+                        className={`grow ${isEditing ? 'bg-[#eff1f5] disabled pointer-events-none cursor-not-allowed' : ''}`}
+                        sx={{
+                            "& .MuiInputBase-input": {
+                              color: "#76797d", 
+                            },
+                          }}
+                        name="firstName"
                     />
                 </div>
 
@@ -66,9 +83,14 @@ const UserForm = ({
                     <AppTextInput
                         id="last-name-text-field-form"
                         control={control}
-                        className="grow"
-                        disabled={isLastNameDisabled}
-                        {...register('lastName')}
+                        value={data ? data.lastName : undefined}
+                        className={`grow ${isEditing ? 'bg-[#eff1f5] disabled pointer-events-none cursor-not-allowed' : ''}`}
+                        sx={{
+                            "& .MuiInputBase-input": {
+                              color: "#76797d", 
+                            },
+                          }}
+                        name="lastName"
                     />
                 </div>
 
@@ -84,7 +106,7 @@ const UserForm = ({
                                     format="DD/MM/YYYY"
                                     disableFuture
                                     className="grow"
-                                    disabled={isDateOfBirthDisabled}
+                                    value={data ? formatDate(data.dateOfBirth) : undefined}
                                     slotProps={{
                                         textField: {
                                             size: 'small',
@@ -105,11 +127,16 @@ const UserForm = ({
                         <Controller
                             control={control}
                             name="gender"
-                            defaultValue={Gender.Female}
                             render={({ field }) => (
-                                <RadioGroup row {...field} color="warning" id="gender-radio-form">
-                                    <FormControlLabel value={Gender.Female} control={<Radio sx={{ '&.Mui-checked': { color: '#cf2338' } }} />} label="Female" disabled={isGenderDisabled}/>
-                                    <FormControlLabel value={Gender.Male} control={<Radio sx={{ '&.Mui-checked': { color: '#cf2338' } }} />} label="Male" disabled={isGenderDisabled}/>
+                                <RadioGroup
+                                    row {...field}
+                                    color="warning"
+                                    id="gender-radio-form"
+                                    value={field.value || Gender.Female} // Ensure a default value is set if field.value is undefined
+                                    onChange={(e) => field.onChange(e.target.value)}
+                                >
+                                    <FormControlLabel value={Gender.Female} control={<Radio sx={{ '&.Mui-checked': { color: '#cf2338' } }} />} label="Female" /> 
+                                    <FormControlLabel value={Gender.Male} control={<Radio sx={{ '&.Mui-checked': { color: '#cf2338' } }} />} label="Male" />
                                 </RadioGroup>
                             )}
                         />
@@ -126,9 +153,8 @@ const UserForm = ({
                                 <DatePicker
                                     {...field}
                                     format="DD/MM/YYYY"
-                                    disableFuture
                                     className="grow"
-                                    disabled={isJoinedDateDisabled}
+                                    value={data ? formatDate(data.joinedDate) : undefined}
                                     slotProps={{
                                         textField: {
                                             size: 'small',
@@ -156,9 +182,10 @@ const UserForm = ({
                                         {...field}
                                         id="type-selection-form"
                                         error={!!error}
-                                        disabled={isTypeDisabled}
+                                        value={field.value || ''} 
+                                        onChange={(e) => field.onChange(e.target.value)}
                                     >
-                                        <MenuItem value={Type.Staff}>Staff</MenuItem>
+                                        <MenuItem value={Type.Staff}>Staff</MenuItem> 
                                         <MenuItem value={Type.Admin}>Admin</MenuItem>
                                     </Select>
                                     {error && (
