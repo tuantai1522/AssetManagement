@@ -61,7 +61,7 @@ function CustomTableHead(props: CustomTableHeadProp) {
     return (
         <TableHead>
             <TableRow>
-                {props.columns.map((column) => (
+                {props.columns && props.columns?.map((column) => (
                     <TableCell
                         key={column.id}
                         align="left"
@@ -98,7 +98,7 @@ function mapToAppTableRows<T>(
     columns: ColumnDefinition[],
     rows: RowDefinition<T>[]
 ): AppTableRow[] {
-    return rows.map((row) => {
+    return rows?.map((row) => {
         const data: AppTableCell[] = columns.map((column) => {
             const { fieldName } = column;
             return {
@@ -128,7 +128,7 @@ export function AppTable<T>(props: AppTableProp<T>) {
         props.setOrderByFieldName(property);
     };
 
-    const rowData: Array<RowDefinition<T>> = props.rows.map((item, index) => ({
+    const rowData: Array<RowDefinition<T>> = props.rows?.map((item, index) => ({
         id: index,
         data: item,
     }))

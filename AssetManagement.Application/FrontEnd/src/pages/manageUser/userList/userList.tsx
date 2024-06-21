@@ -63,7 +63,7 @@ const columns: ColumnDefinition[] = [
     },
     {
         id: 'type',
-        fieldName: 'type',
+        fieldName: 'types',
         disablePadding: false,
         label: 'Type',
         className: "font-bold ",
@@ -95,7 +95,7 @@ export default function UserList(props: UserListProp) {
                 orderByFieldName={orderBy}
                 setOrderByFieldName={setOrderBy}
                 columns={columns}
-                rows={rows}
+                rows={props.data}
                 handleClick={() => { }}
             />
         </>
