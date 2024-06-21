@@ -20,10 +20,13 @@ interface Props extends UseControllerProps {
   sx?: any;
   disabled?: boolean;
   onKeyDown?: any;
-  onChange?: any;
+  isApplyHelperText?: boolean;
 }
 
-export default function AppPasswordInput(props: Props) {
+export default function AppPasswordInput({
+  isApplyHelperText = true,
+  ...props
+}: Props) {
   const { fieldState, field } = useController({ ...props, defaultValue: "" });
 
   const [visible, setVisible] = useState(false);
@@ -47,9 +50,14 @@ export default function AppPasswordInput(props: Props) {
       onKeyDown={props.onKeyDown}
       value={props.value}
       className={props.className}
-      onChange={props.onChange}
-      error={props.error || !!fieldState.error}
-      helperText={props.error ? props.helperText : fieldState.error?.message}
+      error={isApplyHelperText ? props.error || !!fieldState.error : undefined}
+      helperText={
+        isApplyHelperText
+          ? props.error
+            ? props.helperText
+            : fieldState.error?.message
+          : undefined
+      }
       InputProps={{
         endAdornment: (
           <InputAdornment position="end">

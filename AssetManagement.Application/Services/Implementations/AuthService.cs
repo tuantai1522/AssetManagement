@@ -49,17 +49,67 @@ namespace AssetManagement.Application.Services.Implementations
 
         public async Task<bool> ChangePassword(ChangePasswordRequest request)
         {
+            var validationResult = ValidatePassword(request.NewPassword);
+            if (validationResult != string.Empty)
+            {
+                throw new BadRequestException(validationResult);
+            };
+
             var user = await _userManager.FindByIdAsync(request.UserId.ToString());
             if (user == null)
             {
                 throw new NotFoundException("User not found!");
             }
-            var result = await _userManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
+            var result = new IdentityResult();
+            if (!user.IsPasswordChanged)
+            {
+                //First change password
+                var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+                result = await _userManager.ResetPasswordAsync(user, resetToken, request.NewPassword);
+                //Update isPasswordChanged
+                user.IsPasswordChanged = true;
+                await _userManager.UpdateAsync(user);
+            }
+            else
+            {
+                result = await _userManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
+            }
+
             if (!result.Succeeded)
             {
                 throw new BadRequestException(result.Errors.FirstOrDefault()?.Description);
             }
             return true;
+        }
+
+        private string ValidatePassword(string password)
+        {
+            if (password.Length < 8)
+            {
+                return "Password must contain at least eight characters.";
+            }
+            if (!password.Any(char.IsDigit))
+            {
+                return "Password must contain at least one number.";
+            }
+
+            if (!password.Any(char.IsUpper) || !password.Any(char.IsLower))
+            {
+                return "Password must contain at least one uppercase letter and one lowercase letter.";
+            }
+
+            if (!password.Any(IsSpecialCharacter))
+            {
+                return "Password must contain at least one special character (#, ?, !, _, @).";
+            }
+
+            return string.Empty;
+        }
+
+        private bool IsSpecialCharacter(char c)
+        {
+            var specialCharacters = new[] { '#', '?', '!', '_', '@' };
+            return specialCharacters.Contains(c);
         }
     }
 }

@@ -10,14 +10,14 @@ import LoginHeader from "../../app/layout/LoginHeader";
 
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import LoginRequest from "../../app/models/request/LoginRequest";
+import LoginRequest from "../../app/models/login/LoginRequest";
 import agent from "../../app/api/agent";
-import { BaseResult } from "../../app/models/response/BaseResult";
+import { BaseResult } from "../../app/models/BaseResult";
 import { useState } from "react";
 import { User } from "../../app/models/User";
 import { Token } from "../../app/models/Token";
 import { useNavigate } from "react-router-dom";
-import { LoginResponse } from "../../app/models/response/LoginReponse";
+import { LoginResponse } from "../../app/models/login/LoginReponse";
 
 interface FormValues extends FieldValues {
   Username: string;
@@ -80,10 +80,6 @@ const LoginPage = () => {
     }
   };
 
-  const handleClearErrorMessage = () => {
-    if (!errorMessage) return;
-    setErrorMessage("");
-  };
   return (
     <>
       <LoginHeader />
@@ -124,44 +120,70 @@ const LoginPage = () => {
             backgroundColor: "#FAFCFC",
           }}
         >
-          <Grid container alignItems="center" justifyContent="space-between">
-            <Grid item xs={5}>
-              <Typography variant="subtitle1">Username</Typography>
+          <Grid container>
+            <Grid container alignItems="center">
+              <Grid item xs={5}>
+                <Typography variant="subtitle1">Username</Typography>
+              </Grid>
+              <Grid item xs={7}>
+                <Controller
+                  name="Username"
+                  control={control}
+                  render={({ field }) => (
+                    <AppTextInput
+                      {...field}
+                      id="Username"
+                      control={control}
+                      isApplyHelperText={false}
+                    />
+                  )}
+                />
+              </Grid>
             </Grid>
-            <Grid item xs={7}>
-              <Controller
-                name="Username"
-                control={control}
-                render={({ field, fieldState }) => (
-                  <AppTextInput
-                    {...field}
-                    control={control}
-                    error={!!fieldState.error}
-                    helperText={fieldState.error?.message}
-                  />
+            <Grid container alignItems="center">
+              <Grid item xs={5}></Grid>
+              <Grid item xs={7}>
+                {errors.Username && (
+                  <Typography color="error" variant="caption">
+                    {errors.Username.message as string}
+                  </Typography>
                 )}
-              />
+              </Grid>
             </Grid>
           </Grid>
-          <Grid container alignItems="center" justifyContent="space-between">
-            <Grid item xs={5}>
-              <Typography variant="subtitle1">Password</Typography>
+
+          <Grid container>
+            <Grid container alignItems="center">
+              <Grid item xs={5}>
+                <Typography variant="subtitle1">Password</Typography>
+              </Grid>
+              <Grid item xs={7}>
+                <Controller
+                  name="Password"
+                  control={control}
+                  render={({ field }) => (
+                    <AppPasswordInput
+                      {...field}
+                      id="Password"
+                      control={control}
+                      isApplyHelperText={false}
+                    />
+                  )}
+                />
+              </Grid>
             </Grid>
-            <Grid item xs={7}>
-              <Controller
-                name="Password"
-                control={control}
-                render={({ field, fieldState }) => (
-                  <AppPasswordInput
-                    {...field}
-                    control={control}
-                    error={!!fieldState.error}
-                    helperText={fieldState.error?.message}
-                  />
+            <Grid container alignItems="center">
+              <Grid item xs={5}></Grid>
+              <Grid item xs={7}>
+                {errors.Password && (
+                  <Typography color="error" variant="caption">
+                    {errors.Password.message as string}
+                  </Typography>
                 )}
-              />
+              </Grid>
             </Grid>
           </Grid>
+
           {errorMessage && (
             <Grid container alignItems="center" justifyContent="center">
               <Typography color="red" component="p">
