@@ -5,6 +5,6 @@ export interface UserInfoResponse {
     dateOfBirth: Date;
     gender: string;
     joinedDate: Date;
-    types: string[];
+    type: string;
     location: string;
 };
