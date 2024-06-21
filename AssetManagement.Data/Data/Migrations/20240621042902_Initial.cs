@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace AssetManagement.Data.Migrations
+namespace AssetManagement.Data.Data.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration
@@ -175,19 +175,9 @@ namespace AssetManagement.Data.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { new Guid("5fc71af5-0216-402b-a5cb-ba17701e2fa3"), null, "Admin", "ADMIN" },
-                    { new Guid("8bbf66a4-da08-4b87-bdb2-1502e38562f3"), null, "Staff", "STAFF" }
+                    { new Guid("5fc71af5-0216-402b-a5cb-ba17701e2fa3"), null, "Staff", "STAFF" },
+                    { new Guid("8bbf66a4-da08-4b87-bdb2-1502e38562f3"), null, "Admin", "ADMIN" }
                 });
-
-            migrationBuilder.InsertData(
-                table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "CreatedDateTime", "DateOfBirth", "Email", "EmailConfirmed", "FirstName", "Gender", "IsDisabled", "IsPasswordChanged", "JoinedDate", "LastName", "LastUpdatedDateTime", "Location", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "StaffCode", "TwoFactorEnabled", "UserName" },
-                values: new object[] { new Guid("ed44d5cb-19b2-4fc8-b292-78faf498995b"), 0, "a1504760-3be8-4aba-aaf7-38992885b175", new DateTime(2024, 6, 19, 5, 43, 36, 437, DateTimeKind.Utc).AddTicks(1836), null, "admin@gmail.com", false, "Nghĩa", "Male", false, true, null, "Đinh Trọng", new DateTime(2024, 6, 19, 5, 43, 36, 437, DateTimeKind.Utc).AddTicks(1837), "HCM", true, null, "ADMIN@GMAIL.COM", "ADMIN", "AQAAAAIAAYagAAAAECRruClAzVOPteLA9uVBmU3tHZyY7IkgxjRbp5dN6puwy3x1LIhmagFYpwFFkif4jA==", null, false, "1336676d-d2f2-413c-9f52-408e39c71400", "SD0001", false, "admin" });
-
-            migrationBuilder.InsertData(
-                table: "AspNetUserRoles",
-                columns: new[] { "RoleId", "UserId", "Discriminator" },
-                values: new object[] { new Guid("5fc71af5-0216-402b-a5cb-ba17701e2fa3"), new Guid("ed44d5cb-19b2-4fc8-b292-78faf498995b"), "UserRole" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
