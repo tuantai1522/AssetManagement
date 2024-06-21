@@ -26,4 +26,6 @@ yarn-error.log*
 */obj
 */bin
 .vs/
-.vscode/
+.vscode/*
+.env
+/TestResults/*

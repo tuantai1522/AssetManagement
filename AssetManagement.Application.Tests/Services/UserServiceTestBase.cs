@@ -1,8 +1,10 @@
 ﻿using AssetManagement.Application.Common.Credential;
+using AssetManagement.Application.Extensions;
 using AssetManagement.Application.Services.Implementations;
 using AssetManagement.Application.Services.Interfaces;
 using AssetManagement.Domain.Entities;
 using AutoFixture;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -16,6 +18,7 @@ public class UserServiceTestBase
     protected readonly IUserService UserService;
     protected readonly Mock<ILogger<UserService>> LoggerMock;
     protected readonly Fixture Fixture;
+    protected readonly IMapper _mapperConfig;
 
     protected List<Role> Roles;
 
@@ -27,7 +30,12 @@ public class UserServiceTestBase
             null!, null!, null!);
         CurrentUserMock = new Mock<ICurrentUser>();
         LoggerMock = new Mock<ILogger<UserService>>();
-        UserService = new UserService(UserManagerMock.Object, LoggerMock.Object, CurrentUserMock.Object);
+        var mappingConfig = new MapperConfiguration(mc =>
+        {
+            mc.AddProfile(new MappingProfile());
+        });
+        _mapperConfig = mappingConfig.CreateMapper();
+        UserService = new UserService(UserManagerMock.Object, LoggerMock.Object, CurrentUserMock.Object, _mapperConfig);
 
         Fixture = new Fixture();
         Fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList().ForEach(b => Fixture.Behaviors.Remove(b));

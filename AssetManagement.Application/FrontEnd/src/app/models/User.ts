@@ -1,6 +1,9 @@
 export interface User {
   id: string;
-  name: string;
+  userName: string;
+  role: string;
+  token?: string;
+  isPasswordChanged: boolean;
 }
 
 export interface FilterUser {
