@@ -14,6 +14,7 @@ using System.Linq.Expressions;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using AssetManagement.Domain.Enums;
+using System.Linq;
 
 namespace AssetManagement.Application.Services.Implementations;
 public class UserService : IUserService
@@ -121,7 +122,7 @@ public class UserService : IUserService
         try
         {
             ValidateFirstName(request.FirstName);
-            
+            ValidateLastName(request.LastName);
             ValidateGender(request.Gender);
             ValidateDateOfBirth(request.DateOfBirth);
             ValidateJoinedDate(request.DateOfBirth, request.JoinedDate);
@@ -230,7 +231,13 @@ public class UserService : IUserService
 
     private void ValidateFirstName(string firstName)
     {
-        if (firstName.Split(' ').Length > Constants.NUMBER_OF_WORDS_IN_FIRSTNAME) throw new BadRequestException(ErrorStrings.INVALID_FIRSTNAME);
+        if (firstName.Split(' ').Length > Constants.NUMBER_OF_WORDS_IN_FIRSTNAME) throw new BadRequestException(ErrorStrings.INVALID_FIRSTNAME_NUMBER_OF_WORDS);
+        if (firstName.All(c => char.IsLetter(c))) throw new BadRequestException(ErrorStrings.INVALID_FIRSTNAME_CHARACTERS);
+    }
+
+    private void ValidateLastName(string lastname)
+    {
+        if (lastname.All(c => char.IsLetter(c) || char.IsWhiteSpace(c))) throw new BadRequestException(ErrorStrings.INVALID_LASTNAME_CHARACTERS);
     }
 
     private async Task<Role> ValidateTypeAsync(string type)
