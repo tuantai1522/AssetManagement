@@ -1,15 +1,15 @@
-﻿using AssetManagement.Application.Tests.Service;
+﻿using AssetManagement.Application.Tests.Services.UsersTests;
 using AssetManagement.Contracts.Dtos.UserDtos.Responses;
 using AssetManagement.Domain.Entities;
 using AssetManagement.Domain.Exceptions;
 using AutoFixture;
 using MockQueryable.Moq;
 
-namespace AssetManagement.Application.Tests.Services
+namespace AssetManagement.Application.Tests.Services.UsersTests
 {
-    public class GetUserById : UserServiceTestBase
+    public class GetUserByIdAsync : UserServiceTestBase
     {
-        public GetUserById() : base() { }
+        public GetUserByIdAsync() : base() { }
         [Fact]
         public async Task GetUser_ReturnOkAndUserInfo_WhenHasUser()
         {

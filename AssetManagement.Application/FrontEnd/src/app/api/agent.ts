@@ -115,6 +115,7 @@ const Product = {
 const Users = {
   filter: () => requests.get("api/Users"),
   details: (id: string) => requests.get(`/api/users/${id}`),
+  disable: (id: string) => requests.put(`api/users/disable/${id}`, {})
 };
 
 const Authentication = {
@@ -122,10 +123,6 @@ const Authentication = {
   changePassword: (values: {}) =>
     requests.post("api/auth/changepassword", values),
 };
-
-const Users = {
-  disable: (id: string) => requests.put(`api/users/disable/${id}`, {})
-}
 
 const agent = {
   Product,

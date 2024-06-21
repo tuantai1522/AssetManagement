@@ -66,7 +66,7 @@ const UserInfo = ({isOpen, userData, isLoading, errorMessage, onClose }: Props) 
                 })}
                 </div>
                 <div className="col-span-2">Type</div>
-                <div className="col-span-5">{userData?.types[0]}
+                <div className="col-span-5">{userData?.type[0]}
                 </div>
                 <div className="col-span-2">Location</div>
                 <div className="col-span-5">{userData?.location}

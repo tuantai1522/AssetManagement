@@ -1,5 +1,7 @@
 // import { useState } from "react";
+import { useState } from "react";
 import agent from "../../app/api/agent";
+import ConfirmModal from "../../app/components/confirmModal";
 import UserList from "./userList/userList";
 
 export default function ManagementUserPage() {
@@ -7,6 +9,14 @@ export default function ManagementUserPage() {
   // const [users, setUsers] = useState<FilterUser[]>([]);
   const { data, isLoading, error } = agent.Users.filter();
   console.log(`Data: ${JSON.stringify(data, null, 2)}`);
+
+  const [isDisablingModalOpen, setDisablingModalOpen] = useState(false);
+  const [currentDisablingId, setCurrentDisablingId] = useState("");
+
+  const handleDisable = (id: string) => {
+    if (!id && id !== "") agent.Users.disable(id);
+  };
+
 
   return (
     <div className="flex justify-center h-full">
@@ -16,8 +26,7 @@ export default function ManagementUserPage() {
           <UserList data={data?.items?.result} error={error} isLoading={isLoading} />
         </div>
       </div>
-    </div>
-    <ConfirmModal
+      <ConfirmModal
         message="Do you want to disable this user?"
         confirmMessage="Disable"
         isOpen={isDisablingModalOpen}
@@ -33,5 +42,7 @@ export default function ManagementUserPage() {
         isOpen={true}
         onClose={() => {}}
       />  */}
+    </div>
+
   );
 }
