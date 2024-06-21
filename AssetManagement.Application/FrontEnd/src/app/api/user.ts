@@ -1,5 +1,5 @@
 import { requests } from "./agent";
 
-export const UserApi = {
+export const Users = {
   filter: () => requests.get("api/Users"),
 };

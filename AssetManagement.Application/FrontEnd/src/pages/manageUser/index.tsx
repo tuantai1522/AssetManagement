@@ -5,7 +5,7 @@ import UserList from "./userList/userList";
 export default function ManagementUserPage() {
 
   // const [users, setUsers] = useState<FilterUser[]>([]);
-  const { data, isLoading, error } = agent.UserApi.filter();
+  const { data, isLoading, error } = agent.Users.filter();
   console.log(`Data: ${JSON.stringify(data, null, 2)}`);
 
   return (

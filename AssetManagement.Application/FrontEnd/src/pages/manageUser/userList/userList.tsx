@@ -1,9 +1,7 @@
 import { useState } from "react";
 import AppTable, { ColumnDefinition, Order } from "../../../app/components/table/sortTable";
 import { FilterUser } from "../../../app/models/User";
-import agent from "../../../app/api/agent";
-import { Chip } from "@mui/material";
-
+import { Button } from "@mui/material";
 export interface UserListProp {
     data: FilterUser[],
     isLoading: boolean,
@@ -36,7 +34,11 @@ const columns: ColumnDefinition[] = [
         },
 
         rowRatio: "w-2/12",
-        renderCell: <Chip color="primary" label="Test" />
+        renderCell: <button color="primary" className="active:bg-black" onClick={e => {
+            e.stopPropagation();
+            alert("child");
+        }
+        } > Test</button>
 
     },
     {
@@ -99,7 +101,7 @@ export default function UserList(props: UserListProp) {
                 setOrderByFieldName={setOrderBy}
                 columns={columns}
                 rows={props.data}
-                handleClick={() => { }}
+                handleClick={() => { alert("Test") }}
             />
         </>
     );

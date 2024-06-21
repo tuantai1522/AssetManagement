@@ -4,7 +4,7 @@ import useSWR from "swr";
 import { PaginatedResponse } from "../models/Pagination";
 import { BaseResult } from "../models/BaseResult";
 import { User } from "../models/User";
-import { UserApi } from "./user ";
+import { Users } from "./user";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 axios.defaults.headers.post["Content-Type"] = "application/json";
@@ -119,16 +119,10 @@ const Authentication = {
     requests.post("api/auth/changepassword", values),
 };
 
-const UserTest = {
-  filter: () => requests.get("api/users"),
-};
-
-
 const agent = {
   Product,
   Authentication,
-  UserApi,
-  UserTest
+  Users
 };
 
 export default agent;

@@ -169,8 +169,11 @@ export function AppTable<T>(props: AppTableProp<T>) {
 
                             return (<>
                                 <TableRow
-                                    hover
-                                    onClick={(event) => props.handleClick(event, row.id)}
+                                    // hover
+                                    onClick={(event) => {
+                                        props.handleClick(event, row.id)
+                                    }
+                                    }
                                     // role="checkbox"
                                     // aria-checked={isItemSelected}
                                     tabIndex={-1}
@@ -181,6 +184,7 @@ export function AppTable<T>(props: AppTableProp<T>) {
                                     {row.data.map((item, index) => {
                                         return (
                                             <TableCell
+
                                                 align="left"
                                                 className={item.ratio ?? ""}
                                                 key={index}

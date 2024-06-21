@@ -43,13 +43,4 @@ export const router = createBrowserRouter([
   { path: "not-found", element: <NotFound /> },
   { path: "server-error", element: <ServerErrors /> },
   { path: "*", element: <Navigate replace to="/not-found" /> },
-  {
-    path: "test", element: (
-      <div className="w-100" >
-        <div className="mt-5 mx-10">
-          <TestSortComponent />
-        </div>
-      </div>
-    )
-  }
 ]);
