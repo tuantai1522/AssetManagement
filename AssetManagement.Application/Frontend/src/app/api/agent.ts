@@ -91,7 +91,7 @@ const FetchWithSWR = (url: string, params?: URLSearchParams) => {
   return { data, isLoading, error, mutate };
 };
 
-const requests = {
+export const requests = {
   get: (url: string, params?: URLSearchParams) => FetchWithSWR(url, params),
   post: (url: string, body: {}) => axios.post(url, body).then(responseBody),
   postFormData: (url: string, body: any) => {
@@ -112,6 +112,11 @@ const Product = {
   delete: (id: string) => requests.delete(`products/${id}`),
 };
 
+const Users = {
+  filter: () => requests.get("api/Users"),
+  details: (id: string) => requests.get(`/api/users/${id}`),
+};
+
 const Authentication = {
   login: (values: {}) => requests.post("api/auth/login", values),
   changePassword: (values: {}) =>
@@ -121,6 +126,7 @@ const Authentication = {
 const agent = {
   Product,
   Authentication,
+  Users
 };
 
 export default agent;
