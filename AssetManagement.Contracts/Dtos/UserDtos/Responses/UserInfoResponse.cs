@@ -10,6 +10,6 @@
         public string Gender { get; set; } = string.Empty;
         public string? Location { get; set; } = string.Empty;
         public DateTime? JoinedDate { get; set; }
-        public string? Types { get; set; }
+        public string? Type { get; set; }
     }
 }
