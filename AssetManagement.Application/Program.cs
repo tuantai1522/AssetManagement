@@ -24,7 +24,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSpaStaticFiles(configuration =>
 {
-    configuration.RootPath = "Frontend/build";
+    configuration.RootPath = "Frontend";
 });
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -60,9 +60,15 @@ app.UseEndpoints(endpoints =>
 
 app.UseSpa(spa =>
 {
-    spa.Options.SourcePath = "Frontend/build";
-    //spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");
-    //spa.UseReactDevelopmentServer(npmScript: "start");
+    spa.Options.SourcePath = "Frontend";
+    if (app.Environment.IsDevelopment())
+    {
+        spa.UseReactDevelopmentServer(npmScript: "start");
+    }
+    else
+    {
+        spa.Options.SourcePath = "Frontend/build";
+    }
 });
 
 
