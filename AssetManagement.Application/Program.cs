@@ -24,7 +24,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSpaStaticFiles(configuration =>
 {
-    configuration.RootPath = "Frontend";
+    configuration.RootPath = "Frontend/build";
 });
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
