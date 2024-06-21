@@ -1,6 +1,7 @@
 import { ArrowDropDown } from "@mui/icons-material";
-import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel } from "@mui/material";
+import { Box, Chip, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel } from "@mui/material";
 import { visuallyHidden } from '@mui/utils';
+import { JsxClosingElement } from "typescript";
 
 export interface CustomTableHeadProp {
     onRequestSort: (event: React.MouseEvent<unknown>, property: any) => void;
@@ -20,7 +21,7 @@ export interface ColumnDefinition {
     disableSort?: boolean,
     rowRatio?: string,
     bodyStyle?: any,
-    rederCell?: (data: any) => Element,
+    renderCell?: JSX.Element
 }
 export interface RowDefinition<T> {
     id: any;
@@ -37,7 +38,7 @@ export interface AppTableCell {
     ratio?: string,
     bodyStyle?: React.CSSProperties,
     value?: any,
-    renderCell?: (data: any) => Element
+    renderCell?: JSX.Element
 }
 
 export interface AppTableProp<T> {
@@ -104,7 +105,7 @@ function mapToAppTableRows<T>(
             return {
                 fieldName,
                 value: (row.data as Record<string, any>)[fieldName],
-                renderCell: column.rederCell,
+                renderCell: column.renderCell,
                 ratio: column.rowRatio,
                 bodyStyle: column.bodyStyle
             };
@@ -185,7 +186,7 @@ export function AppTable<T>(props: AppTableProp<T>) {
                                                 key={index}
                                                 sx={item.bodyStyle}
                                             >
-                                                {item.value ?? item.renderCell ?? ''}
+                                                {item.renderCell ?? item.value ?? ''}
                                             </TableCell>
                                         );
                                     })}
