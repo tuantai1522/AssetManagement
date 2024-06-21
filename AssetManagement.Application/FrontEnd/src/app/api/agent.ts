@@ -115,7 +115,7 @@ const Product = {
 const Users = {
   filter: () => requests.get("api/Users"),
   details: (id: string) => requests.get(`/api/users/${id}`),
-  disable: (id: string) => requests.put(`api/users/disable/${id}`, {})
+  disable: (id: string) => requests.put(`api/users/disable/${id}`, {}),
   update: (id: string, values: {}) => requests.put(`/api/users/${id}`, values),
 };
 

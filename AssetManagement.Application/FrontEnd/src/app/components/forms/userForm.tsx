@@ -9,9 +9,10 @@ import { Gender, Type } from "../../types/enum";
 import AppTextInput from "../AppTextInput";
 import AppButton from "../buttons/Button";
 import { createFormSchema } from "../../schemas/createFormSchema";
-import { UserInfoResponse } from "../../models/response/UserInfoResponse";
 import { useEffect } from "react";
 import dayjs from "dayjs";
+import { UserInfoResponse } from "../../models/login/UserInfoResponse";
+
 
 interface IFormInput extends FieldValues {
     firstName: string,

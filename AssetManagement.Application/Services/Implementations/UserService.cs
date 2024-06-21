@@ -95,7 +95,7 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<UserInfoResponse> GetUserById(Guid id)
+    public async Task<UserInfoResponse> GetUserByIdAsync(Guid id)
     {
         try
         {
@@ -110,9 +110,9 @@ public class UserService : IUserService
         }
         catch (Exception e)
         {
-            _logger.LogError("Error when execute {} method.\nDate: {}.\nDetail: {}", nameof(this.GetUserById),
+            _logger.LogError("Error when execute {} method.\nDate: {}.\nDetail: {}", nameof(this.GetUserByIdAsync),
                 DateTime.UtcNow, e.Message);
-            throw new Exception($"Error when execute {nameof(this.GetUserById)} method");
+            throw new Exception($"Error when execute {nameof(this.GetUserByIdAsync)} method");
         }
     }
 
@@ -165,7 +165,7 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<DisableUserResponse> DisableUserAsync(DisableUserRequest request)
+    public async Task<DisableUserResponse> DisableUserAsync(Guid id)
     {
         var userToBeDisabled = await _userManager.FindByIdAsync(id.ToString()) ?? throw new NotFoundException(ErrorStrings.USER_NOT_FOUND);
         userToBeDisabled.IsDisabled = true;

@@ -1,7 +1,8 @@
 import { useNavigate, useParams } from "react-router-dom";
 import UserForm from "../../app/components/forms/userForm";
 import agent from "../../app/api/agent";
-import { EditUserRequest } from "../../app/models/request/EditUserRequest";
+import { EditUserRequest } from "../../app/models/login/EditUserRequest";
+
 
 const EditUserPage = () => {
     const { id } = useParams();
