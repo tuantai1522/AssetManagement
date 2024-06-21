@@ -25,12 +25,14 @@ export default function ManagementUserPage() {
     pageSize: 5
   });
 
+  cobs
+
   const [order, setOrder] = useState<Order>("desc");
   const [orderBy, setOrderBy] = useState<OrderByFieldName>("joinedDate");
 
   
 
-  const { data, isLoading, error } = agent.Users.filter();
+  const { data, isLoading, error, mutate } = agent.Users.filter();
 
   return (
     <div className="flex justify-center h-full">

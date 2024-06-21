@@ -4,6 +4,7 @@ import useSWR from "swr";
 import { PaginatedResponse } from "../models/Pagination";
 import { BaseResult } from "../models/BaseResult";
 import { User } from "../models/User";
+import { Order } from "../components/table/sortTable";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 axios.defaults.headers.post["Content-Type"] = "application/json";
@@ -113,7 +114,9 @@ const Product = {
 };
 
 const Users = {
-  filter: (query?:string) => requests.get(`api/Users?${query}`),
+  filter: (query?:UserQuery) =>{ 
+    
+    requests.get(`api/Users?${query}`)},
   details: (id: string) => requests.get(`/api/users/${id}`),
 };
 
@@ -130,3 +133,14 @@ const agent = {
 };
 
 export default agent;
+
+interface UserQuery {
+  name?: string,
+  type?: string,
+  sortStaffCode?: Order,
+  sortFullName?: Order,
+  sortJoinedDate?: Order,
+  sortType?: Order,
+  pageNumber?: number,
+  pageSize?: number
+}
