@@ -90,23 +90,14 @@ public class UserService : IUserService
 
     public async Task<DisableUserResponse> DisableUserAsync(Guid id)
     {
-        try
+        var userToBeDisabled = await _userManager.FindByIdAsync(id.ToString()) ?? throw new NotFoundException(ErrorStrings.USER_NOT_FOUND);
+        userToBeDisabled.IsDisabled = true;
+        var result = await _userManager.UpdateAsync(userToBeDisabled);
+        if (result.Succeeded)
         {
-            var userToBeDisabled = await _userManager.FindByIdAsync(id.ToString()) ?? throw new NotFoundException(ErrorStrings.USER_NOT_FOUND);
-            userToBeDisabled.IsDisabled = true;
-            var result = await _userManager.UpdateAsync(userToBeDisabled);
-            if (result.Succeeded)
-            {
-                return new DisableUserResponse();
-            }
-            throw new Exception(string.Join(". ", result.Errors.Select(p => p.Description)));
+            return new DisableUserResponse();
         }
-        catch (Exception e)
-        {
-            _logger.LogError("Error when execute {} method.\nDate: {}.\nDetail: {}", nameof(this.DisableUserAsync),
-                DateTime.UtcNow, e.Message);
-            throw new Exception($"Error when execute {nameof(this.DisableUserAsync)} method");
-        }
+        throw new Exception(string.Join(". ", result.Errors.Select(p => p.Description)));
     }
 
     private Func<IQueryable<AppUser>, IOrderedQueryable<AppUser>> GetOrderByExpression(FilterUserRequest filter)
