@@ -36,7 +36,7 @@ namespace AssetManagement.Application.Tests.Services.UsersTests
             UserManagerMock.Setup(m => m.Users).Returns(userQueryMock);
 
             //Act
-            var result = await UserService.GetUserById(id);
+            var result = await UserService.GetUserByIdAsync(id);
 
             //Assert
             var actionResult = Assert.IsType<UserInfoResponse>(result);
@@ -69,7 +69,7 @@ namespace AssetManagement.Application.Tests.Services.UsersTests
             //Act
 
             //Assert
-            var exception = await Assert.ThrowsAsync<NotFoundException>(() => UserService.GetUserById(id));
+            var exception = await Assert.ThrowsAsync<NotFoundException>(() => UserService.GetUserByIdAsync(id));
             Assert.Equal("User can not found", exception.Message);
         }
     }

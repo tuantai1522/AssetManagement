@@ -140,7 +140,7 @@ public class UserService : IUserService
         return orderBy;
     }
 
-    public async Task<UserInfoResponse> GetUserById(Guid id)
+    public async Task<UserInfoResponse> GetUserByIdAsync(Guid id)
     {
         var queryable = _userManager.Users;
         var appUser = await queryable.Where(q => q.Id == id).Include(q => q.UserRoles).ThenInclude(q => q.Role).FirstOrDefaultAsync();

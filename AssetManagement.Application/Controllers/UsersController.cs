@@ -42,7 +42,7 @@ public class UsersController : ControllerBase
     [Authorize(Roles = $"{RoleConstant.AdminRole}")]
     public async Task<ActionResult<BaseResult<UserInfoResponse>>> GetUserInfoAsync([FromRoute] Guid id)
     {
-        var data = await _userService.GetUserById(id);
+        var data = await _userService.GetUserByIdAsync(id);
         var result = new BaseResult<UserInfoResponse>()
         {
             IsSuccess = true,

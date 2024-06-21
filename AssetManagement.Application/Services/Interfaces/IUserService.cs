@@ -7,5 +7,5 @@ public interface IUserService
 {
     Task<PagingDto<FilterUserResponse>> FilterUserAsync(FilterUserRequest filter);
     Task<DisableUserResponse> DisableUserAsync(Guid id);
-    Task<UserInfoResponse> GetUserById(Guid id);
+    Task<UserInfoResponse> GetUserByIdAsync(Guid id);
 }
