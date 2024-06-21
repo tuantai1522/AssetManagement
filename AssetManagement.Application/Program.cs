@@ -61,12 +61,8 @@ app.UseEndpoints(endpoints =>
 app.UseSpa(spa =>
 {
     spa.Options.SourcePath = "Frontend";
-
-    if (app.Environment.IsDevelopment())
-    {
-        //spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");
-        spa.UseReactDevelopmentServer(npmScript: "start");
-    }
+    //spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");
+    spa.UseReactDevelopmentServer(npmScript: "start");
 });
 
 
