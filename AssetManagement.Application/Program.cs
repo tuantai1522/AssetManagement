@@ -1,12 +1,8 @@
-using AssetManagement.Application.Common.Credential;
 using AssetManagement.Application.ConfigurationOptions;
 using AssetManagement.Application.Extensions;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 
 var builder = WebApplication.CreateBuilder(args);
-
-
-
 
 //Configure variable
 var appSettings = new AppSetting();

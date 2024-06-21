@@ -11,5 +11,6 @@ declare module 'yup' {
     olderThan18(message: string): this;
     notWeekend(message: string): this;
     afterDoB(refField: string, message: string): this;
+    requireDoB(refField: string, message: string): this;
   }
 }

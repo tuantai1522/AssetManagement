@@ -18,12 +18,13 @@ export const createFormSchema = yup.object().shape({
     joinedDate: yup.date()
         .required("Please Select Joined Date")
         .typeError("Invalid Date Type")
+        .requireDoB('dateOfBirth', "Please Select Date of Birth First")
         .afterDoB('dateOfBirth', 'User under the age of 18 may not join\ncompany. Please select a different date')
         .notWeekend('Joined date is Saturday or Sunday.\nPlease select a different date'),
     gender: yup
-        .mixed<Gender>()
+        .string()
         .defined(),
     type: yup
-        .mixed<Type>()
+        .string()
         .required('Please Select Type')
 });
