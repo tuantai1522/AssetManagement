@@ -16,7 +16,7 @@ export interface ColumnDefinition {
     fieldName: string;
     className?: string;
     classNames?: string[];
-    style?: any;
+    style?: React.CSSProperties;
     disableSort?: boolean,
     rowRatio?: string,
     bodyStyle?: any,
@@ -35,7 +35,7 @@ export interface AppTableRow {
 export interface AppTableCell {
     fieldName: string,
     ratio?: string,
-    bodyStyle?: {},
+    bodyStyle?: React.CSSProperties,
     value?: any,
     renderCell?: (data: any) => Element
 }
