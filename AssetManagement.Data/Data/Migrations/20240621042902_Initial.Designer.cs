@@ -4,16 +4,19 @@ using AssetManagement.Data.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace AssetManagement.Data.Migrations
+namespace AssetManagement.Data.Data.Migrations
 {
     [DbContext(typeof(AssetManagementDbContext))]
-    partial class AssetManagementDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240621042902_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -129,33 +132,6 @@ namespace AssetManagement.Data.Migrations
                     b.HasIndex("FirstName", "LastName");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("ed44d5cb-19b2-4fc8-b292-78faf498995b"),
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "a1504760-3be8-4aba-aaf7-38992885b175",
-                            CreatedDateTime = new DateTime(2024, 6, 19, 5, 43, 36, 437, DateTimeKind.Utc).AddTicks(1836),
-                            Email = "admin@gmail.com",
-                            EmailConfirmed = false,
-                            FirstName = "Nghĩa",
-                            Gender = "Male",
-                            IsDisabled = false,
-                            IsPasswordChanged = true,
-                            LastName = "Đinh Trọng",
-                            LastUpdatedDateTime = new DateTime(2024, 6, 19, 5, 43, 36, 437, DateTimeKind.Utc).AddTicks(1837),
-                            Location = "HCM",
-                            LockoutEnabled = true,
-                            NormalizedEmail = "ADMIN@GMAIL.COM",
-                            NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAECRruClAzVOPteLA9uVBmU3tHZyY7IkgxjRbp5dN6puwy3x1LIhmagFYpwFFkif4jA==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "1336676d-d2f2-413c-9f52-408e39c71400",
-                            StaffCode = "SD0001",
-                            TwoFactorEnabled = false,
-                            UserName = "admin"
-                        });
                 });
 
             modelBuilder.Entity("AssetManagement.Domain.Entities.Role", b =>
@@ -188,13 +164,13 @@ namespace AssetManagement.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("5fc71af5-0216-402b-a5cb-ba17701e2fa3"),
+                            Id = new Guid("8bbf66a4-da08-4b87-bdb2-1502e38562f3"),
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = new Guid("8bbf66a4-da08-4b87-bdb2-1502e38562f3"),
+                            Id = new Guid("5fc71af5-0216-402b-a5cb-ba17701e2fa3"),
                             Name = "Staff",
                             NormalizedName = "STAFF"
                         });
@@ -317,13 +293,6 @@ namespace AssetManagement.Data.Migrations
                     b.HasIndex("RoleId");
 
                     b.HasDiscriminator().HasValue("UserRole");
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = new Guid("ed44d5cb-19b2-4fc8-b292-78faf498995b"),
-                            RoleId = new Guid("5fc71af5-0216-402b-a5cb-ba17701e2fa3")
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

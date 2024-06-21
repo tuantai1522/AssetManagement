@@ -1,16 +1,15 @@
-﻿using AssetManagement.Application.Common.Credential;
+﻿using AssetManagement.Application.Common.Constants;
+using AssetManagement.Application.Common.Credential;
 using AssetManagement.Application.Services.Interfaces;
 using AssetManagement.Contracts.Dtos.PaginationDtos;
 using AssetManagement.Contracts.Dtos.UserDtos.Requests;
 using AssetManagement.Contracts.Dtos.UserDtos.Responses;
-using AssetManagement.Application.Common.Constants;
 using AssetManagement.Contracts.Enums;
 using AssetManagement.Domain.Entities;
 using AssetManagement.Domain.Exceptions;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace AssetManagement.Application.Services.Implementations;
@@ -143,23 +142,14 @@ public class UserService : IUserService
 
     public async Task<UserInfoResponse> GetUserById(Guid id)
     {
-        try
+        var queryable = _userManager.Users;
+        var appUser = await queryable.Where(q => q.Id == id).Include(q => q.UserRoles).ThenInclude(q => q.Role).FirstOrDefaultAsync();
+        if (appUser == null)
         {
-            var queryable = _userManager.Users;
-            var appUser = await queryable.Where(q => q.Id == id).Include(q => q.UserRoles).ThenInclude(q => q.Role).FirstOrDefaultAsync();
-            if (appUser == null)
-            {
-                throw new NotFoundException("User can not found");
-            }
-            var result = _mapper.Map<UserInfoResponse>(appUser);
-            return result;
+            throw new NotFoundException("User can not found");
         }
-        catch (Exception e)
-        {
-            _logger.LogError("Error when execute {} method.\nDate: {}.\nDetail: {}", nameof(this.GetUserById),
-                DateTime.UtcNow, e.Message);
-            throw new Exception($"Error when execute {nameof(this.GetUserById)} method");
-        }
+        var result = _mapper.Map<UserInfoResponse>(appUser);
+        return result;
     }
 }
 
