@@ -5,7 +5,6 @@ import HomePage from "../../pages/home";
 import NotFound from "../errors/NotFound";
 import ServerErrors from "../errors/ServerErrors";
 import ManagementUserPage from "../../pages/manageUser";
-import TestSortComponent from "../components/table/test";
 import LoginPage from "../../pages/authentication/LoginPage";
 import RequireAuth from "./RequireAuth";
 

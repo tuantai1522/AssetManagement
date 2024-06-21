@@ -4,7 +4,7 @@ import useSWR from "swr";
 import { PaginatedResponse } from "../models/Pagination";
 import { BaseResult } from "../models/BaseResult";
 import { User } from "../models/User";
-import { Users } from "./user";
+// import { Users } from "./user";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 axios.defaults.headers.post["Content-Type"] = "application/json";
@@ -114,6 +114,7 @@ const Product = {
 };
 
 const Users = {
+  filter: () => requests.get("api/Users"),
   details: (id: string) => requests.get(`/api/users/${id}`),
 };
 
