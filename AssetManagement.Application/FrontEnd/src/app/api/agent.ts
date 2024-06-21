@@ -118,9 +118,14 @@ const Authentication = {
     requests.post("api/auth/changepassword", values),
 };
 
+const Users = {
+  disable: (id: string) => requests.put(`api/users/disable/${id}`, {})
+}
+
 const agent = {
   Product,
   Authentication,
+  Users
 };
 
 export default agent;
