@@ -88,11 +88,11 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<DisableUserResponse> DisableUserAsync(DisableUserRequest request)
+    public async Task<DisableUserResponse> DisableUserAsync(Guid id)
     {
         try
         {
-            var userToBeDisabled = await _userManager.FindByIdAsync(request.UserId) ?? throw new NotFoundException(ErrorStrings.USER_NOT_FOUND);
+            var userToBeDisabled = await _userManager.FindByIdAsync(id.ToString()) ?? throw new NotFoundException(ErrorStrings.USER_NOT_FOUND);
             userToBeDisabled.IsDisabled = true;
             var result = await _userManager.UpdateAsync(userToBeDisabled);
             if (result.Succeeded)
