@@ -112,6 +112,10 @@ const Product = {
   delete: (id: string) => requests.delete(`products/${id}`),
 };
 
+const Users = {
+  details: (id: string) => requests.get(`/api/users/${id}`),
+};
+
 const Authentication = {
   login: (values: {}) => requests.post("api/auth/login", values),
   changePassword: (values: {}) =>
@@ -121,6 +125,7 @@ const Authentication = {
 const agent = {
   Product,
   Authentication,
+  Users
 };
 
 export default agent;
