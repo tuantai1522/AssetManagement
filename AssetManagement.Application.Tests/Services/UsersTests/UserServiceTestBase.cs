@@ -1,15 +1,15 @@
 ﻿using AssetManagement.Application.Common.Credential;
+using AssetManagement.Application.Extensions;
 using AssetManagement.Application.Services.Implementations;
 using AssetManagement.Application.Services.Interfaces;
 using AssetManagement.Domain.Entities;
 using AutoFixture;
 using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace AssetManagement.Application.Tests.Service;
+namespace AssetManagement.Application.Tests.Services.UsersTests;
 public class UserServiceTestBase
 {
 
@@ -17,10 +17,9 @@ public class UserServiceTestBase
     protected readonly Mock<ICurrentUser> CurrentUserMock;
     protected readonly IUserService UserService;
     protected readonly Mock<ILogger<UserService>> LoggerMock;
-    protected readonly Mock<IHttpContextAccessor> HttpContextAccessorMock;
-    protected readonly Mock<IMapper> MapperMock;
-    protected readonly Mock<RoleManager<Role>> RoleManagerMock;
     protected readonly Fixture Fixture;
+    protected readonly IMapper _mapperConfig;
+    protected readonly Mock<RoleManager<Role>> RoleManagerMock;
 
     protected List<Role> Roles;
 
@@ -32,11 +31,13 @@ public class UserServiceTestBase
             null!, null!, null!);
         CurrentUserMock = new Mock<ICurrentUser>();
         LoggerMock = new Mock<ILogger<UserService>>();
-        HttpContextAccessorMock = new Mock<IHttpContextAccessor>();
-        MapperMock = new Mock<IMapper>();
+        var mappingConfig = new MapperConfiguration(mc =>
+        {
+            mc.AddProfile(new MappingProfile());
+        });
+        _mapperConfig = mappingConfig.CreateMapper();
         RoleManagerMock = new Mock<RoleManager<Role>>();
-        UserService = new UserService(UserManagerMock.Object, LoggerMock.Object, CurrentUserMock.Object, MapperMock.Object, 
-            HttpContextAccessorMock.Object, RoleManagerMock.Object);
+        UserService = new UserService(UserManagerMock.Object, LoggerMock.Object, CurrentUserMock.Object, _mapperConfig, RoleManagerMock.Object);
 
         Fixture = new Fixture();
         Fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList().ForEach(b => Fixture.Behaviors.Remove(b));
