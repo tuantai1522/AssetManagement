@@ -33,7 +33,7 @@ export const router = createBrowserRouter([
                         children: [
                             { path: "manage-user", element: <ManagementUserPage /> },
                             { path: "create-user", element: <CreateUserPage />},
-                            { path: "edit-user", element: <EditUserPage />},
+                            { path: "edit-user/:id", element: <EditUserPage />},
                         ],
                     },
                 ],
