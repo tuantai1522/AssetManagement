@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import usePagination from "@mui/material/usePagination";
 import { styled } from "@mui/material/styles";
-import AppButton from "../buttons/Button";
 import AppPaginatedButton from "../buttons/PaginatedButton";
 
 const List = styled("ul")({
