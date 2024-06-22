@@ -24,7 +24,7 @@ export default function ManagementUserPage() {
   const [query, setQuery] = useState<Query>({
     sortJoinedDate: "desc",
     pageNumber: 1,
-    pageSize: 10
+    pageSize: 5
   });
 
   const [order, setOrder] = useState<Order>("desc");

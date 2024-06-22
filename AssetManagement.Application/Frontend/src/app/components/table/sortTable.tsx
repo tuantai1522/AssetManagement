@@ -1,4 +1,4 @@
-import { ArrowDropDown } from "@mui/icons-material";
+import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
 import { Box, Chip, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel } from "@mui/material";
 import { visuallyHidden } from '@mui/utils';
 
@@ -76,7 +76,7 @@ function CustomTableHead(props: CustomTableHeadProp) {
                                 active={orderBy === key}
                                 direction={orderBy === key ? order : 'asc'}
                                 onClick={createSortHandler(key)}
-                                IconComponent={ArrowDropDown}
+                                IconComponent={ArrowDropUp}
                                 className={`font-bold ${column.className}`}
                                 classes={column.classNames}
                                 sx={column.style}
