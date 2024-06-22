@@ -190,20 +190,15 @@ public class UserService : IUserService
         userToUpdate.DateOfBirth = request.DateOfBirth;
         userToUpdate.JoinedDate = request.JoinedDate;
         userToUpdate.Gender = request.Gender;
-        userToUpdate.LastUpdatedDateTime = DateTime.UtcNow;
+        userToUpdate.LastUpdatedDateTime = DateTime.Now;
             
         IList<String> currentRoles = await _userManager.GetRolesAsync(userToUpdate);
         if (!currentRoles.Contains(request.Type))
         {
             Role? updateRoles = await _roleManager.FindByNameAsync(request.Type);
-
-            if (updateRoles is null)
-            {
-                throw new BadRequestException(ErrorStrings.ROLE_NOT_EXIST);
-            }
             userToUpdate.UserRoles = new List<UserRole> { new UserRole() {
                 UserId = userId,
-                RoleId = updateRoles.Id
+                RoleId = updateRoles!.Id
             } };
          }
 
