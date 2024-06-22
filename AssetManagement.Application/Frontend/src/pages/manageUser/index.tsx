@@ -7,18 +7,6 @@ import { convertUtcToLocalDate } from "../../app/utils/dateUtils";
 import { FilterUser } from "../../app/models/User";
 import { Pagination, Stack } from "@mui/material";
 
-// interface Query {
-//   name?: string,
-//   type?: string,
-//   sortStaffCode?: Order,
-//   sortFullName?: Order,
-//   sortJoinedDate?: Order,
-//   sortType?: Order,
-//   sortLastUpdate?: Order,
-//   pageNumber?: number,
-//   pageSize?: number
-// }
-
 type OrderByFieldName = "staffCode" | "fullName" | "joinedDate" | "type" | "lastUpdate";
 
 export default function ManagementUserPage() {
