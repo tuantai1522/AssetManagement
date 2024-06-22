@@ -1,6 +1,6 @@
 export interface EditUserRequest{
-    dateOfBirth: Date,
-    joinedDate: Date,
-    gender: string,
-    type: string,
+    DateOfBirth: Date,
+    JoinedDate: Date,
+    Gender: string,
+    Type: string,
 }

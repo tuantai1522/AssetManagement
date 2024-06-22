@@ -14,14 +14,15 @@ const EditUserPage = () => {
 
     const { data,  error, isLoading } = agent.Users.details(id);
     
-    const onSubmit = (formData: any) => {
+    const onSubmit = async (formData: any) => {
         const updateData: EditUserRequest = {
-            dateOfBirth: formData.dateOfBirth,
-            joinedDate: formData.joinedDate,
-            gender: formData.type,
-            type: formData.gender,
+            DateOfBirth: formData.dateOfBirth,
+            JoinedDate: formData.joinedDate,
+            Gender: formData.gender,
+            Type: formData.type,
         }
-        agent.Users.update(id, updateData);
+        await agent.Users.update(id, updateData);
+        navigate('/manage-user');
     }
 
     if (isLoading) {

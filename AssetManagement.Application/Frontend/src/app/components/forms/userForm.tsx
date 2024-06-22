@@ -47,7 +47,6 @@ const UserForm = ({
 
     useEffect(() => {
         if (data && isEditing) {
-            console.log('data: ', data)
             reset({
                 firstName: data.firstName,
                 lastName: data.lastName,
