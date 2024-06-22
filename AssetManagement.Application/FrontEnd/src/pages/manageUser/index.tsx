@@ -25,8 +25,6 @@ export default function ManagementUserPage() {
     pageSize: 5
   });
 
-  cobs
-
   const [order, setOrder] = useState<Order>("desc");
   const [orderBy, setOrderBy] = useState<OrderByFieldName>("joinedDate");
 
