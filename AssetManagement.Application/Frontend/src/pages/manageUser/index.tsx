@@ -5,6 +5,7 @@ import { Order } from "../../app/components/table/sortTable";
 import UserList from "./userList/userList";
 import { convertUtcToLocalDate } from "../../app/utils/dateUtils";
 import { FilterUser } from "../../app/models/User";
+import { Pagination, Stack } from "@mui/material";
 
 interface Query {
   name?: string,
@@ -29,6 +30,8 @@ export default function ManagementUserPage() {
 
   const [order, setOrder] = useState<Order>("desc");
   const [orderBy, setOrderBy] = useState<OrderByFieldName>("joinedDate");
+
+  const { data, isLoading, error, mutate } = agent.Users.filter(query);
 
   useEffect(() => {
     switch (orderBy) {
@@ -62,7 +65,23 @@ export default function ManagementUserPage() {
 
   }, [orderBy, order])
 
-  const { data, isLoading, error, mutate } = agent.Users.filter(query);
+  useEffect(() => {
+    const reloadData = async () => {
+      await mutate(query);
+    };
+
+    reloadData();
+
+    return () => {
+    };
+  }, [query.pageNumber]);
+
+  const handlePageNumberChange = (value: any) => {
+    const pageNumber = Number(value);
+    setQuery((prevQuery) => ({ ...prevQuery, pageNumber }));
+  };
+
+  console.log(`Data: `, data);
 
   return (
     <div className="flex justify-center h-full">
@@ -81,6 +100,14 @@ export default function ManagementUserPage() {
             orderBy={orderBy}
             setOrderBy={setOrderBy}
           />
+
+          <Stack
+            direction="row"
+            justifyContent="flex-end"
+            alignItems="baseline"
+          >
+            <Pagination count={data?.metaData?.totalPageCount ?? 1} onChange={(event, value) => handlePageNumberChange(value)} variant="outlined" shape="rounded" />
+          </Stack>
         </div>
       </div>
     </div>

@@ -93,7 +93,7 @@ const rows: FilterUser[] = []
 export default function UserList(props: UserListProp) {
 
     return (
-        <>
+        <div className="min-h-60">
             <AppTable<FilterUser>
                 order={props.order}
                 setOrder={props.setOrder}
@@ -103,6 +103,6 @@ export default function UserList(props: UserListProp) {
                 rows={props.data}
                 handleClick={() => { }}
             />
-        </>
+        </div>
     );
 }
