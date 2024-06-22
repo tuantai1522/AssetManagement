@@ -65,7 +65,7 @@ export default function ChangePasswordModal({ user, isOpen, onClose }: Props) {
     handleSubmit,
     setError,
     reset,
-    formState: { isSubmitting, errors },
+    formState: { isSubmitting, errors, isValid },
   } = useForm({
     resolver: yupResolver<FormValues>(schema),
     mode: "all",
@@ -193,6 +193,7 @@ export default function ChangePasswordModal({ user, isOpen, onClose }: Props) {
                     isLoading={isSubmitting}
                     content="Save"
                     isFormSubmit={true}
+                    isDisabled={!isValid}
                   />
                 </>
               )}
