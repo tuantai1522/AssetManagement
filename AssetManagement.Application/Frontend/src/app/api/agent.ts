@@ -114,9 +114,10 @@ const Product = {
 };
 
 const Users = {
-  filter: (query?:UserQuery) =>{ 
-    
-    requests.get(`api/Users?${query}`)},
+  filter: (query?: UserQuery) => {
+    const queryString = getUserQueryString(query);
+    return requests.get(`api/Users?${queryString}`);
+  },
   details: (id: string) => requests.get(`/api/users/${id}`),
 };
 
@@ -129,18 +130,45 @@ const Authentication = {
 const agent = {
   Product,
   Authentication,
-  Users
+  Users,
 };
 
 export default agent;
 
 interface UserQuery {
-  name?: string,
-  type?: string,
-  sortStaffCode?: Order,
-  sortFullName?: Order,
-  sortJoinedDate?: Order,
-  sortType?: Order,
-  pageNumber?: number,
-  pageSize?: number
+  name?: string;
+  type?: string;
+  sortStaffCode?: Order;
+  sortFullName?: Order;
+  sortJoinedDate?: Order;
+  sortType?: Order;
+  pageNumber?: number;
+  pageSize?: number;
+}
+
+function getUserQueryString(filter?: UserQuery) {
+  if (!filter) {
+    return "";
+  }
+
+  const nameParam = filter.name ? `name=${filter.name}&` : "";
+  // const genderParam = filter.type !== undefined && filter.type !== null ? `gender=${filter.gender}&` : '';
+  const sortStaffCodeParam = filter.sortStaffCode
+    ? `sortStaffCode=${filter.sortStaffCode === "asc" ? 1 : 2}&`
+    : "";
+  const sortFullNameParam = filter.sortFullName
+    ? `sortFullName=${filter.sortFullName === "asc" ? 1 : 2}&`
+    : "";
+  const sortJoinedDateParam = filter.sortJoinedDate
+    ? `sortJoinedDate=${filter.sortJoinedDate === "asc" ? 1 : 2}&`
+    : "";
+  const sortTypeParam = filter.sortType
+    ? `sortType=${filter.sortType === "asc" ? 1 : 2}&`
+    : "";
+
+  const pageParam = `pageNumber=${filter.pageNumber ?? 1}&`;
+  const sizeParam = `pageSize=${filter.pageSize ?? 5}`;
+
+  const queryString = `${nameParam}${sortStaffCodeParam}${sortFullNameParam}${sortJoinedDateParam}${sortTypeParam}${pageParam}${sizeParam}`;
+  return queryString;
 }

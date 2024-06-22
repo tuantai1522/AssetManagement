@@ -19,10 +19,11 @@ const columns: ColumnDefinition[] = [
         disablePadding: true,
         label: 'Staff Code',
         className: "font-bold",
-        rowRatio: "w-3/12",
+        rowRatio: "w-1/12",
         style: {
             border: "none",
-            borderBottom: "none"
+            borderBottom: "none",
+            minWidth: "100px"
         }
     },
     {
@@ -33,10 +34,11 @@ const columns: ColumnDefinition[] = [
         className: "font-bold",
         style: {
             border: "none",
-            borderBottom: "none"
+            borderBottom: "none",
+            minWidth: "250px"
         },
 
-        rowRatio: "w-2/12",
+        rowRatio: "w-4/12",
         // renderCell: <button color="primary" className="active:bg-black" onClick={e => {
         //     e.stopPropagation();
         //     alert("child");
@@ -65,7 +67,8 @@ const columns: ColumnDefinition[] = [
         className: "font-bold ",
         style: {
             border: "none",
-            borderBottom: "none"
+            borderBottom: "none",
+            minWidth: "120px"
         },
         rowRatio: "w-2/12",
     },
@@ -78,9 +81,9 @@ const columns: ColumnDefinition[] = [
         style: {
             border: "none",
             borderBottom: "none",
-            minWidth: "100px",
+            minWidth: "80px",
         },
-        rowRatio: "w-2/12",
+        rowRatio: "w-1/12",
     },
 
 ];
@@ -88,9 +91,6 @@ const columns: ColumnDefinition[] = [
 const rows: FilterUser[] = []
 
 export default function UserList(props: UserListProp) {
-
-    // const [order, setOrder] = useState<Order>("desc");
-    // const [orderBy, setOrderBy] = useState<string>("joinedDate");
 
     return (
         <>
