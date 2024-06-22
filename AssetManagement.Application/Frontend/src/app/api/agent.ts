@@ -91,7 +91,7 @@ const FetchWithSWR = (url: string, params?: URLSearchParams) => {
   return { data, isLoading, error, mutate };
 };
 
-const requests = {
+export const requests = {
   get: (url: string, params?: URLSearchParams) => FetchWithSWR(url, params),
   post: (url: string, body: {}) => axios.post(url, body).then(responseBody),
   postFormData: (url: string, body: any) => {
@@ -113,6 +113,7 @@ const Product = {
 };
 
 const Users = {
+  filter: () => requests.get("api/Users"),
   details: (id: string) => requests.get(`/api/users/${id}`),
 };
 

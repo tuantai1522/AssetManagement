@@ -1,4 +1,3 @@
-using AssetManagement.Application.Common.Credential;
 using AssetManagement.Application.ConfigurationOptions;
 using AssetManagement.Application.Extensions;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
@@ -25,7 +24,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSpaStaticFiles(configuration =>
 {
-    configuration.RootPath = "Frontend";
+    configuration.RootPath = "Frontend/build";
 });
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -36,15 +35,13 @@ var app = builder.Build();
 
 app.UseExceptionHandler(_ => { });
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+//
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.ConfigObject.AdditionalItems.Add("persistAuthorization", "true");
-    });
-}
-
+    c.ConfigObject.AdditionalItems.Add("persistAuthorization", "true");
+});
+//
 
 app.UseSpaStaticFiles();
 app.UseStaticFiles();
@@ -64,11 +61,13 @@ app.UseEndpoints(endpoints =>
 app.UseSpa(spa =>
 {
     spa.Options.SourcePath = "Frontend";
-
     if (app.Environment.IsDevelopment())
     {
-        //spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");
         spa.UseReactDevelopmentServer(npmScript: "start");
+    }
+    else
+    {
+        spa.Options.SourcePath = "Frontend/build";
     }
 });
 
