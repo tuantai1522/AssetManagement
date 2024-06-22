@@ -1,28 +1,17 @@
 // import { useState } from "react";
 import { useEffect, useState } from "react";
-import agent from "../../app/api/agent";
+import agent, { UserQuery } from "../../app/api/agent";
 import { Order } from "../../app/components/table/sortTable";
 import UserList from "./userList/userList";
 import { convertUtcToLocalDate } from "../../app/utils/dateUtils";
 import { FilterUser } from "../../app/models/User";
 import { Pagination, Stack } from "@mui/material";
 
-interface Query {
-  name?: string,
-  type?: string,
-  sortStaffCode?: Order,
-  sortFullName?: Order,
-  sortJoinedDate?: Order,
-  sortType?: Order,
-  pageNumber?: number,
-  pageSize?: number
-}
-
-type OrderByFieldName = "staffCode" | "fullName" | "joinedDate" | "type";
+type OrderByFieldName = "staffCode" | "fullName" | "joinedDate" | "type" | "lastUpdate";
 
 export default function ManagementUserPage() {
 
-  const [query, setQuery] = useState<Query>({
+  const [query, setQuery] = useState<UserQuery>({
     sortJoinedDate: "desc",
     pageNumber: 1,
     pageSize: 5
@@ -37,25 +26,31 @@ export default function ManagementUserPage() {
     switch (orderBy) {
       case "staffCode":
         {
-          setQuery((query) => ({ ...query, sortStaffCode: order, sortFullName: undefined, sortJoinedDate: undefined, sortType: undefined }));
+          setQuery((query) => ({ ...query, sortStaffCode: order, sortFullName: undefined, sortJoinedDate: undefined, sortType: undefined, sortLastUpdate: undefined }));
           mutate();
           break;
         }
       case "fullName":
         {
-          setQuery((query) => ({ ...query, sortStaffCode: undefined, sortFullName: order, sortJoinedDate: undefined, sortType: undefined }));
+          setQuery((query) => ({ ...query, sortStaffCode: undefined, sortFullName: order, sortJoinedDate: undefined, sortType: undefined, sortLastUpdate: undefined }));
           mutate();
           break;
         }
       case "joinedDate":
         {
-          setQuery((query) => ({ ...query, sortStaffCode: undefined, sortFullName: undefined, sortJoinedDate: order, sortType: undefined }));
-          mutate(); mutate();
+          setQuery((query) => ({ ...query, sortStaffCode: undefined, sortFullName: undefined, sortJoinedDate: order, sortType: undefined, sortLastUpdate: undefined }));
+          mutate(); 
           break;
         }
       case "type":
         {
-          setQuery((query) => ({ ...query, sortStaffCode: undefined, sortFullName: undefined, sortJoinedDate: undefined, sortType: order }));
+          setQuery((query) => ({ ...query, sortStaffCode: undefined, sortFullName: undefined, sortJoinedDate: undefined, sortType: order, sortLastUpdate: undefined }));
+          mutate();
+          break;
+        }
+        case "lastUpdate":
+        {
+          setQuery((query) => ({ ...query, sortStaffCode: undefined, sortFullName: undefined, sortJoinedDate: undefined, sortType: undefined, sortLastUpdate: order }));
           mutate();
           break;
         }

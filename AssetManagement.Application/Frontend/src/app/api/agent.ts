@@ -135,13 +135,14 @@ const agent = {
 
 export default agent;
 
-interface UserQuery {
+export interface UserQuery {
   name?: string;
   type?: string;
   sortStaffCode?: Order;
   sortFullName?: Order;
   sortJoinedDate?: Order;
   sortType?: Order;
+  sortLastUpdate?: Order;
   pageNumber?: number;
   pageSize?: number;
 }
@@ -165,10 +166,13 @@ function getUserQueryString(filter?: UserQuery) {
   const sortTypeParam = filter.sortType
     ? `sortType=${filter.sortType === "asc" ? 1 : 2}&`
     : "";
+    const sortLastUpdate = filter.sortLastUpdate
+    ? `sortLastUpdate=${filter.sortLastUpdate === "asc" ? 1 : 2}&`
+    : "";
 
   const pageParam = `pageNumber=${filter.pageNumber ?? 1}&`;
   const sizeParam = `pageSize=${filter.pageSize ?? 5}`;
 
-  const queryString = `${nameParam}${sortStaffCodeParam}${sortFullNameParam}${sortJoinedDateParam}${sortTypeParam}${pageParam}${sizeParam}`;
+  const queryString = `${nameParam}${sortStaffCodeParam}${sortFullNameParam}${sortJoinedDateParam}${sortTypeParam}${sortLastUpdate}${pageParam}${sizeParam}`;
   return queryString;
 }
