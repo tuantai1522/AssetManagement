@@ -21,7 +21,7 @@ const EditUserPage = () => {
             gender: formData.type,
             type: formData.gender,
         }
-        agent.Users.update(id, formData);
+        agent.Users.update(id, updateData);
     }
 
     if (isLoading) {

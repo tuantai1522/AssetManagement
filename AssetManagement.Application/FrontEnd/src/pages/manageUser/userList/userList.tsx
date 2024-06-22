@@ -8,6 +8,7 @@ import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import EditIcon from '@mui/icons-material/Edit';
 import agent from "../../../app/api/agent";
 import ConfirmModal from "../../../app/components/confirmModal";
+import { useNavigate } from "react-router-dom";
 export interface UserListProp {
   data: FilterUser[];
   isLoading: boolean;
@@ -18,6 +19,7 @@ export interface UserListProp {
 }
 
 export default function UserList(props: UserListProp) {
+  const navigate = useNavigate();
   const columns: ColumnDefinition[] = [
     {
       id: "staffCode",
@@ -113,7 +115,7 @@ export default function UserList(props: UserListProp) {
             className="text-gray-500"
             onClick={(e) => {
               e.stopPropagation();
-              alert("Edit");
+              navigate(`/edit-user/${params}`);
             }}
           >
             {" "}
@@ -141,7 +143,7 @@ export default function UserList(props: UserListProp) {
   // const [users, setUsers] = useState<FilterUser[]>([]);
 
   const [order, setOrder] = useState<Order>("desc");
-  const [orderBy, setOrderBy] = useState<string>("joinedDate");
+  const [orderBy, setOrderBy] = useState<string>("LastUpdatedDateTime");
 
   return (
     <>

@@ -189,10 +189,9 @@ public class UserService : IUserService
         AppUser userToUpdate = await queryable.Where(q => q.Id == userId).Include(q => q.UserRoles).ThenInclude(q => q.Role).FirstOrDefaultAsync() ?? throw new NotFoundException(ErrorStrings.USER_NOT_FOUND);
         userToUpdate.DateOfBirth = request.DateOfBirth;
         userToUpdate.JoinedDate = request.JoinedDate;
-            
-            
         userToUpdate.Gender = request.Gender;
-
+        userToUpdate.LastUpdatedDateTime = DateTime.UtcNow;
+            
         IList<String> currentRoles = await _userManager.GetRolesAsync(userToUpdate);
         if (!currentRoles.Contains(request.Type))
         {
