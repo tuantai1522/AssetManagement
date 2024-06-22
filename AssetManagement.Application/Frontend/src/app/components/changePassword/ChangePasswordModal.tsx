@@ -180,6 +180,12 @@ export default function ChangePasswordModal({ user, isOpen, onClose }: Props) {
                 />
               ) : (
                 <>
+                  <Button
+                    isLoading={isSubmitting}
+                    content="Save"
+                    isFormSubmit={true}
+                    isDisabled={!isValid}
+                  />
                   {user?.isPasswordChanged && (
                     <>
                       <Button
@@ -189,12 +195,6 @@ export default function ChangePasswordModal({ user, isOpen, onClose }: Props) {
                       />
                     </>
                   )}
-                  <Button
-                    isLoading={isSubmitting}
-                    content="Save"
-                    isFormSubmit={true}
-                    isDisabled={!isValid}
-                  />
                 </>
               )}
             </div>
