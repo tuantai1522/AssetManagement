@@ -49,7 +49,8 @@ public class UserService : IUserService
 
             Expression<Func<AppUser, bool>> filterSpecification = u => (string.IsNullOrEmpty(request.Name) || (u.FirstName + u.LastName).Contains(request.Name) || u.StaffCode.Contains(request.Name))
             && (request.Types == null || !request.Types.Any() || request.Types.Contains(u.UserRoles.Select(ur => ur.Role.Name).FirstOrDefault())
-            && u.Location == currentUser.Location);
+            && u.Location == currentUser.Location
+            && !u.IsDisabled);
 
             var totalRecord = await queryable.CountAsync();
 
@@ -111,7 +112,7 @@ public class UserService : IUserService
     private Func<IQueryable<AppUser>, IOrderedQueryable<AppUser>> GetOrderByExpression(FilterUserRequest filter)
     {
         Func<IQueryable<AppUser>, IOrderedQueryable<AppUser>> orderBy = q =>
-                q.OrderBy(u => u.FirstName + u.LastName);
+                q.OrderByDescending(u => u.JoinedDate);
 
         if (filter.SortStaffCode != null && filter.SortStaffCode.Equals(SortOption.Asc))
         {
@@ -131,21 +132,28 @@ public class UserService : IUserService
         }
         else if (filter.SortJoinedDate != null && filter.SortJoinedDate.Equals(SortOption.Asc))
         {
-            orderBy = q => q.OrderBy(u => u.FirstName + u.LastName);
+            orderBy = q => q.OrderBy(u => u.JoinedDate);
         }
         else if (filter.SortJoinedDate != null && filter.SortJoinedDate.Equals(SortOption.Desc))
         {
-            orderBy = q => q.OrderByDescending(u => u.FirstName + u.LastName);
+            orderBy = q => q.OrderByDescending(u => u.JoinedDate);
         }
         else if (filter.SortType != null && filter.SortType.Equals(SortOption.Asc))
         {
-            orderBy = q => q.OrderBy(u => u.FirstName + u.LastName);
+            orderBy = q => q.OrderBy(u => u.UserRoles.Select(ur => ur.Role.Name).FirstOrDefault());
         }
         else if (filter.SortType != null && filter.SortType.Equals(SortOption.Desc))
         {
-            orderBy = q => q.OrderByDescending(u => u.FirstName + u.LastName);
+            orderBy = q => q.OrderByDescending(u => u.UserRoles.Select(ur => ur.Role.Name).FirstOrDefault());
         }
-
+        else if (filter.SortLastUpdate != null && filter.SortLastUpdate.Equals(SortOption.Asc))
+        {
+            orderBy = q => q.OrderBy(u => u.LastUpdatedDateTime);
+        }
+        else if (filter.SortLastUpdate != null && filter.SortLastUpdate.Equals(SortOption.Desc))
+        {
+            orderBy = q => q.OrderByDescending(u => u.LastUpdatedDateTime);
+        }
         return orderBy;
     }
 
