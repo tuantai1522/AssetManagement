@@ -31,8 +31,6 @@ public static class ServiceExtension
         services.AddIdentity<AppUser, Role>(options =>
         {
             options.Password.RequireDigit = true;
-            options.Password.RequireLowercase = true;
-            options.Password.RequireUppercase = true;
             options.Password.RequireNonAlphanumeric = true;
             options.Password.RequiredLength = 8;
 
@@ -119,11 +117,9 @@ public static class ServiceExtension
     {
         var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
-        response.Headers.Add("Access-Control-Allow-Origin", "*");
-
-        response.Headers.Add("X-Pagination", JsonSerializer.Serialize(pagination, options));
-
-        response.Headers.Add("Access-Control-Expose-Headers", "X-Pagination");
+        response.Headers.Append("Access-Control-Allow-Origin", "*");
+        response.Headers.Append("X-Pagination", JsonSerializer.Serialize(pagination, options));
+        response.Headers.Append("Access-Control-Expose-Headers", "X-Pagination");
     }
 
     public static void RegisterServiceDependencies(this IServiceCollection services)
