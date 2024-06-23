@@ -265,10 +265,16 @@ public class UserService : IUserService
 
     private async Task<Role> ValidateTypeAsync(string type)
     {
-        var role = await _roleManager.Roles.Where(r => r.Name!.Equals(type, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefaultAsync() 
-            ?? throw new BadRequestException(ErrorStrings.INVALID_ROLE);
-        return role;
-    }
+		var roles = await _roleManager.Roles.ToListAsync();
+		var role = roles.Find(r => r.Name!.Equals(type, StringComparison.CurrentCultureIgnoreCase));
+
+		if (role == null)
+		{
+			throw new BadRequestException(ErrorStrings.INVALID_ROLE);
+		}
+
+		return role;
+	}
 
     private static void ValidateGender(string gender)
     {

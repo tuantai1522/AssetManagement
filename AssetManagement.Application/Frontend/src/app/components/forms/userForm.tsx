@@ -12,6 +12,7 @@ import { createFormSchema } from "../../schemas/createFormSchema";
 import { useEffect } from "react";
 import dayjs from "dayjs";
 import { UserInfoResponse } from "../../models/login/UserInfoResponse";
+import { ConstructionOutlined } from "@mui/icons-material";
 
 
 interface IFormInput extends FieldValues {
@@ -35,6 +36,7 @@ const UserForm = ({
     data
 }: UserFormProps) => {
     const navigate = useNavigate();
+    console.log('data', data);
 
     const formatDate = (date: Date) => {
         return dayjs(date);
@@ -57,40 +59,57 @@ const UserForm = ({
             });
         }
     }, [data, reset]);
-    
+
     return (
         <div className="bg-white w-[30rem] mx-auto">
             <h2 className="text-2xl font-bold text-primary mb-5">{isEditing ? 'Edit User' : 'Create New User'}</h2>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div className="flex items-center gap-5 pl-2">
                     <label className="w-[6rem]">First Name</label>
-                    <AppTextInput
-                        id="first-name-text-field-form"
+                    <Controller
                         control={control}
-                        value={data ? data.firstName : undefined}
-                        className={`grow ${isEditing ? 'bg-[#eff1f5] disabled pointer-events-none cursor-not-allowed' : ''}`}
-                        sx={{
-                            "& .MuiInputBase-input": {
-                              color: "#76797d", 
-                            },
-                          }}
                         name="firstName"
+                        render={({ field }) => (
+                            <AppTextInput
+                                {...field}
+                                id="first-name-text-field-form"
+                                control={control}
+                                name="firstName"
+                                className={`grow ${isEditing ? 'bg-[#eff1f5] disabled pointer-events-none cursor-not-allowed' : ''}`}
+                                sx={{
+                                    ...(isEditing && {
+                                        "& .MuiInputBase-input": {
+                                            color: "#76797d"
+                                        },
+                                    })
+                                }}
+                            />
+                        )}
                     />
+                    
                 </div>
 
                 <div className="flex items-center gap-5 pl-2">
                     <label className="w-[6rem]">Last Name</label>
-                    <AppTextInput
-                        id="last-name-text-field-form"
+                    <Controller
                         control={control}
-                        value={data ? data.lastName : undefined}
-                        className={`grow ${isEditing ? 'bg-[#eff1f5] disabled pointer-events-none cursor-not-allowed' : ''}`}
-                        sx={{
-                            "& .MuiInputBase-input": {
-                              color: "#76797d", 
-                            },
-                          }}
                         name="lastName"
+                        render={({ field }) => (
+                            <AppTextInput
+                                {...field}
+                                id="last-name-text-field-form"
+                                control={control}
+                                name="lastName"
+                                className={`grow ${isEditing ? 'bg-[#eff1f5] disabled pointer-events-none cursor-not-allowed' : ''}`}
+                                sx={{
+                                    ...(isEditing && {
+                                        "& .MuiInputBase-input": {
+                                            color: "#76797d"
+                                        },
+                                    })
+                                }}
+                            />
+                        )}
                     />
                 </div>
 
@@ -106,7 +125,6 @@ const UserForm = ({
                                     format="DD/MM/YYYY"
                                     disableFuture
                                     className="grow"
-                                    value={data ? formatDate(data.dateOfBirth) : undefined}
                                     slotProps={{
                                         textField: {
                                             size: 'small',
@@ -135,8 +153,8 @@ const UserForm = ({
                                     value={field.value || Gender.Female} // Ensure a default value is set if field.value is undefined
                                     onChange={(e) => field.onChange(e.target.value)}
                                 >
-                                    <FormControlLabel value={Gender.Female} control={<Radio sx={{ '&.Mui-checked': { color: '#cf2338' } }} />} label="Female" /> 
-                                    <FormControlLabel value={Gender.Male} control={<Radio sx={{ '&.Mui-checked': { color: '#cf2338' } }} />} label="Male" />
+                                    <FormControlLabel value={Gender.Female} control={<Radio sx={{ '&.Mui-checked': { color: '#cf2338' } }} />} label="Female" />
+                                    <FormControlLabel value={Gender.Male}  control={<Radio sx={{ '&.Mui-checked': { color: '#cf2338' } }} />} label="Male" />
                                 </RadioGroup>
                             )}
                         />
@@ -154,7 +172,7 @@ const UserForm = ({
                                     {...field}
                                     format="DD/MM/YYYY"
                                     className="grow"
-                                    value={data ? formatDate(data.joinedDate) : undefined}
+                                    // value={data ? formatDate(data.joinedDate) : undefined}
                                     slotProps={{
                                         textField: {
                                             size: 'small',
@@ -182,10 +200,10 @@ const UserForm = ({
                                         {...field}
                                         id="type-selection-form"
                                         error={!!error}
-                                        value={field.value || ''} 
+                                        value={field.value || ''}
                                         onChange={(e) => field.onChange(e.target.value)}
                                     >
-                                        <MenuItem value={Type.Staff}>Staff</MenuItem> 
+                                        <MenuItem value={Type.Staff}>Staff</MenuItem>
                                         <MenuItem value={Type.Admin}>Admin</MenuItem>
                                     </Select>
                                     {error && (
