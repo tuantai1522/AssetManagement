@@ -1,5 +1,7 @@
-import { TextField } from "@mui/material";
+import { InputAdornment, TextField } from "@mui/material";
 import { useController, UseControllerProps } from "react-hook-form";
+
+import SearchIcon from "@mui/icons-material/Search";
 
 interface Props extends UseControllerProps {
   id?: string;
@@ -12,7 +14,6 @@ interface Props extends UseControllerProps {
   error?: boolean;
   helperText?: string;
   className?: string;
-  InputProps?: any | undefined;
   defaultValue?: string | "";
   value?: any | undefined;
   maxRows?: number;
@@ -23,7 +24,7 @@ interface Props extends UseControllerProps {
   isApplyHelperText?: boolean;
 }
 
-export default function AppTextInput({
+export default function AppSearchInput({
   isApplyHelperText = true,
   ...props
 }: Props) {
@@ -56,7 +57,13 @@ export default function AppTextInput({
             : fieldState.error?.message
           : undefined
       }
-      {...(props.InputProps && `inputProps=${props.InputProps}`)}
+      InputProps={{
+        endAdornment: (
+          <InputAdornment position="end">
+            <SearchIcon></SearchIcon>
+          </InputAdornment>
+        ),
+      }}
     />
   );
 }

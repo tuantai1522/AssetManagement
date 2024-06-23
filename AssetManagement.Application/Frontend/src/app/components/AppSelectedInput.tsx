@@ -1,5 +1,12 @@
-import { TextField } from "@mui/material";
+import { InputAdornment, MenuItem, TextField } from "@mui/material";
 import { useController, UseControllerProps } from "react-hook-form";
+
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
+
+interface Item {
+  id: string;
+  name: string;
+}
 
 interface Props extends UseControllerProps {
   id?: string;
@@ -12,7 +19,6 @@ interface Props extends UseControllerProps {
   error?: boolean;
   helperText?: string;
   className?: string;
-  InputProps?: any | undefined;
   defaultValue?: string | "";
   value?: any | undefined;
   maxRows?: number;
@@ -21,9 +27,11 @@ interface Props extends UseControllerProps {
   onKeyDown?: any;
   onChange?: any;
   isApplyHelperText?: boolean;
+
+  items: Array<Item>;
 }
 
-export default function AppTextInput({
+export default function AppSelectedInput({
   isApplyHelperText = true,
   ...props
 }: Props) {
@@ -33,9 +41,14 @@ export default function AppTextInput({
     <TextField
       {...props}
       {...field}
-      id={props.id}
+      select
+      SelectProps={{
+        IconComponent: () => null,
+      }}
+      defaultValue={props.items && props.items[0].name}
       label={props.label}
-      sx={props.sx ? props.sx : ""}
+      id={props.id}
+      sx={{ ...props.sx, width: 180 }}
       multiline={props.multiline}
       rows={props.rows}
       maxRows={props.maxRows}
@@ -56,7 +69,19 @@ export default function AppTextInput({
             : fieldState.error?.message
           : undefined
       }
-      {...(props.InputProps && `inputProps=${props.InputProps}`)}
-    />
+      InputProps={{
+        endAdornment: (
+          <InputAdornment position="end">
+            <FilterAltIcon></FilterAltIcon>
+          </InputAdornment>
+        ),
+      }}
+    >
+      {props.items.map((option) => (
+        <MenuItem key={option.id} value={option.name}>
+          {option.name}
+        </MenuItem>
+      ))}
+    </TextField>
   );
 }
