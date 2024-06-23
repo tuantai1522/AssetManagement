@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AppTable, { ColumnDefinition, Order } from "../../../app/components/table/sortTable";
 import { FilterUser } from "../../../app/models/User";
 import { Button } from "@mui/material";
@@ -6,6 +6,7 @@ export interface UserListProp {
     data: FilterUser[],
     isLoading: boolean,
     error: any,
+    onClickOnUser: (rowId: string) => void
     // setData: (data: FilterUser[]) => void
 }
 
@@ -90,7 +91,7 @@ export default function UserList(props: UserListProp) {
 
     const [order, setOrder] = useState<Order>("desc");
     const [orderBy, setOrderBy] = useState<string>("joinedDate");
-
+    
 
     return (
         <>
@@ -101,7 +102,7 @@ export default function UserList(props: UserListProp) {
                 setOrderByFieldName={setOrderBy}
                 columns={columns}
                 rows={props.data}
-                handleClick={() => { alert("Test") }}
+                handleClick={(event, rowId) => props.onClickOnUser(rowId)}
             />
         </>
     );
