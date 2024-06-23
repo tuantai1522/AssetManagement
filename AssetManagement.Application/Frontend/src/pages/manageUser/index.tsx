@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import agent, { UserQuery } from "../../app/api/agent";
 import { Order } from "../../app/components/table/sortTable";
+import UserInfo from "../../app/components/userInfo/userInfo";
 import UserList from "./userList/userList";
 import { convertUtcToLocalDate } from "../../app/utils/dateUtils";
 import { FilterUser } from "../../app/models/User";
@@ -10,6 +11,8 @@ import { Pagination, Stack } from "@mui/material";
 type OrderByFieldName = "staffCode" | "fullName" | "joinedDate" | "type" | "lastUpdate";
 
 export default function ManagementUserPage() {
+  const [clickOnUser, setClickOnUser] = useState<boolean>(false)
+  const [userId, setUserId] = useState<string>("0")
 
   const [query, setQuery] = useState<UserQuery>({
     sortJoinedDate: "desc",
@@ -21,6 +24,7 @@ export default function ManagementUserPage() {
   const [orderBy, setOrderBy] = useState<OrderByFieldName>("joinedDate");
 
   const { data, isLoading, error, mutate } = agent.Users.filter(query);
+  const {data:userData, isLoading:userLoading, error:userError} = agent.Users.details(userId);
 
   useEffect(() => {
     switch (orderBy) {
@@ -77,7 +81,10 @@ export default function ManagementUserPage() {
   };
 
   console.log(`Data: `, data);
-
+  const handleClickOnUser = (rowId:string) => {
+    setClickOnUser(true);
+    setUserId(data.items.result[rowId].id);
+  }
   return (
     <div className="flex justify-center h-full">
       <div className="container">
@@ -94,6 +101,7 @@ export default function ManagementUserPage() {
             setOrder={setOrder}
             orderBy={orderBy}
             setOrderBy={setOrderBy}
+            handleClick={(event, rowId) => handleClickOnUser(rowId)}
           />
 
           <Stack
@@ -105,6 +113,14 @@ export default function ManagementUserPage() {
           </Stack>
         </div>
       </div>
+      <UserInfo
+        isOpen={clickOnUser}
+        isLoading = {userLoading}
+        userData={userData?.result}
+        onClose={() => {
+          setClickOnUser(false);
+        }}
+      ></UserInfo>
     </div>
   );
 }

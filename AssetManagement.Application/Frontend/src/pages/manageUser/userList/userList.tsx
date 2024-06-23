@@ -10,6 +10,7 @@ export interface UserListProp {
     setOrder: (order: Order) => void,
     orderBy: any,
     setOrderBy: (orderBy: any) => void,
+    handleClick: (event:any, rowId: string) => void,
 }
 
 const columns: ColumnDefinition[] = [
@@ -101,7 +102,7 @@ export default function UserList(props: UserListProp) {
                 setOrderByFieldName={props.setOrderBy}
                 columns={columns}
                 rows={props.data}
-                handleClick={() => { }}
+                handleClick={props.handleClick}
             />
         </div>
     );
