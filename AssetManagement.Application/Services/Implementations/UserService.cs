@@ -19,13 +19,13 @@ using System.Text.RegularExpressions;
 using System.Linq;
 
 namespace AssetManagement.Application.Services.Implementations;
-public class UserService : IUserService
+public partial class UserService : IUserService
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly ILogger<UserService> _logger;
     private readonly ICurrentUser _currentUser;
     private readonly IMapper _mapper;
-	private readonly RoleManager<Role> _roleManager;
+    private readonly RoleManager<Role> _roleManager;
 
     public UserService(UserManager<AppUser> userManager, ILogger<UserService> logger, ICurrentUser currentUser, IMapper mapper, RoleManager<Role> roleManager)
     {
@@ -118,51 +118,42 @@ public class UserService : IUserService
 
     public async Task<UserInfoResponse> CreateUserAsync(CreateUserRequest request)
     {
-        try
+        ValidateFirstName(request.FirstName);
+        ValidateLastName(request.LastName);
+        ValidateGender(request.Gender);
+        ValidateDateOfBirth(request.DateOfBirth);
+        ValidateJoinedDate(request.DateOfBirth, request.JoinedDate);
+        await ValidateTypeAsync(request.Type);
+
+        var firstName = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(request.FirstName.ToLower());
+        var lastName = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(request.LastName.ToLower());
+        var userName = await GenerateUsernameAsync(firstName, lastName);
+        var password = userName + Constants.PASSWORD_SEPERATOR + request.DateOfBirth.ToString("ddmmyyyy");
+
+        var user = new AppUser()
         {
-            ValidateFirstName(request.FirstName);
-            ValidateLastName(request.LastName);
-            ValidateGender(request.Gender);
-            ValidateDateOfBirth(request.DateOfBirth);
-            ValidateJoinedDate(request.DateOfBirth, request.JoinedDate);
-            await ValidateTypeAsync(request.Type);
+            UserName = userName,
+            FirstName = firstName,
+            LastName = lastName,
+            Email = userName + Constants.EMAIL_SUFFIX,
+            Gender = request.Gender,
+            Location = await GetAndValidateLocationAsync(),
+            DateOfBirth = request.DateOfBirth,
+            JoinedDate = request.JoinedDate,
+            IsPasswordChanged = false,
+            StaffCode = await GenerateStaffCodeAsync(),
+            IsDisabled = false,
+            CreatedDateTime = DateTime.UtcNow,
+            LastUpdatedDateTime = DateTime.UtcNow,
+        };
 
-            var firstName = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(request.FirstName.ToLower());
-            var lastName = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(request.LastName.ToLower());
-            var userName = await GenerateUsernameAsync(firstName, lastName);
-            var password = userName + Constants.PASSWORD_SEPERATOR + request.DateOfBirth.ToString("ddmmyyyy");
-
-            var user = new AppUser()
-            {
-                UserName = userName,
-                FirstName = firstName,
-                LastName = lastName,
-                Email = userName + Constants.EMAIL_SUFFIX, 
-                Gender = request.Gender,
-                Location = await GetAndValidateLocationAsync(),
-                DateOfBirth = request.DateOfBirth,
-                JoinedDate = request.JoinedDate,
-                IsPasswordChanged = false,
-                StaffCode = await GenerateStaffCodeAsync(),
-                IsDisabled = false,
-                CreatedDateTime = DateTime.UtcNow,
-                LastUpdatedDateTime = DateTime.UtcNow,
-            };
-
-            var result = await _userManager.CreateAsync(user, password);
-            if (result.Succeeded)
-            {
-                await _userManager.AddToRoleAsync(user, request.Type);
-                return _mapper.Map<UserInfoResponse>(user);
-            }
-            throw new Exception(string.Join(". ", result.Errors.Select(p => p.Description)));
-        }
-        catch (Exception e)
+        var result = await _userManager.CreateAsync(user, password);
+        if (result.Succeeded)
         {
-            _logger.LogError("Error when execute {} method.\nDate: {}.\nDetail: {}", nameof(this.CreateUserAsync),
-                DateTime.UtcNow, e.Message);
-            throw new Exception($"Error when execute {nameof(this.CreateUserAsync)} method");
+            await _userManager.AddToRoleAsync(user, request.Type);
+            return _mapper.Map<UserInfoResponse>(user);
         }
+        throw new Exception(string.Join(". ", result.Errors.Select(p => p.Description)));
     }
 
     public async Task<DisableUserResponse> DisableUserAsync(DisableUserRequest request)
@@ -185,23 +176,23 @@ public class UserService : IUserService
             throw new Exception($"Error when execute {nameof(this.DisableUserAsync)} method");
         }
     }
-    
+
     public async Task<UserInfoResponse> UpdateUserAsync(Guid userId, UpdateUserRequest request)
     {
         try
         {
-			ValidateGender(request.Gender);
-			ValidateDateOfBirth(request.DateOfBirth);
-			ValidateJoinedDate(request.DateOfBirth, request.JoinedDate);
-			await ValidateTypeAsync(request.Role);
+            ValidateGender(request.Gender);
+            ValidateDateOfBirth(request.DateOfBirth);
+            ValidateJoinedDate(request.DateOfBirth, request.JoinedDate);
+            await ValidateTypeAsync(request.Role);
 
-			_logger.LogInformation("Updating user with ID: {UserId}", userId);
+            _logger.LogInformation("Updating user with ID: {UserId}", userId);
             var queryable = _userManager.Users;
             AppUser userToUpdate = await queryable.Where(q => q.Id == userId).Include(q => q.UserRoles).ThenInclude(q => q.Role).FirstOrDefaultAsync() ?? throw new NotFoundException(ErrorStrings.USER_NOT_FOUND);
             userToUpdate.DateOfBirth = request.DateOfBirth;
             userToUpdate.JoinedDate = request.JoinedDate;
-            
-            
+
+
             userToUpdate.Gender = request.Gender;
 
             IList<String> currentRoles = await _userManager.GetRolesAsync(userToUpdate);
@@ -277,25 +268,25 @@ public class UserService : IUserService
         return orderBy;
     }
 
-    private void ValidateFirstName(string firstName)
+    private static void ValidateFirstName(string firstName)
     {
         if (firstName.Split(' ').Length > Constants.NUMBER_OF_WORDS_IN_FIRSTNAME) throw new BadRequestException(ErrorStrings.INVALID_FIRSTNAME_NUMBER_OF_WORDS);
-        if (firstName.All(c => char.IsLetter(c))) throw new BadRequestException(ErrorStrings.INVALID_FIRSTNAME_CHARACTERS);
+        if (!firstName.All(c => char.IsLetter(c))) throw new BadRequestException(ErrorStrings.INVALID_FIRSTNAME_CHARACTERS);
     }
 
-    private void ValidateLastName(string lastname)
+    private static void ValidateLastName(string lastname)
     {
-        if (lastname.All(c => char.IsLetter(c) || char.IsWhiteSpace(c))) throw new BadRequestException(ErrorStrings.INVALID_LASTNAME_CHARACTERS);
+        if (!lastname.All(c => char.IsLetter(c) || char.IsWhiteSpace(c))) throw new BadRequestException(ErrorStrings.INVALID_LASTNAME_CHARACTERS);
     }
 
     private async Task<Role> ValidateTypeAsync(string type)
     {
-        var role = await _roleManager.Roles.Where(r => r.Name!.ToLower() == type.ToLower()).FirstOrDefaultAsync();
-        if (role == null) throw new BadRequestException(ErrorStrings.INVALID_ROLE);
+        var role = await _roleManager.Roles.Where(r => r.Name!.Equals(type, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefaultAsync() 
+            ?? throw new BadRequestException(ErrorStrings.INVALID_ROLE);
         return role;
     }
 
-    private void ValidateGender(string gender)
+    private static void ValidateGender(string gender)
     {
         if (!Enum.TryParse(gender, out Gender resultGender)) throw new BadRequestException(ErrorStrings.INVALID_GENDER);
     }
@@ -306,7 +297,7 @@ public class UserService : IUserService
         var newStaffCode = Constants.STAFFCODE_PREFIX;
         if (latestStaff != null)
         {
-            string numberStr = Regex.Match(latestStaff.StaffCode, @"\d+").Value;
+            string numberStr = GetNumbersFromStringRegex().Match(latestStaff.StaffCode).Value;
             newStaffCode += (int.Parse(numberStr) + 1).ToString().PadLeft(Constants.PADDING_STAFFCODE_NUMBERS, '0');
         }
         else
@@ -325,16 +316,16 @@ public class UserService : IUserService
         return adminUser.Location;
     }
 
-    private void ValidateDateOfBirth(DateTime dateOfBirth)
+    private static void ValidateDateOfBirth(DateTime dateOfBirth)
     {
         var now = DateTime.Now;
         if (now < dateOfBirth) throw new BadRequestException(ErrorStrings.INVALID_DATE_OF_BIRTH_IN_FUTURE);
         if (dateOfBirth.AddYears(Constants.MINIMUM_AGE) > now) throw new BadRequestException(ErrorStrings.INVALID_DATE_OF_BIRTH);
     }
 
-    private void ValidateJoinedDate(DateTime dateOfBirth, DateTime joinedDate)
+    private static void ValidateJoinedDate(DateTime dateOfBirth, DateTime joinedDate)
     {
-        if ((joinedDate.DayOfWeek == DayOfWeek.Saturday) || (joinedDate.DayOfWeek == DayOfWeek.Sunday)) 
+        if ((joinedDate.DayOfWeek == DayOfWeek.Saturday) || (joinedDate.DayOfWeek == DayOfWeek.Sunday))
             throw new BadRequestException(ErrorStrings.INVALID_JOINED_DATE_RELATE_TO_WEEKDAY);
         if (dateOfBirth.AddYears(Constants.MINIMUM_AGE) > joinedDate)
             throw new BadRequestException(ErrorStrings.INVALID_JOINED_DATE_RELATE_TO_DOB);
@@ -347,19 +338,21 @@ public class UserService : IUserService
         var latestUserContainsSameUsername = await _userManager.Users.Where(u => u.UserName!.Contains(userName)).OrderByDescending(u => u.UserName).FirstOrDefaultAsync();
         if (latestUserContainsSameUsername != null && latestUserContainsSameUsername.UserName != null)
         {
-            int number = 0;
-            string numberStr = Regex.Match(latestUserContainsSameUsername.UserName, @"\d+").Value;
-            if (int.TryParse(numberStr, out number) && number > 0)
+            string numberStr = GetNumbersFromStringRegex().Match(latestUserContainsSameUsername.UserName).Value;
+            if (int.TryParse(numberStr, out int number) && number > 0)
             {
-                userName = userName + (number + 1).ToString();
+                userName += (number + 1).ToString();
             }
-            else
-            {
-                userName = userName + "1";
+            else 
+            { 
+                userName += "1"; 
             }
         }
         return userName;
     }
+
+    [GeneratedRegex(@"\d+")]
+    private static partial Regex GetNumbersFromStringRegex();
     #endregion
 }
 

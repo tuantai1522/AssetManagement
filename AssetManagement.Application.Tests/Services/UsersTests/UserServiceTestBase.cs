@@ -36,7 +36,7 @@ public class UserServiceTestBase
             mc.AddProfile(new MappingProfile());
         });
         _mapperConfig = mappingConfig.CreateMapper();
-        RoleManagerMock = new Mock<RoleManager<Role>>();
+        RoleManagerMock = new Mock<RoleManager<Role>>(Mock.Of<IRoleStore<Role>>(), null!, null!, null!, null!);
         UserService = new UserService(UserManagerMock.Object, LoggerMock.Object, CurrentUserMock.Object, _mapperConfig, RoleManagerMock.Object);
 
         Fixture = new Fixture();
