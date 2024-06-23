@@ -17,6 +17,6 @@ namespace AssetManagement.Contracts.Dtos.UserDtos.Requests
 		[Required]
 		public required string Gender { get; set; }
 		[Required]
-		public required string Role { get; set; }
+		public required string Type { get; set; }
 	}
 }

@@ -1,8 +1,7 @@
-﻿using AssetManagement.Domain.Entities;
-using Microsoft.AspNetCore.Identity;
+﻿using AssetManagement.Data.Data.SeedDatabase;
+using AssetManagement.Domain.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Reflection;
 
 namespace AssetManagement.Data.Data
@@ -19,6 +18,9 @@ namespace AssetManagement.Data.Data
         {
             base.OnModelCreating(builder);
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+            UserSeeder.SeedUsers(builder);
+
         }
     }
 }

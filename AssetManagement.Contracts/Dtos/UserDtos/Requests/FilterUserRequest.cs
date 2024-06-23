@@ -10,6 +10,7 @@ public class FilterUserRequest
     public SortOption? SortFullName { get; set; }
     public SortOption? SortJoinedDate { get; set; }
     public SortOption? SortType { get; set; }
+    public SortOption? SortLastUpdate { get; set; }
     public int? PageNumber { get; set; }
     public int? PageSize { get; set; }
 }

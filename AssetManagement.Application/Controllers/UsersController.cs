@@ -42,7 +42,7 @@ public class UsersController : ControllerBase
     [Authorize(Roles = $"{RoleConstant.AdminRole}")]
     public async Task<ActionResult<BaseResult<UserInfoResponse>>> GetUserInfoAsync([FromRoute] Guid id)
     {
-        var data = await _userService.GetUserById(id);
+        var data = await _userService.GetUserByIdAsync(id);
         var result = new BaseResult<UserInfoResponse>()
         {
             IsSuccess = true,
@@ -68,9 +68,9 @@ public class UsersController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = $"{RoleConstant.AdminRole}")]
-    public async Task<IActionResult> DisableAsync([FromBody] DisableUserRequest request)
+    public async Task<IActionResult> DisableAsync(Guid id)
     {
-        var data = await _userService.DisableUserAsync(request);
+        var data = await _userService.DisableUserAsync(id);
         var result = new BaseResult<DisableUserResponse>()
         {
             IsSuccess = true,
