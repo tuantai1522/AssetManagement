@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using MockQueryable.Moq;
 using Moq;
 
+namespace AssetManagement.Application.Tests.Services.UsersTests;
 public class CreateUserAsyncTest : UserServiceTestBase
 {
     public CreateUserAsyncTest() : base() { }
@@ -36,12 +37,18 @@ public class CreateUserAsyncTest : UserServiceTestBase
         };
 
         RoleManagerMock.Setup(r => r.Roles).Returns(Roles.AsQueryable().BuildMockDbSet().Object);
-        
-        UserManagerMock.Setup(x => x.Users).Returns(Users.AsQueryable().BuildMockDbSet().Object);
+
+        var mockData = Fixture.Build<AppUser>().CreateMany(8).ToList();
+
+        UserManagerMock.Setup(x => x.Users).Returns(mockData.AsQueryable().BuildMock());
         UserManagerMock.Setup(x => x.CreateAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Success);
         UserManagerMock.Setup(x => x.AddToRoleAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Success);
+
+        CurrentUserMock.Setup(m => m.UserId).Returns(mockData[0].Id);
+        UserManagerMock.Setup(m => m.FindByIdAsync(It.IsAny<string>()))
+                .ReturnsAsync(mockData[0]);
 
         // Act
         var result = await UserService.CreateUserAsync(request);
