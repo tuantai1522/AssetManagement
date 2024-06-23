@@ -12,5 +12,5 @@ export interface FilterUser {
   fullName?: string;
   username?: string;
   joinedDate?: Date;
-  types: Array<string>[];
+  types: string[];
 }

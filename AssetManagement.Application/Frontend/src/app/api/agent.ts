@@ -4,6 +4,7 @@ import useSWR from "swr";
 import { PaginatedResponse } from "../models/Pagination";
 import { BaseResult } from "../models/BaseResult";
 import { User } from "../models/User";
+import { Order } from "../components/table/sortTable";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 axios.defaults.headers.post["Content-Type"] = "application/json";
@@ -113,7 +114,10 @@ const Product = {
 };
 
 const Users = {
-  filter: () => requests.get("api/Users"),
+  filter: (query?: UserQuery) => {
+    const queryString = getUserQueryString(query);
+    return requests.get(`api/Users?${queryString}`);
+  },
   details: (id: string) => requests.get(`/api/users/${id}`),
 };
 
@@ -126,7 +130,49 @@ const Authentication = {
 const agent = {
   Product,
   Authentication,
-  Users
+  Users,
 };
 
 export default agent;
+
+export interface UserQuery {
+  name?: string;
+  type?: string;
+  sortStaffCode?: Order;
+  sortFullName?: Order;
+  sortJoinedDate?: Order;
+  sortType?: Order;
+  sortLastUpdate?: Order;
+  pageNumber?: number;
+  pageSize?: number;
+}
+
+function getUserQueryString(filter?: UserQuery) {
+  if (!filter) {
+    return "";
+  }
+
+  const nameParam = filter.name ? `name=${filter.name}&` : "";
+  // const genderParam = filter.type !== undefined && filter.type !== null ? `gender=${filter.gender}&` : '';
+  const sortStaffCodeParam = filter.sortStaffCode
+    ? `sortStaffCode=${filter.sortStaffCode === "asc" ? 1 : 2}&`
+    : "";
+  const sortFullNameParam = filter.sortFullName
+    ? `sortFullName=${filter.sortFullName === "asc" ? 1 : 2}&`
+    : "";
+  const sortJoinedDateParam = filter.sortJoinedDate
+    ? `sortJoinedDate=${filter.sortJoinedDate === "asc" ? 1 : 2}&`
+    : "";
+  const sortTypeParam = filter.sortType
+    ? `sortType=${filter.sortType === "asc" ? 1 : 2}&`
+    : "";
+    const sortLastUpdate = filter.sortLastUpdate
+    ? `sortLastUpdate=${filter.sortLastUpdate === "asc" ? 1 : 2}&`
+    : "";
+
+  const pageParam = `pageNumber=${filter.pageNumber ?? 1}&`;
+  const sizeParam = `pageSize=${filter.pageSize ?? 5}`;
+
+  const queryString = `${nameParam}${sortStaffCodeParam}${sortFullNameParam}${sortJoinedDateParam}${sortTypeParam}${sortLastUpdate}${pageParam}${sizeParam}`;
+  return queryString;
+}
