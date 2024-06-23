@@ -19,7 +19,6 @@ import { Token } from "../../app/models/Token";
 import { useNavigate } from "react-router-dom";
 import { LoginResponse } from "../../app/models/login/LoginReponse";
 import AppButton from "../../app/components/buttons/Button";
-import Test from "./Test";
 
 interface FormValues extends FieldValues {
   Username: string;
@@ -205,8 +204,6 @@ const LoginPage = () => {
           </Grid>
         </Box>
       </Container>
-
-      <Test />
     </>
   );
 };
