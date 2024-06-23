@@ -6,8 +6,9 @@ import UserInfo from "../../app/components/userInfo/userInfo";
 import UserList from "./userList/userList";
 import { convertUtcToLocalDate } from "../../app/utils/dateUtils";
 import { FilterUser } from "../../app/models/User";
-import { Pagination, Stack, TextField } from "@mui/material";
-import AppTextInput from "../../app/components/AppTextInput";
+import { IconButton, Stack } from "@mui/material";
+import UsePagination from "../../app/components/paginationButtons/paginationButtons";
+import { Search } from "@mui/icons-material";
 
 type OrderByFieldName = "staffCode" | "fullName" | "joinedDate" | "type" | "lastUpdate";
 
@@ -27,7 +28,7 @@ export default function ManagementUserPage() {
   const [orderBy, setOrderBy] = useState<OrderByFieldName>("joinedDate");
 
   const { data, isLoading, error, mutate } = agent.Users.filter(query);
-  const {data:userData, isLoading:userLoading, error:userError} = agent.Users.details(userId);
+  const { data: userData, isLoading: userLoading, error: userError } = agent.Users.details(userId);
 
   useEffect(() => {
     switch (orderBy) {
@@ -67,17 +68,6 @@ export default function ManagementUserPage() {
 
   }, [orderBy, order])
 
-  // useEffect(() => {
-  //   const reloadData = async () => {
-  //     await mutate(query);
-  //   };
-
-  //   reloadData();
-
-  //   return () => {
-  //   };
-  // }, [query.pageNumber]);
-
   const handlePageNumberChange = (value: any) => {
     const pageNumber = Number(value);
     setQuery((prevQuery) => ({ ...prevQuery, pageNumber }));
@@ -89,7 +79,7 @@ export default function ManagementUserPage() {
     setSearchInput(value);
   }
 
-  const handleSearchClick = () => {
+  const handleSerchSubmit = () => {
     setQuery((prevQuery) => ({
       ...prevQuery,
       name: searchInput,
@@ -99,7 +89,7 @@ export default function ManagementUserPage() {
   }
 
   console.log(`Data: `, data);
-  const handleClickOnUser = (rowId:string) => {
+  const handleClickOnUser = (rowId: string) => {
     setClickOnUser(true);
     setUserId(data.items.result[rowId].id);
   }
@@ -121,7 +111,9 @@ export default function ManagementUserPage() {
             spacing={2}
           >
             <input type="text" placeholder="Search" name="name" value={searchInput} onChange={handleQueryInputChange} />
-            <button onClick={handleSearchClick}>Search</button>
+            <IconButton aria-label="Search" onClick={handleSerchSubmit} size="small">
+              <Search />
+            </IconButton>
 
           </Stack>
 
@@ -146,13 +138,13 @@ export default function ManagementUserPage() {
             justifyContent="flex-end"
             alignItems="baseline"
           >
-            <Pagination count={data?.metaData?.totalPageCount ?? 1} onChange={(event, value) => handlePageNumberChange(value)} variant="outlined" shape="rounded" />
+            <UsePagination totalPage={data?.metaData?.totalPageCount ?? 1} onChange={handlePageNumberChange} />
           </Stack>
         </div>
       </div>
       <UserInfo
         isOpen={clickOnUser}
-        isLoading = {userLoading}
+        isLoading={userLoading}
         userData={userData?.result}
         onClose={() => {
           setClickOnUser(false);
