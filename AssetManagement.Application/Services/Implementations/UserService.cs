@@ -19,7 +19,7 @@ using System.Text.RegularExpressions;
 using System.Linq;
 
 namespace AssetManagement.Application.Services.Implementations;
-public partial class UserService : IUserService
+public class UserService : IUserService
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly ILogger<UserService> _logger;
@@ -297,7 +297,7 @@ public partial class UserService : IUserService
         var newStaffCode = Constants.STAFFCODE_PREFIX;
         if (latestStaff != null)
         {
-            string numberStr = GetNumbersFromStringRegex().Match(latestStaff.StaffCode).Value;
+            string numberStr = Regex.Match(latestStaff.StaffCode, @"\d+").Value;
             newStaffCode += (int.Parse(numberStr) + 1).ToString().PadLeft(Constants.PADDING_STAFFCODE_NUMBERS, '0');
         }
         else
@@ -338,7 +338,7 @@ public partial class UserService : IUserService
         var latestUserContainsSameUsername = await _userManager.Users.Where(u => u.UserName!.Contains(userName)).OrderByDescending(u => u.UserName).FirstOrDefaultAsync();
         if (latestUserContainsSameUsername != null && latestUserContainsSameUsername.UserName != null)
         {
-            string numberStr = GetNumbersFromStringRegex().Match(latestUserContainsSameUsername.UserName).Value;
+            string numberStr = Regex.Match(latestUserContainsSameUsername.UserName, @"\d+").Value;
             if (int.TryParse(numberStr, out int number) && number > 0)
             {
                 userName += (number + 1).ToString();
@@ -350,9 +350,6 @@ public partial class UserService : IUserService
         }
         return userName;
     }
-
-    [GeneratedRegex(@"\d+")]
-    private static partial Regex GetNumbersFromStringRegex();
     #endregion
 }
 
