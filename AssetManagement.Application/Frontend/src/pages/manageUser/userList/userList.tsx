@@ -40,12 +40,6 @@ const columns: ColumnDefinition[] = [
         },
 
         rowRatio: "w-4/12",
-        // renderCell: <button color="primary" className="active:bg-black" onClick={e => {
-        //     e.stopPropagation();
-        //     alert("child");
-        // }
-        // } > Test</button>
-
     },
     {
         id: 'username',

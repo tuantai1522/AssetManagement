@@ -119,7 +119,7 @@ export default function ManagementUserPage() {
                 className="!rounded-l-md !border !border-gray-400 !border-r-0"
               />
 
-              <div onClick={handleSerchSubmit} className="border border-gray-500 rounded-r-md mx-0 hover:cursor-pointer" style={{ margin: 0, padding: "6px" }}>
+              <div onClick={handleSerchSubmit} className="border border-gray-500 border-l-0 rounded-r-md mx-0 hover:cursor-pointer" style={{ margin: 0, padding: "6px" }}>
                 <Search className="mx-0" />
               </div>
             </Stack>

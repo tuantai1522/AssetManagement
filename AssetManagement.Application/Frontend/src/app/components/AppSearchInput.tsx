@@ -36,10 +36,15 @@ export default function AppSearchInput({
         '& .MuiOutlinedInput-root': {
           '& > fieldset': {
             border: "1px solid gray",
-            borderRight: 'none',
+            // borderRight: 'none',
             borderRadius: "6px 0  0 6px",
           },
-        },
+          '&.Mui-focused fieldset': {
+            border: "2px solid #cf2338",
+            // borderRight: 'none',
+            borderRadius: "6px 0  0 6px"
+          }
+        },        
         minWidth: "200px",
         maxWidth: "350px",
         ...props.sx
