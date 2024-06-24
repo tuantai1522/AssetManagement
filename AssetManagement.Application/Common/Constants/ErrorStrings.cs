@@ -15,9 +15,9 @@
         public const string INVALID_GENDER = "Invalid gender";
         public const string INVALID_LOCATION = "Invalid location";
 
-        public const string ROLE_NOT_DELETED = "User's Role cannot be deleted";
-        public const string ROLE_NOT_EXIST = "Role does not exist";
-        public const string USER_ROLE_ADD = "Cannot Add Role to User";
-        public const string USER_UPDATE = "Cannot Update User";
+        public const string CANNOT_REMOVE_CURRENT_ROLE = "User's Role cannot be deleted";
+        public const string ROLE_NOT_FOUND = "Role does not exist";
+        public const string CANNOT_ADD_ROLE_TO_USER = "Cannot Add Role to User";
+        public const string CANNOT_UPDATE_USER = "Cannot Update User";
     }
 }

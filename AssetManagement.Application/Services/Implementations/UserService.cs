@@ -144,14 +144,23 @@ public class UserService : IUserService
             IsPasswordChanged = false,
             StaffCode = await GenerateStaffCodeAsync(),
             IsDisabled = false,
-            CreatedDateTime = DateTime.UtcNow,
-            LastUpdatedDateTime = DateTime.UtcNow,
+            CreatedDateTime = DateTime.Now,
+            LastUpdatedDateTime = DateTime.Now,
         };
 
         var result = await _userManager.CreateAsync(user, password);
         if (result.Succeeded)
         {
-            await _userManager.AddToRoleAsync(user, request.Type);
+            Role? role = await _roleManager.FindByNameAsync(request.Type);
+            user.UserRoles = new List<UserRole> { new UserRole() {
+                UserId = user.Id,
+                RoleId = role!.Id
+            } };
+            IdentityResult updateResult = await _userManager.UpdateAsync(user);
+            if (!updateResult.Succeeded)
+            {
+                throw new BadRequestException(ErrorStrings.CANNOT_ADD_ROLE_TO_USER);
+            }
             return _mapper.Map<UserInfoResponse>(user);
         }
         throw new Exception(string.Join(". ", result.Errors.Select(p => p.Description)));
@@ -196,7 +205,7 @@ public class UserService : IUserService
         IdentityResult updateResult = await _userManager.UpdateAsync(userToUpdate);
         if (!updateResult.Succeeded)
         {
-            throw new BadRequestException(ErrorStrings.USER_UPDATE);
+            throw new BadRequestException(ErrorStrings.CANNOT_UPDATE_USER);
         }
         UserInfoResponse response = _mapper.Map<UserInfoResponse>(userToUpdate);
         _logger.LogInformation("User updated successfully: {UserId}", userId);
