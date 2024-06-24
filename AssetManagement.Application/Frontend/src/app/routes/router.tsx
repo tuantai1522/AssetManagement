@@ -5,6 +5,8 @@ import HomePage from "../../pages/home";
 import NotFound from "../errors/NotFound";
 import ServerErrors from "../errors/ServerErrors";
 import ManagementUserPage from "../../pages/manageUser";
+import CreateUserPage from "../../pages/manageUser/createUser";
+import EditUserPage from "../../pages/manageUser/editUser";
 import LoginPage from "../../pages/authentication";
 import RequireAuth from "./RequireAuth";
 import ManagementAssetPage from "../../pages/manageAsset";
@@ -45,6 +47,13 @@ export const router = createBrowserRouter([
                 element: <ManagementRequestForReturningPage />,
               },
               { path: "report", element: <ManagementReportPage /> },
+              {
+                path: "manage-user",
+                element: <ManagementUserPage />,
+                
+              },
+              { path: "manage-user/create-user", element: <CreateUserPage />},
+              { path: "manage-user/edit-user/:id", element: <EditUserPage />},  
             ],
           },
         ],

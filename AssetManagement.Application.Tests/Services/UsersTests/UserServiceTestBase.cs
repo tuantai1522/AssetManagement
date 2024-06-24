@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace AssetManagement.Application.Tests.Service;
+namespace AssetManagement.Application.Tests.Services.UsersTests;
 public class UserServiceTestBase
 {
 
@@ -19,6 +19,7 @@ public class UserServiceTestBase
     protected readonly Mock<ILogger<UserService>> LoggerMock;
     protected readonly Fixture Fixture;
     protected readonly IMapper _mapperConfig;
+    protected readonly Mock<RoleManager<Role>> RoleManagerMock;
 
     protected List<Role> Roles;
 
@@ -28,14 +29,22 @@ public class UserServiceTestBase
     {
         UserManagerMock = new Mock<UserManager<AppUser>>(Mock.Of<IUserStore<AppUser>>(), null!, null!, null!, null!, null!,
             null!, null!, null!);
-        CurrentUserMock = new Mock<ICurrentUser>();
+
+		RoleManagerMock = new Mock<RoleManager<Role>>(
+            Mock.Of<IRoleStore<Role>>(), null!, null!, null!, null!);
+
+
+		CurrentUserMock = new Mock<ICurrentUser>();
+
         LoggerMock = new Mock<ILogger<UserService>>();
+
         var mappingConfig = new MapperConfiguration(mc =>
         {
             mc.AddProfile(new MappingProfile());
         });
         _mapperConfig = mappingConfig.CreateMapper();
-        UserService = new UserService(UserManagerMock.Object, LoggerMock.Object, CurrentUserMock.Object, _mapperConfig);
+
+        UserService = new UserService(UserManagerMock.Object, LoggerMock.Object, CurrentUserMock.Object, _mapperConfig, RoleManagerMock.Object);
 
         Fixture = new Fixture();
         Fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList().ForEach(b => Fixture.Behaviors.Remove(b));
@@ -45,7 +54,6 @@ public class UserServiceTestBase
     }
 
     #region setup
-
     protected void Setup()
     {
         Roles = [
@@ -110,10 +118,6 @@ public class UserServiceTestBase
             );
 
     }
-
-
     #endregion
-
-
 }
 

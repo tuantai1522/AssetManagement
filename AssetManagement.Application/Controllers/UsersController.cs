@@ -42,7 +42,7 @@ public class UsersController : ControllerBase
     [Authorize(Roles = $"{RoleConstant.AdminRole}")]
     public async Task<ActionResult<BaseResult<UserInfoResponse>>> GetUserInfoAsync([FromRoute] Guid id)
     {
-        var data = await _userService.GetUserById(id);
+        var data = await _userService.GetUserByIdAsync(id);
         var result = new BaseResult<UserInfoResponse>()
         {
             IsSuccess = true,
@@ -51,12 +51,26 @@ public class UsersController : ControllerBase
         };
         return Ok(result);
     }
-    
+
+    [HttpPost("create")]
+    [Authorize(Roles = $"{RoleConstant.AdminRole}")]
+    public async Task<ActionResult<BaseResult<UserInfoResponse>>> CreateUserAsync([FromBody] CreateUserRequest request)
+    {
+        var data = await _userService.CreateUserAsync(request);
+        var result = new BaseResult<UserInfoResponse>()
+        {
+            IsSuccess = true,
+            Error = null,
+            Result = data
+        };
+        return Ok(result);
+    }
+
     [HttpPost]
     [Authorize(Roles = $"{RoleConstant.AdminRole}")]
-    public async Task<IActionResult> DisableAsync([FromBody] DisableUserRequest request)
+    public async Task<IActionResult> DisableAsync(Guid id)
     {
-        var data = await _userService.DisableUserAsync(request);
+        var data = await _userService.DisableUserAsync(id);
         var result = new BaseResult<DisableUserResponse>()
         {
             IsSuccess = true,
@@ -65,5 +79,20 @@ public class UsersController : ControllerBase
         };
         return Ok(result);
     }
+
+	[HttpPut]
+	[Route("{userId}")]
+	[Authorize(Roles = $"{RoleConstant.AdminRole}")]
+    public async Task<ActionResult<BaseResult<UserInfoResponse>>> UpdateAsync([FromRoute]Guid userId, [FromBody] UpdateUserRequest request)
+    {
+        var data = await _userService.UpdateUserAsync(userId, request);
+        var result = new BaseResult<UserInfoResponse>()
+        {
+            IsSuccess = true,
+            Error = null,
+            Result = data
+        };
+		return Ok(result);
+	}
 }
 
