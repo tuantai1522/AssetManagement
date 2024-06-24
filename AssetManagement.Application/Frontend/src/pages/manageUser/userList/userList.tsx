@@ -6,7 +6,11 @@ export interface UserListProp {
     data: FilterUser[],
     isLoading: boolean,
     error: any,
-    // setData: (data: FilterUser[]) => void
+    order: Order,
+    setOrder: (order: Order) => void,
+    orderBy: any,
+    setOrderBy: (orderBy: any) => void,
+    handleClick: (event:any, rowId: string) => void,
 }
 
 const columns: ColumnDefinition[] = [
@@ -16,10 +20,11 @@ const columns: ColumnDefinition[] = [
         disablePadding: true,
         label: 'Staff Code',
         className: "font-bold",
-        rowRatio: "w-3/12",
+        rowRatio: "w-1/12",
         style: {
             border: "none",
-            borderBottom: "none"
+            borderBottom: "none",
+            minWidth: "100px"
         }
     },
     {
@@ -30,15 +35,16 @@ const columns: ColumnDefinition[] = [
         className: "font-bold",
         style: {
             border: "none",
-            borderBottom: "none"
+            borderBottom: "none",
+            minWidth: "250px"
         },
 
-        rowRatio: "w-2/12",
-        renderCell: <button color="primary" className="active:bg-black" onClick={e => {
-            e.stopPropagation();
-            alert("child");
-        }
-        } > Test</button>
+        rowRatio: "w-4/12",
+        // renderCell: <button color="primary" className="active:bg-black" onClick={e => {
+        //     e.stopPropagation();
+        //     alert("child");
+        // }
+        // } > Test</button>
 
     },
     {
@@ -62,7 +68,8 @@ const columns: ColumnDefinition[] = [
         className: "font-bold ",
         style: {
             border: "none",
-            borderBottom: "none"
+            borderBottom: "none",
+            minWidth: "120px"
         },
         rowRatio: "w-2/12",
     },
@@ -75,9 +82,9 @@ const columns: ColumnDefinition[] = [
         style: {
             border: "none",
             borderBottom: "none",
-            minWidth: "100px",
+            minWidth: "80px",
         },
-        rowRatio: "w-2/12",
+        rowRatio: "w-1/12",
     },
 
 ];
@@ -86,23 +93,17 @@ const rows: FilterUser[] = []
 
 export default function UserList(props: UserListProp) {
 
-    // const [users, setUsers] = useState<FilterUser[]>([]);
-
-    const [order, setOrder] = useState<Order>("desc");
-    const [orderBy, setOrderBy] = useState<string>("joinedDate");
-
-
     return (
-        <>
+        <div className="min-h-60">
             <AppTable<FilterUser>
-                order={order}
-                setOrder={setOrder}
-                orderByFieldName={orderBy}
-                setOrderByFieldName={setOrderBy}
+                order={props.order}
+                setOrder={props.setOrder}
+                orderByFieldName={props.orderBy}
+                setOrderByFieldName={props.setOrderBy}
                 columns={columns}
                 rows={props.data}
-                handleClick={() => { alert("Test") }}
+                handleClick={props.handleClick}
             />
-        </>
+        </div>
     );
 }

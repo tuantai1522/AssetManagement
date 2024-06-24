@@ -1,7 +1,6 @@
-import { ArrowDropDown } from "@mui/icons-material";
+import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
 import { Box, Chip, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel } from "@mui/material";
 import { visuallyHidden } from '@mui/utils';
-import { JsxClosingElement } from "typescript";
 
 export interface CustomTableHeadProp {
     onRequestSort: (event: React.MouseEvent<unknown>, property: any) => void;
@@ -12,7 +11,7 @@ export interface CustomTableHeadProp {
 export type Order = 'asc' | 'desc';
 export interface ColumnDefinition {
     disablePadding?: boolean;
-    id: any;
+    id?: any;
     label: string;
     fieldName: string;
     className?: string;
@@ -62,34 +61,37 @@ function CustomTableHead(props: CustomTableHeadProp) {
     return (
         <TableHead>
             <TableRow>
-                {props.columns && props.columns?.map((column) => (
-                    <TableCell
-                        key={column.id}
-                        align="left"
-                        padding={column.disablePadding ? 'none' : 'normal'}
+                {props.columns && props.columns?.map((column) => {
+                    let key = column.id ?? column.fieldName;
+                    return (
+                        <TableCell
+                            key={key}
+                            align="left"
+                            padding={column.disablePadding ? 'none' : 'normal'}
 
-                        //modify 
-                        sortDirection={orderBy === column.id ? order : false}
-                    >
-                        <TableSortLabel
-                            active={orderBy === column.id}
-                            direction={orderBy === column.id ? order : 'asc'}
-                            onClick={createSortHandler(column.id)}
-                            IconComponent={ArrowDropDown}
-                            className={`font-bold ${column.className}`}
-                            classes={column.classNames}
-                            sx={column.style}
-                            disabled={column.disableSort ?? false}
+                            //modify 
+                            sortDirection={orderBy === key ? order : false}
                         >
-                            {column.label}
-                            {orderBy === column.id ? (
-                                <Box component="span" sx={visuallyHidden}>
-                                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                                </Box>
-                            ) : null}
-                        </TableSortLabel>
-                    </TableCell>
-                ))}
+                            <TableSortLabel
+                                active={orderBy === key}
+                                direction={orderBy === key ? order : 'asc'}
+                                onClick={createSortHandler(key)}
+                                IconComponent={ArrowDropUp}
+                                className={`font-bold ${column.className}`}
+                                classes={column.classNames}
+                                sx={column.style}
+                                disabled={column.disableSort ?? false}
+                            >
+                                {column.label}
+                                {orderBy === key ? (
+                                    <Box component="span" sx={visuallyHidden}>
+                                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                    </Box>
+                                ) : null}
+                            </TableSortLabel>
+                        </TableCell>
+                    )
+                })}
             </TableRow>
         </TableHead>
     );
