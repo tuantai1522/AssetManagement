@@ -1,15 +1,15 @@
-﻿using AssetManagement.Application.Tests.Service;
+﻿using AssetManagement.Application.Tests.Services.UsersTests;
 using AssetManagement.Contracts.Dtos.UserDtos.Responses;
 using AssetManagement.Domain.Entities;
 using AssetManagement.Domain.Exceptions;
 using AutoFixture;
 using MockQueryable.Moq;
 
-namespace AssetManagement.Application.Tests.Services
+namespace AssetManagement.Application.Tests.Services.UsersTests
 {
-    public class GetUserById : UserServiceTestBase
+    public class GetUserByIdAsync : UserServiceTestBase
     {
-        public GetUserById() : base() { }
+        public GetUserByIdAsync() : base() { }
         [Fact]
         public async Task GetUser_ReturnOkAndUserInfo_WhenHasUser()
         {
@@ -36,7 +36,7 @@ namespace AssetManagement.Application.Tests.Services
             UserManagerMock.Setup(m => m.Users).Returns(userQueryMock);
 
             //Act
-            var result = await UserService.GetUserById(id);
+            var result = await UserService.GetUserByIdAsync(id);
 
             //Assert
             var actionResult = Assert.IsType<UserInfoResponse>(result);
@@ -69,7 +69,7 @@ namespace AssetManagement.Application.Tests.Services
             //Act
 
             //Assert
-            var exception = await Assert.ThrowsAsync<NotFoundException>(() => UserService.GetUserById(id));
+            var exception = await Assert.ThrowsAsync<NotFoundException>(() => UserService.GetUserByIdAsync(id));
             Assert.Equal("User can not found", exception.Message);
         }
     }

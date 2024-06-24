@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace AssetManagement.Application.Tests.Service;
+namespace AssetManagement.Application.Tests.Services.UsersTests;
 public class UserServiceTestBase
 {
 
