@@ -1,5 +1,3 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
 import SidebarItem from './SidebarItem';
 
 const Sidebar = () => {
@@ -14,10 +12,10 @@ const Sidebar = () => {
             <div className='menu mt-8 flex flex-col gap-1'>
                 <SidebarItem url="/" name="Home"/>
                 <SidebarItem url ="/user-manage" name="Manage User"/>
-                <SidebarItem url ="/user-manage" name="Manage Asset" />
-                <SidebarItem url ="/user-manage" name="Manage Assignment" />
-                <SidebarItem url ="/user-manage" name="Request for Returning" />
-                <SidebarItem url ="/user-manage" name="Report" />
+                <SidebarItem url ="/asset-manage" name="Manage Asset" />
+                <SidebarItem url ="/assignment-manage" name="Manage Assignment" />
+                <SidebarItem url ="/request-returning" name="Request for Returning" />
+                <SidebarItem url ="/report" name="Report" />
             </div>
         </div>
     );
