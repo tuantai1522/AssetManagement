@@ -60,7 +60,7 @@ public class UserService : IUserService
             && u.Location == currentUser.Location
             && !u.IsDisabled);
 
-            var totalRecord = await queryable.CountAsync();
+            var totalRecord = await queryable.Where(filterSpecification).CountAsync();
 
             queryable = orderBy(queryable);
 
