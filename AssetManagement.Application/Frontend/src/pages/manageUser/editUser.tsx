@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import UserForm from "../../app/components/forms/userForm";
 import agent from "../../app/api/agent";
 import { EditUserRequest } from "../../app/models/login/EditUserRequest";
@@ -7,6 +7,9 @@ import { EditUserRequest } from "../../app/models/login/EditUserRequest";
 const EditUserPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const callbackUrl = searchParams.get('callbackUrl') ?? undefined; // Retrieve the callback URL
+    
     if (!id) {
         navigate('/not-found');
         return null; 
@@ -22,7 +25,7 @@ const EditUserPage = () => {
             Type: formData.type,
         }
         await agent.Users.update(id, updateData);
-        navigate('/manage-user');
+        navigate(`/manage-user?passedOrderBy=${encodeURIComponent('lastUpdate')}&passedOrderBy=${encodeURIComponent('desc')}`);
     }
 
     if (isLoading) {
@@ -44,6 +47,7 @@ const EditUserPage = () => {
             onSubmit={onSubmit} 
             isEditing={true} 
             data={data.result} 
+            callbackUrl={callbackUrl}
         />
     );
 }

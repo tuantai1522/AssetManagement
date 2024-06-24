@@ -6,9 +6,13 @@ import NotFound from "../errors/NotFound";
 import ServerErrors from "../errors/ServerErrors";
 import ManagementUserPage from "../../pages/manageUser";
 import CreateUserPage from "../../pages/manageUser/createUser";
-import LoginPage from "../../pages/authentication/LoginPage";
-import RequireAuth from "./RequireAuth";
 import EditUserPage from "../../pages/manageUser/editUser";
+import LoginPage from "../../pages/authentication";
+import RequireAuth from "./RequireAuth";
+import ManagementAssetPage from "../../pages/manageAsset";
+import ManagementAssignmentPage from "../../pages/manageAssignment";
+import ManagementRequestForReturningPage from "../../pages/requestForReturning";
+import ManagementReportPage from "../../pages/report";
 
 export const router = createBrowserRouter([
   {
@@ -32,9 +36,24 @@ export const router = createBrowserRouter([
           {
             element: <DefaultLayout />,
             children: [
-              { path: "manage-user", element: <ManagementUserPage /> },
-              { path: "create-user", element: <CreateUserPage />},
-              { path: "edit-user/:id", element: <EditUserPage />},  
+              { path: "user-manage", element: <ManagementUserPage /> },
+              { path: "asset-manage", element: <ManagementAssetPage /> },
+              {
+                path: "assignment-manage",
+                element: <ManagementAssignmentPage />,
+              },
+              {
+                path: "request-for-returning-manage",
+                element: <ManagementRequestForReturningPage />,
+              },
+              { path: "report", element: <ManagementReportPage /> },
+              {
+                path: "manage-user",
+                element: <ManagementUserPage />,
+                
+              },
+              { path: "manage-user/create-user", element: <CreateUserPage />},
+              { path: "manage-user/edit-user/:id", element: <EditUserPage />},  
             ],
           },
         ],

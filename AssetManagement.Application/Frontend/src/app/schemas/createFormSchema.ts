@@ -4,11 +4,11 @@ import yup from "../types/yupGlobal"
 
 export const createFormSchema = yup.object().shape({
     firstName: yup.string()
-        .max(10, 'Must not exceed 10 characters long')
+        .max(50, 'Must not exceed 50 characters long')
         .required("Please Type First Name")
         .firstName('First name must be a single word containing only alphabet letters'),
     lastName: yup.string()
-        .max(30, 'Must not exceed 30 characters long')
+        .max(100, 'Must not exceed 100 characters long')
         .required("Please Type Last Name")
         .lastName('Last name must contain only alphabet letters and spaces'),
     dateOfBirth: yup.date()
