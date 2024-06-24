@@ -3,28 +3,28 @@ import { Box, Chip, Table, TableBody, TableCell, TableContainer, TableHead, Tabl
 import { visuallyHidden } from '@mui/utils';
 
 export interface CustomTableHeadProp {
-  onRequestSort: (event: React.MouseEvent<unknown>, property: any) => void;
-  order: Order;
-  orderBy: any;
-  columns: ColumnDefinition[];
+    onRequestSort: (event: React.MouseEvent<unknown>, property: any) => void;
+    order: Order;
+    orderBy: any;
+    columns: ColumnDefinition[]
 }
 export type Order = 'asc' | 'desc';
 export interface ColumnDefinition {
-  disablePadding?: boolean,
-  id: any;
-  label: string;
-  fieldName: string;
-  className?: string;
-  classNames?: string[];
-  style?: React.CSSProperties;
-  disableSort?: boolean;
-  rowRatio?: string;
-  bodyStyle?: any;
-  renderCell?: (data: any) => JSX.Element;
+    disablePadding?: boolean;
+    id?: any;
+    label: string;
+    fieldName: string;
+    className?: string;
+    classNames?: string[];
+    style?: React.CSSProperties;
+    disableSort?: boolean,
+    rowRatio?: string,
+    bodyStyle?: any,
+    renderCell?: (data: any) => JSX.Element,
 }
 export interface RowDefinition<T> {
-  id: any;
-  data: T;
+    id: any;
+    data: T;
 }
 
 export interface AppTableRow {
@@ -51,74 +51,73 @@ export interface AppTableProp<T> {
 }
 
 function CustomTableHead(props: CustomTableHeadProp) {
-  const { order, orderBy, onRequestSort } = props;
-  const createSortHandler =
-    (property: any) => (event: React.MouseEvent<unknown>) => {
-      onRequestSort(event, property);
-    };
+    const { order, orderBy, onRequestSort } =
+        props;
+    const createSortHandler =
+        (property: any) => (event: React.MouseEvent<unknown>) => {
+            onRequestSort(event, property);
+        };
 
-  return (
-    <TableHead>
-      <TableRow>
-        {props.columns && props.columns?.map((column) => {
-            let key = column.id ?? column.fieldName;
-            return (
-                <TableCell
-                    key={key}
-                    align="left"
-                    padding={column.disablePadding ? 'none' : 'normal'}
+    return (
+        <TableHead>
+            <TableRow>
+                {props.columns && props.columns?.map((column) => {
+                    let key = column.id ?? column.fieldName;
+                    return (
+                        <TableCell
+                            key={key}
+                            align="left"
+                            padding={column.disablePadding ? 'none' : 'normal'}
 
-                    //modify 
-                    sortDirection={orderBy === key ? order : false}
-                >
-                    <TableSortLabel
-                        active={orderBy === key}
-                        direction={orderBy === key ? order : 'asc'}
-                        onClick={createSortHandler(key)}
-                        IconComponent={ArrowDropUp}
-                        className={`font-bold ${column.className}`}
-                        classes={column.classNames}
-                        sx={column.style}
-                        disabled={column.disableSort ?? false}
-                    >
-                        {column.label}
-                        {orderBy === key ? (
-                            <Box component="span" sx={visuallyHidden}>
-                                {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                            </Box>
-                        ) : null}
-                    </TableSortLabel>
-                </TableCell>
-            )
-        })}
-      </TableRow>
+                            //modify 
+                            sortDirection={orderBy === key ? order : false}
+                        >
+                            <TableSortLabel
+                                active={orderBy === key}
+                                direction={orderBy === key ? order : 'asc'}
+                                onClick={createSortHandler(key)}
+                                IconComponent={ArrowDropUp}
+                                className={`font-bold ${column.className}`}
+                                classes={column.classNames}
+                                sx={column.style}
+                                disabled={column.disableSort ?? false}
+                            >
+                                {column.label}
+                                {orderBy === key ? (
+                                    <Box component="span" sx={visuallyHidden}>
+                                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                    </Box>
+                                ) : null}
+                            </TableSortLabel>
+                        </TableCell>
+                    )
+                })}
+            </TableRow>
         </TableHead>
-  );
+    );
 }
 
 function mapToAppTableRows<T>(
-  columns: ColumnDefinition[],
-  rows: RowDefinition<T>[]
+    columns: ColumnDefinition[],
+    rows: RowDefinition<T>[]
 ): AppTableRow[] {
-  return rows?.map((row) => {
-    const data: AppTableCell[] = columns.map((column) => {
-      const { fieldName } = column;
-      const data = (row.data as Record<string, any>)[fieldName];
+    return rows?.map((row) => {
+        const data: AppTableCell[] = columns.map((column) => {
+            const { fieldName } = column;
+            return {
+                fieldName,
+                value: (row.data as Record<string, any>)[fieldName],
+                renderCell: column.renderCell ? column.renderCell(data) : undefined,
+                ratio: column.rowRatio,
+                bodyStyle: column.bodyStyle
+            };
+        });
 
-      return {
-        fieldName,
-        value: data,
-        renderCell: column.renderCell ? column.renderCell(data) : undefined,
-        ratio: column.rowRatio,
-        bodyStyle: column.bodyStyle,
-      };
+        return {
+            id: row.id,
+            data,
+        };
     });
-
-    return {
-      id: row.id,
-      data,
-    };
-  });
 }
 
 

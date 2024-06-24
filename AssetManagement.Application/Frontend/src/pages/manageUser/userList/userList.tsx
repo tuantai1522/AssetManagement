@@ -4,6 +4,7 @@ import AppTable, {
   Order,
 } from "../../../app/components/table/sortTable";
 import { FilterUser } from "../../../app/models/User";
+import { Button } from "@mui/material";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import EditIcon from '@mui/icons-material/Edit';
 import { useLocation, useNavigate } from "react-router-dom";
@@ -12,14 +13,17 @@ export interface UserListProp {
   data: FilterUser[];
   isLoading: boolean;
   error: any;
+  order: Order;
+  setOrder: (order: Order) => void;
+  orderBy: any;
+  setOrderBy: (orderBy: any) => void;
+  handleClick: (event: any, rowId: string) => void;
   setIsOpenDisablingModal: Dispatch<SetStateAction<boolean>>;
   setCurrentDisablingId: Dispatch<SetStateAction<string>>;
-  order: Order,
-  setOrder: (order: Order) => void,
-  orderBy: any,
-  setOrderBy: (orderBy: any) => void,
-  handleClick: (event:any, rowId: string) => void,
+
 }
+
+const rows: FilterUser[] = [];
 
 export default function UserList(props: UserListProp) {
   const navigate = useNavigate();
@@ -67,15 +71,15 @@ export default function UserList(props: UserListProp) {
       disableSort: true,
     },
     {
-      id: 'joinedDate',
-      fieldName: 'joinedDate',
+      id: "joinedDate",
+      fieldName: "joinedDate",
       disablePadding: false,
       label: 'Joined Date',
       className: "font-bold ",
       style: {
-          border: "none",
-          borderBottom: "none",
-          minWidth: "120px"
+        border: "none",
+        borderBottom: "none",
+        minWidth: "120px",
       },
       rowRatio: "w-2/12",
     },
@@ -90,7 +94,7 @@ export default function UserList(props: UserListProp) {
           borderBottom: "none",
           minWidth: "80px",
       },
-      rowRatio: "w-1/12",
+      rowRatio: "w-2/12",
     },
     {
       id: "disable",
@@ -99,12 +103,11 @@ export default function UserList(props: UserListProp) {
       label: "",
       className: "font-bold",
       bodyStyle: {
-        width: "1rem",
         borderBottom: "none",
       },
-      rowRatio: "w-2/12",
+      rowRatio: "w-1/12",
       renderCell: (params) => (
-        <div className="flex">
+        <div className="ml-2 flex w-fit justify-end">
           <button
             color="primary"
             className="text-gray-500"
@@ -134,8 +137,6 @@ export default function UserList(props: UserListProp) {
     },
   ];
   
-  const rows: FilterUser[] = [];
-
 
   return (
     <div className="min-h-60">
