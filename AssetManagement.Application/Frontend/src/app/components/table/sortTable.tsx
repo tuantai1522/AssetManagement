@@ -104,9 +104,10 @@ function mapToAppTableRows<T>(
     return rows?.map((row) => {
         const data: AppTableCell[] = columns.map((column) => {
             const { fieldName } = column;
+            const data = (row.data as Record<string, any>)[fieldName];
             return {
                 fieldName,
-                value: (row.data as Record<string, any>)[fieldName],
+                value: data,
                 renderCell: column.renderCell ? column.renderCell(data) : undefined,
                 ratio: column.rowRatio,
                 bodyStyle: column.bodyStyle
@@ -119,6 +120,7 @@ function mapToAppTableRows<T>(
         };
     });
 }
+
 
 export function AppTable<T>(props: AppTableProp<T>) {
 
@@ -151,10 +153,8 @@ export function AppTable<T>(props: AppTableProp<T>) {
                             paddingLeft: 0,
                             paddingRight: 0,
                         },
-
                         "& td:last-child, & th:last-child": {
-                        border: "none",
-                        maxWidth: "1rem"
+                          border: "none",
                         },
 
                         "& thead tr th": {
@@ -173,25 +173,20 @@ export function AppTable<T>(props: AppTableProp<T>) {
                     />
                     <TableBody>
                         {data && data.map((row, index) => {
-
-                            return (<>
+                            return (
+                            <>
                                 <TableRow
-                                    // hover
                                     onClick={(event) => {
                                         props.handleClick(event, row.id)
                                     }
                                     }
-                                    // role="checkbox"
-                                    // aria-checked={isItemSelected}
                                     tabIndex={-1}
                                     key={row.id}
-                                    // selected={isItemSelected}
                                     sx={{ cursor: 'pointer' }}
                                 >
                                     {row.data.map((item, index) => {
                                         return (
                                             <TableCell
-
                                                 align="left"
                                                 className={item.ratio ?? ""}
                                                 key={index}
