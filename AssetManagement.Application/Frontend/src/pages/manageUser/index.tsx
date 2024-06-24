@@ -8,8 +8,18 @@ import UserList from "./userList/userList";
 import { convertUtcToLocalDate } from "../../app/utils/dateUtils";
 import { FilterUser } from "../../app/models/User";
 import { Pagination, Stack } from "@mui/material";
+import { useSearchParams } from "react-router-dom";
 
 type OrderByFieldName = "staffCode" | "fullName" | "joinedDate" | "type" | "lastUpdate";
+
+const isOrderByFieldName = (value: any): value is OrderByFieldName => {
+  return ["staffCode", "fullName", "joinedDate", "type", "lastUpdate"].includes(value);
+};
+
+const isOrder = (value: any): value is Order => {
+  return ["asc", "desc"].includes(value);
+};
+
 
 export default function ManagementUserPage() {
   const [clickOnUser, setClickOnUser] = useState<boolean>(false)
@@ -34,6 +44,19 @@ export default function ManagementUserPage() {
   const [order, setOrder] = useState<Order>("desc");
   const [orderBy, setOrderBy] = useState<OrderByFieldName>("joinedDate");
 
+  const [searchParams] = useSearchParams();
+  const passedOrderBy = searchParams.get('passedOrderBy') ?? undefined; 
+  const passedOrder = searchParams.get('passedOrder') ?? undefined; 
+
+  useEffect(() => {
+    if (passedOrderBy && isOrderByFieldName(passedOrderBy)) {
+      setOrderBy(passedOrderBy);
+    }
+    if (passedOrder && isOrder(passedOrder)) {
+      setOrder(passedOrder);
+    }
+  }, [passedOrderBy, order])
+  
 
   useEffect(() => {
     switch (orderBy) {

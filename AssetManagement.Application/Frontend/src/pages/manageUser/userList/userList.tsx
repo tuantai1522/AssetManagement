@@ -6,7 +6,7 @@ import AppTable, {
 import { FilterUser } from "../../../app/models/User";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import EditIcon from '@mui/icons-material/Edit';
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
 export interface UserListProp {
   data: FilterUser[];
@@ -23,6 +23,8 @@ export interface UserListProp {
 
 export default function UserList(props: UserListProp) {
   const navigate = useNavigate();
+  const location = useLocation();
+
   const columns: ColumnDefinition[] = [
     {
       id: 'staffCode',
@@ -108,9 +110,8 @@ export default function UserList(props: UserListProp) {
             className="text-gray-500"
             onClick={(e) => {
               e.stopPropagation();
-              // props.setOrderBy('lastUpdate');
-              // props.setOrder('asc');
-              navigate(`/edit-user/${params}`);
+              const callbackUrl = location.pathname;
+              navigate(`/edit-user/${params}?callbackUrl=${encodeURIComponent(callbackUrl)}`);
             }}
           >
             {" "}
