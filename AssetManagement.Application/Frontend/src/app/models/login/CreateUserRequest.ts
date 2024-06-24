@@ -1,8 +1,8 @@
 export interface CreateUserRequest{
     FirstName: string,
     LastName: string,
-    DateOfBirth: Date,
-    JoinedDate: Date,
+    DateOfBirth: string,
+    JoinedDate: string,
     Gender: string,
     Type: string,
 }

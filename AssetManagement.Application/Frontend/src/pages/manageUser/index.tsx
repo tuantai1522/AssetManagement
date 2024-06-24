@@ -12,7 +12,7 @@ import UsePagination from "../../app/components/paginationButtons/paginationButt
 import { Search } from "@mui/icons-material";
 import AppSearchInput from "../../app/components/AppSearchInput";
 import AppButton from "../../app/components/buttons/Button";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
 type OrderByFieldName =
   | "staffCode"
@@ -31,6 +31,9 @@ const isOrder = (value: any): value is Order => {
 
 
 export default function ManagementUserPage() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const callbackUrl = location.pathname;
   const [clickOnUser, setClickOnUser] = useState<boolean>(false);
   const [userId, setUserId] = useState<string>("0");
 
@@ -66,7 +69,7 @@ export default function ManagementUserPage() {
     if (passedOrder && isOrder(passedOrder)) {
       setOrder(passedOrder);
     }
-  }, [passedOrderBy, order])
+  }, [passedOrderBy, passedOrder])
   
 
   useEffect(() => {
@@ -194,7 +197,13 @@ export default function ManagementUserPage() {
                 <Search className="mx-0" />
               </div>
             </Stack>
-            <AppButton content="Create new user" className="py-[6px]" />
+            <AppButton
+              content="Create new user"
+              className="py-[6px]"
+              onClickOn={() => {
+                navigate(`/manage-user/create-user?callbackUrl=${encodeURIComponent(callbackUrl)}`);
+              }}
+            />
           </Stack>
         </Stack>
         <div className="mt-3">
@@ -212,6 +221,7 @@ export default function ManagementUserPage() {
             setIsOpenDisablingModal={setIsDisablingModalOpen}
             setCurrentDisablingId={setCurrentDisablingId}
             handleClick={(event, rowId) => handleClickOnUser(rowId)}
+            callbackUrl={callbackUrl}
           />
 
           <Stack

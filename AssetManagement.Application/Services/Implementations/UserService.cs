@@ -245,12 +245,12 @@ public class UserService : IUserService
     private static void ValidateFirstName(string firstName)
     {
         if (firstName.Split(' ').Length > Constants.NUMBER_OF_WORDS_IN_FIRSTNAME) throw new BadRequestException(ErrorStrings.INVALID_FIRSTNAME_NUMBER_OF_WORDS);
-        if (!firstName.All(c => char.IsLetter(c))) throw new BadRequestException(ErrorStrings.INVALID_FIRSTNAME_CHARACTERS);
+        if (!Regex.IsMatch(firstName, @"^[a-zA-Z]+$")) throw new BadRequestException(ErrorStrings.INVALID_FIRSTNAME_CHARACTERS);
     }
 
     private static void ValidateLastName(string lastname)
     {
-        if (!lastname.All(c => char.IsLetter(c) || char.IsWhiteSpace(c))) throw new BadRequestException(ErrorStrings.INVALID_LASTNAME_CHARACTERS);
+        if (!Regex.IsMatch(lastname, @"^[a-zA-Z\s]+$")) throw new BadRequestException(ErrorStrings.INVALID_LASTNAME_CHARACTERS);
     }
 
     private async Task<Role> ValidateTypeAsync(string type)

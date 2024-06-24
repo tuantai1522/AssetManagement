@@ -20,6 +20,8 @@ interface IFormInput extends FieldValues {
     lastName: string,
     dateOfBirth: Date,
     joinedDate: Date,
+    // dateOfBirth: string,
+    // joinedDate: string,
     gender: string,
     type: string,
 }
@@ -38,7 +40,6 @@ const UserForm = ({
     callbackUrl
 }: UserFormProps) => {
     const navigate = useNavigate();
-    console.log('data', data);
 
     const formatDate = (date: Date) => {
         return dayjs(date);
@@ -46,6 +47,9 @@ const UserForm = ({
 
     const { handleSubmit, control, reset } = useForm({
         resolver: yupResolver<IFormInput>(createFormSchema),
+        defaultValues: {
+            gender: Gender.Female, // Set default value for gender
+        },
         mode: 'all'
     });
 
@@ -56,6 +60,8 @@ const UserForm = ({
                 lastName: data.lastName,
                 dateOfBirth: formatDate(data.dateOfBirth),
                 joinedDate: formatDate(data.joinedDate),
+                // dateOfBirth: dayjs(data.dateOfBirth).format('YYYY-MM-DD'),
+                // joinedDate: dayjs(data.joinedDate).format('YYYY-MM-DD'),
                 gender: data.gender,
                 type: data.type,
             });

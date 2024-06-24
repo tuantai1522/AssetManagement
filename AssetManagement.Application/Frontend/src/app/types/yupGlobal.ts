@@ -2,11 +2,11 @@ import * as yup from 'yup';
 import dayjs from 'dayjs';
 
 // Regular expressions for validation
-// const REGEX_FIRST_NAME = /^[a-zA-Z]+$/; // Only contains alphabet letters
-// const REGEX_LAST_NAME = /^[a-zA-Z\s]+$/; // Contains multiple words with alphabet letters only
+const REGEX_FIRST_NAME = /^[a-zA-Z]+$/; // Only contains alphabet letters
+const REGEX_LAST_NAME = /^[a-zA-Z\s]+$/; // Contains multiple words with alphabet letters only
 // Regular expressions for validation
-const REGEX_FIRST_NAME = /^[\p{L}]+$/u;
-const REGEX_LAST_NAME = /^[\p{L}\s]+$/u;
+// const REGEX_FIRST_NAME = /^[\p{L}]+$/u; // Contains Vietnamese letters
+// const REGEX_LAST_NAME = /^[\p{L}\s]+$/u; // Contains Vietnamese letters
 
 
 // Adding custom methods to yup

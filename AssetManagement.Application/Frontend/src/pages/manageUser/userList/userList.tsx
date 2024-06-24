@@ -4,10 +4,9 @@ import AppTable, {
   Order,
 } from "../../../app/components/table/sortTable";
 import { FilterUser } from "../../../app/models/User";
-import { Button } from "@mui/material";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import EditIcon from '@mui/icons-material/Edit';
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 export interface UserListProp {
   data: FilterUser[];
   isLoading: boolean;
@@ -19,14 +18,13 @@ export interface UserListProp {
   handleClick: (event: any, rowId: string) => void;
   setIsOpenDisablingModal: Dispatch<SetStateAction<boolean>>;
   setCurrentDisablingId: Dispatch<SetStateAction<string>>;
-
+  callbackUrl: string;
 }
 
 const rows: FilterUser[] = [];
 
 export default function UserList(props: UserListProp) {
   const navigate = useNavigate();
-  const location = useLocation();
 
   const columns: ColumnDefinition[] = [
     {
@@ -112,8 +110,7 @@ export default function UserList(props: UserListProp) {
             className="text-gray-500"
             onClick={(e) => {
               e.stopPropagation();
-              const callbackUrl = location.pathname;
-              navigate(`/manage-user/edit-user/${params}?callbackUrl=${encodeURIComponent(callbackUrl)}`);
+              navigate(`/manage-user/edit-user/${params}?callbackUrl=${encodeURIComponent(props.callbackUrl)}`);
             }}
           >
             {" "}
