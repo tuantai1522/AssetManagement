@@ -8,7 +8,6 @@ import { Button } from "@mui/material";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import EditIcon from '@mui/icons-material/Edit';
 import { useLocation, useNavigate } from "react-router-dom";
-import { Button } from "@mui/material";
 export interface UserListProp {
   data: FilterUser[];
   isLoading: boolean;

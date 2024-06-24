@@ -140,10 +140,6 @@ export default function ManagementUserPage() {
     mutate(query);
   };
 
-  const handleDisable = (id: string) => {
-    agent.Users.disable(id);
-    mutate();
-  };
 
   const handleQueryInputChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -215,8 +211,6 @@ export default function ManagementUserPage() {
             setIsOpenDisablingModal={setIsDisablingModalOpen}
             setCurrentDisablingId={setCurrentDisablingId}
             handleClick={(event, rowId) => handleClickOnUser(rowId)}
-            setIsOpenDisablingModal={setIsDisablingModalOpen}
-            setCurrentDisablingId={setCurrentDisablingId}
           />
 
           <Stack

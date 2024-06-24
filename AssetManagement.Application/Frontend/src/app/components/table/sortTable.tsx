@@ -104,9 +104,10 @@ function mapToAppTableRows<T>(
     return rows?.map((row) => {
         const data: AppTableCell[] = columns.map((column) => {
             const { fieldName } = column;
+            const data = (row.data as Record<string, any>)[fieldName];
             return {
                 fieldName,
-                value: (row.data as Record<string, any>)[fieldName],
+                value: data,
                 renderCell: column.renderCell ? column.renderCell(data) : undefined,
                 ratio: column.rowRatio,
                 bodyStyle: column.bodyStyle
