@@ -111,7 +111,7 @@ export default function UserList(props: UserListProp) {
             onClick={(e) => {
               e.stopPropagation();
               const callbackUrl = location.pathname;
-              navigate(`/edit-user/${params}?callbackUrl=${encodeURIComponent(callbackUrl)}`);
+              navigate(`/manage-user/edit-user/${params}?callbackUrl=${encodeURIComponent(callbackUrl)}`);
             }}
           >
             {" "}
