@@ -1,12 +1,11 @@
-﻿using AssetManagement.Application.Tests.Service;
-using AssetManagement.Contracts.Dtos.UserDtos.Requests;
+﻿using AssetManagement.Contracts.Dtos.UserDtos.Requests;
 using AssetManagement.Contracts.Enums;
 using AssetManagement.Domain.Entities;
 using AutoFixture;
 using MockQueryable.Moq;
 using Moq;
 
-namespace AssetManagement.Application.Tests.Services
+namespace AssetManagement.Application.Tests.Services.UsersTests
 {
     public class FilterProductAsyncTest : UserServiceTestBase
     {
@@ -75,7 +74,7 @@ namespace AssetManagement.Application.Tests.Services
         [InlineData(null, null, SortOption.Asc, null, "Admin 1")]
         [InlineData(null, null, SortOption.Desc, null, "Admin 10")]
         [InlineData(null, null, null, SortOption.Asc, "Admin 1")]
-        [InlineData(null, null, null, SortOption.Desc, "Staff 9")]
+        [InlineData(null, null, null, SortOption.Desc, "Staff 2")]
         public async Task FilterProductAsync_ShouldReturnCorrectSortOrder(
             SortOption? sortFullName,
             SortOption? sortJoinedDate,

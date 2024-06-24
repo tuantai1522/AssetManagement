@@ -119,6 +119,7 @@ const Users = {
     return requests.get(`api/Users?${queryString}`);
   },
   details: (id: string) => requests.get(`/api/users/${id}`),
+  disable: (id: string) => requests.put(`api/users/disable/${id}`, {})
 };
 
 const Authentication = {

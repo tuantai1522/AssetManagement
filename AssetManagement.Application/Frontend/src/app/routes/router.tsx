@@ -5,8 +5,12 @@ import HomePage from "../../pages/home";
 import NotFound from "../errors/NotFound";
 import ServerErrors from "../errors/ServerErrors";
 import ManagementUserPage from "../../pages/manageUser";
-import LoginPage from "../../pages/authentication/LoginPage";
+import LoginPage from "../../pages/authentication";
 import RequireAuth from "./RequireAuth";
+import ManagementAssetPage from "../../pages/manageAsset";
+import ManagementAssignmentPage from "../../pages/manageAssignment";
+import ManagementRequestForReturningPage from "../../pages/requestForReturning";
+import ManagementReportPage from "../../pages/report";
 
 export const router = createBrowserRouter([
   {
@@ -31,6 +35,16 @@ export const router = createBrowserRouter([
             element: <DefaultLayout />,
             children: [
               { path: "user-manage", element: <ManagementUserPage /> },
+              { path: "asset-manage", element: <ManagementAssetPage /> },
+              {
+                path: "assignment-manage",
+                element: <ManagementAssignmentPage />,
+              },
+              {
+                path: "request-for-returning-manage",
+                element: <ManagementRequestForReturningPage />,
+              },
+              { path: "report", element: <ManagementReportPage /> },
             ],
           },
         ],

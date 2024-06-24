@@ -141,16 +141,6 @@ const LoginPage = () => {
                 />
               </Grid>
             </Grid>
-            <Grid container alignItems="center">
-              <Grid item xs={5}></Grid>
-              <Grid item xs={7}>
-                {errors.Username && (
-                  <Typography color="error" variant="caption">
-                    {errors.Username.message as string}
-                  </Typography>
-                )}
-              </Grid>
-            </Grid>
           </Grid>
 
           <Grid container>
@@ -171,16 +161,6 @@ const LoginPage = () => {
                     />
                   )}
                 />
-              </Grid>
-            </Grid>
-            <Grid container alignItems="center">
-              <Grid item xs={5}></Grid>
-              <Grid item xs={7}>
-                {errors.Password && (
-                  <Typography color="error" variant="caption">
-                    {errors.Password.message as string}
-                  </Typography>
-                )}
               </Grid>
             </Grid>
           </Grid>

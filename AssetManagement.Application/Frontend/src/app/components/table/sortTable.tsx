@@ -20,7 +20,7 @@ export interface ColumnDefinition {
     disableSort?: boolean,
     rowRatio?: string,
     bodyStyle?: any,
-    renderCell?: JSX.Element
+    renderCell?: (data: any) => JSX.Element,
 }
 export interface RowDefinition<T> {
     id: any;
@@ -107,7 +107,7 @@ function mapToAppTableRows<T>(
             return {
                 fieldName,
                 value: (row.data as Record<string, any>)[fieldName],
-                renderCell: column.renderCell,
+                renderCell: column.renderCell ? column.renderCell(data) : undefined,
                 ratio: column.rowRatio,
                 bodyStyle: column.bodyStyle
             };
@@ -152,10 +152,15 @@ export function AppTable<T>(props: AppTableProp<T>) {
                             paddingRight: 0,
                         },
 
+                        "& td:last-child, & th:last-child": {
+                        border: "none",
+                        maxWidth: "1rem"
+                        },
+
                         "& thead tr th": {
                             borderBottom: "1px solid black",
                             fontWeight: "bold"
-                        }
+                        },
                     }}
                     aria-labelledby="tableTitle"
                     size={"small"}

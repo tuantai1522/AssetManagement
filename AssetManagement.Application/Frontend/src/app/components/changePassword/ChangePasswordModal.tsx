@@ -111,9 +111,9 @@ export default function ChangePasswordModal({ user, isOpen, onClose }: Props) {
 
   return (
     <>
-      <div className="fixed inset-0 flex items-center justify-center">
-        <div className="absolute inset-0"></div>
-        <div className="z-10 bg-white rounded-lg border border-black w-[32rem]">
+      <div className="fixed inset-0 flex items-center justify-center z-10">
+        <div className="absolute inset-0 bg-gray-400 opacity-50"></div>
+        <div className="z-20 bg-white rounded-lg border border-black w-[32rem]">
           <div className="bg-slate-100 rounded-t-lg border-b border-black px-12 py-5">
             <h2 className="text-2xl font-bold text-primary">Change password</h2>
           </div>
@@ -135,24 +135,31 @@ export default function ChangePasswordModal({ user, isOpen, onClose }: Props) {
                     <p>You have to change your password to continue.</p>
                   </div>
                 ) : (
-                  <div className="flex justify-between items-center">
-                    <label className="w-32 font-normal">Old password</label>
-                    <Controller
-                      name="oldPassword"
-                      control={control}
-                      render={({ field }) => (
-                        <AppPasswordInput
-                          {...field}
-                          id="oldPassword"
-                          control={control}
-                          error={!!errors.oldPassword}
-                          helperText={errors?.oldPassword?.message as string}
-                        />
-                      )}
-                    />
+                  <div>
+                    <div className="flex justify-between items-center">
+                      <label className="w-32 font-normal">Old password</label>
+                      <Controller
+                        name="oldPassword"
+                        control={control}
+                        render={({ field }) => (
+                          <AppPasswordInput
+                            {...field}
+                            id="oldPassword"
+                            control={control}
+                            isApplyHelperText={false}
+                          />
+                        )}
+                      />
+                    </div>
+                    {errors.oldPassword && (
+                      <div className=" flex items-end justify-end">
+                        <span className="text-[#d32f2f] font-normal text-xs w-[270px] mt-1">{errors.oldPassword.message as string}</span>
+                      </div>
+                    )}
                   </div>
+                 
                 )}
-
+                <div>
                 <div className="flex justify-between items-center">
                   <label className="w-32 font-normal">New password</label>
                   <Controller
@@ -163,12 +170,18 @@ export default function ChangePasswordModal({ user, isOpen, onClose }: Props) {
                         {...field}
                         id="newPassword"
                         control={control}
-                        error={!!errors.newPassword}
-                        helperText={errors?.newPassword?.message as string}
+                        isApplyHelperText={false}
                       />
                     )}
                   />
                 </div>
+                {errors.newPassword && (
+                      <div className=" flex items-end justify-end">
+                        <span className="text-[#d32f2f] font-normal text-xs w-[270px] mt-1">{errors.newPassword.message as string}</span>
+                      </div>
+                    )}
+                </div>
+                
               </div>
             )}
             <div className="flex justify-end gap-6">
