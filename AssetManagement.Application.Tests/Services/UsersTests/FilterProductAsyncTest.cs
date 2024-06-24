@@ -1,6 +1,7 @@
 ﻿using AssetManagement.Contracts.Dtos.UserDtos.Requests;
 using AssetManagement.Contracts.Enums;
 using AssetManagement.Domain.Entities;
+using AssetManagement.Domain.Enums;
 using AutoFixture;
 using MockQueryable.Moq;
 using Moq;
@@ -31,6 +32,8 @@ namespace AssetManagement.Application.Tests.Services.UsersTests
             };
 
             var admin = Fixture.Build<AppUser>()
+                .With(a => a.Location, Location.HCM.ToString())
+                .With(a => a.IsDisabled, false)
                 .With(a => a.UserRoles,
                 Fixture.Build<UserRole>()
                 .With(ur => ur.Role,
@@ -39,6 +42,8 @@ namespace AssetManagement.Application.Tests.Services.UsersTests
                 .Create()).CreateMany(1).ToList()).Create();
 
             var mockData = Fixture.Build<AppUser>()
+                .With(a => a.Location, Location.HCM.ToString())
+                .With(a => a.IsDisabled, false)
                 .With(a => a.UserRoles,
                 Fixture.Build<UserRole>()
                 .With(ur => ur.Role,
