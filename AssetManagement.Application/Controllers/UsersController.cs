@@ -51,8 +51,22 @@ public class UsersController : ControllerBase
         };
         return Ok(result);
     }
-    
-    [HttpPut("disable/{id}")]
+
+    [HttpPost("create")]
+    [Authorize(Roles = $"{RoleConstant.AdminRole}")]
+    public async Task<ActionResult<BaseResult<UserInfoResponse>>> CreateUserAsync([FromBody] CreateUserRequest request)
+    {
+        var data = await _userService.CreateUserAsync(request);
+        var result = new BaseResult<UserInfoResponse>()
+        {
+            IsSuccess = true,
+            Error = null,
+            Result = data
+        };
+        return Ok(result);
+    }
+
+    [HttpPost]
     [Authorize(Roles = $"{RoleConstant.AdminRole}")]
     public async Task<IActionResult> DisableAsync(Guid id)
     {
@@ -65,5 +79,20 @@ public class UsersController : ControllerBase
         };
         return Ok(result);
     }
+
+	[HttpPut]
+	[Route("{userId}")]
+	[Authorize(Roles = $"{RoleConstant.AdminRole}")]
+    public async Task<ActionResult<BaseResult<UserInfoResponse>>> UpdateAsync([FromRoute]Guid userId, [FromBody] UpdateUserRequest request)
+    {
+        var data = await _userService.UpdateUserAsync(userId, request);
+        var result = new BaseResult<UserInfoResponse>()
+        {
+            IsSuccess = true,
+            Error = null,
+            Result = data
+        };
+		return Ok(result);
+	}
 }
 

@@ -36,3 +36,7 @@
     transform: rotate(360deg);
   }
 }
+
+.dob input {
+  height: 0.65rem;
+}

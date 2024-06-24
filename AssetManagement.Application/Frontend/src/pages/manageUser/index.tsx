@@ -3,13 +3,14 @@ import { useEffect, useState } from "react";
 import agent, { UserQuery } from "../../app/api/agent";
 import { Order } from "../../app/components/table/sortTable";
 import UserInfo from "../../app/components/userInfo/userInfo";
+import ConfirmModal from "../../app/components/confirmModal";
 import UserList from "./userList/userList";
 import { convertUtcToLocalDate } from "../../app/utils/dateUtils";
 import { FilterUser } from "../../app/models/User";
 import { IconButton, Stack } from "@mui/material";
 import UsePagination from "../../app/components/paginationButtons/paginationButtons";
 import { Search } from "@mui/icons-material";
-import ConfirmModal from "../../app/components/confirmModal";
+import { useSearchParams } from "react-router-dom";
 
 type OrderByFieldName =
   | "staffCode"
@@ -17,6 +18,15 @@ type OrderByFieldName =
   | "joinedDate"
   | "type"
   | "lastUpdate";
+
+const isOrderByFieldName = (value: any): value is OrderByFieldName => {
+  return ["staffCode", "fullName", "joinedDate", "type", "lastUpdate"].includes(value);
+};
+
+const isOrder = (value: any): value is Order => {
+  return ["asc", "desc"].includes(value);
+};
+
 
 export default function ManagementUserPage() {
   const [clickOnUser, setClickOnUser] = useState<boolean>(false);
@@ -27,20 +37,35 @@ export default function ManagementUserPage() {
     pageNumber: 1,
     pageSize: 5,
   });
+  const { data, isLoading, error, mutate } = agent.Users.filter(query);
+  const {data:userData, isLoading:userLoading, error:userError} = agent.Users.details(userId);
+
   const [isDisablingModalOpen, setIsDisablingModalOpen] = useState(false);
   const [currentDisablingId, setCurrentDisablingId] = useState("");
+
+  const handleDisable = (id: string) => {
+    agent.Users.disable(id);
+    mutate();
+  };
 
   const [searchInput, setSearchInput] = useState<string>("");
 
   const [order, setOrder] = useState<Order>("desc");
   const [orderBy, setOrderBy] = useState<OrderByFieldName>("joinedDate");
 
-  const { data, isLoading, error, mutate } = agent.Users.filter(query);
-  const {
-    data: userData,
-    isLoading: userLoading,
-    error: userError,
-  } = agent.Users.details(userId);
+  const [searchParams] = useSearchParams();
+  const passedOrderBy = searchParams.get('passedOrderBy') ?? undefined; 
+  const passedOrder = searchParams.get('passedOrder') ?? undefined; 
+
+  useEffect(() => {
+    if (passedOrderBy && isOrderByFieldName(passedOrderBy)) {
+      setOrderBy(passedOrderBy);
+    }
+    if (passedOrder && isOrder(passedOrder)) {
+      setOrder(passedOrder);
+    }
+  }, [passedOrderBy, order])
+  
 
   useEffect(() => {
     switch (orderBy) {
@@ -115,10 +140,6 @@ export default function ManagementUserPage() {
     mutate(query);
   };
 
-  const handleDisable = (id: string) => {
-    agent.Users.disable(id);
-    mutate();
-  };
 
   const handleQueryInputChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -187,9 +208,9 @@ export default function ManagementUserPage() {
             setOrder={setOrder}
             orderBy={orderBy}
             setOrderBy={setOrderBy}
-            handleClick={(event, rowId) => handleClickOnUser(rowId)}
             setIsOpenDisablingModal={setIsDisablingModalOpen}
             setCurrentDisablingId={setCurrentDisablingId}
+            handleClick={(event, rowId) => handleClickOnUser(rowId)}
           />
 
           <Stack
@@ -204,14 +225,6 @@ export default function ManagementUserPage() {
           </Stack>
         </div>
       </div>
-      <UserInfo
-        isOpen={clickOnUser}
-        isLoading={userLoading}
-        userData={userData?.result}
-        onClose={() => {
-          setClickOnUser(false);
-        }}
-      ></UserInfo>
       <ConfirmModal
         message="Do you want to disable this user?"
         confirmMessage="Disable"
@@ -222,6 +235,14 @@ export default function ManagementUserPage() {
           handleDisable(currentDisablingId);
         }}
       />
+      <UserInfo
+        isOpen={clickOnUser}
+        isLoading={userLoading}
+        userData={userData?.result}
+        onClose={() => {
+          setClickOnUser(false);
+        }}
+      ></UserInfo>
     </div>
   );
 }
