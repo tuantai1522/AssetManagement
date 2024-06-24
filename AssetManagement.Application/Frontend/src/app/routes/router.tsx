@@ -32,9 +32,13 @@ export const router = createBrowserRouter([
           {
             element: <DefaultLayout />,
             children: [
-              { path: "manage-user", element: <ManagementUserPage /> },
-              { path: "create-user", element: <CreateUserPage />},
-              { path: "edit-user/:id", element: <EditUserPage />},  
+              {
+                path: "manage-user",
+                element: <ManagementUserPage />,
+                
+              },
+              { path: "manage-user/create-user", element: <CreateUserPage />},
+              { path: "manage-user/edit-user/:id", element: <EditUserPage />},  
             ],
           },
         ],
