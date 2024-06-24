@@ -9,6 +9,7 @@ import { FilterUser } from "../../app/models/User";
 import { IconButton, Stack } from "@mui/material";
 import UsePagination from "../../app/components/paginationButtons/paginationButtons";
 import { Search } from "@mui/icons-material";
+import AppSearchInput from "../../app/components/AppSearchInput";
 
 type OrderByFieldName = "staffCode" | "fullName" | "joinedDate" | "type" | "lastUpdate";
 
@@ -82,13 +83,11 @@ export default function ManagementUserPage() {
   const handleSerchSubmit = () => {
     setQuery((prevQuery) => ({
       ...prevQuery,
-      name: searchInput,
       pageNumber: 1,
+      name: searchInput,
     }));
-    mutate(query);
+    mutate();
   }
-
-  console.log(`Data: `, data);
   const handleClickOnUser = (rowId: string) => {
     setClickOnUser(true);
     setUserId(data.items.result[rowId].id);
@@ -104,7 +103,7 @@ export default function ManagementUserPage() {
           spacing={2}
           className="mt-3"
         >
-          <Stack
+          {/* <Stack
             direction="row"
             justifyContent="flex-start"
             alignItems="center"
@@ -115,6 +114,17 @@ export default function ManagementUserPage() {
               <Search />
             </IconButton>
 
+          </Stack> */}
+          <Stack
+            direction="row"
+            justifyContent="flex-start"
+            alignItems="center"
+            spacing={2}>
+            <AppSearchInput type="text" placeholder="Search" name="name" value={searchInput} onChange={handleQueryInputChange} 
+            className="rounded-l-lg"/>
+            <IconButton aria-label="Search" onClick={handleSerchSubmit} size="small" className="rounded-r-lg">
+              <Search />
+            </IconButton>
           </Stack>
 
         </Stack>
@@ -138,7 +148,7 @@ export default function ManagementUserPage() {
             justifyContent="flex-end"
             alignItems="baseline"
           >
-            <UsePagination totalPage={data?.metaData?.totalPageCount ?? 1} onChange={handlePageNumberChange} />
+            <UsePagination totalPage={data?.metaData?.totalPageCount ?? 1} onChange={handlePageNumberChange} currentPage={data?.metaData?.currentPage ?? 1} />
           </Stack>
         </div>
       </div>

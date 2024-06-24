@@ -10,7 +10,7 @@ interface Props extends UseControllerProps {
   size?: "small" | "medium";
   multiline?: boolean;
   rows?: number;
-  type?: string;
+  type?: React.HTMLInputTypeAttribute;
   error?: boolean;
   helperText?: string;
   className?: string;
@@ -28,12 +28,12 @@ export default function AppSearchInput({
   isApplyHelperText = true,
   ...props
 }: Props) {
-  const { fieldState, field } = useController({ ...props, defaultValue: "" });
+  // const { fieldState, field } = useController({ ...props, defaultValue: "" });
 
   return (
     <TextField
       {...props}
-      {...field}
+      // {...field}
       id={props.id}
       label={props.label}
       sx={props.sx ? props.sx : ""}
@@ -49,21 +49,21 @@ export default function AppSearchInput({
       value={props.value}
       className={props.className}
       onChange={props.onChange}
-      error={isApplyHelperText ? props.error || !!fieldState.error : undefined}
-      helperText={
-        isApplyHelperText
-          ? props.error
-            ? props.helperText
-            : fieldState.error?.message
-          : undefined
-      }
-      InputProps={{
-        endAdornment: (
-          <InputAdornment position="end">
-            <SearchIcon></SearchIcon>
-          </InputAdornment>
-        ),
-      }}
+      // error={isApplyHelperText ? props.error || !!fieldState.error : undefined}
+      // helperText={
+      //   isApplyHelperText
+      //     ? props.error
+      //       ? props.helperText
+      //       : fieldState.error?.message
+      //     : undefined
+      // }
+      // InputProps={{
+      //   endAdornment: (
+      //     <InputAdornment position="end">
+      //       <SearchIcon></SearchIcon>
+      //     </InputAdornment>
+      //   ),
+      // }}
     />
   );
 }
