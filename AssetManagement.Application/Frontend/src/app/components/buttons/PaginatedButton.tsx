@@ -22,15 +22,15 @@ const AppPaginatedButton = ({
       {styleType === "primary" ? (
         <button
           type={isFormSubmit ? "submit" : "button"}
-          className={`flex gap-2 bg-primary text-white font-semibold py-2 px-4 rounded-lg border-2 transition-all duration-200 border-primary ${className} ${
+          className={`flex gap-2 bg-primary text-white py-1 px-3 transition-all duration-200 ${className} ${
             isLoading
               ? "disabled pointer-events-none opacity-80"
-              : "hover:bg-white hover:border-2 hover:border-primary hover:text-primary hover:font-semibold hover:translate-y-[3px]"
+              : "hover:bg-white hover:border hover:border-primary hover:text-primary hover hover:translate-y-[1px]"
           }`}
           onClick={onClickOn}
         >
           {isLoading ? (
-            <div className="animate-spin h-5 w-5 border-4 border-white rounded-full border-b-primary"></div>
+            <div className="animate-spin h-5 w-5 border-4 border-white border-b-primary"></div>
           ) : (
             ""
           )}
@@ -39,15 +39,15 @@ const AppPaginatedButton = ({
       ) : (
         <button
           type={isFormSubmit ? "submit" : "button"}
-          className={`flex gap-2 bg-white text-gray-400 font-semibold py-2 px-4 rounded-lg border-2 transition-all duration-150 border-gray-400 ${className} ${
+          className={`flex gap-2 bg-white text-primary py-1 px-3 transition-all duration-150 border-primary ${className} ${
             isLoading
               ? "disabled pointer-events-none opacity-50"
-              : "hover:bg-white hover:border-2 hover:border-primary hover:text-primary hover:font-semibold hover:translate-y-[3px]"
+              : "hover:bg-white hover:border hover:border-primary hover:text-primary hover hover:translate-y-[1px]"
           }`}
           onClick={onClickOn}
         >
           {isLoading ? (
-            <div className="animate-spin h-5 w-5 border-4 border-gray-400 rounded-full border-b-white"></div>
+            <div className="animate-spin h-5 w-5 border border-primary border-b-white"></div>
           ) : (
             ""
           )}

@@ -5,6 +5,8 @@ import { PaginatedResponse } from "../models/Pagination";
 import { BaseResult } from "../models/BaseResult";
 import { User } from "../models/User";
 import { Order } from "../components/table/sortTable";
+import { EditUserRequest } from "../models/login/EditUserRequest";
+import { CreateUserRequest } from "../models/login/CreateUserRequest";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 axios.defaults.headers.post["Content-Type"] = "application/json";
@@ -119,7 +121,9 @@ const Users = {
     return requests.get(`api/Users?${queryString}`);
   },
   details: (id: string) => requests.get(`/api/users/${id}`),
-  disable: (id: string) => requests.put(`api/users/disable/${id}`, {})
+  disable: (id: string) => requests.put(`api/users/disable/${id}`, {}),
+  update: (id: string, values: EditUserRequest) => requests.put(`/api/users/${id}`, values),
+  create: (values: CreateUserRequest) => requests.post('api/users/create', values)
 };
 
 const Authentication = {

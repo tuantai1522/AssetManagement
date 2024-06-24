@@ -7,7 +7,7 @@ import { FilterUser } from "../../../app/models/User";
 import { Button } from "@mui/material";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import EditIcon from '@mui/icons-material/Edit';
-
+import { useLocation, useNavigate } from "react-router-dom";
 export interface UserListProp {
   data: FilterUser[];
   isLoading: boolean;
@@ -19,53 +19,52 @@ export interface UserListProp {
   handleClick: (event: any, rowId: string) => void;
   setIsOpenDisablingModal: Dispatch<SetStateAction<boolean>>;
   setCurrentDisablingId: Dispatch<SetStateAction<string>>;
+
 }
 
 const rows: FilterUser[] = [];
 
 export default function UserList(props: UserListProp) {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const columns: ColumnDefinition[] = [
     {
-      id: "staffCode",
-      fieldName: "staffCode",
-      disablePadding: true,
-      label: "Staff Code",
-      className: "font-bold",
-      rowRatio: "w-1/12",
-      style: {
-        border: "none",
-        borderBottom: "none",
-        minWidth: "100px",
-      },
+      id: 'staffCode',
+        fieldName: "staffCode",
+        disablePadding: true,
+        label: 'Staff Code',
+        className: "font-bold",
+        rowRatio: "w-1/12",
+        style: {
+            border: "none",
+            borderBottom: "none",
+            minWidth: "100px"
+        }
     },
     {
-      id: "fullName",
-      fieldName: "fullName",
+      id: 'fullName',
+      fieldName: 'fullName',
       disablePadding: false,
-      label: "Full Name",
+      label: 'Full Name',
       className: "font-bold",
       style: {
-        border: "none",
-        borderBottom: "none",
-        minWidth: "250px",
+          border: "none",
+          borderBottom: "none",
+          minWidth: "250px"
       },
-  
+
       rowRatio: "w-4/12",
-      // renderCell: <button color="primary" className="active:bg-black" onClick={e => {
-      //     e.stopPropagation();
-      //     alert("child");
-      // }
-      // } > Test</button>
     },
     {
-      id: "username",
-      fieldName: "username",
+      id: 'username',
+      fieldName: 'username',
       disablePadding: false,
-      label: "Username",
+      label: 'Username',
       className: "font-bold ",
       style: {
-        border: "none",
-        borderBottom: "none",
+          border: "none",
+          borderBottom: "none"
       },
       rowRatio: "w-2/12",
       disableSort: true,
@@ -74,7 +73,7 @@ export default function UserList(props: UserListProp) {
       id: "joinedDate",
       fieldName: "joinedDate",
       disablePadding: false,
-      label: "Joined Date",
+      label: 'Joined Date',
       className: "font-bold ",
       style: {
         border: "none",
@@ -84,15 +83,15 @@ export default function UserList(props: UserListProp) {
       rowRatio: "w-2/12",
     },
     {
-      id: "type",
-      fieldName: "types",
+      id: 'type',
+      fieldName: 'types',
       disablePadding: false,
-      label: "Type",
+      label: 'Type',
       className: "font-bold ",
       style: {
-        border: "none",
-        borderBottom: "none",
-        minWidth: "100px",
+          border: "none",
+          borderBottom: "none",
+          minWidth: "80px",
       },
       rowRatio: "w-2/12",
     },
@@ -113,7 +112,8 @@ export default function UserList(props: UserListProp) {
             className="text-gray-500"
             onClick={(e) => {
               e.stopPropagation();
-              alert("Edit");
+              const callbackUrl = location.pathname;
+              navigate(`/manage-user/edit-user/${params}?callbackUrl=${encodeURIComponent(callbackUrl)}`);
             }}
           >
             {" "}
@@ -136,6 +136,7 @@ export default function UserList(props: UserListProp) {
     },
   ];
   
+
   return (
     <div className="min-h-60">
       <AppTable<FilterUser>

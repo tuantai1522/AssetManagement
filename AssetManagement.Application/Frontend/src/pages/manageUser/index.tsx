@@ -3,13 +3,16 @@ import { useEffect, useState } from "react";
 import agent, { UserQuery } from "../../app/api/agent";
 import { Order } from "../../app/components/table/sortTable";
 import UserInfo from "../../app/components/userInfo/userInfo";
+import ConfirmModal from "../../app/components/confirmModal";
 import UserList from "./userList/userList";
 import { convertUtcToLocalDate } from "../../app/utils/dateUtils";
 import { FilterUser } from "../../app/models/User";
-import { IconButton, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 import UsePagination from "../../app/components/paginationButtons/paginationButtons";
 import { Search } from "@mui/icons-material";
-import ConfirmModal from "../../app/components/confirmModal";
+import AppSearchInput from "../../app/components/AppSearchInput";
+import AppButton from "../../app/components/buttons/Button";
+import { useSearchParams } from "react-router-dom";
 
 type OrderByFieldName =
   | "staffCode"
@@ -17,6 +20,15 @@ type OrderByFieldName =
   | "joinedDate"
   | "type"
   | "lastUpdate";
+
+const isOrderByFieldName = (value: any): value is OrderByFieldName => {
+  return ["staffCode", "fullName", "joinedDate", "type", "lastUpdate"].includes(value);
+};
+
+const isOrder = (value: any): value is Order => {
+  return ["asc", "desc"].includes(value);
+};
+
 
 export default function ManagementUserPage() {
   const [clickOnUser, setClickOnUser] = useState<boolean>(false);
@@ -27,20 +39,35 @@ export default function ManagementUserPage() {
     pageNumber: 1,
     pageSize: 5,
   });
+  const { data, isLoading, error, mutate } = agent.Users.filter(query);
+  const {data:userData, isLoading:userLoading, error:userError} = agent.Users.details(userId);
+
   const [isDisablingModalOpen, setIsDisablingModalOpen] = useState(false);
   const [currentDisablingId, setCurrentDisablingId] = useState("");
+
+  const handleDisable = (id: string) => {
+    agent.Users.disable(id);
+    mutate();
+  };
 
   const [searchInput, setSearchInput] = useState<string>("");
 
   const [order, setOrder] = useState<Order>("desc");
   const [orderBy, setOrderBy] = useState<OrderByFieldName>("joinedDate");
 
-  const { data, isLoading, error, mutate } = agent.Users.filter(query);
-  const {
-    data: userData,
-    isLoading: userLoading,
-    error: userError,
-  } = agent.Users.details(userId);
+  const [searchParams] = useSearchParams();
+  const passedOrderBy = searchParams.get('passedOrderBy') ?? undefined; 
+  const passedOrder = searchParams.get('passedOrder') ?? undefined; 
+
+  useEffect(() => {
+    if (passedOrderBy && isOrderByFieldName(passedOrderBy)) {
+      setOrderBy(passedOrderBy);
+    }
+    if (passedOrder && isOrder(passedOrder)) {
+      setOrder(passedOrder);
+    }
+  }, [passedOrderBy, order])
+  
 
   useEffect(() => {
     switch (orderBy) {
@@ -115,10 +142,6 @@ export default function ManagementUserPage() {
     mutate(query);
   };
 
-  const handleDisable = (id: string) => {
-    agent.Users.disable(id);
-    mutate();
-  };
 
   const handleQueryInputChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -130,12 +153,11 @@ export default function ManagementUserPage() {
   const handleSerchSubmit = () => {
     setQuery((prevQuery) => ({
       ...prevQuery,
-      name: searchInput,
       pageNumber: 1,
+      name: searchInput,
     }));
-    mutate(query);
-  };
-
+    mutate();
+  }
   const handleClickOnUser = (rowId: string) => {
     setClickOnUser(true);
     setUserId(data.items.result[rowId].id);
@@ -153,26 +175,26 @@ export default function ManagementUserPage() {
           spacing={2}
           className="mt-3"
         >
+          <div></div>
           <Stack
             direction="row"
-            justifyContent="flex-start"
+            justifyContent="flex-end"
             alignItems="center"
-            spacing={2}
-          >
-            <input
-              type="text"
-              placeholder="Search"
-              name="name"
-              value={searchInput}
-              onChange={handleQueryInputChange}
-            />
-            <IconButton
-              aria-label="Search"
-              onClick={handleSerchSubmit}
-              size="small"
-            >
-              <Search />
-            </IconButton>
+            spacing={8}>
+            <Stack
+              direction="row"
+              justifyContent="flex-start"
+              alignItems="center"
+              spacing={2}>
+              <AppSearchInput type="text" placeholder="Search" name="name" value={searchInput} onChange={handleQueryInputChange}
+                className="!rounded-l-md !border !border-gray-400 !border-r-0"
+              />
+
+              <div onClick={handleSerchSubmit} className="border border-gray-500 border-l-0 rounded-r-md mx-0 hover:cursor-pointer" style={{ margin: 0, padding: "6px" }}>
+                <Search className="mx-0" />
+              </div>
+            </Stack>
+            <AppButton content="Create new user" className="py-[6px]" />
           </Stack>
         </Stack>
         <div className="mt-3">
@@ -187,9 +209,9 @@ export default function ManagementUserPage() {
             setOrder={setOrder}
             orderBy={orderBy}
             setOrderBy={setOrderBy}
-            handleClick={(event, rowId) => handleClickOnUser(rowId)}
             setIsOpenDisablingModal={setIsDisablingModalOpen}
             setCurrentDisablingId={setCurrentDisablingId}
+            handleClick={(event, rowId) => handleClickOnUser(rowId)}
           />
 
           <Stack
@@ -197,21 +219,13 @@ export default function ManagementUserPage() {
             justifyContent="flex-end"
             alignItems="baseline"
           >
-            <UsePagination
-              totalPage={data?.metaData?.totalPageCount ?? 1}
-              onChange={handlePageNumberChange}
-            />
+            <UsePagination 
+            totalPage={data?.metaData?.totalPageCount ?? 1} 
+            onChange={handlePageNumberChange} 
+            currentPage={data?.metaData?.currentPage ?? 1} />
           </Stack>
         </div>
       </div>
-      <UserInfo
-        isOpen={clickOnUser}
-        isLoading={userLoading}
-        userData={userData?.result}
-        onClose={() => {
-          setClickOnUser(false);
-        }}
-      ></UserInfo>
       <ConfirmModal
         message="Do you want to disable this user?"
         confirmMessage="Disable"
@@ -222,6 +236,14 @@ export default function ManagementUserPage() {
           handleDisable(currentDisablingId);
         }}
       />
+      <UserInfo
+        isOpen={clickOnUser}
+        isLoading={userLoading}
+        userData={userData?.result}
+        onClose={() => {
+          setClickOnUser(false);
+        }}
+      ></UserInfo>
     </div>
   );
 }

@@ -9,8 +9,10 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
+        //User
         CreateMap<AppUser, UserInfoResponse>()
             .ForMember(dest => dest.FullName, src => src.MapFrom(src => string.Concat(src.LastName, " ", src.FirstName)))
-            .ForMember(dest => dest.Type, src => src.MapFrom(src => src.UserRoles.FirstOrDefault().Role.Name));
-    }
+            .ForMember(dest => dest.Type, src => src.MapFrom(src => src.UserRoles.FirstOrDefault()!.Role.Name));
+		//Assert
+	}
 }
