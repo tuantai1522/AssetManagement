@@ -1,9 +1,9 @@
 import ManagementMyAssignmentPage from "../myAssignment";
 
-export default function HomePage() {
+export default function ManagementAssignmentPage() {
   return (
     <>
-      <ManagementMyAssignmentPage />
+      <h1>Assignment list</h1>
     </>
   );
 }
