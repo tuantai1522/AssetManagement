@@ -6,7 +6,7 @@ import UserInfo from "../../app/components/userInfo/userInfo";
 import UserList from "./userList/userList";
 import { convertUtcToLocalDate } from "../../app/utils/dateUtils";
 import { FilterUser } from "../../app/models/User";
-import { IconButton, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 import UsePagination from "../../app/components/paginationButtons/paginationButtons";
 import { Search } from "@mui/icons-material";
 import AppSearchInput from "../../app/components/AppSearchInput";
@@ -103,28 +103,18 @@ export default function ManagementUserPage() {
           spacing={2}
           className="mt-3"
         >
-          {/* <Stack
-            direction="row"
-            justifyContent="flex-start"
-            alignItems="center"
-            spacing={2}
-          >
-            <input type="text" placeholder="Search" name="name" value={searchInput} onChange={handleQueryInputChange} />
-            <IconButton aria-label="Search" onClick={handleSerchSubmit} size="small">
-              <Search />
-            </IconButton>
-
-          </Stack> */}
           <Stack
             direction="row"
             justifyContent="flex-start"
             alignItems="center"
             spacing={2}>
-            <AppSearchInput type="text" placeholder="Search" name="name" value={searchInput} onChange={handleQueryInputChange} 
-            className="rounded-l-lg"/>
-            <IconButton aria-label="Search" onClick={handleSerchSubmit} size="small" className="rounded-r-lg">
-              <Search />
-            </IconButton>
+            <AppSearchInput type="text" placeholder="Search" name="name" value={searchInput} onChange={handleQueryInputChange}
+              className="!rounded-l-md !border !border-gray-400 !border-r-0"
+            />
+
+            <div onClick={handleSerchSubmit} className="border border-gray-500 rounded-r-md mx-0 hover:cursor-pointer" style={{ margin: 0, padding: "6px" }}>
+              <Search className="mx-0" />
+            </div>
           </Stack>
 
         </Stack>
