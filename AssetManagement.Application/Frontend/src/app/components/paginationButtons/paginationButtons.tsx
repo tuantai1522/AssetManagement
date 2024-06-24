@@ -2,6 +2,7 @@ import { useState } from "react";
 import usePagination from "@mui/material/usePagination";
 import { styled } from "@mui/material/styles";
 import AppPaginatedButton from "../buttons/PaginatedButton";
+import { Stack } from "@mui/material";
 
 const List = styled("ul")({
   listStyle: "none",
@@ -35,7 +36,17 @@ export default function UsePagination({ totalPage, onChange }: Props) {
         let children = null;
 
         if (type === "start-ellipsis" || type === "end-ellipsis") {
-          children = "…";
+          children = (
+            <Stack
+              direction="row"
+              justifyContent="center"
+              alignItems="center"
+              spacing={2}
+              className="text-primary"
+            >
+              ...
+            </Stack>
+          );
         } else if (type === "page") {
           children = (
             <AppPaginatedButton
@@ -46,11 +57,10 @@ export default function UsePagination({ totalPage, onChange }: Props) {
                 handleClick(page!); // Call handleClick to handle your custom logic
                 item.onClick(e);
               }}
-              className={`${
-                currentPage === page
-                  ? "bg-primary px-2 py-1 rounded hover:bg-red-600"
+              className={`${currentPage === page
+                  ? "bg-primary hover:bg-red-600 "
                   : ""
-              }`}
+                }`}
             />
           );
         } else if (type === "previous") {
