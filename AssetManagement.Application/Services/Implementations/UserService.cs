@@ -53,9 +53,12 @@ public class UserService : IUserService
 
         var orderBy = GetOrderByExpression(request);
 
+		Expression<Func<AppUser, bool>> filterSpecification = u => (string.IsNullOrEmpty(request.Name) || (u.FirstName + u.LastName).Contains(request.Name) || u.StaffCode.Contains(request.Name))
+		   && (request.Types == null || !request.Types.Any() || request.Types.Contains(u.UserRoles.Select(ur => ur.Role.Name).FirstOrDefault())
+		   && u.Location == currentUser.Location
+		   && !u.IsDisabled);
 
-
-        var totalRecord = await queryable.Where(filterSpecification).CountAsync();
+		var totalRecord = await queryable.Where(filterSpecification).CountAsync();
 
         queryable = orderBy(queryable);
 
