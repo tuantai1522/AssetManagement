@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import agent, { UserQuery } from "../../app/api/agent";
 import { Order } from "../../app/components/table/sortTable";
+import UserInfo from "../../app/components/userInfo/userInfo";
 import ConfirmModal from "../../app/components/confirmModal";
 import UserList from "./userList/userList";
 import { convertUtcToLocalDate } from "../../app/utils/dateUtils";
@@ -11,12 +12,16 @@ import { Pagination, Stack } from "@mui/material";
 type OrderByFieldName = "staffCode" | "fullName" | "joinedDate" | "type" | "lastUpdate";
 
 export default function ManagementUserPage() {
+  const [clickOnUser, setClickOnUser] = useState<boolean>(false)
+  const [userId, setUserId] = useState<string>("0")
+
   const [query, setQuery] = useState<UserQuery>({
     sortJoinedDate: "desc",
     pageNumber: 1,
     pageSize: 5
   });
   const { data, isLoading, error, mutate } = agent.Users.filter(query);
+  const {data:userData, isLoading:userLoading, error:userError} = agent.Users.details(userId);
 
   const [isDisablingModalOpen, setIsDisablingModalOpen] = useState(false);
   const [currentDisablingId, setCurrentDisablingId] = useState("");
@@ -28,6 +33,7 @@ export default function ManagementUserPage() {
 
   const [order, setOrder] = useState<Order>("desc");
   const [orderBy, setOrderBy] = useState<OrderByFieldName>("joinedDate");
+
 
   useEffect(() => {
     switch (orderBy) {
@@ -83,6 +89,10 @@ export default function ManagementUserPage() {
     setQuery((prevQuery) => ({ ...prevQuery, pageNumber }));
   };
 
+  const handleClickOnUser = (rowId:string) => {
+    setClickOnUser(true);
+    setUserId(data.items.result[rowId].id);
+  }
   return (
     <div className="flex justify-center h-full">
       <div className="container">
@@ -101,6 +111,7 @@ export default function ManagementUserPage() {
             setOrderBy={setOrderBy}
             setIsOpenDisablingModal={setIsDisablingModalOpen}
             setCurrentDisablingId={setCurrentDisablingId}
+            handleClick={(event, rowId) => handleClickOnUser(rowId)}
           />
 
           <Stack
@@ -122,12 +133,14 @@ export default function ManagementUserPage() {
           handleDisable(currentDisablingId);
         }}
       />
-      {/* <NotifyModal
-        message="You have succesfully change the password"
-        title="Change Password"
-        isOpen={true}
-        onClose={() => {}}
-      />  */}
+      <UserInfo
+        isOpen={clickOnUser}
+        isLoading = {userLoading}
+        userData={userData?.result}
+        onClose={() => {
+          setClickOnUser(false);
+        }}
+      ></UserInfo>
     </div>
   );
 }

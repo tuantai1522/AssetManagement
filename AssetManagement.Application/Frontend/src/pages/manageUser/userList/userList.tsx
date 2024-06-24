@@ -7,6 +7,7 @@ import { FilterUser } from "../../../app/models/User";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import EditIcon from '@mui/icons-material/Edit';
 import { useNavigate } from "react-router-dom";
+import { Button } from "@mui/material";
 export interface UserListProp {
   data: FilterUser[];
   isLoading: boolean;
@@ -17,6 +18,7 @@ export interface UserListProp {
   setOrder: (order: Order) => void,
   orderBy: any,
   setOrderBy: (orderBy: any) => void,
+  handleClick: (event:any, rowId: string) => void,
 }
 
 export default function UserList(props: UserListProp) {
@@ -148,7 +150,7 @@ export default function UserList(props: UserListProp) {
 
 
   return (
-    <>
+    <div className="min-h-60">
       <AppTable<FilterUser>
         order={props.order}
         setOrder={props.setOrder}
@@ -156,10 +158,8 @@ export default function UserList(props: UserListProp) {
         setOrderByFieldName={props.setOrderBy}
         columns={columns}
         rows={props.data}
-        handleClick={() => {
-          alert("Test");
-        }}
+        handleClick={props.handleClick}
       />
-    </>
+    </div>
   );
 }
