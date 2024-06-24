@@ -51,70 +51,51 @@ public class UserService : IUserService
             request.PageSize = 5;
         }
 
-        try
-        {
-            var orderBy = GetOrderByExpression(request);
+        var orderBy = GetOrderByExpression(request);
 
-            Expression<Func<AppUser, bool>> filterSpecification = u => (string.IsNullOrEmpty(request.Name) || (u.FirstName + u.LastName).Contains(request.Name) || u.StaffCode.Contains(request.Name))
-            && (request.Types == null || !request.Types.Any() || request.Types.Contains(u.UserRoles.Select(ur => ur.Role.Name).FirstOrDefault())
-            && u.Location == currentUser.Location
-            && !u.IsDisabled);
+        Expression<Func<AppUser, bool>> filterSpecification = u => (string.IsNullOrEmpty(request.Name) || (u.FirstName + u.LastName).Contains(request.Name) || u.StaffCode.Contains(request.Name))
+        && (request.Types == null || !request.Types.Any() || request.Types.Contains(u.UserRoles.Select(ur => ur.Role.Name).FirstOrDefault())
+        && u.Location == currentUser.Location
+        && !u.IsDisabled);
 
-            var totalRecord = await queryable.CountAsync();
+        var totalRecord = await queryable.CountAsync();
 
-            queryable = orderBy(queryable);
+        queryable = orderBy(queryable);
 
-            var result = await queryable
-                .AsNoTracking()
-                .Where(filterSpecification)
-                .Skip((request.PageNumber.Value - 1) * request.PageSize.Value)
-                .Take(request.PageSize.Value)
-                .Select(u => new FilterUserResponse()
-                {
-                    Id = u.Id,
-                    FullName = $"{u.FirstName} {u.LastName}",
-                    JoinedDate = u.JoinedDate,
-                    StaffCode = u.StaffCode,
-                    Username = u.UserName,
-                    Types = u.UserRoles.Select(ur => ur.Role.Name).ToList()
-                }).ToListAsync();
-
-            var totalPages = (int)Math.Ceiling((double)totalRecord / request.PageSize.Value);
-            return new PagingDto<FilterUserResponse>()
+        var result = await queryable
+            .AsNoTracking()
+            .Where(filterSpecification)
+            .Skip((request.PageNumber.Value - 1) * request.PageSize.Value)
+            .Take(request.PageSize.Value)
+            .Select(u => new FilterUserResponse()
             {
-                CurrentPage = request.PageNumber.Value,
-                TotalItemCount = totalRecord,
-                PageSize = request.PageSize.Value,
-                Data = result
-            };
-        }
-        catch (Exception e)
+                Id = u.Id,
+                FullName = $"{u.FirstName} {u.LastName}",
+                JoinedDate = u.JoinedDate,
+                StaffCode = u.StaffCode,
+                Username = u.UserName,
+                Types = u.UserRoles.Select(ur => ur.Role.Name).ToList()
+            }).ToListAsync();
+
+        return new PagingDto<FilterUserResponse>()
         {
-            _logger.LogError("Error when execute {} method.\nDate: {}.\nDetail: {}", nameof(this.FilterUserAsync),
-                DateTime.UtcNow, e.Message);
-            throw new Exception($"Error when execute {nameof(this.FilterUserAsync)} method");
-        }
+            CurrentPage = request.PageNumber.Value,
+            TotalItemCount = totalRecord,
+            PageSize = request.PageSize.Value,
+            Data = result
+        };
     }
 
     public async Task<UserInfoResponse> GetUserByIdAsync(Guid id)
     {
-        try
+        var queryable = _userManager.Users;
+        var appUser = await queryable.Where(q => q.Id == id).Include(q => q.UserRoles).ThenInclude(q => q.Role).FirstOrDefaultAsync();
+        if (appUser == null)
         {
-            var queryable = _userManager.Users;
-            var appUser = await queryable.Where(q => q.Id == id).Include(q => q.UserRoles).ThenInclude(q => q.Role).FirstOrDefaultAsync();
-            if (appUser == null)
-            {
-                throw new NotFoundException("User can not found");
-            }
-            var result = _mapper.Map<UserInfoResponse>(appUser);
-            return result;
+            throw new NotFoundException("User can not found");
         }
-        catch (Exception e)
-        {
-            _logger.LogError("Error when execute {} method.\nDate: {}.\nDetail: {}", nameof(this.GetUserByIdAsync),
-                DateTime.UtcNow, e.Message);
-            throw new Exception($"Error when execute {nameof(this.GetUserByIdAsync)} method");
-        }
+        var result = _mapper.Map<UserInfoResponse>(appUser);
+        return result;
     }
 
     public async Task<UserInfoResponse> CreateUserAsync(CreateUserRequest request)
