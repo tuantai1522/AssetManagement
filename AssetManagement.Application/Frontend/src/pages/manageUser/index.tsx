@@ -38,9 +38,6 @@ export default function ManagementUserPage() {
   const [order, setOrder] = useState<Order>("desc");
   const [orderBy, setOrderBy] = useState<OrderByFieldName>("joinedDate");
 
-  const { data, isLoading, error, mutate } = agent.Users.filter(query);
-  const { data: userData, isLoading: userLoading, error: userError } = agent.Users.details(userId);
-
   useEffect(() => {
     switch (orderBy) {
       case "staffCode":
