@@ -27,5 +27,5 @@ yarn-error.log*
 */bin
 .vs/
 .vscode/*
-.env
 /TestResults/*
+/AssetManagement.Application/Frontend/.env
