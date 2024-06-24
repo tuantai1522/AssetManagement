@@ -10,6 +10,7 @@ import { Stack } from "@mui/material";
 import UsePagination from "../../app/components/paginationButtons/paginationButtons";
 import { Search } from "@mui/icons-material";
 import AppSearchInput from "../../app/components/AppSearchInput";
+import AppButton from "../../app/components/buttons/Button";
 
 type OrderByFieldName = "staffCode" | "fullName" | "joinedDate" | "type" | "lastUpdate";
 
@@ -103,18 +104,26 @@ export default function ManagementUserPage() {
           spacing={2}
           className="mt-3"
         >
+          <div></div>
           <Stack
             direction="row"
-            justifyContent="flex-start"
+            justifyContent="flex-end"
             alignItems="center"
-            spacing={2}>
-            <AppSearchInput type="text" placeholder="Search" name="name" value={searchInput} onChange={handleQueryInputChange}
-              className="!rounded-l-md !border !border-gray-400 !border-r-0"
-            />
+            spacing={8}>
+            <Stack
+              direction="row"
+              justifyContent="flex-start"
+              alignItems="center"
+              spacing={2}>
+              <AppSearchInput type="text" placeholder="Search" name="name" value={searchInput} onChange={handleQueryInputChange}
+                className="!rounded-l-md !border !border-gray-400 !border-r-0"
+              />
 
-            <div onClick={handleSerchSubmit} className="border border-gray-500 rounded-r-md mx-0 hover:cursor-pointer" style={{ margin: 0, padding: "6px" }}>
-              <Search className="mx-0" />
-            </div>
+              <div onClick={handleSerchSubmit} className="border border-gray-500 rounded-r-md mx-0 hover:cursor-pointer" style={{ margin: 0, padding: "6px" }}>
+                <Search className="mx-0" />
+              </div>
+            </Stack>
+            <AppButton content="Create new user" className="py-[6px]" />
           </Stack>
 
         </Stack>
