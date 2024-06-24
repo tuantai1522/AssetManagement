@@ -46,8 +46,7 @@ export default function ManagementUserPage() {
   const [currentDisablingId, setCurrentDisablingId] = useState("");
 
   const handleDisable = (id: string) => {
-    agent.Users.disable(id);
-    mutate();
+    agent.Users.disable(id).then(mutate);
   };
 
   const [searchInput, setSearchInput] = useState<string>("");

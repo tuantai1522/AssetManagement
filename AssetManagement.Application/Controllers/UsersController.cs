@@ -66,7 +66,7 @@ public class UsersController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost]
+    [HttpPut("disable/{id}")]
     [Authorize(Roles = $"{RoleConstant.AdminRole}")]
     public async Task<IActionResult> DisableAsync(Guid id)
     {
