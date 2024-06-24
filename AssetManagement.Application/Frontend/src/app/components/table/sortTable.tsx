@@ -164,6 +164,7 @@ export function AppTable<T>(props: AppTableProp<T>) {
 
             "& td:last-child, & th:last-child": {
               border: "none",
+              maxWidth: "1rem"
             },
 
             "& thead tr th": {

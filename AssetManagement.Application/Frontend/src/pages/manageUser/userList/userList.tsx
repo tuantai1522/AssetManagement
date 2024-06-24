@@ -102,12 +102,11 @@ export default function UserList(props: UserListProp) {
       label: "",
       className: "font-bold",
       bodyStyle: {
-        width: "1rem",
         borderBottom: "none",
       },
-      rowRatio: "w-2/12",
+      rowRatio: "w-1/12",
       renderCell: (params) => (
-        <div className="flex">
+        <div className="ml-2 flex w-fit justify-end">
           <button
             color="primary"
             className="text-gray-500"
