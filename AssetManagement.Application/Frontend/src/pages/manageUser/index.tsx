@@ -11,16 +11,21 @@ import UsePagination from "../../app/components/paginationButtons/paginationButt
 import { Search } from "@mui/icons-material";
 import ConfirmModal from "../../app/components/confirmModal";
 
-type OrderByFieldName = "staffCode" | "fullName" | "joinedDate" | "type" | "lastUpdate";
+type OrderByFieldName =
+  | "staffCode"
+  | "fullName"
+  | "joinedDate"
+  | "type"
+  | "lastUpdate";
 
 export default function ManagementUserPage() {
-  const [clickOnUser, setClickOnUser] = useState<boolean>(false)
-  const [userId, setUserId] = useState<string>("0")
+  const [clickOnUser, setClickOnUser] = useState<boolean>(false);
+  const [userId, setUserId] = useState<string>("0");
 
   const [query, setQuery] = useState<UserQuery>({
     sortJoinedDate: "desc",
     pageNumber: 1,
-    pageSize: 5
+    pageSize: 5,
   });
   const [isDisablingModalOpen, setIsDisablingModalOpen] = useState(false);
   const [currentDisablingId, setCurrentDisablingId] = useState("");
@@ -31,59 +36,96 @@ export default function ManagementUserPage() {
   const [orderBy, setOrderBy] = useState<OrderByFieldName>("joinedDate");
 
   const { data, isLoading, error, mutate } = agent.Users.filter(query);
-  const { data: userData, isLoading: userLoading, error: userError } = agent.Users.details(userId);
+  const {
+    data: userData,
+    isLoading: userLoading,
+    error: userError,
+  } = agent.Users.details(userId);
 
   useEffect(() => {
     switch (orderBy) {
-      case "staffCode":
-        {
-          setQuery((query) => ({ ...query, sortStaffCode: order, sortFullName: undefined, sortJoinedDate: undefined, sortType: undefined, sortLastUpdate: undefined }));
-          mutate(query);
-          break;
-        }
-      case "fullName":
-        {
-          setQuery((query) => ({ ...query, sortStaffCode: undefined, sortFullName: order, sortJoinedDate: undefined, sortType: undefined, sortLastUpdate: undefined }));
-          mutate(query);
-          break;
-        }
-      case "joinedDate":
-        {
-          setQuery((query) => ({ ...query, sortStaffCode: undefined, sortFullName: undefined, sortJoinedDate: order, sortType: undefined, sortLastUpdate: undefined }));
-          mutate(query);
-          break;
-        }
-      case "type":
-        {
-          setQuery((query) => ({ ...query, sortStaffCode: undefined, sortFullName: undefined, sortJoinedDate: undefined, sortType: order, sortLastUpdate: undefined }));
-          mutate(query);
-          break;
-        }
-      case "lastUpdate":
-        {
-          setQuery((query) => ({ ...query, sortStaffCode: undefined, sortFullName: undefined, sortJoinedDate: undefined, sortType: undefined, sortLastUpdate: order }));
-          mutate(query);
-          break;
-        }
+      case "staffCode": {
+        setQuery((query) => ({
+          ...query,
+          sortStaffCode: order,
+          sortFullName: undefined,
+          sortJoinedDate: undefined,
+          sortType: undefined,
+          sortLastUpdate: undefined,
+        }));
+        mutate(query);
+        break;
+      }
+      case "fullName": {
+        setQuery((query) => ({
+          ...query,
+          sortStaffCode: undefined,
+          sortFullName: order,
+          sortJoinedDate: undefined,
+          sortType: undefined,
+          sortLastUpdate: undefined,
+        }));
+        mutate(query);
+        break;
+      }
+      case "joinedDate": {
+        setQuery((query) => ({
+          ...query,
+          sortStaffCode: undefined,
+          sortFullName: undefined,
+          sortJoinedDate: order,
+          sortType: undefined,
+          sortLastUpdate: undefined,
+        }));
+        mutate(query);
+        break;
+      }
+      case "type": {
+        setQuery((query) => ({
+          ...query,
+          sortStaffCode: undefined,
+          sortFullName: undefined,
+          sortJoinedDate: undefined,
+          sortType: order,
+          sortLastUpdate: undefined,
+        }));
+        mutate(query);
+        break;
+      }
+      case "lastUpdate": {
+        setQuery((query) => ({
+          ...query,
+          sortStaffCode: undefined,
+          sortFullName: undefined,
+          sortJoinedDate: undefined,
+          sortType: undefined,
+          sortLastUpdate: order,
+        }));
+        mutate(query);
+        break;
+      }
       default:
         break;
     }
-
-  }, [orderBy, order])
+  }, [orderBy, order]);
 
   const handlePageNumberChange = (value: any) => {
     const pageNumber = Number(value);
     setQuery((prevQuery) => ({ ...prevQuery, pageNumber }));
     mutate(query);
+  };
+
   const handleDisable = (id: string) => {
     agent.Users.disable(id);
     mutate();
   };
 
-  const handleQueryInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleQueryInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const { name, value } = event.target;
     setSearchInput(value);
-  }
+  };
 
   const handleSerchSubmit = () => {
     setQuery((prevQuery) => ({
@@ -92,17 +134,18 @@ export default function ManagementUserPage() {
       pageNumber: 1,
     }));
     mutate(query);
-  }
+  };
 
-  console.log(`Data: `, data);
   const handleClickOnUser = (rowId: string) => {
     setClickOnUser(true);
     setUserId(data.items.result[rowId].id);
-  }
+  };
   return (
     <div className="flex justify-center h-full">
       <div className="container">
-        <p className="text-primary text-xl font-bold justify-start items-start">User List</p>
+        <p className="text-primary text-xl font-bold justify-start items-start">
+          User List
+        </p>
         <Stack
           direction="row"
           justifyContent="space-between"
@@ -116,13 +159,21 @@ export default function ManagementUserPage() {
             alignItems="center"
             spacing={2}
           >
-            <input type="text" placeholder="Search" name="name" value={searchInput} onChange={handleQueryInputChange} />
-            <IconButton aria-label="Search" onClick={handleSerchSubmit} size="small">
+            <input
+              type="text"
+              placeholder="Search"
+              name="name"
+              value={searchInput}
+              onChange={handleQueryInputChange}
+            />
+            <IconButton
+              aria-label="Search"
+              onClick={handleSerchSubmit}
+              size="small"
+            >
               <Search />
             </IconButton>
-
           </Stack>
-
         </Stack>
         <div className="mt-3">
           <UserList
@@ -137,6 +188,8 @@ export default function ManagementUserPage() {
             orderBy={orderBy}
             setOrderBy={setOrderBy}
             handleClick={(event, rowId) => handleClickOnUser(rowId)}
+            setIsOpenDisablingModal={setIsDisablingModalOpen}
+            setCurrentDisablingId={setCurrentDisablingId}
           />
 
           <Stack
@@ -144,7 +197,10 @@ export default function ManagementUserPage() {
             justifyContent="flex-end"
             alignItems="baseline"
           >
-            <UsePagination totalPage={data?.metaData?.totalPageCount ?? 1} onChange={handlePageNumberChange} />
+            <UsePagination
+              totalPage={data?.metaData?.totalPageCount ?? 1}
+              onChange={handlePageNumberChange}
+            />
           </Stack>
         </div>
       </div>
@@ -154,6 +210,8 @@ export default function ManagementUserPage() {
         userData={userData?.result}
         onClose={() => {
           setClickOnUser(false);
+        }}
+      ></UserInfo>
       <ConfirmModal
         message="Do you want to disable this user?"
         confirmMessage="Disable"
@@ -163,9 +221,7 @@ export default function ManagementUserPage() {
           setIsDisablingModalOpen(false);
           handleDisable(currentDisablingId);
         }}
-      ></UserInfo>
+      />
     </div>
   );
 }
-
-
