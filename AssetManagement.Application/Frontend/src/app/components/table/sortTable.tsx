@@ -155,7 +155,7 @@ export function AppTable<T>(props: AppTableProp<T>) {
                         "& thead tr th": {
                             borderBottom: "1px solid black",
                             fontWeight: "bold"
-                        }
+                        },
                     }}
                     aria-labelledby="tableTitle"
                     size={"small"}
