@@ -12,7 +12,6 @@ import { createFormSchema } from "../../schemas/createFormSchema";
 import { useEffect } from "react";
 import dayjs from "dayjs";
 import { UserInfoResponse } from "../../models/login/UserInfoResponse";
-import { ConstructionOutlined } from "@mui/icons-material";
 
 
 interface IFormInput extends FieldValues {
@@ -28,17 +27,14 @@ interface UserFormProps {
     onSubmit: (data: any) => void;
     isEditing?: boolean;
     data?: UserInfoResponse;
-    callbackUrl?: string; 
 }
 
 const UserForm = ({
     onSubmit,
     isEditing = false,
-    data,
-    callbackUrl
+    data
 }: UserFormProps) => {
     const navigate = useNavigate();
-    console.log('data', data);
 
     const formatDate = (date: Date) => {
         return dayjs(date);
@@ -46,6 +42,9 @@ const UserForm = ({
 
     const { handleSubmit, control, reset } = useForm({
         resolver: yupResolver<IFormInput>(createFormSchema),
+        defaultValues: {
+            gender: Gender.Female, // Set default value for gender
+        },
         mode: 'all'
     });
 
@@ -174,7 +173,6 @@ const UserForm = ({
                                     {...field}
                                     format="DD/MM/YYYY"
                                     className="grow"
-                                    // value={data ? formatDate(data.joinedDate) : undefined}
                                     slotProps={{
                                         textField: {
                                             size: 'small',
@@ -219,7 +217,7 @@ const UserForm = ({
 
                 <div className="flex justify-end space-x-4">
                     <AppButton content="Save" isFormSubmit={true} />
-                    <AppButton content="Cancel" styleType="Secondary" onClickOn={() => { navigate(callbackUrl ?? '/manage-user') }} />
+                    <AppButton content="Cancel" styleType="Secondary" onClickOn={() => { navigate(-1) }} />
                 </div>
             </form>
         </div>
