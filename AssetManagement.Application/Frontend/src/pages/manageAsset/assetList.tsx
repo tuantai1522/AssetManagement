@@ -91,13 +91,17 @@ export default function AssetList(props: AssetListProp) {
                         alignItems="center"
                         spacing={2}
                     >
-                        <button onClick={(e) => {
+                        <button 
+                        className="text-gray-500"
+                        onClick={(e) => {
                             e.stopPropagation()
                             alert(params)
                         }}>
                             <Edit />
                         </button>
-                        <button onClick={(e) => {
+                        <button
+                        className="text-red-500"
+                        onClick={(e) => {
                             e.stopPropagation()
                             alert(params)
                         }}>
