@@ -16,7 +16,6 @@ public class UnitOfWork : IUnitOfWork, IAsyncDisposable
         _logger = logger;
         AssetRepo = new AssetRepository(dbContext);
         CategoryRepo = new CategoryRepository(dbContext);
-
     }
 
     public async Task SaveChangesAsync()
