@@ -1,14 +1,13 @@
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import UserForm from "../../app/components/forms/userForm";
 import agent from "../../app/api/agent";
 import { EditUserRequest } from "../../app/models/login/EditUserRequest";
+import dayjs from "dayjs";
 
 
 const EditUserPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const [searchParams] = useSearchParams();
-    const callbackUrl = searchParams.get('callbackUrl') ?? undefined; // Retrieve the callback URL
     
     if (!id) {
         navigate('/not-found');
@@ -18,9 +17,13 @@ const EditUserPage = () => {
     const { data,  error, isLoading } = agent.Users.details(id);
     
     const onSubmit = async (formData: any) => {
+        // Format the dates to 'YYYY-MM-DD'
+        const formattedDateOfBirth = dayjs(formData.dateOfBirth).format('YYYY-MM-DD');
+        const formattedJoinedDate = dayjs(formData.joinedDate).format('YYYY-MM-DD');
+
         const updateData: EditUserRequest = {
-            DateOfBirth: formData.dateOfBirth,
-            JoinedDate: formData.joinedDate,
+            DateOfBirth: formattedDateOfBirth,
+            JoinedDate: formattedJoinedDate,
             Gender: formData.gender,
             Type: formData.type,
         }
@@ -47,7 +50,6 @@ const EditUserPage = () => {
             onSubmit={onSubmit} 
             isEditing={true} 
             data={data.result} 
-            callbackUrl={callbackUrl}
         />
     );
 }

@@ -123,14 +123,23 @@ public class UserService : IUserService
             IsPasswordChanged = false,
             StaffCode = await GenerateStaffCodeAsync(),
             IsDisabled = false,
-            CreatedDateTime = DateTime.UtcNow,
-            LastUpdatedDateTime = DateTime.UtcNow,
+            CreatedDateTime = DateTime.Now,
+            LastUpdatedDateTime = DateTime.Now,
         };
 
         var result = await _userManager.CreateAsync(user, password);
         if (result.Succeeded)
         {
-            await _userManager.AddToRoleAsync(user, request.Type);
+            Role? role = await _roleManager.FindByNameAsync(request.Type);
+            user.UserRoles = new List<UserRole> { new UserRole() {
+                UserId = user.Id,
+                RoleId = role!.Id
+            } };
+            IdentityResult updateResult = await _userManager.UpdateAsync(user);
+            if (!updateResult.Succeeded)
+            {
+                throw new BadRequestException(ErrorStrings.CANNOT_ADD_ROLE_TO_USER);
+            }
             return _mapper.Map<UserInfoResponse>(user);
         }
         throw new Exception(string.Join(". ", result.Errors.Select(p => p.Description)));
@@ -149,10 +158,11 @@ public class UserService : IUserService
     }
     public async Task<UserInfoResponse> UpdateUserAsync(Guid userId, UpdateUserRequest request)
     {
-        ValidateGender(request.Gender);
+		ValidateGender(request.Gender);
         ValidateDateOfBirth(request.DateOfBirth);
         ValidateJoinedDate(request.DateOfBirth, request.JoinedDate);
         await ValidateTypeAsync(request.Type);
+        await ValidateLocationAsync(userId);
 
         _logger.LogInformation("Updating user with ID: {UserId}", userId);
         var queryable = _userManager.Users;
@@ -175,7 +185,7 @@ public class UserService : IUserService
         IdentityResult updateResult = await _userManager.UpdateAsync(userToUpdate);
         if (!updateResult.Succeeded)
         {
-            throw new BadRequestException(ErrorStrings.USER_UPDATE);
+            throw new BadRequestException(ErrorStrings.CANNOT_UPDATE_USER);
         }
         UserInfoResponse response = _mapper.Map<UserInfoResponse>(userToUpdate);
         _logger.LogInformation("User updated successfully: {UserId}", userId);
@@ -234,12 +244,12 @@ public class UserService : IUserService
     private static void ValidateFirstName(string firstName)
     {
         if (firstName.Split(' ').Length > Constants.NUMBER_OF_WORDS_IN_FIRSTNAME) throw new BadRequestException(ErrorStrings.INVALID_FIRSTNAME_NUMBER_OF_WORDS);
-        if (!firstName.All(c => char.IsLetter(c))) throw new BadRequestException(ErrorStrings.INVALID_FIRSTNAME_CHARACTERS);
+        if (!Regex.IsMatch(firstName, @"^[a-zA-Z]+$")) throw new BadRequestException(ErrorStrings.INVALID_FIRSTNAME_CHARACTERS);
     }
 
     private static void ValidateLastName(string lastname)
     {
-        if (!lastname.All(c => char.IsLetter(c) || char.IsWhiteSpace(c))) throw new BadRequestException(ErrorStrings.INVALID_LASTNAME_CHARACTERS);
+        if (!Regex.IsMatch(lastname, @"^[a-zA-Z\s]+$")) throw new BadRequestException(ErrorStrings.INVALID_LASTNAME_CHARACTERS);
     }
 
     private async Task<Role> ValidateTypeAsync(string type)
@@ -276,7 +286,17 @@ public class UserService : IUserService
 
         return newStaffCode;
     }
+    private async Task ValidateLocationAsync(Guid userId)
+    {
+        var adminId = _currentUser.UserId;
+		var adminUser = await _userManager.FindByIdAsync(adminId.ToString()) ?? throw new NotFoundException(ErrorStrings.USER_NOT_FOUND);
 
+		var currentUser = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new NotFoundException(ErrorStrings.USER_NOT_FOUND);
+        if (adminUser.Location != currentUser.Location)
+        {
+            throw new BadRequestException(ErrorStrings.LOCATION_NOT_VALID);
+        }
+	}
     private async Task<string> GetAndValidateLocationAsync()
     {
         var currentAdminId = _currentUser.UserId;
