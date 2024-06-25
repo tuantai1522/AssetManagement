@@ -102,24 +102,28 @@ export default function AssetList(props: AssetListProp) {
                         spacing={2}
                     >
                         <Tooltip title="Edit">
-                            <IconButton
-                                disabled={params?.state === "Assigned"}
-                                onClick={(e) => {
-                                    e.stopPropagation()
-                                    alert(params?.id)
-                                }}>
-                                <Edit className={params?.state === "Assigned" ? "" : "text-gray-500"} />
-                            </IconButton>
+                            <span>
+                                <IconButton
+                                    disabled={params?.state === "Assigned"}
+                                    onClick={(e) => {
+                                        e.stopPropagation()
+                                        alert(params?.id)
+                                    }}>
+                                    <Edit className={params?.state === "Assigned" ? "" : "text-gray-500"} />
+                                </IconButton>
+                            </span>
                         </Tooltip>
                         <Tooltip title="Remove">
-                            <IconButton
-                                disabled={params?.state === "Assigned"}
-                                onClick={(e) => {
-                                    e.stopPropagation()
-                                    alert(params?.id)
-                                }}>
-                                <HighlightOff className={params?.state === "Assigned" ? "" : "text-red-500"} />
-                            </IconButton>
+                            <span>
+                                <IconButton
+                                    disabled={params?.state === "Assigned"}
+                                    onClick={(e) => {
+                                        e.stopPropagation()
+                                        alert(params?.id)
+                                    }}>
+                                    <HighlightOff className={params?.state === "Assigned" ? "" : "text-red-500"} />
+                                </IconButton>
+                            </span>
                         </Tooltip>
                     </Stack>
                 )

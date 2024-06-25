@@ -1,5 +1,5 @@
 import AssetList, { AssetRowData } from "./assetList";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FilterAssetRequest, FilterAssetResponse, getAssetQueryString } from "../../app/models/Asset";
 import agent from "../../app/api/agent";
 import { Order } from "../../app/components/table/sortTable";
@@ -28,7 +28,7 @@ export default function ManagementAssetPage() {
 
   const [searchInput, setSearchInput] = useState<string>("");
 
-  // const { data, isLoading, error, mutate } = agent.Assets.filter(query);
+  // const { data, isLoading, error, mutate } = agent.Assets.filter(query); 
 
   //Fake data 
   const data = {
@@ -262,6 +262,118 @@ export default function ManagementAssetPage() {
   const isLoading: boolean = false;
   //Fake data
 
+  useEffect(() => {
+    switch (orderBy) {
+      case "assetCode": {
+        setQuery((query) => ({
+          ...query,
+          sortAssetCode: order,
+          sortAssetName: undefined,
+          sortCategoryName: undefined,
+          sortState: undefined,
+          sortLastUpdate: undefined,
+        }));
+        //refresh
+        const queryString = getAssetQueryString({
+          ...query,
+          sortAssetCode: order,
+          sortAssetName: undefined,
+          sortCategoryName: undefined,
+          sortState: undefined,
+          sortLastUpdate: undefined,
+        });
+        // mutate(query);
+        break;
+      }
+      case "assetName": {
+        setQuery((query) => ({
+          ...query,
+          sortAssetCode: undefined,
+          sortAssetName: order,
+          sortCategoryName: undefined,
+          sortState: undefined,
+          sortLastUpdate: undefined,
+        }));
+        //refresh
+        const queryString = getAssetQueryString({
+          ...query,
+          sortAssetCode: undefined,
+          sortAssetName: order,
+          sortCategoryName: undefined,
+          sortState: undefined,
+          sortLastUpdate: undefined,
+        });
+        // mutate(query);
+        break;
+      }
+      case "categoryName": {
+        setQuery((query) => ({
+          ...query,
+          sortAssetCode: undefined,
+          sortAssetName: undefined,
+          sortCategoryName: order,
+          sortState: undefined,
+          sortLastUpdate: undefined,
+        }));
+        //refresh
+        const queryString = getAssetQueryString({
+          ...query,
+          sortAssetCode: undefined,
+          sortAssetName: undefined,
+          sortCategoryName: order,
+          sortState: undefined,
+          sortLastUpdate: undefined,
+        });
+        // mutate(query);
+        break;
+      }
+      case "state": {
+        setQuery((query) => ({
+          ...query,
+          sortAssetCode: undefined,
+          sortAssetName: undefined,
+          sortCategoryName: undefined,
+          sortState: order,
+          sortLastUpdate: undefined,
+        }));
+        //refresh
+        const queryString = getAssetQueryString({
+          ...query,
+          sortAssetCode: undefined,
+          sortAssetName: undefined,
+          sortCategoryName: undefined,
+          sortState: order,
+          sortLastUpdate: undefined,
+        });
+        // mutate(query);
+        break;
+      }
+      case "lastUpdate": {
+        setQuery((query) => ({
+          ...query,
+          sortAssetCode: undefined,
+          sortAssetName: undefined,
+          sortCategoryName: undefined,
+          sortState: undefined,
+          sortLastUpdate: order,
+        }));
+        //refresh
+        const queryString = getAssetQueryString({
+          ...query,
+          sortAssetCode: undefined,
+          sortAssetName: undefined,
+          sortCategoryName: undefined,
+          sortState: undefined,
+          sortLastUpdate: order,
+        });
+        // mutate(query);
+        break;
+      }
+      default:
+        break;
+    }
+  }, [orderBy, order]);
+
   const handleSearchInputChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -277,7 +389,7 @@ export default function ManagementAssetPage() {
     }));
     // mutate();
     //test
-    const queryString = getAssetQueryString({
+    getAssetQueryString({
       ...query,
       pageNumber: 1,
       name: searchInput?.trim(),
