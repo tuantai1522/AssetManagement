@@ -7,6 +7,8 @@ using AssetManagement.Domain.Entities;
 using AssetManagement.Domain.Exceptions;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
 
 namespace AssetManagement.Application.Services.Implementations
 {
@@ -37,12 +39,13 @@ namespace AssetManagement.Application.Services.Implementations
                 throw new BadRequestException("Your account is disabled!");
             }
 
-            var category = _unitOfWork.CategoryRepo.FindOne(c => c.Id.Equals(request.CategoryId));
+            var category = await _unitOfWork.CategoryRepo.FindOne(c => c.Id.Equals(request.CategoryId));
             if (category == null)
             {
                 throw new NotFoundException("Category is not found!");
             }
             var newAsset = _mapper.Map<Asset>(request);
+            newAsset.AssetCode = await GenerateAssetCode(category);
             newAsset.Location = userLogin.Location;
             newAsset.CreatedAt = DateTime.Now;
             newAsset.LastUpdated = DateTime.Now;
@@ -51,6 +54,23 @@ namespace AssetManagement.Application.Services.Implementations
             await _unitOfWork.SaveChangesAsync();
 
             return _mapper.Map<AssetResponse>(newAsset);
+        }
+
+        private async Task<string> GenerateAssetCode(Category category)
+        {
+            var lastAssetCode = await _unitOfWork.AssetRepo.GetQueryableSet().Where(a => a.CategoryId.Equals(category.Id)).OrderByDescending(a => a.AssetCode).FirstOrDefaultAsync();
+            string assetCode = "";
+            if (lastAssetCode != null && lastAssetCode.AssetCode != null)
+            {
+                string numberStr = Regex.Match(lastAssetCode.AssetCode, @"\d+").Value;
+                assetCode = string.Concat(category.Prefix, (int.Parse(numberStr) + 1).ToString().PadLeft(6, '0'));
+            }
+            else
+            {
+                assetCode = string.Concat(category.Prefix, "1".PadLeft(6, '0'));
+            }
+
+            return assetCode;
         }
     }
 }
