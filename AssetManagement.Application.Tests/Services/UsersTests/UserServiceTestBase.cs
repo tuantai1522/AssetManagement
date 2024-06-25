@@ -3,6 +3,7 @@ using AssetManagement.Application.Extensions;
 using AssetManagement.Application.Services.Implementations;
 using AssetManagement.Application.Services.Interfaces;
 using AssetManagement.Domain.Entities;
+using AssetManagement.Domain.Enums;
 using AutoFixture;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
@@ -30,11 +31,11 @@ public class UserServiceTestBase
         UserManagerMock = new Mock<UserManager<AppUser>>(Mock.Of<IUserStore<AppUser>>(), null!, null!, null!, null!, null!,
             null!, null!, null!);
 
-		RoleManagerMock = new Mock<RoleManager<Role>>(
+        RoleManagerMock = new Mock<RoleManager<Role>>(
             Mock.Of<IRoleStore<Role>>(), null!, null!, null!, null!);
 
 
-		CurrentUserMock = new Mock<ICurrentUser>();
+        CurrentUserMock = new Mock<ICurrentUser>();
 
         LoggerMock = new Mock<ILogger<UserService>>();
 
@@ -77,6 +78,8 @@ public class UserServiceTestBase
             LastName = "1",
             StaffCode = "SD0001",
             JoinedDate = DateTime.Now,
+            Location = Location.HCM.ToString(),
+            IsDisabled = false,
             UserRoles = [
                 new UserRole() {
                 Role = Roles[0]
@@ -93,6 +96,8 @@ public class UserServiceTestBase
                 LastName = i.ToString(),
                 StaffCode = $"SD{i:D4}",
                 JoinedDate = DateTime.Now.AddDays(i),
+                Location = Location.HCM.ToString(),
+                IsDisabled = false,
                 UserRoles = [
                 new UserRole
                 {
@@ -109,6 +114,8 @@ public class UserServiceTestBase
                 LastName = "10",
                 StaffCode = "SD0010",
                 JoinedDate = DateTime.Now.AddHours(2),
+                Location = Location.HCM.ToString(),
+                IsDisabled = false,
                 UserRoles = [
                     new UserRole() {
                         Role = Roles[0]
