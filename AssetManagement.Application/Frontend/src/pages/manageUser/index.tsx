@@ -12,7 +12,7 @@ import UsePagination from "../../app/components/paginationButtons/paginationButt
 import { Search } from "@mui/icons-material";
 import AppSearchInput from "../../app/components/AppSearchInput";
 import AppButton from "../../app/components/buttons/Button";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 type OrderByFieldName =
   | "staffCode"
@@ -32,7 +32,6 @@ const isOrder = (value: any): value is Order => {
 
 export default function ManagementUserPage() {
   const navigate = useNavigate();
-  const location = useLocation();
   const [clickOnUser, setClickOnUser] = useState<boolean>(false);
   const [userId, setUserId] = useState<string>("0");
 
