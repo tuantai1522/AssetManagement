@@ -101,7 +101,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         return await dbSet.Where(predicate).ToListAsync();
     }
 
-    public async Task<T> FindOne(Expression<Func<T, bool>> predicate)
+    public async Task<T?> FindOne(Expression<Func<T, bool>> predicate)
     {
         return await dbSet.Where(predicate).FirstOrDefaultAsync();
     }
