@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import AppTable, {
   ColumnDefinition,
   Order,
@@ -18,7 +18,6 @@ export interface UserListProp {
   handleClick: (event: any, rowId: string) => void;
   setIsOpenDisablingModal: Dispatch<SetStateAction<boolean>>;
   setCurrentDisablingId: Dispatch<SetStateAction<string>>;
-  callbackUrl: string;
 }
 
 const rows: FilterUser[] = [];
@@ -110,7 +109,7 @@ export default function UserList(props: UserListProp) {
             className="text-gray-500"
             onClick={(e) => {
               e.stopPropagation();
-              navigate(`/manage-user/edit-user/${params}?callbackUrl=${encodeURIComponent(props.callbackUrl)}`);
+              navigate(`/manage-user/edit-user/${params}`);
             }}
           >
             {" "}

@@ -33,7 +33,6 @@ const isOrder = (value: any): value is Order => {
 export default function ManagementUserPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const callbackUrl = location.pathname;
   const [clickOnUser, setClickOnUser] = useState<boolean>(false);
   const [userId, setUserId] = useState<string>("0");
 
@@ -201,7 +200,7 @@ export default function ManagementUserPage() {
               content="Create new user"
               className="py-[6px]"
               onClickOn={() => {
-                navigate(`/manage-user/create-user?callbackUrl=${encodeURIComponent(callbackUrl)}`);
+                navigate(`/manage-user/create-user`);
               }}
             />
           </Stack>
@@ -221,7 +220,6 @@ export default function ManagementUserPage() {
             setIsOpenDisablingModal={setIsDisablingModalOpen}
             setCurrentDisablingId={setCurrentDisablingId}
             handleClick={(event, rowId) => handleClickOnUser(rowId)}
-            callbackUrl={callbackUrl}
           />
 
           <Stack
