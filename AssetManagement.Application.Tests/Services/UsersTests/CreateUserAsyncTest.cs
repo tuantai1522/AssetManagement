@@ -40,14 +40,23 @@ public class CreateUserAsyncTest : UserServiceTestBase
         };
 
         RoleManagerMock.Setup(r => r.Roles).Returns(Roles.AsQueryable().BuildMockDbSet().Object);
+        RoleManagerMock.Setup(m => m.FindByNameAsync(It.IsAny<string>())).ReturnsAsync(Roles.Find(r => r.Name == request.Type));
 
         var mockData = Fixture.Build<AppUser>().CreateMany(8).ToList();
+        var firstUserWithSameUsername = new AppUser { UserName = "anhnv" };
+        var secondUserWithSameUsername = new AppUser { UserName = "anhnv1" };
+        var thirdUserWithSameUsername = new AppUser { UserName = "binhnv" };
+        mockData.Add(firstUserWithSameUsername);
+        mockData.Add(secondUserWithSameUsername);
+        mockData.Add(thirdUserWithSameUsername);
 
         UserManagerMock.Setup(x => x.Users).Returns(mockData.AsQueryable().BuildMock());
         UserManagerMock.Setup(x => x.CreateAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
-            .ReturnsAsync(IdentityResult.Success);
-        UserManagerMock.Setup(x => x.AddToRoleAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
-            .ReturnsAsync(IdentityResult.Success);
+            .ReturnsAsync(IdentityResult.Success)
+            .Verifiable();
+        UserManagerMock.Setup(x => x.UpdateAsync(It.IsAny<AppUser>()))
+            .ReturnsAsync(IdentityResult.Success)
+            .Verifiable();
 
         CurrentUserMock.Setup(m => m.UserId).Returns(mockData[0].Id);
         UserManagerMock.Setup(m => m.FindByIdAsync(It.IsAny<string>()))
@@ -59,7 +68,7 @@ public class CreateUserAsyncTest : UserServiceTestBase
         // Assert
         Assert.NotNull(result);
         UserManagerMock.Verify(x => x.CreateAsync(It.IsAny<AppUser>(), It.IsAny<string>()), Times.Once);
-        UserManagerMock.Verify(x => x.AddToRoleAsync(It.IsAny<AppUser>(), It.IsAny<string>()), Times.Once);
+        UserManagerMock.Verify(x => x.UpdateAsync(It.IsAny<AppUser>()), Times.Once);
     }
 
     [Fact]

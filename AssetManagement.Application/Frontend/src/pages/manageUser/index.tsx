@@ -12,7 +12,7 @@ import UsePagination from "../../app/components/paginationButtons/paginationButt
 import { Search } from "@mui/icons-material";
 import AppSearchInput from "../../app/components/AppSearchInput";
 import AppButton from "../../app/components/buttons/Button";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import UserType from "./userList/userType";
 
 type OrderByFieldName =
@@ -33,6 +33,7 @@ const isOrder = (value: any): value is Order => {
 };
 
 export default function ManagementUserPage() {
+  const navigate = useNavigate();
   const [clickOnUser, setClickOnUser] = useState<boolean>(false);
   const [userId, setUserId] = useState<string>("0");
   const [types, setTypes] = useState<string[]>([]);
@@ -72,7 +73,7 @@ export default function ManagementUserPage() {
     if (passedOrder && isOrder(passedOrder)) {
       setOrder(passedOrder);
     }
-  }, [passedOrderBy, order]);
+  }, [passedOrderBy, passedOrder]);
 
   useEffect(() => {
     switch (orderBy) {
@@ -223,7 +224,13 @@ export default function ManagementUserPage() {
                 <Search className="mx-0" />
               </div>
             </Stack>
-            <AppButton content="Create new user" className="py-[6px]" />
+            <AppButton
+              content="Create new user"
+              className="py-[6px]"
+              onClickOn={() => {
+                navigate(`/manage-user/create-user`);
+              }}
+            />
           </Stack>
         </Stack>
         <div className="mt-3">
