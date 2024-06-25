@@ -1,6 +1,6 @@
 import AssetList, { AssetRowData } from "./assetList";
 import { useState } from "react";
-import { FilterAssetRequest, FilterAssetResponse } from "../../app/models/Asset";
+import { FilterAssetRequest, FilterAssetResponse, getAssetQueryString } from "../../app/models/Asset";
 import agent from "../../app/api/agent";
 import { Order } from "../../app/components/table/sortTable";
 import { Stack } from "@mui/material";
@@ -26,7 +26,7 @@ export default function ManagementAssetPage() {
     pageSize: 5,
   });
 
-  const [searchInput, setSearchInput] = useState<string | undefined>(undefined);
+  const [searchInput, setSearchInput] = useState<string>("");
 
   // const { data, isLoading, error, mutate } = agent.Assets.filter(query);
 
@@ -276,6 +276,12 @@ export default function ManagementAssetPage() {
       name: searchInput?.trim(),
     }));
     // mutate();
+    //test
+    const queryString = getAssetQueryString({
+      ...query,
+      pageNumber: 1,
+      name: searchInput?.trim(),
+    });
   }
 
   return (

@@ -52,5 +52,6 @@ export function getAssetQueryString(filter?: FilterAssetRequest) {
   const sizeParam = `pageSize=${filter.pageSize ?? 5}`;
 
   const queryString = `${nameParam}${statesParam}${categoryIdsParam}${sortAssetCodeParam}${sortAssetNameParam}${sortCategoryNameParam}${sortStateParam}${pageParam}${sizeParam}`;
+  console.log(`queryString: ${queryString}`);
   return queryString;
 }
