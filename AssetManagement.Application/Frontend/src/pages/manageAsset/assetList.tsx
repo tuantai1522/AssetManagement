@@ -1,11 +1,21 @@
 import { Edit, HighlightOff } from "@mui/icons-material";
-import AppButton from "../../app/components/buttons/Button";
 import AppTable, { ColumnDefinition, Order } from "../../app/components/table/sortTable";
-import { FilterAssetResponse } from "../../app/models/Asset";
-import { Stack } from "@mui/material";
+import { IconButton, Stack, Tooltip } from "@mui/material";
+
+export interface AssetRowData {
+    id: string;
+    assetCode: string;
+    assetName?: string;
+    categoryName?: string;
+    state?: string;
+    action: {
+        id: string;
+        state?: string;
+    }
+}
 
 export interface AssetListProp {
-    data: FilterAssetResponse[];
+    data: AssetRowData[];
     isLoading: boolean;
     error: any;
     order: Order;
@@ -42,7 +52,7 @@ export default function AssetList(props: AssetListProp) {
                 borderBottom: "none",
                 minWidth: "300px"
             },
-            rowRatio: "w-4/12",
+            rowRatio: "w-6/12",
         },
         {
             id: 'categoryName',
@@ -72,7 +82,7 @@ export default function AssetList(props: AssetListProp) {
         },
         {
             id: 'action',
-            fieldName: "id",
+            fieldName: "action",
             disablePadding: true,
             label: '',
             className: "font-bold",
@@ -91,22 +101,26 @@ export default function AssetList(props: AssetListProp) {
                         alignItems="center"
                         spacing={2}
                     >
-                        <button 
-                        className="text-gray-500"
-                        onClick={(e) => {
-                            e.stopPropagation()
-                            alert(params)
-                        }}>
-                            <Edit />
-                        </button>
-                        <button
-                        className="text-red-500"
-                        onClick={(e) => {
-                            e.stopPropagation()
-                            alert(params)
-                        }}>
-                            <HighlightOff />
-                        </button>
+                        <Tooltip title="Edit">
+                            <IconButton
+                                disabled={params?.state === "Assigned"}
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    alert(params?.id)
+                                }}>
+                                <Edit className={params?.state === "Assigned" ? "" : "text-gray-500"} />
+                            </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Remove">
+                            <IconButton
+                                disabled={params?.state === "Assigned"}
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    alert(params?.id)
+                                }}>
+                                <HighlightOff className={params?.state === "Assigned" ? "" : "text-red-500"} />
+                            </IconButton>
+                        </Tooltip>
                     </Stack>
                 )
             }
@@ -115,7 +129,7 @@ export default function AssetList(props: AssetListProp) {
 
     return (
         <div className="min-h-60">
-            <AppTable<FilterAssetResponse>
+            <AppTable<AssetRowData>
                 order={props.order}
                 setOrder={props.setOrder}
                 orderByFieldName={props.orderBy}
