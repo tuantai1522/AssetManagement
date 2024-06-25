@@ -7,13 +7,14 @@ import ConfirmModal from "../../app/components/confirmModal";
 import UserList from "./userList/userList";
 import { convertUtcToLocalDate } from "../../app/utils/dateUtils";
 import { FilterUser } from "../../app/models/User";
-import { Stack } from "@mui/material";
+import { Alert, Snackbar, Stack } from "@mui/material";
 import UsePagination from "../../app/components/paginationButtons/paginationButtons";
 import { Search } from "@mui/icons-material";
 import AppSearchInput from "../../app/components/AppSearchInput";
 import AppButton from "../../app/components/buttons/Button";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import UserType from "./userList/userType";
+import { BaseResult } from "../../app/models/BaseResult";
 
 type OrderByFieldName =
   | "staffCode"
@@ -23,7 +24,9 @@ type OrderByFieldName =
   | "lastUpdate";
 
 const isOrderByFieldName = (value: any): value is OrderByFieldName => {
-  return ["staffCode", "fullName", "joinedDate", "type", "lastUpdate"].includes(value);
+  return ["staffCode", "fullName", "joinedDate", "type", "lastUpdate"].includes(
+    value
+  );
 };
 
 const isOrder = (value: any): value is Order => {
@@ -42,13 +45,25 @@ export default function ManagementUserPage() {
     pageSize: 5,
   });
   const { data, isLoading, error, mutate } = agent.Users.filter(query);
-  const {data:userData, isLoading:userLoading, error:userError} = agent.Users.details(userId);
+  const {
+    data: userData,
+    isLoading: userLoading,
+    error: userError,
+  } = agent.Users.details(userId);
 
   const [isDisablingModalOpen, setIsDisablingModalOpen] = useState(false);
   const [currentDisablingId, setCurrentDisablingId] = useState("");
 
-  const handleDisable = (id: string) => {
-    agent.Users.disable(id).then(mutate);
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
+  const [currentErrorMessage, setCurrentErrorMessage] = useState(false);
+
+  const handleDisable = async (id: string) => {
+    try {
+      await agent.Users.disable(id).then(mutate);
+    } catch (e) {
+      setCurrentErrorMessage(e?.error?.message);
+      setIsErrorModalOpen(true);
+    }
   };
 
   const [searchInput, setSearchInput] = useState<string>("");
@@ -57,8 +72,8 @@ export default function ManagementUserPage() {
   const [orderBy, setOrderBy] = useState<OrderByFieldName>("joinedDate");
 
   const [searchParams] = useSearchParams();
-  const passedOrderBy = searchParams.get('passedOrderBy') ?? undefined; 
-  const passedOrder = searchParams.get('passedOrder') ?? undefined; 
+  const passedOrderBy = searchParams.get("passedOrderBy") ?? undefined;
+  const passedOrder = searchParams.get("passedOrder") ?? undefined;
 
   useEffect(() => {
     if (passedOrderBy && isOrderByFieldName(passedOrderBy)) {
@@ -67,8 +82,7 @@ export default function ManagementUserPage() {
     if (passedOrder && isOrder(passedOrder)) {
       setOrder(passedOrder);
     }
-  }, [passedOrderBy, passedOrder])
-  
+  }, [passedOrderBy, order]);
 
   useEffect(() => {
     switch (orderBy) {
@@ -157,7 +171,7 @@ export default function ManagementUserPage() {
       name: searchInput?.trim(),
     }));
     mutate();
-  }
+  };
   const handleClickOnUser = (rowId: string) => {
     setClickOnUser(true);
     setUserId(data.items.result[rowId].id);
@@ -175,6 +189,21 @@ export default function ManagementUserPage() {
   return (
     <div className="flex justify-center h-full">
       <div className="container">
+        <Snackbar
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
+          open={isErrorModalOpen}
+          autoHideDuration={5000}
+          onClose={() => setIsErrorModalOpen(false)}
+        >
+          <Alert
+            onClose={() => setIsErrorModalOpen(false)}
+            severity="error"
+            variant="outlined"
+            sx={{ width: "100%", bgcolor: 'background.paper' }}
+          >
+            {currentErrorMessage}
+          </Alert>
+        </Snackbar>
         <p className="text-primary text-xl font-bold justify-start items-start">
           User List
         </p>
@@ -185,22 +214,37 @@ export default function ManagementUserPage() {
           spacing={2}
           className="mt-3"
         >
-          <UserType types={types} setTypes={setTypes} onSubmit={handleFilterClick}/>
+          <UserType
+            types={types}
+            setTypes={setTypes}
+            onSubmit={handleFilterClick}
+          />
           <Stack
             direction="row"
             justifyContent="flex-end"
             alignItems="center"
-            spacing={8}>
+            spacing={8}
+          >
             <Stack
               direction="row"
               justifyContent="flex-start"
               alignItems="center"
-              spacing={2}>
-              <AppSearchInput type="text" placeholder="Search" name="name" value={searchInput} onChange={handleQueryInputChange}
+              spacing={2}
+            >
+              <AppSearchInput
+                type="text"
+                placeholder="Search"
+                name="name"
+                value={searchInput}
+                onChange={handleQueryInputChange}
                 className="!rounded-l-md !border !border-gray-400 !border-r-0"
               />
 
-              <div onClick={handleSerchSubmit} className="border border-gray-500 border-l-0 rounded-r-md mx-0 hover:cursor-pointer" style={{ margin: 0, padding: "6px" }}>
+              <div
+                onClick={handleSerchSubmit}
+                className="border border-gray-500 border-l-0 rounded-r-md mx-0 hover:cursor-pointer"
+                style={{ margin: 0, padding: "6px" }}
+              >
                 <Search className="mx-0" />
               </div>
             </Stack>
@@ -235,10 +279,11 @@ export default function ManagementUserPage() {
             justifyContent="flex-end"
             alignItems="baseline"
           >
-            <UsePagination 
-            totalPage={data?.metaData?.totalPageCount ?? 1} 
-            onChange={handlePageNumberChange} 
-            currentPage={data?.metaData?.currentPage ?? 1} />
+            <UsePagination
+              totalPage={data?.metaData?.totalPageCount ?? 1}
+              onChange={handlePageNumberChange}
+              currentPage={data?.metaData?.currentPage ?? 1}
+            />
           </Stack>
         </div>
       </div>
