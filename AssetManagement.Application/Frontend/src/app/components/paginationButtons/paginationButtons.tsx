@@ -1,5 +1,5 @@
-import { useState } from "react";
-import usePagination from "@mui/material/usePagination";
+import { useCallback, useState } from "react";
+import usePagination, { UsePaginationProps } from "@mui/material/usePagination";
 import { styled } from "@mui/material/styles";
 import AppPaginatedButton from "../buttons/PaginatedButton";
 import { Stack } from "@mui/material";
@@ -14,24 +14,24 @@ const List = styled("ul")({
 
 interface Props {
   totalPage: number;
+  currentPage: number;
   onChange: (page: number) => void;
 }
 
-export default function UsePagination({ totalPage, onChange }: Props) {
+export default function AppPagination({ totalPage, onChange, currentPage = 1 }: Props) {
   const { items } = usePagination({
     count: totalPage,
+    page: currentPage
   });
 
-  const [currentPage, setCurrentPage] = useState(1);
+  const key = `${totalPage}-${currentPage}`;
 
   const handleClick = (page: number) => {
-    setCurrentPage(page);
-    console.log(`Fetching data for page ${page}`);
     onChange(page);
   };
 
   return (
-    <List>
+    <List key={key}>
       {items.map(({ page, type, selected, ...item }, index) => {
         let children = null;
 
@@ -69,12 +69,12 @@ export default function UsePagination({ totalPage, onChange }: Props) {
               content="Previous"
               styleType="secondary"
               onClickOn={(e) => {
-                if (currentPage === 1) return;
+                if (currentPage <= 1) return;
                 handleClick(page!);
                 item.onClick(e);
               }}
               className={
-                currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
+                currentPage <= 1 ? "opacity-50 cursor-not-allowed" : ""
               }
             />
           );
@@ -84,13 +84,13 @@ export default function UsePagination({ totalPage, onChange }: Props) {
               content="Next"
               styleType="secondary"
               onClickOn={(e) => {
-                if (currentPage === totalPage) return;
+                if (currentPage >= totalPage) return;
 
                 handleClick(page!);
                 item.onClick(e);
               }}
               className={
-                currentPage === totalPage ? "opacity-50 cursor-not-allowed" : ""
+                currentPage >= totalPage ? "opacity-50 cursor-not-allowed" : ""
               }
             />
           );
