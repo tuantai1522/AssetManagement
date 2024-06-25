@@ -12,7 +12,6 @@ import { createFormSchema } from "../../schemas/createFormSchema";
 import { useEffect } from "react";
 import dayjs from "dayjs";
 import { UserInfoResponse } from "../../models/login/UserInfoResponse";
-import { ConstructionOutlined } from "@mui/icons-material";
 
 
 interface IFormInput extends FieldValues {
@@ -20,8 +19,6 @@ interface IFormInput extends FieldValues {
     lastName: string,
     dateOfBirth: Date,
     joinedDate: Date,
-    // dateOfBirth: string,
-    // joinedDate: string,
     gender: string,
     type: string,
 }
@@ -60,8 +57,6 @@ const UserForm = ({
                 lastName: data.lastName,
                 dateOfBirth: formatDate(data.dateOfBirth),
                 joinedDate: formatDate(data.joinedDate),
-                // dateOfBirth: dayjs(data.dateOfBirth).format('YYYY-MM-DD'),
-                // joinedDate: dayjs(data.joinedDate).format('YYYY-MM-DD'),
                 gender: data.gender,
                 type: data.type,
             });
@@ -180,7 +175,6 @@ const UserForm = ({
                                     {...field}
                                     format="DD/MM/YYYY"
                                     className="grow"
-                                    // value={data ? formatDate(data.joinedDate) : undefined}
                                     slotProps={{
                                         textField: {
                                             size: 'small',

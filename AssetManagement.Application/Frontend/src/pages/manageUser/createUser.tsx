@@ -2,7 +2,6 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import agent from "../../app/api/agent";
 import UserForm from "../../app/components/forms/userForm";
 import { CreateUserRequest } from "../../app/models/login/CreateUserRequest";
-import { ConstructionOutlined } from "@mui/icons-material";
 import { UserInfoResponse } from "../../app/models/login/UserInfoResponse";
 import { BaseResult } from "../../app/models/BaseResult";
 import dayjs from "dayjs";

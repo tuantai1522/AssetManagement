@@ -40,7 +40,7 @@ yup.addMethod(yup.date, 'olderThan18', function (message) {
 yup.addMethod(yup.date, 'notWeekend', function (message) {
   return this.test('notWeekend', message, function (value) {
     if (!value) return false;
-    const day = dayjs(value).day();
+    const day:number = dayjs(value).day();
     // day() returns 0 for Sunday and 6 for Saturday
     return day !== 0 && day !== 6;
   });
