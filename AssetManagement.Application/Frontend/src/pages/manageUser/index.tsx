@@ -55,13 +55,20 @@ export default function ManagementUserPage() {
   const [currentDisablingId, setCurrentDisablingId] = useState("");
 
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
-  const [currentErrorMessage, setCurrentErrorMessage] = useState(false);
+  const [currentErrorMessage, setCurrentErrorMessage] = useState("");
 
   const handleDisable = async (id: string) => {
     try {
       await agent.Users.disable(id).then(mutate);
     } catch (e) {
-      setCurrentErrorMessage(e?.error?.message);
+      const err = e as BaseResult<any>;
+      if (err?.error) {
+        if (err?.error?.message) setCurrentErrorMessage(err?.error?.message);
+      } else {
+        setCurrentErrorMessage(
+          "An unexpected error happened. Please try again!"
+        );
+      }
       setIsErrorModalOpen(true);
     }
   };
@@ -82,8 +89,7 @@ export default function ManagementUserPage() {
     if (passedOrder && isOrder(passedOrder)) {
       setOrder(passedOrder);
     }
-  }, [passedOrderBy, passedOrder])
-  
+  }, [passedOrderBy, passedOrder]);
 
   useEffect(() => {
     switch (orderBy) {
@@ -200,7 +206,7 @@ export default function ManagementUserPage() {
             onClose={() => setIsErrorModalOpen(false)}
             severity="error"
             variant="outlined"
-            sx={{ width: "100%", bgcolor: 'background.paper' }}
+            sx={{ width: "100%", bgcolor: "background.paper" }}
           >
             {currentErrorMessage}
           </Alert>
