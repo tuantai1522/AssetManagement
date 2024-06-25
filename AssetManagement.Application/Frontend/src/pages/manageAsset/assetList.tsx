@@ -1,5 +1,8 @@
+import { Edit, HighlightOff } from "@mui/icons-material";
+import AppButton from "../../app/components/buttons/Button";
 import AppTable, { ColumnDefinition, Order } from "../../app/components/table/sortTable";
 import { FilterAssetResponse } from "../../app/models/Asset";
+import { Stack } from "@mui/material";
 
 export interface AssetListProp {
     data: FilterAssetResponse[];
@@ -52,8 +55,7 @@ export default function AssetList(props: AssetListProp) {
                 borderBottom: "none",
                 minWidth: "150px"
             },
-            rowRatio: "w-2/12",
-            disableSort: true,
+            rowRatio: "w-2/12"
         },
         {
             id: "state",
@@ -67,7 +69,44 @@ export default function AssetList(props: AssetListProp) {
                 minWidth: "150px",
             },
             rowRatio: "w-2/12",
-        }
+        },
+        {
+            id: 'action',
+            fieldName: "id",
+            disablePadding: true,
+            label: '',
+            className: "font-bold",
+            rowRatio: "w-1/12",
+            style: {
+                border: "none",
+                borderBottom: "none",
+                minWidth: "100px",
+                maxWidth: "120px"
+            },
+            renderCell: (params) => {
+                return (
+                    <Stack
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        spacing={2}
+                    >
+                        <button onClick={(e) => {
+                            e.stopPropagation()
+                            alert(params)
+                        }}>
+                            <Edit />
+                        </button>
+                        <button onClick={(e) => {
+                            e.stopPropagation()
+                            alert(params)
+                        }}>
+                            <HighlightOff />
+                        </button>
+                    </Stack>
+                )
+            }
+        },
     ];
 
     return (
