@@ -20,7 +20,7 @@ namespace AssetManagement.Data.Data
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
             UserSeeder.SeedUsers(builder);
-
+            AssetSeeder.SeedAssets(builder);
         }
     }
 }
