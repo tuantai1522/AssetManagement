@@ -74,6 +74,7 @@ public class UserServiceTestBase
 
         Users = [
            new AppUser (){
+            Id = Guid.NewGuid(),
             FirstName = "Admin",
             LastName = "1",
             StaffCode = "SD0001",
@@ -92,7 +93,8 @@ public class UserServiceTestBase
         {
             Users.Add(new AppUser
             {
-                FirstName = "Staff",
+				Id = Guid.NewGuid(),
+				FirstName = "Staff",
                 LastName = i.ToString(),
                 StaffCode = $"SD{i:D4}",
                 JoinedDate = DateTime.Now.AddDays(i),
@@ -102,7 +104,7 @@ public class UserServiceTestBase
                 new UserRole
                 {
                     Role = Roles[1]
-          }
+                }
                 ]
             });
         }
@@ -110,7 +112,8 @@ public class UserServiceTestBase
         Users.Add(
             new AppUser()
             {
-                FirstName = "Admin",
+				Id = Guid.NewGuid(),
+				FirstName = "Admin",
                 LastName = "10",
                 StaffCode = "SD0010",
                 JoinedDate = DateTime.Now.AddHours(2),

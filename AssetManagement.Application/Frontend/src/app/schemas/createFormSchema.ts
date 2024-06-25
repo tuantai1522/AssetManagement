@@ -1,4 +1,3 @@
-import { Gender, Type } from "../types/enum";
 import yup from "../types/yupGlobal"
 
 

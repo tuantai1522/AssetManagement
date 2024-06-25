@@ -14,11 +14,11 @@ const UserInfo = ({isOpen, userData, isLoading, errorMessage, onClose }: Props) 
   return (
     <>
       <div className="fixed w-screen h-screen bg-gray-400 top-0 left-0 opacity-50 "></div>
-      <div className="z-10 shadow-2xl absolute">
+      <div className="z-10 shadow-2xl absolute top-1/2 -translate-y-1/2">
         <div className="bg-white rounded-lg border-gray-400 border-2 w-[120%]">
           <div className="bg-slate-100 rounded-t-lg border-b-2 border-gray-400 px-12 py-5 flex justify-between items-center">
             <h2 className="text-lg font-bold text-primary">
-              Detailed User Infomation
+              Detailed User Information
             </h2>
             <div className="border-2 border-primary rounded-sm text-primary cursor-pointer transition-all hover:text-white hover:bg-primary">
               <svg
@@ -45,7 +45,7 @@ const UserInfo = ({isOpen, userData, isLoading, errorMessage, onClose }: Props) 
                 <div className="col-span-2">Staff Code</div>
                 <div className="col-span-5">{userData?.staffCode}</div>
                 <div className="col-span-2">Full Name</div>
-                <div className="col-span-5">{userData?.fullName} </div>
+                <div className="col-span-5">{userData?.firstName} {userData?.lastName}</div>
                 <div className="col-span-2">Username</div>
                 <div className="col-span-5">{userData?.username} </div>
                 <div className="col-span-2">Date of Birth</div>
@@ -66,7 +66,7 @@ const UserInfo = ({isOpen, userData, isLoading, errorMessage, onClose }: Props) 
                 })}
                 </div>
                 <div className="col-span-2">Type</div>
-                <div className="col-span-5">{userData?.type[0]}
+                <div className="col-span-5">{userData?.type}
                 </div>
                 <div className="col-span-2">Location</div>
                 <div className="col-span-5">{userData?.location}
