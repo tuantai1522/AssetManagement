@@ -142,7 +142,7 @@ export default agent;
 
 export interface UserQuery {
   name?: string;
-  type?: string;
+  type?: string[];
   sortStaffCode?: Order;
   sortFullName?: Order;
   sortJoinedDate?: Order;
@@ -158,7 +158,10 @@ function getUserQueryString(filter?: UserQuery) {
   }
 
   const nameParam = filter.name ? `name=${filter.name}&` : "";
-  // const genderParam = filter.type !== undefined && filter.type !== null ? `gender=${filter.gender}&` : '';
+  let typeParam = "";
+  if (filter.type && filter.type.length > 0) {
+    typeParam = filter.type.map((type) => `types=${type}&`).join("");
+  }
   const sortStaffCodeParam = filter.sortStaffCode
     ? `sortStaffCode=${filter.sortStaffCode === "asc" ? 1 : 2}&`
     : "";
@@ -178,6 +181,5 @@ function getUserQueryString(filter?: UserQuery) {
   const pageParam = `pageNumber=${filter.pageNumber ?? 1}&`;
   const sizeParam = `pageSize=${filter.pageSize ?? 5}`;
 
-  const queryString = `${nameParam}${sortStaffCodeParam}${sortFullNameParam}${sortJoinedDateParam}${sortTypeParam}${sortLastUpdate}${pageParam}${sizeParam}`;
-  return queryString;
+  const queryString = `${nameParam}${typeParam}${sortStaffCodeParam}${sortFullNameParam}${sortJoinedDateParam}${sortTypeParam}${sortLastUpdate}${pageParam}${sizeParam}`;  return queryString;
 }

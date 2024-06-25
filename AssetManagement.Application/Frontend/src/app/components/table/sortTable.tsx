@@ -154,7 +154,10 @@ export function AppTable<T>(props: AppTableProp<T>) {
                             paddingRight: 0,
                         },
                         "& td:last-child, & th:last-child": {
-                          border: "none",
+                            border: "none",
+                            display: "flex",
+                            justifyContent: "end",
+                            width: "fit-content"
                         },
 
                         "& thead tr th": {

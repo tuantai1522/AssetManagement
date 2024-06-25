@@ -103,7 +103,7 @@ export default function UserList(props: UserListProp) {
       },
       rowRatio: "w-1/12",
       renderCell: (params) => (
-        <div className="ml-2 flex w-fit justify-end">
+        <div className="flex w-fit justify-end">
           <button
             color="primary"
             className="text-gray-500"

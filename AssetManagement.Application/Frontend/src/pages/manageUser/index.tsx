@@ -13,6 +13,7 @@ import { Search } from "@mui/icons-material";
 import AppSearchInput from "../../app/components/AppSearchInput";
 import AppButton from "../../app/components/buttons/Button";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import UserType from "./userList/userType";
 
 type OrderByFieldName =
   | "staffCode"
@@ -29,11 +30,11 @@ const isOrder = (value: any): value is Order => {
   return ["asc", "desc"].includes(value);
 };
 
-
 export default function ManagementUserPage() {
   const navigate = useNavigate();
   const [clickOnUser, setClickOnUser] = useState<boolean>(false);
   const [userId, setUserId] = useState<string>("0");
+  const [types, setTypes] = useState<string[]>([]);
 
   const [query, setQuery] = useState<UserQuery>({
     sortJoinedDate: "desc",
@@ -47,8 +48,7 @@ export default function ManagementUserPage() {
   const [currentDisablingId, setCurrentDisablingId] = useState("");
 
   const handleDisable = (id: string) => {
-    agent.Users.disable(id);
-    mutate();
+    agent.Users.disable(id).then(mutate);
   };
 
   const [searchInput, setSearchInput] = useState<string>("");
@@ -143,7 +143,6 @@ export default function ManagementUserPage() {
     mutate(query);
   };
 
-
   const handleQueryInputChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -155,7 +154,7 @@ export default function ManagementUserPage() {
     setQuery((prevQuery) => ({
       ...prevQuery,
       pageNumber: 1,
-      name: searchInput,
+      name: searchInput?.trim(),
     }));
     mutate();
   }
@@ -163,6 +162,16 @@ export default function ManagementUserPage() {
     setClickOnUser(true);
     setUserId(data.items.result[rowId].id);
   };
+
+  const handleFilterClick = () => {
+    if (types.length === 0 || types.includes("All")) {
+      setQuery((query) => ({ ...query, type: [], pageNumber: 1 }));
+    } else {
+      setQuery((query) => ({ ...query, type: types, pageNumber: 1 }));
+    }
+    mutate(query);
+  };
+
   return (
     <div className="flex justify-center h-full">
       <div className="container">
@@ -176,7 +185,7 @@ export default function ManagementUserPage() {
           spacing={2}
           className="mt-3"
         >
-          <div></div>
+          <UserType types={types} setTypes={setTypes} onSubmit={handleFilterClick}/>
           <Stack
             direction="row"
             justifyContent="flex-end"

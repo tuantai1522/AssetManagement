@@ -1,5 +1,6 @@
 ﻿using AssetManagement.Contracts.Dtos.UserDtos.Requests;
 using AssetManagement.Domain.Entities;
+using AssetManagement.Domain.Enums;
 using AssetManagement.Domain.Exceptions;
 using AutoFixture;
 using Microsoft.AspNetCore.Identity;
@@ -112,7 +113,8 @@ namespace AssetManagement.Application.Tests.Services.UsersTests
 		public async Task UpdateUserAsync_Success()
 		{
 			// Arrange
-			var userId = Users[0].Id;
+			var adminId = Users[0].Id;
+			var userId = Users[1].Id;
 			var request = new UpdateUserRequest()
 			{
 				DateOfBirth = new DateTime(2002, 10, 11, 0, 0, 0, DateTimeKind.Local),
@@ -125,9 +127,12 @@ namespace AssetManagement.Application.Tests.Services.UsersTests
 			UserManagerMock.Setup(um => um.GetRolesAsync(It.IsAny<AppUser>())).ReturnsAsync(new List<string> { "Admin" });
 
 
-			//CurrentUserMock.Setup(m => m.UserId).Returns(Users);
-			//UserManagerMock.Setup(m => m.FindByIdAsync(It.IsAny<string>()))
-			//		.ReturnsAsync(mockData[0]);
+			CurrentUserMock.Setup(m => m.UserId).Returns(adminId);
+			
+			UserManagerMock.Setup(m => m.FindByIdAsync(adminId.ToString()))
+					.ReturnsAsync(Users[0]);
+			UserManagerMock.Setup(m => m.FindByIdAsync(userId.ToString()))
+					.ReturnsAsync(Users[1]);
 
 
 			RoleManagerMock.Setup(rm => rm.FindByNameAsync(It.IsAny<string>())).ReturnsAsync(Roles.Find(r => r.Name == request.Type));
@@ -142,7 +147,32 @@ namespace AssetManagement.Application.Tests.Services.UsersTests
 			Assert.NotNull(result);
 			UserManagerMock.Verify(um => um.UpdateAsync(It.IsAny<AppUser>()), Times.Once);
 		}
+		[Fact]
+		public async Task LocationInvalid()
+		{
+			// Arrange
+			var adminId = Users[0].Id;
+			Users[1].Location = Location.HN.ToString();
+			var userId = Users[1].Id;
+			var request = new UpdateUserRequest()
+			{
+				DateOfBirth = new DateTime(2002, 10, 11, 0, 0, 0, DateTimeKind.Local),
+				Gender = "Male",
+				JoinedDate = new DateTime(2024, 6, 24, 0, 0, 0, DateTimeKind.Local),
+				Type = "Staff"
+			};
+			RoleManagerMock.Setup(rm => rm.Roles).Returns(Roles.AsQueryable().BuildMockDbSet().Object);
 
+			CurrentUserMock.Setup(m => m.UserId).Returns(adminId);
+
+			UserManagerMock.Setup(m => m.FindByIdAsync(adminId.ToString()))
+					.ReturnsAsync(Users[0]);
+			UserManagerMock.Setup(m => m.FindByIdAsync(userId.ToString()))
+					.ReturnsAsync(Users[1]);
+
+			// Act & Assert
+			await Assert.ThrowsAsync<BadRequestException>(() => UserService.UpdateUserAsync(userId, request));
+		}
 		[Fact]
 		public async Task UpdateUserAsync_UserNotFound()
 		{
@@ -168,7 +198,8 @@ namespace AssetManagement.Application.Tests.Services.UsersTests
 		public async Task UpdateUserAsync_FailedUpdate()
 		{
 			// Arrange
-			var userId = Users[0].Id;
+			var adminId = Users[0].Id;
+			var userId = Users[1].Id;
 			var request = new UpdateUserRequest()
 			{
 				DateOfBirth = new DateTime(2002, 10, 11, 0, 0, 0, DateTimeKind.Local),
@@ -179,6 +210,14 @@ namespace AssetManagement.Application.Tests.Services.UsersTests
 			RoleManagerMock.Setup(rm => rm.Roles).Returns(Roles.AsQueryable().BuildMockDbSet().Object);
 			UserManagerMock.Setup(um => um.Users).Returns(Users.AsQueryable().BuildMockDbSet().Object);
 			UserManagerMock.Setup(um => um.GetRolesAsync(It.IsAny<AppUser>())).ReturnsAsync(new List<string> { "Admin" });
+
+			CurrentUserMock.Setup(m => m.UserId).Returns(adminId);
+
+			UserManagerMock.Setup(m => m.FindByIdAsync(adminId.ToString()))
+					.ReturnsAsync(Users[0]);
+			UserManagerMock.Setup(m => m.FindByIdAsync(userId.ToString()))
+					.ReturnsAsync(Users[1]);
+
 			UserManagerMock.Setup(um => um.UpdateAsync(It.IsAny<AppUser>())).ReturnsAsync(IdentityResult.Failed(new IdentityError { Description = "Update failed" }));
 
 			// Act & Assert

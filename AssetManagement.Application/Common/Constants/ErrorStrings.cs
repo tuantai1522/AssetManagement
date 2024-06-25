@@ -19,5 +19,6 @@
         public const string ROLE_NOT_FOUND = "Role does not exist";
         public const string CANNOT_ADD_ROLE_TO_USER = "Cannot Add Role to User";
         public const string CANNOT_UPDATE_USER = "Cannot Update User";
-    }
+		public const string LOCATION_NOT_VALID = "Admin is not entitled to edit user due to location";
+	}
 }
