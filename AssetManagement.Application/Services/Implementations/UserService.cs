@@ -6,17 +6,14 @@ using AssetManagement.Contracts.Dtos.UserDtos.Requests;
 using AssetManagement.Contracts.Dtos.UserDtos.Responses;
 using AssetManagement.Contracts.Enums;
 using AssetManagement.Domain.Entities;
+using AssetManagement.Domain.Enums;
 using AssetManagement.Domain.Exceptions;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
-using AssetManagement.Domain.Constants;
-using Microsoft.AspNetCore.Mvc;
-using AssetManagement.Domain.Enums;
 using System.Globalization;
+using System.Linq.Expressions;
 using System.Text.RegularExpressions;
-using System.Linq;
 
 namespace AssetManagement.Application.Services.Implementations;
 public class UserService : IUserService
@@ -53,12 +50,13 @@ public class UserService : IUserService
 
         var orderBy = GetOrderByExpression(request);
 
-		Expression<Func<AppUser, bool>> filterSpecification = u => (string.IsNullOrEmpty(request.Name) || (u.FirstName + u.LastName).Contains(request.Name) || u.StaffCode.Contains(request.Name))
-		   && (request.Types == null || !request.Types.Any() || request.Types.Contains(u.UserRoles.Select(ur => ur.Role.Name).FirstOrDefault())
-		   && u.Location == currentUser.Location
-		   && !u.IsDisabled);
+        Expression<Func<AppUser, bool>> filterSpecification = u =>
+           (string.IsNullOrEmpty(request.Name) || (u.FirstName + " " + u.LastName).Contains(request.Name) || u.StaffCode.Contains(request.Name))
+            && (request.Types == null || request.Types.Length == 0 || request.Types.Contains(u.UserRoles.Select(ur => ur.Role.Name).FirstOrDefault()))
+            && u.Location == currentUser.Location
+            && !u.IsDisabled;
 
-		var totalRecord = await queryable.Where(filterSpecification).CountAsync();
+        var totalRecord = await queryable.Where(filterSpecification).CountAsync();
 
         queryable = orderBy(queryable);
 
@@ -163,7 +161,7 @@ public class UserService : IUserService
         userToUpdate.JoinedDate = request.JoinedDate;
         userToUpdate.Gender = request.Gender;
         userToUpdate.LastUpdatedDateTime = DateTime.Now;
-            
+
         IList<String> currentRoles = await _userManager.GetRolesAsync(userToUpdate);
         if (!currentRoles.Contains(request.Type))
         {
@@ -172,7 +170,7 @@ public class UserService : IUserService
                 UserId = userId,
                 RoleId = updateRoles!.Id
             } };
-         }
+        }
 
         IdentityResult updateResult = await _userManager.UpdateAsync(userToUpdate);
         if (!updateResult.Succeeded)
@@ -246,16 +244,16 @@ public class UserService : IUserService
 
     private async Task<Role> ValidateTypeAsync(string type)
     {
-		var roles = await _roleManager.Roles.ToListAsync();
-		var role = roles.Find(r => r.Name!.Equals(type, StringComparison.CurrentCultureIgnoreCase));
+        var roles = await _roleManager.Roles.ToListAsync();
+        var role = roles.Find(r => r.Name!.Equals(type, StringComparison.CurrentCultureIgnoreCase));
 
-		if (role == null)
-		{
-			throw new BadRequestException(ErrorStrings.INVALID_ROLE);
-		}
+        if (role == null)
+        {
+            throw new BadRequestException(ErrorStrings.INVALID_ROLE);
+        }
 
-		return role;
-	}
+        return role;
+    }
 
     private static void ValidateGender(string gender)
     {
@@ -314,9 +312,9 @@ public class UserService : IUserService
             {
                 userName += (number + 1).ToString();
             }
-            else 
-            { 
-                userName += "1"; 
+            else
+            {
+                userName += "1";
             }
         }
         return userName;
