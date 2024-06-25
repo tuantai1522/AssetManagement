@@ -7,6 +7,7 @@ import { User } from "../models/User";
 import { Order } from "../components/table/sortTable";
 import { EditUserRequest } from "../models/login/EditUserRequest";
 import { CreateUserRequest } from "../models/login/CreateUserRequest";
+import { FilterAssetRequest, getAssetQueryString } from "../models/Asset";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 axios.defaults.headers.post["Content-Type"] = "application/json";
@@ -132,10 +133,18 @@ const Authentication = {
     requests.post("api/auth/changepassword", values),
 };
 
+const Assets = {
+  filter: (query?: FilterAssetRequest) => {
+    const queryString = getAssetQueryString(query);
+    return requests.get(`api/Assets?${queryString}`);
+  },
+}
+
 const agent = {
   Product,
   Authentication,
   Users,
+  Assets
 };
 
 export default agent;
@@ -183,3 +192,4 @@ function getUserQueryString(filter?: UserQuery) {
 
   const queryString = `${nameParam}${typeParam}${sortStaffCodeParam}${sortFullNameParam}${sortJoinedDateParam}${sortTypeParam}${sortLastUpdate}${pageParam}${sizeParam}`;  return queryString;
 }
+

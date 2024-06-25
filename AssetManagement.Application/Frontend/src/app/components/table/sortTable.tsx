@@ -19,7 +19,7 @@ export interface ColumnDefinition {
     style?: React.CSSProperties;
     disableSort?: boolean,
     rowRatio?: string,
-    bodyStyle?: any,
+    bodyStyle?: React.CSSProperties,
     renderCell?: (data: any) => JSX.Element,
 }
 export interface RowDefinition<T> {
