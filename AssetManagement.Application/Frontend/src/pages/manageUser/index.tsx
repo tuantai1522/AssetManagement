@@ -82,7 +82,8 @@ export default function ManagementUserPage() {
     if (passedOrder && isOrder(passedOrder)) {
       setOrder(passedOrder);
     }
-  }, [passedOrderBy, order]);
+  }, [passedOrderBy, passedOrder])
+  
 
   useEffect(() => {
     switch (orderBy) {
