@@ -16,7 +16,7 @@ interface Props extends UseControllerProps {
   sx?: any;
 
   items: Array<SelectedItem>;
-  checked: string[];
+  checked?: string[];
   onChangeSelectedBox: (event: any) => void;
   onSubmit: (event: any) => void;
 }
@@ -109,7 +109,7 @@ export default function AppSelectedInput({ ...props }: Props) {
                     sx={{ padding: 1 }}
                     control={
                       <Checkbox
-                        checked={props.checked.indexOf(option.name) !== -1}
+                        checked={props.checked?.indexOf(option.name) !== -1 ?? false}
                         onClick={() => handleChecked(option.name)}
                       />
                     }
