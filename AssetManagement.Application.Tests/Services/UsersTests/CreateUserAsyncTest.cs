@@ -43,6 +43,12 @@ public class CreateUserAsyncTest : UserServiceTestBase
         RoleManagerMock.Setup(m => m.FindByNameAsync(It.IsAny<string>())).ReturnsAsync(Roles.Find(r => r.Name == request.Type));
 
         var mockData = Fixture.Build<AppUser>().CreateMany(8).ToList();
+        var firstUserWithSameUsername = new AppUser { UserName = "anhnv" };
+        var secondUserWithSameUsername = new AppUser { UserName = "anhnv1" };
+        var thirdUserWithSameUsername = new AppUser { UserName = "binhnv" };
+        mockData.Add(firstUserWithSameUsername);
+        mockData.Add(secondUserWithSameUsername);
+        mockData.Add(thirdUserWithSameUsername);
 
         UserManagerMock.Setup(x => x.Users).Returns(mockData.AsQueryable().BuildMock());
         UserManagerMock.Setup(x => x.CreateAsync(It.IsAny<AppUser>(), It.IsAny<string>()))
