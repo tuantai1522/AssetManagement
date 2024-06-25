@@ -19,7 +19,7 @@ const AssetInfo = ({
   return (
     <>
       <div className="fixed w-screen h-screen bg-gray-400 top-0 left-0 opacity-50 "></div>
-      <div className="z-10 shadow-2xl absolute">
+      <div className="z-10 shadow-2xl absolute top-1/2 -translate-y-1/2">
         <div className="bg-white rounded-lg border-gray-400 border-2 w-[120%]">
           <div className="bg-slate-100 rounded-t-lg border-b-2 border-gray-400 px-12 py-5 flex justify-between items-center">
             <h2 className="text-lg font-bold text-primary">
