@@ -123,9 +123,17 @@ namespace AssetManagement.Application.Tests.Services.UsersTests
 			RoleManagerMock.Setup(rm => rm.Roles).Returns(Roles.AsQueryable().BuildMockDbSet().Object);
 			UserManagerMock.Setup(um => um.Users).Returns(Users.AsQueryable().BuildMockDbSet().Object);
 			UserManagerMock.Setup(um => um.GetRolesAsync(It.IsAny<AppUser>())).ReturnsAsync(new List<string> { "Admin" });
+
+
+			//CurrentUserMock.Setup(m => m.UserId).Returns(Users);
+			//UserManagerMock.Setup(m => m.FindByIdAsync(It.IsAny<string>()))
+			//		.ReturnsAsync(mockData[0]);
+
+
 			RoleManagerMock.Setup(rm => rm.FindByNameAsync(It.IsAny<string>())).ReturnsAsync(Roles.Find(r => r.Name == request.Type));
 			UserManagerMock.Setup(um => um.UpdateAsync(It.IsAny<AppUser>())).ReturnsAsync(IdentityResult.Success)
 				.Verifiable();
+
 
 			// Act
 			var result = await UserService.UpdateUserAsync(userId, request);

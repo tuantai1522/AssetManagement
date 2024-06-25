@@ -1,4 +1,4 @@
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import agent from "../../app/api/agent";
 import UserForm from "../../app/components/forms/userForm";
 import { CreateUserRequest } from "../../app/models/login/CreateUserRequest";
@@ -8,8 +8,6 @@ import dayjs from "dayjs";
 
 const CreateUserPage = () => {
     const navigate = useNavigate();
-    const [searchParams] = useSearchParams();
-    const callbackUrl = searchParams.get('callbackUrl') ?? undefined; // Retrieve the callback URL
 
     const onSubmit = async (formData: any) => {
         // Format the dates to 'YYYY-MM-DD'
@@ -30,7 +28,6 @@ const CreateUserPage = () => {
 
     return <UserForm
         onSubmit={onSubmit}
-        callbackUrl={callbackUrl}
     />;
 }
 

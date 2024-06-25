@@ -27,14 +27,12 @@ interface UserFormProps {
     onSubmit: (data: any) => void;
     isEditing?: boolean;
     data?: UserInfoResponse;
-    callbackUrl?: string; 
 }
 
 const UserForm = ({
     onSubmit,
     isEditing = false,
-    data,
-    callbackUrl
+    data
 }: UserFormProps) => {
     const navigate = useNavigate();
 
@@ -219,7 +217,7 @@ const UserForm = ({
 
                 <div className="flex justify-end space-x-4">
                     <AppButton content="Save" isFormSubmit={true} />
-                    <AppButton content="Cancel" styleType="Secondary" onClickOn={() => { navigate(callbackUrl ?? '/manage-user') }} />
+                    <AppButton content="Cancel" styleType="Secondary" onClickOn={() => { navigate(-1) }} />
                 </div>
             </form>
         </div>

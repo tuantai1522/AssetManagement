@@ -97,7 +97,7 @@ public class UserServiceTestBase
                 new UserRole
                 {
                     Role = Roles[1]
-          }
+                }
                 ]
             });
         }
