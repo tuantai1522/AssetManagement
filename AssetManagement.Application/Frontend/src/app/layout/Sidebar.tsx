@@ -24,8 +24,8 @@ const Sidebar = () => {
         <SidebarItem url="/" name="Home" />
         {user?.role === "Admin" && (
           <>
-            <SidebarItem url="/user-manage" name="Manage User" />
-            <SidebarItem url="/asset-manage" name="Manage Asset" />
+            <SidebarItem url="/manage-user" name="Manage User" />
+            <SidebarItem url="/manage-asset" name="Manage Asset" />
             <SidebarItem url="/assignment-manage" name="Manage Assignment" />
             <SidebarItem
               url="/request-for-returning-manage"

@@ -1,4 +1,4 @@
-import { Controller, FieldValues, useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -12,16 +12,7 @@ import { createFormSchema } from "../../schemas/createFormSchema";
 import { useEffect } from "react";
 import dayjs from "dayjs";
 import { UserInfoResponse } from "../../models/login/UserInfoResponse";
-
-
-interface IFormInput extends FieldValues {
-    firstName: string,
-    lastName: string,
-    dateOfBirth: Date,
-    joinedDate: Date,
-    gender: string,
-    type: string,
-}
+import { UserCreateForm } from "../../models/user/UserCreateForm";
 
 interface UserFormProps {
     onSubmit: (data: any) => void;
@@ -41,7 +32,7 @@ const UserForm = ({
     }
 
     const { handleSubmit, control, reset, formState: {isValid} } = useForm({
-        resolver: yupResolver<IFormInput>(createFormSchema),
+        resolver: yupResolver<UserCreateForm>(createFormSchema),
         defaultValues: {
             gender: Gender.Female, // Set default value for gender
         },

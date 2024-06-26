@@ -1,8 +1,9 @@
 import { useNavigate, useParams } from "react-router-dom";
 import UserForm from "../../app/components/forms/userForm";
 import agent from "../../app/api/agent";
-import { EditUserRequest } from "../../app/models/login/EditUserRequest";
+import { EditUserRequest } from "../../app/models/user/EditUserRequest";
 import dayjs from "dayjs";
+import { UserEditForm } from "../../app/models/user/UserCreateForm";
 
 
 const EditUserPage = () => {
@@ -16,7 +17,7 @@ const EditUserPage = () => {
 
     const { data,  error, isLoading } = agent.Users.details(id);
     
-    const onSubmit = async (formData: any) => {
+    const onSubmit = async (formData: UserEditForm) => {
         // Format the dates to 'YYYY-MM-DD'
         const formattedDateOfBirth = dayjs(formData.dateOfBirth).format('YYYY-MM-DD');
         const formattedJoinedDate = dayjs(formData.joinedDate).format('YYYY-MM-DD');

@@ -1,15 +1,16 @@
 import { useNavigate } from "react-router-dom";
 import agent from "../../app/api/agent";
 import UserForm from "../../app/components/forms/userForm";
-import { CreateUserRequest } from "../../app/models/login/CreateUserRequest";
+import { CreateUserRequest } from "../../app/models/user/CreateUserRequest";
 import { UserInfoResponse } from "../../app/models/login/UserInfoResponse";
 import { BaseResult } from "../../app/models/BaseResult";
 import dayjs from "dayjs";
+import { UserCreateForm } from "../../app/models/user/UserCreateForm";
 
 const CreateUserPage = () => {
     const navigate = useNavigate();
 
-    const onSubmit = async (formData: any) => {
+    const onSubmit = async (formData: UserCreateForm) => {
         // Format the dates to 'YYYY-MM-DD'
         const formattedDateOfBirth = dayjs(formData.dateOfBirth).format('YYYY-MM-DD');
         const formattedJoinedDate = dayjs(formData.joinedDate).format('YYYY-MM-DD');
