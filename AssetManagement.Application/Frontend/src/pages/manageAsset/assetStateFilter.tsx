@@ -1,7 +1,6 @@
 import AppSelectedInput from "../../app/components/AppSelectedInput";
 
 const items = [
-  { id: "All", name: "All" },
   { id: "assigned", name: "Assigned" },
   { id: "available", name: "Available" },
   { id: "notAvailable", name: "Not available" },
@@ -10,12 +9,12 @@ const items = [
 ];
 
 export interface AssetStateFilterProp {
-    states?: string[],
-    setStates: (data?: any) => void,
-    onSubmit: () => void
+  states?: string[],
+  setStates: (data?: any) => void,
+  onSubmit: () => void
 }
 
-function AssetStateFilter (props: AssetStateFilterProp) {
+function AssetStateFilter(props: AssetStateFilterProp) {
   const onChangeSelectedBox = (checkedItems: string[]) => {
     props.setStates(checkedItems);
   };
@@ -26,7 +25,7 @@ function AssetStateFilter (props: AssetStateFilterProp) {
         sx={{ marginLeft: 60 }}
         onSubmit={props.onSubmit}
         checked={props.states}
-        name="states"
+        name="State"
         items={items}
         onChangeSelectedBox={onChangeSelectedBox}
       />

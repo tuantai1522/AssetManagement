@@ -35,10 +35,10 @@ export default function AssetList(props: AssetListProp) {
             label: 'Asset Code',
             className: "font-bold",
             rowRatio: "w-1/12",
+            minWidth: "100px",
             style: {
                 border: "none",
                 borderBottom: "none",
-                minWidth: "100px"
             }
         },
         {
@@ -47,10 +47,10 @@ export default function AssetList(props: AssetListProp) {
             disablePadding: false,
             label: 'Asset Name',
             className: "font-bold",
+            minWidth: "300px",
             style: {
                 border: "none",
                 borderBottom: "none",
-                minWidth: "300px"
             },
             rowRatio: "w-6/12",
         },
@@ -60,10 +60,10 @@ export default function AssetList(props: AssetListProp) {
             disablePadding: false,
             label: 'Category',
             className: "font-bold ",
+            minWidth: "150px",
             style: {
                 border: "none",
                 borderBottom: "none",
-                minWidth: "150px"
             },
             rowRatio: "w-2/12"
         },
@@ -73,10 +73,10 @@ export default function AssetList(props: AssetListProp) {
             disablePadding: false,
             label: 'State',
             className: "font-bold ",
+            minWidth: "150px",
             style: {
                 border: "none",
                 borderBottom: "none",
-                minWidth: "150px",
             },
             rowRatio: "w-2/12",
         },
@@ -87,10 +87,10 @@ export default function AssetList(props: AssetListProp) {
             label: '',
             className: "font-bold",
             rowRatio: "w-1/12",
+            minWidth: "100px",
             style: {
                 border: "none",
                 borderBottom: "none",
-                minWidth: "100px",
                 maxWidth: "120px"
             },
             renderCell: (params) => {
