@@ -144,6 +144,7 @@ export default function UserList(props: UserListProp) {
         columns={columns}
         rows={props.data}
         handleClick={props.handleClick}
+        isLoading={props.isLoading}
       />
     </div>
   );
