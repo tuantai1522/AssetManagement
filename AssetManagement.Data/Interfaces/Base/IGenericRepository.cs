@@ -6,7 +6,7 @@ public interface IGenericRepository<T>
     Task<IEnumerable<T>> All();
     IEnumerable<T> Get(
         Expression<Func<T, bool>> filter,
-        Func<IQueryable<T>, IOrderedQueryable<T>> orderBy,
+        Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy,
         string includeProperties);
     IQueryable<T> GetQueryableSet();
     T Add(T entity);
