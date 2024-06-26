@@ -8,6 +8,7 @@ import { Search } from "@mui/icons-material";
 import AppButton from "../../app/components/buttons/Button";
 import AppSearchInput from "../../app/components/AppSearchInput";
 import AppPagination from "../../app/components/paginationButtons/paginationButtons";
+import AssetStateFilter from "./assetStateFilter";
 
 type OrderByFieldName =
   | "assetCode"
@@ -20,6 +21,7 @@ export default function ManagementAssetPage() {
 
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<OrderByFieldName>("assetName");
+  const [states, setStates] = useState<string[]>([]);
 
   const [query, setQuery] = useState<FilterAssetRequest>({
     sortAssetName: "asc",
@@ -409,6 +411,19 @@ export default function ManagementAssetPage() {
     });
   }
 
+  const handleStateFilterClick = () => {
+    if (states.length === 0 || states.includes("All")) {
+      setQuery((query) => ({ ...query, states: [], pageNumber: 1 }));
+    } else {
+      setQuery((query) => ({ ...query, states: states, pageNumber: 1 }));
+    }
+    // mutate(query);
+    //fake api
+    getAssetQueryString({
+      ...query, states: states, pageNumber: 1 
+    });
+  };
+
   return (
     <div className="flex justify-center h-full">
       <div className="container mb-12">
@@ -422,7 +437,18 @@ export default function ManagementAssetPage() {
           spacing={2}
           className="mt-3"
         >
-          <div></div>
+          <Stack
+            direction="row"
+            justifyContent="flex-start"
+            alignItems="center"
+            spacing={2}
+          >
+            <AssetStateFilter
+              states={states}
+              setStates={setStates}
+              onSubmit={handleStateFilterClick}
+            />
+          </Stack>
           <Stack
             direction="row"
             justifyContent="flex-end"
