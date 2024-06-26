@@ -1,6 +1,6 @@
 ﻿namespace AssetManagement.Domain.Enums
 {
-    public enum AsssetStatus
+    public enum AssetState
     {
         Available = 1,
         NotAvailable = 2,
