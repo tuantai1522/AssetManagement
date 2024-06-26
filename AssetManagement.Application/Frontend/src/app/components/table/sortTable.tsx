@@ -1,5 +1,5 @@
 import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
-import { Box, Chip, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel } from "@mui/material";
+import { Box, Chip, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel, Typography } from "@mui/material";
 import { visuallyHidden } from '@mui/utils';
 
 export interface CustomTableHeadProp {
@@ -47,7 +47,8 @@ export interface AppTableProp<T> {
     setOrderByFieldName: (orderBy: any) => void,
     handleClick: (event: React.MouseEvent<unknown>, id: any) => void,
     columns: ColumnDefinition[],
-    rows: Array<T>
+    rows: Array<T>,
+    isLoading?: boolean,
 }
 
 function CustomTableHead(props: CustomTableHeadProp) {
@@ -175,38 +176,51 @@ export function AppTable<T>(props: AppTableProp<T>) {
                         columns={props.columns}
                     />
                     <TableBody>
-                        {data && data.map((row, index) => {
+                        {data && data.length > 0 && data.map((row, index) => {
                             return (
-                            <>
-                                <TableRow
-                                    onClick={(event) => {
-                                        props.handleClick(event, row.id)
-                                    }
-                                    }
-                                    tabIndex={-1}
-                                    key={row.id}
-                                    sx={{ cursor: 'pointer' }}
-                                >
-                                    {row.data.map((item, index) => {
-                                        return (
-                                            <TableCell
-                                                align="left"
-                                                className={item.ratio ?? ""}
-                                                key={index}
-                                                sx={item.bodyStyle}
-                                            >
-                                                {item.renderCell ?? item.value ?? ''}
-                                            </TableCell>
-                                        );
-                                    })}
-                                </TableRow>
-                            </>
+                                <>
+                                    <TableRow
+                                        onClick={(event) => {
+                                            props.handleClick(event, row.id)
+                                        }
+                                        }
+                                        tabIndex={-1}
+                                        key={index}
+                                        sx={{ cursor: 'pointer' }}
+                                    >
+                                        {row.data.map((item, index) => {
+                                            return (
+                                                <TableCell
+                                                    align="left"
+                                                    className={item.ratio ?? ""}
+                                                    key={index}
+                                                    sx={item.bodyStyle}
+                                                >
+                                                    {item.renderCell ?? item.value ?? ''}
+                                                </TableCell>
+                                            );
+                                        })}
+                                    </TableRow>
+                                </>
                             );
                         })}
                     </TableBody>
                 </Table>
+                {props.isLoading === false && (!data || data.length === 0) &&
+                    (
+                        <div className="min-h-48 flex justify-center items-center">
+                            <Typography variant="h4" gutterBottom color={"#CF2338"}>
+                                No data found
+                            </Typography>
+                        </div>)
+                }
+                {props.isLoading === true &&
+                    (<div className="min-h-48 flex justify-center items-center">
+                        <div className="animate-spin w-10 h-10 border-4 border-primary border-t-white border-b-white rounded-full"></div>
+                    </div>)
+                }
             </TableContainer>
-        </Box>
+        </Box >
     );
 }
 
