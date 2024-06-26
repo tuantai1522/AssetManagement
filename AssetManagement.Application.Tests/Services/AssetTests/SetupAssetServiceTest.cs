@@ -19,7 +19,7 @@ public class SetupAssetServiceTest
     protected readonly Mock<UserManager<AppUser>> _userManagerMock;
     protected readonly IMapper _mapperConfig;
     protected readonly Mock<IUnitOfWork> _mockUnitOfWork;
-    protected readonly Mock<IAssetRepository> _mockAssetRepo;
+    protected readonly Mock<IAssetRepository> _mockAssetRepository;
 
     protected IAssetService _assetService;
 
@@ -36,7 +36,7 @@ public class SetupAssetServiceTest
         });
         _mapperConfig = mappingConfig.CreateMapper();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
-        _mockAssetRepo = new Mock<IAssetRepository>();
+        _mockAssetRepository = new Mock<IAssetRepository>();
 
         _assetService = new AssetService(_currentUserMock.Object, _mapperConfig, _mockUnitOfWork.Object, _userManagerMock.Object);
 

@@ -1,4 +1,7 @@
 ﻿
+using AssetManagement.Contracts.Dtos.AssetDtos.Requests;
+using AssetManagement.Contracts.Dtos.AssetDtos.Responses;
+using AssetManagement.Contracts.Dtos.CategoryDtos.Responses;
 using AssetManagement.Contracts.Dtos.UserDtos.Responses;
 using AssetManagement.Domain.Entities;
 using AutoMapper;

@@ -40,7 +40,7 @@ namespace AssetManagement.Application.Services.Implementations
             newAsset.CreatedAt = DateTime.Now;
             newAsset.LastUpdated = DateTime.Now;
 
-            _unitOfWork.AssetRepo.Add(newAsset);
+            _unitOfWork.AssetRepository.Add(newAsset);
             await _unitOfWork.SaveChangesAsync();
 
             return _mapper.Map<AssetResponse>(newAsset);
@@ -48,7 +48,7 @@ namespace AssetManagement.Application.Services.Implementations
 
         private async Task<string> GenerateAssetCode(Category category)
         {
-            var lastAssetCode = await _unitOfWork.AssetRepo.GetQueryableSet().Where(a => a.CategoryId.Equals(category.Id)).OrderByDescending(a => a.AssetCode).FirstOrDefaultAsync();
+            var lastAssetCode = await _unitOfWork.AssetRepository.GetQueryableSet().Where(a => a.CategoryId.Equals(category.Id)).OrderByDescending(a => a.AssetCode).FirstOrDefaultAsync();
             string assetCode = "";
             if (lastAssetCode != null && lastAssetCode.AssetCode != null)
             {
@@ -84,7 +84,7 @@ namespace AssetManagement.Application.Services.Implementations
         }
         private async Task<Category> GetCategoryOfAsset(Guid categoryId)
         {
-            var category = await _unitOfWork.CategoryRepo.FindOne(c => c.Id.Equals(categoryId));
+            var category = await _unitOfWork.CategoryRepository.FindOne(c => c.Id.Equals(categoryId));
             if (category == null)
             {
                 throw new NotFoundException("Category is not found!");
