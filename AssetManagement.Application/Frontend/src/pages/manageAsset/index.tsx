@@ -1,47 +1,37 @@
 import { useState } from "react";
 import AssetInfo from "../../app/components/assetInfo/assetInfo";
-import AssetDetailsResponse from "../../app/models/asset/AssetDetailsResponse";
 import { Button } from "@mui/material";
+import agent from "../../app/api/agent";
 
-const assetDetails: AssetDetailsResponse = {
-  assetCode: "A12345",
-  assetName: "Dell XPS 15",
-  categoryName: "Laptop",
-  installedDate: new Date("2022-01-15"),
-  state: "In Use",
-  location: "New York Office",
-  specification: "16GB RAM, 512GB SSD, Intel i7",
-  assignments: [
-    {
-      date: new Date("2022-01-16"),
-      assignedTo: "John Doe",
-      assignedBy: "Jane Smith",
-      returnedDate: new Date("2023-01-15"),
-    },
-    {
-      date: new Date("2023-01-20"),
-      assignedTo: "Emily Johnson",
-      assignedBy: "Jane Smith",
-      returnedDate: new Date("2023-01-16"),
-    },
-  ],
-};
 export default function ManagementAssetPage() {
   const [open, setOpen] = useState(false);
 
-  const handleOpen = () => {
+  const [id, setId] = useState("");
+
+  const {
+    data: assetData,
+    isLoading: assetLoading,
+    error: assetError,
+  } = agent.Asset.details(id);
+
+  const handleOpen1 = () => {
     setOpen(!open);
+    setId("173279D4-8458-461F-B3B0-170A3122A82A");
   };
+
   return (
     <>
-      <div className="flex justify-center h-full">
+      <div className="h-full">
         <h1>Asset list</h1>
-        <Button onClick={handleOpen}>Open</Button>
+        <Button onClick={handleOpen1}>
+          Open with id: 173279D4-8458-461F-B3B0-170A3122A82A
+        </Button>
+
         {open && (
           <AssetInfo
             isOpen={true}
-            isLoading={false}
-            assetData={assetDetails}
+            isLoading={assetLoading}
+            assetData={assetData?.result}
             onClose={() => {
               setOpen(false);
             }}

@@ -8,6 +8,28 @@ interface Props {
   onClose: () => void;
 }
 
+interface AssignmentResponse {
+  date: Date;
+  assignedTo: string;
+  assignedBy: string;
+  returnedDate: Date;
+}
+
+const assignments: Array<AssignmentResponse> = [
+  {
+    date: new Date("2022-01-16"),
+    assignedTo: "John Doe",
+    assignedBy: "Jane Smith",
+    returnedDate: new Date("2023-01-15"),
+  },
+  {
+    date: new Date("2023-01-20"),
+    assignedTo: "Emily Johnson",
+    assignedBy: "Jane Smith",
+    returnedDate: new Date("2023-01-16"),
+  },
+];
+
 const AssetInfo = ({
   isOpen,
   assetData,
@@ -83,7 +105,7 @@ const AssetInfo = ({
                     Returned date
                   </div>
 
-                  {assetData?.assignments.map((row, index) => {
+                  {assignments.map((row, index) => {
                     return (
                       <>
                         <div className="col-span-1 border-b border-black border-solid">

@@ -122,8 +122,10 @@ const Users = {
   },
   details: (id: string) => requests.get(`/api/users/${id}`),
   disable: (id: string) => requests.put(`api/users/disable/${id}`, {}),
-  update: (id: string, values: EditUserRequest) => requests.put(`/api/users/${id}`, values),
-  create: (values: CreateUserRequest) => requests.post('api/users/create', values)
+  update: (id: string, values: EditUserRequest) =>
+    requests.put(`/api/users/${id}`, values),
+  create: (values: CreateUserRequest) =>
+    requests.post("api/users/create", values),
 };
 
 const Authentication = {
@@ -132,10 +134,15 @@ const Authentication = {
     requests.post("api/auth/changepassword", values),
 };
 
+const Asset = {
+  details: (id: string) => requests.get(`/api/asset/getAssetById?Id=${id}`),
+};
+
 const agent = {
   Product,
   Authentication,
   Users,
+  Asset,
 };
 
 export default agent;
@@ -174,12 +181,13 @@ function getUserQueryString(filter?: UserQuery) {
   const sortTypeParam = filter.sortType
     ? `sortType=${filter.sortType === "asc" ? 1 : 2}&`
     : "";
-    const sortLastUpdate = filter.sortLastUpdate
+  const sortLastUpdate = filter.sortLastUpdate
     ? `sortLastUpdate=${filter.sortLastUpdate === "asc" ? 1 : 2}&`
     : "";
 
   const pageParam = `pageNumber=${filter.pageNumber ?? 1}&`;
   const sizeParam = `pageSize=${filter.pageSize ?? 5}`;
 
-  const queryString = `${nameParam}${typeParam}${sortStaffCodeParam}${sortFullNameParam}${sortJoinedDateParam}${sortTypeParam}${sortLastUpdate}${pageParam}${sizeParam}`;  return queryString;
+  const queryString = `${nameParam}${typeParam}${sortStaffCodeParam}${sortFullNameParam}${sortJoinedDateParam}${sortTypeParam}${sortLastUpdate}${pageParam}${sizeParam}`;
+  return queryString;
 }
