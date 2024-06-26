@@ -14,13 +14,13 @@ namespace AssetManagement.Application.Controllers
     {
         private readonly ICategoryService _categoryService;
 
-        public CategoryController(ICategoryService categoryService) 
+        public CategoryController(ICategoryService categoryService)
         {
             _categoryService = categoryService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<ICollection<CategoryInfoResponse>>> GetAllAsync(GetAllCategoryRequest? request)
+        public async Task<ActionResult<ICollection<CategoryInfoResponse>>> GetAllAsync([FromQuery] GetAllCategoryRequest request)
         {
             var data = await _categoryService.GetAllAsync(request);
             PaginationMetaData metaData = new PaginationMetaData(data.TotalItemCount, data.PageSize, data.CurrentPage);
