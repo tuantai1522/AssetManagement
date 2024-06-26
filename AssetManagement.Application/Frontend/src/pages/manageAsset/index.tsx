@@ -7,6 +7,7 @@ import { Stack } from "@mui/material";
 import { Search } from "@mui/icons-material";
 import AppButton from "../../app/components/buttons/Button";
 import AppSearchInput from "../../app/components/AppSearchInput";
+import AppPagination from "../../app/components/paginationButtons/paginationButtons";
 
 type OrderByFieldName =
   | "assetCode"
@@ -255,6 +256,10 @@ export default function ManagementAssetPage() {
         }
       }
       ] as AssetRowData[]
+    },
+    metaData: {
+      totalPageCount: 10 as number,
+      currentPage: 1 as number
     }
   }
 
@@ -374,6 +379,14 @@ export default function ManagementAssetPage() {
     }
   }, [orderBy, order]);
 
+  const handlePageNumberChange = (value: any) => {
+    const pageNumber = Number(value);
+    setQuery((prevQuery) => ({ ...prevQuery, pageNumber }));
+    // mutate(query);
+    //fake api 
+    getAssetQueryString({ ...query, pageNumber });
+  };
+
   const handleSearchInputChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -388,7 +401,7 @@ export default function ManagementAssetPage() {
       name: searchInput?.trim(),
     }));
     // mutate();
-    //test
+    //fake api 
     getAssetQueryString({
       ...query,
       pageNumber: 1,
@@ -398,7 +411,7 @@ export default function ManagementAssetPage() {
 
   return (
     <div className="flex justify-center h-full">
-      <div className="container">
+      <div className="container mb-12">
         <p className="text-primary text-xl font-bold justify-start items-start">
           Asset List
         </p>
@@ -445,6 +458,18 @@ export default function ManagementAssetPage() {
             setOrderBy={setOrderBy}
             handleClick={(event, rowId) => { }}
           />
+
+          <Stack
+            direction="row"
+            justifyContent="flex-end"
+            alignItems="baseline"
+          >
+            <AppPagination
+              totalPage={data?.metaData?.totalPageCount ?? 1}
+              onChange={handlePageNumberChange}
+              currentPage={data?.metaData?.currentPage ?? 1}
+            />
+          </Stack>
         </div>
       </div>
     </div>
