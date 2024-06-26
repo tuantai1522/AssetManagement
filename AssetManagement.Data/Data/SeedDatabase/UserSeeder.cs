@@ -60,7 +60,8 @@ public class UserSeeder
         var startIndex = defaultAdmins.Count + defaultStaffs.Count + 1;
         int numOfAdmins = 10;
         int numOfStaffs = 50;
-        for (int i = startIndex; i < (numOfAdmins + numOfStaffs + startIndex); i++)
+        int totalUsers = numOfAdmins + numOfStaffs + startIndex;
+        for (int i = startIndex; i < totalUsers; i++)
         {
             var firstName = firstNames[random.Next(firstNames.Count)];
             var lastName = lastNames[random.Next(lastNames.Count)];
@@ -161,14 +162,14 @@ public class UserSeeder
         var adminHcm = new AppUser()
         {
             Id = Guid.NewGuid(),
-            UserName = $"adminhcm",
-            NormalizedUserName = $"ADMINHCM",
-            Email = $"adminhcm@gmail.com",
-            NormalizedEmail = $"ADMINHCM@GMAIL.COM",
+            UserName = "adminhcm",
+            NormalizedUserName = "ADMINHCM",
+            Email = "adminhcm@gmail.com",
+            NormalizedEmail = "ADMINHCM@GMAIL.COM",
             LockoutEnabled = true,
             SecurityStamp = Guid.NewGuid().ToString(),
-            FirstName = $"Admin",
-            LastName = $"HCM",
+            FirstName = "Admin",
+            LastName = "HCM",
             Gender = "Male",
             Location = "HCM",
             IsPasswordChanged = false,
@@ -183,14 +184,14 @@ public class UserSeeder
         var adminHn = new AppUser()
         {
             Id = Guid.NewGuid(),
-            UserName = $"adminhn",
-            NormalizedUserName = $"ADMINHN",
-            Email = $"adminhn@gmail.com",
-            NormalizedEmail = $"ADMINHN@GMAIL.COM",
+            UserName = "adminhn",
+            NormalizedUserName = "ADMINHN",
+            Email = "adminhn@gmail.com",
+            NormalizedEmail = "ADMINHN@GMAIL.COM",
             LockoutEnabled = true,
             SecurityStamp = Guid.NewGuid().ToString(),
-            FirstName = $"Admin",
-            LastName = $"HN",
+            FirstName = "Admin",
+            LastName = "HN",
             Gender = "Male",
             Location = "HN",
             IsPasswordChanged = false,
@@ -205,6 +206,8 @@ public class UserSeeder
         admins.Add(adminHn);
         admins.Add(adminHcm);
 
+        storeUsernames.Add(adminHn.UserName);
+        storeUsernames.Add(adminHcm.UserName);
         return admins;
     }
 
@@ -260,6 +263,8 @@ public class UserSeeder
         staffs.Add(staffHn);
         staffs.Add(staffHcm);
 
+        storeUsernames.Add(staffHn.UserName);
+        storeUsernames.Add(staffHcm.UserName);
         return staffs;
     }
 }
