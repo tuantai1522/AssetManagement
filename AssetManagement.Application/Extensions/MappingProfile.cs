@@ -1,4 +1,5 @@
 ﻿
+using AssetManagement.Contracts.Dtos.AssetDtos.Requests;
 using AssetManagement.Contracts.Dtos.AssetDtos.Responses;
 using AssetManagement.Contracts.Dtos.UserDtos.Responses;
 using AssetManagement.Domain.Entities;
@@ -14,9 +15,9 @@ public class MappingProfile : Profile
         CreateMap<AppUser, UserInfoResponse>()
             .ForMember(dest => dest.FullName, src => src.MapFrom(src => string.Concat(src.FirstName, " ", src.LastName)))
             .ForMember(dest => dest.Type, src => src.MapFrom(src => src.UserRoles.FirstOrDefault()!.Role.Name));
-
-        //Asset
-
+        //Assert
+        CreateMap<AssetCreationRequest, Asset>();
+        CreateMap<Asset, AssetResponse>();
         CreateMap<Asset, AssetDetailsResponse>()
             .ForMember(des => des.AssetCode, act => act.MapFrom(src => src.AssetCode))
             .ForMember(des => des.AssetName, act => act.MapFrom(src => src.Name))
@@ -25,6 +26,5 @@ public class MappingProfile : Profile
             .ForMember(des => des.State, act => act.MapFrom(src => src.State))
             .ForMember(des => des.Location, act => act.MapFrom(src => src.Location))
             .ForMember(des => des.Specification, act => act.MapFrom(src => src.Specification));
-
     }
 }

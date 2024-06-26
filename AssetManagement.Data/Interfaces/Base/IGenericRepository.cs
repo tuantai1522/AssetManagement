@@ -12,7 +12,7 @@ public interface IGenericRepository<T>
     T Add(T entity);
     IEnumerable<T> AddRange(IEnumerable<T> entities);
     Task<List<T>> Find(Expression<Func<T, bool>> predicate);
-    Task<T> FindOne(Expression<Func<T, bool>> predicate);
+    Task<T?> FindOne(Expression<Func<T, bool>> predicate);
     Task<bool> Check(Expression<Func<T, bool>> predicate);
     T Update(T entity);
     bool Delete(Guid id);
