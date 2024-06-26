@@ -68,7 +68,7 @@ export default function AppSelectedInput({ ...props }: Props) {
 
   return (
     <>
-      <Grid width={200} sx={{ ...props.sx }}>
+      <Grid width={150} sx={{ ...props.sx }}>
         <Grid item>
           <Stack
             direction="row"
@@ -103,8 +103,8 @@ export default function AppSelectedInput({ ...props }: Props) {
                     cursor: "pointer"
                   }
                 },
-                minWidth: "200px",
-                maxWidth: "350px",
+                minWidth: "180px",
+                maxWidth: "250px",
               }}
             />
             <div

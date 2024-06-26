@@ -29,7 +29,8 @@ export function getAssetQueryString(filter?: FilterAssetRequest) {
   const nameParam = filter.name ? `name=${filter.name}&` : "";
   let statesParam = "";
   if (filter.states && filter.states.length > 0) {
-    statesParam = filter.states.map((state) => `states=${state}&`).join("");
+    if (!filter.states.includes("all"))
+      statesParam = filter.states.map((state) => `states=${state}&`).join("");
   }
   let categoryIdsParam = "";
   if (filter.categoryIds && filter.categoryIds.length > 0) {
@@ -49,7 +50,7 @@ export function getAssetQueryString(filter?: FilterAssetRequest) {
   const sortStateParam = filter.sortState
     ? `sortState=${filter.sortState === "asc" ? 1 : 2}&`
     : "";
-    const sortLastUpdateParam = filter.sortLastUpdate
+  const sortLastUpdateParam = filter.sortLastUpdate
     ? `sortLastUpdate=${filter.sortLastUpdate === "asc" ? 1 : 2}&`
     : "";
   const pageParam = `pageNumber=${filter.pageNumber ?? 1}&`;
