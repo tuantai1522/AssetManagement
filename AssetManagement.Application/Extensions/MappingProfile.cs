@@ -1,6 +1,4 @@
 ﻿
-using AssetManagement.Contracts.Dtos.AssetDtos.Requests;
-using AssetManagement.Contracts.Dtos.AssetDtos.Responses;
 using AssetManagement.Contracts.Dtos.UserDtos.Responses;
 using AssetManagement.Domain.Entities;
 using AutoMapper;
@@ -18,5 +16,8 @@ public class MappingProfile : Profile
         //Assert
         CreateMap<AssetCreationRequest, Asset>();
         CreateMap<Asset, AssetResponse>();
+        //Asset
+        //Category
+        CreateMap<Category, CategoryInfoResponse>();
     }
 }
