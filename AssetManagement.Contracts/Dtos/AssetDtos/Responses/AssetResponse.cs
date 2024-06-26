@@ -8,6 +8,7 @@ public class AssetResponse
     public string Specification { get; set; } = string.Empty;
     public DateTime InstalledDate { get; set; }
     public string State { get; set; } = string.Empty;
+    public string Location { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
     public DateTime LastUpdated { get; set; }
 }
