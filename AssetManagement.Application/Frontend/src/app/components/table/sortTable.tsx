@@ -175,54 +175,49 @@ export function AppTable<T>(props: AppTableProp<T>) {
                         onRequestSort={handleRequestSort}
                         columns={props.columns}
                     />
-                    {!data || data.length === 0 ?
-
-                        (<></>) :
-                        (<TableBody>
-                            {data && data.map((row, index) => {
-                                return (
-                                    <>
-                                        <TableRow
-                                            onClick={(event) => {
-                                                props.handleClick(event, row.id)
-                                            }
-                                            }
-                                            tabIndex={-1}
-                                            key={row.id}
-                                            sx={{ cursor: 'pointer' }}
-                                        >
-                                            {row.data.map((item, index) => {
-                                                return (
-                                                    <TableCell
-                                                        align="left"
-                                                        className={item.ratio ?? ""}
-                                                        key={index}
-                                                        sx={item.bodyStyle}
-                                                    >
-                                                        {item.renderCell ?? item.value ?? ''}
-                                                    </TableCell>
-                                                );
-                                            })}
-                                        </TableRow>
-                                    </>
-                                );
-                            })}
-                        </TableBody>)
-                    }
+                    <TableBody>
+                        {data && data.length > 0 && data.map((row, index) => {
+                            return (
+                                <>
+                                    <TableRow
+                                        onClick={(event) => {
+                                            props.handleClick(event, row.id)
+                                        }
+                                        }
+                                        tabIndex={-1}
+                                        key={index}
+                                        sx={{ cursor: 'pointer' }}
+                                    >
+                                        {row.data.map((item, index) => {
+                                            return (
+                                                <TableCell
+                                                    align="left"
+                                                    className={item.ratio ?? ""}
+                                                    key={index}
+                                                    sx={item.bodyStyle}
+                                                >
+                                                    {item.renderCell ?? item.value ?? ''}
+                                                </TableCell>
+                                            );
+                                        })}
+                                    </TableRow>
+                                </>
+                            );
+                        })}
+                    </TableBody>
                 </Table>
-                {props.isLoading === false && (!data || data.length === 0) ?
+                {props.isLoading === false && (!data || data.length === 0) &&
                     (
-                        <div className="min-h-60 flex justify-center items-center">
+                        <div className="min-h-48 flex justify-center items-center">
                             <Typography variant="h4" gutterBottom color={"#CF2338"}>
                                 No data found
                             </Typography>
-                        </div>) : (<></>)
+                        </div>)
                 }
-                {props.isLoading === true ?
-                    (<div className="min-h-60 flex justify-center items-center">
+                {props.isLoading === true &&
+                    (<div className="min-h-48 flex justify-center items-center">
                         <div className="animate-spin w-10 h-10 border-4 border-primary border-t-white border-b-white rounded-full"></div>
                     </div>)
-                    : (<></>)
                 }
             </TableContainer>
         </Box >
