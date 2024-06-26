@@ -7,13 +7,14 @@ import ConfirmModal from "../../app/components/confirmModal";
 import UserList from "./userList/userList";
 import { convertUtcToLocalDate } from "../../app/utils/dateUtils";
 import { FilterUser } from "../../app/models/User";
-import { Stack } from "@mui/material";
+import { Alert, Snackbar, Stack } from "@mui/material";
 import UsePagination from "../../app/components/paginationButtons/paginationButtons";
 import { Search } from "@mui/icons-material";
 import AppSearchInput from "../../app/components/AppSearchInput";
 import AppButton from "../../app/components/buttons/Button";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import UserType from "./userList/userType";
+import { BaseResult } from "../../app/models/BaseResult";
 
 type OrderByFieldName =
   | "staffCode"
@@ -53,8 +54,23 @@ export default function ManagementUserPage() {
   const [isDisablingModalOpen, setIsDisablingModalOpen] = useState(false);
   const [currentDisablingId, setCurrentDisablingId] = useState("");
 
-  const handleDisable = (id: string) => {
-    agent.Users.disable(id).then(mutate);
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
+  const [currentErrorMessage, setCurrentErrorMessage] = useState("");
+
+  const handleDisable = async (id: string) => {
+    try {
+      await agent.Users.disable(id).then(mutate);
+    } catch (e) {
+      const err = e as BaseResult<any>;
+      if (err?.error) {
+        if (err?.error?.message) setCurrentErrorMessage(err?.error?.message);
+      } else {
+        setCurrentErrorMessage(
+          "An unexpected error happened. Please try again!"
+        );
+      }
+      setIsErrorModalOpen(true);
+    }
   };
 
   const [searchInput, setSearchInput] = useState<string>("");
@@ -180,6 +196,21 @@ export default function ManagementUserPage() {
   return (
     <div className="flex justify-center h-full">
       <div className="container">
+        <Snackbar
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
+          open={isErrorModalOpen}
+          autoHideDuration={5000}
+          onClose={() => setIsErrorModalOpen(false)}
+        >
+          <Alert
+            onClose={() => setIsErrorModalOpen(false)}
+            severity="error"
+            variant="outlined"
+            sx={{ width: "100%", bgcolor: "background.paper" }}
+          >
+            {currentErrorMessage}
+          </Alert>
+        </Snackbar>
         <p className="text-primary text-xl font-bold justify-start items-start">
           User List
         </p>

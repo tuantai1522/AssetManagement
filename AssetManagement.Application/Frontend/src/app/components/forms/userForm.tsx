@@ -40,7 +40,7 @@ const UserForm = ({
         return dayjs(date);
     }
 
-    const { handleSubmit, control, reset } = useForm({
+    const { handleSubmit, control, reset, formState: {isValid} } = useForm({
         resolver: yupResolver<IFormInput>(createFormSchema),
         defaultValues: {
             gender: Gender.Female, // Set default value for gender
@@ -216,7 +216,7 @@ const UserForm = ({
                 </div>
 
                 <div className="flex justify-end space-x-4">
-                    <AppButton content="Save" isFormSubmit={true} />
+                    <AppButton content="Save" isFormSubmit={true} isDisabled={!isValid} />
                     <AppButton content="Cancel" styleType="Secondary" onClickOn={() => { navigate(-1) }} />
                 </div>
             </form>
