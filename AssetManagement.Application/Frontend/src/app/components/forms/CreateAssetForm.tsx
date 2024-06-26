@@ -18,27 +18,23 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { AssetStatus } from "../../types/enum";
 import { Category } from "../../models/category/Category";
+import agent from "../../api/agent";
+import { AssetCreationForm } from "../../models/asset/AssetCreationRequest";
+import { BaseResult } from "../../models/BaseResult";
 
 interface Props {
   handleCreateAsset: (data: any) => void;
-  categories: Category[];
 }
 
-interface IFormType extends FieldValues {
-  name: string;
-  categoryId: string;
-  specification: string;
-  installedDate: Date;
-  status: string;
-}
+const CreateAssetForm = ({ handleCreateAsset }: Props) => {
+  const categories = agent.Category.all();
 
-const CreateAssetForm = (props: Props) => {
   const {
     handleSubmit,
     control,
     formState: { isValid, errors },
   } = useForm({
-    resolver: yupResolver<IFormType>(createAssetSchema),
+    resolver: yupResolver<AssetCreationForm>(createAssetSchema),
     defaultValues: {},
     mode: "all",
   });
@@ -47,10 +43,7 @@ const CreateAssetForm = (props: Props) => {
   return (
     <div className="bg-white w-[35rem] mx-auto">
       <h2 className="text-2xl font-bold text-primary mb-5">Create New Asset</h2>
-      <form
-        onSubmit={handleSubmit(props.handleCreateAsset)}
-        className="space-y-6"
-      >
+      <form onSubmit={handleSubmit(handleCreateAsset)} className="space-y-6">
         <div>
           <div className="flex items-center gap-5 pl-2">
             <label className="w-[7rem]">Name</label>
@@ -94,11 +87,14 @@ const CreateAssetForm = (props: Props) => {
                       value={field.value || ""}
                       onChange={(e) => field.onChange(e.target.value)}
                     >
-                      {props.categories.map((category, index) => (
-                        <MenuItem key={index} value={category.id}>
-                          {category.name}
-                        </MenuItem>
-                      ))}
+                      {categories.data &&
+                        (
+                          (categories.data.items.result as Category[]) ?? []
+                        ).map((category, index) => (
+                          <MenuItem key={index} value={category.id}>
+                            {category.name}
+                          </MenuItem>
+                        ))}
                     </Select>
                   </FormControl>
                 )}

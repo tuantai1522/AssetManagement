@@ -1,36 +1,41 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
+import agent from "../../app/api/agent";
 import CreateAssetForm from "../../app/components/forms/CreateAssetForm";
-import { Category } from "../../app/models/category/Category";
+import { BaseResult } from "../../app/models/BaseResult";
+import { Asset } from "../../app/models/asset/Asset";
+import {
+  AssetCreationForm,
+  AssetCreationRequest,
+} from "../../app/models/asset/AssetCreationRequest";
 
 const CreateAssetPage = () => {
-  const handleSubmit = (values: any) => {
-    console.log("values", values);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (data: AssetCreationForm) => {
+    const dataRequest: AssetCreationRequest = {
+      categoryId: data.categoryId,
+      installedDate: data.installedDate,
+      name: data.name,
+      specification: data.specification,
+      state: data.state,
+    };
+
+    console.log("Data", data);
+    console.log("Data Request", dataRequest);
+
+    const response: BaseResult<Asset> = await agent.Asset.create(dataRequest);
+    if (response.isSuccess) {
+      navigate(
+        `/manage-asset?passedOrderBy=${encodeURIComponent(
+          "lastUpdate"
+        )}&passedOrder=${encodeURIComponent("desc")}`
+      );
+    }
   };
 
-  const categoryData: Category[] = [
-    {
-      id: "1",
-      name: "Laptop",
-      prefix: "LA",
-    },
-    {
-      id: "2",
-      name: "Computer",
-      prefix: "C",
-    },
-    {
-      id: "3",
-      name: "Phone",
-      prefix: "P",
-    },
-  ];
   return (
     <div>
-      <CreateAssetForm
-        handleCreateAsset={handleSubmit}
-        categories={categoryData}
-      />
+      <CreateAssetForm handleCreateAsset={handleSubmit} />
     </div>
   );
 };
