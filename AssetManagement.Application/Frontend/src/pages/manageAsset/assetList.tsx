@@ -5,8 +5,8 @@ import { IconButton, Stack, Tooltip } from "@mui/material";
 export interface AssetRowData {
     id: string;
     assetCode: string;
-    assetName?: string;
-    categoryName?: string;
+    name?: string;
+    category?: string;
     state?: string;
     action: {
         id: string;
@@ -42,8 +42,8 @@ export default function AssetList(props: AssetListProp) {
             }
         },
         {
-            id: 'assetName',
-            fieldName: 'assetName',
+            id: 'name',
+            fieldName: 'name',
             disablePadding: false,
             label: 'Asset Name',
             className: "font-bold",
@@ -55,8 +55,8 @@ export default function AssetList(props: AssetListProp) {
             rowRatio: "w-6/12",
         },
         {
-            id: 'categoryName',
-            fieldName: 'categoryName',
+            id: 'category',
+            fieldName: 'category',
             disablePadding: false,
             label: 'Category',
             className: "font-bold ",
@@ -83,7 +83,7 @@ export default function AssetList(props: AssetListProp) {
         {
             id: 'action',
             fieldName: "action",
-            disablePadding: true,
+            disablePadding: false,
             label: '',
             className: "font-bold",
             rowRatio: "w-1/12",
@@ -101,30 +101,31 @@ export default function AssetList(props: AssetListProp) {
                         alignItems="center"
                         spacing={2}
                     >
-                        <Tooltip title="Edit">
-                            <span>
-                                <IconButton
-                                    disabled={params?.state === "Assigned"}
-                                    onClick={(e) => {
-                                        e.stopPropagation()
-                                        alert(params?.id)
-                                    }}>
-                                    <Edit className={params?.state === "Assigned" ? "" : "text-gray-500"} />
-                                </IconButton>
-                            </span>
-                        </Tooltip>
-                        <Tooltip title="Remove">
-                            <span>
-                                <IconButton
-                                    disabled={params?.state === "Assigned"}
-                                    onClick={(e) => {
-                                        e.stopPropagation()
-                                        alert(params?.id)
-                                    }}>
-                                    <HighlightOff className={params?.state === "Assigned" ? "" : "text-red-500"} />
-                                </IconButton>
-                            </span>
-                        </Tooltip>
+                        <button
+                            disabled={params?.state === "Assigned"}
+                            color="primary"
+                            className="text-gray-500"
+                            onClick={(e) => {
+                                e.stopPropagation()
+                                alert(params?.id)
+                            }}
+                        >
+                            {" "}
+                            <Edit />
+                        </button>
+
+                        <button
+                            disabled={params?.state === "Assigned"}
+                            color="primary"
+                            className="text-red-500"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                alert(params?.id)
+                            }}
+                        >
+                            {" "}
+                            <HighlightOff />
+                        </button>
                     </Stack>
                 )
             }
@@ -141,6 +142,7 @@ export default function AssetList(props: AssetListProp) {
                 columns={columns}
                 rows={props.data}
                 handleClick={props.handleClick}
+                isLoading={props.isLoading}
             />
         </div>
     );
