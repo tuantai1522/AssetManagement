@@ -4,7 +4,6 @@ using AssetManagement.Contracts.Dtos.AssetDtos.Requests;
 using AssetManagement.Contracts.Dtos.AssetDtos.Responses;
 using AssetManagement.Data.Interfaces;
 using AssetManagement.Domain.Entities;
-using AssetManagement.Domain.Enums;
 using AssetManagement.Domain.Exceptions;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
@@ -30,7 +29,6 @@ namespace AssetManagement.Application.Services.Implementations
 
         public async Task<AssetResponse> CreateAssetAsync(AssetCreationRequest request)
         {
-            ValidateAssetRequest(request);
             var userLogin = await GetUserLogined();
             var category = await GetCategoryOfAsset(request.CategoryId);
 
@@ -61,13 +59,6 @@ namespace AssetManagement.Application.Services.Implementations
             }
 
             return assetCode;
-        }
-        private void ValidateAssetRequest(AssetCreationRequest request)
-        {
-            if (!Enum.IsDefined(typeof(AssetState), request.State))
-            {
-                throw new BadRequestException("State value is not valid!");
-            }
         }
         private async Task<AppUser> GetUserLogined()
         {

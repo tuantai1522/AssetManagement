@@ -1,11 +1,18 @@
 ﻿using AssetManagement.Domain.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace AssetManagement.Contracts.Dtos.AssetDtos.Requests;
 public class AssetCreationRequest
 {
-    public required string Name { get; set; }
+    [Required]
+    public string Name { get; set; } = string.Empty;
+    [Required]
     public Guid CategoryId { get; set; }
-    public required string Specification { get; set; }
-    public required DateTime InstalledDate { get; set; }
-    public required AssetState State { get; set; }
+    [Required]
+    public string Specification { get; set; } = string.Empty;
+    [Required]
+    public DateTime InstalledDate { get; set; }
+    [Required]
+    [EnumDataType(typeof(AssetState))]
+    public AssetState State { get; set; }
 }

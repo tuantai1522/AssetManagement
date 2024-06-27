@@ -7,6 +7,5 @@ namespace AssetManagement.Application.Services.Interfaces
     public interface ICategoryService
     {
         Task<PagingDto<CategoryInfoResponse>> GetAllAsync(GetAllCategoryRequest request);
-        Task<CategoryInfoResponse> CreateAsync(CreateCategoryRequest request);
     }
 }
