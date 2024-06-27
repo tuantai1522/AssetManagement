@@ -36,14 +36,14 @@ export const router = createBrowserRouter([
           {
             element: <DefaultLayout />,
             children: [
-              { path: "user-manage", element: <ManagementUserPage /> },
-              { path: "asset-manage", element: <ManagementAssetPage /> },
+              { path: "manage-user", element: <ManagementUserPage /> },
+              { path: "manage-asset", element: <ManagementAssetPage /> },
               {
-                path: "assignment-manage",
+                path: "manage-assignment",
                 element: <ManagementAssignmentPage />,
               },
               {
-                path: "request-for-returning-manage",
+                path: "request-for-returning",
                 element: <ManagementRequestForReturningPage />,
               },
               { path: "report", element: <ManagementReportPage /> },
