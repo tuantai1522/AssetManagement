@@ -1,5 +1,5 @@
 import AppSelectedInput from "../../app/components/AppSelectedInput";
-import { AssetState } from "../../app/models/Asset";
+import { AssetState } from "../../app/models/asset/Asset";
 
 const items = [
   { id: AssetState[AssetState.Assigned], name: "Assigned" },

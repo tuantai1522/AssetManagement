@@ -1,6 +1,6 @@
 import { Edit, HighlightOff } from "@mui/icons-material";
 import AppTable, { ColumnDefinition, Order } from "../../app/components/table/sortTable";
-import { IconButton, Stack, Tooltip } from "@mui/material";
+import { Stack } from "@mui/material";
 
 export interface AssetRowData {
     id: string;

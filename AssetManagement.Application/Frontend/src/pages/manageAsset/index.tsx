@@ -1,6 +1,6 @@
 import AssetList, { AssetRowData } from "./assetList";
 import { useEffect, useState } from "react";
-import { AssetState, FilterAssetRequest, FilterAssetResponse, getAssetQueryString } from "../../app/models/Asset";
+import { AssetState, FilterAssetRequest, FilterAssetResponse, getAssetQueryString } from "../../app/models/asset/Asset";
 import agent from "../../app/api/agent";
 import { Order } from "../../app/components/table/sortTable";
 import { Stack } from "@mui/material";
@@ -10,6 +10,9 @@ import AppSearchInput from "../../app/components/AppSearchInput";
 import { SetURLSearchParams, useSearchParams } from "react-router-dom";
 import AppPagination from "../../app/components/paginationButtons/paginationButtons";
 import AssetStateFilter from "./assetStateFilter";
+import CategoryFilter from "./categoryFilter";
+import SelectedItem from "../../app/models/SelectedItem";
+import { Category } from "../../app/models/category/Category";
 
 type OrderByFieldName =
   | "assetCode"
@@ -30,6 +33,13 @@ function setFilterSearchParam(query: FilterAssetRequest, setSearchParams: SetURL
     normalizeState.forEach((state) => {
       if (state)
         params.append("states", state);
+    });
+  }
+
+  if (query?.categories && query.categories.length > 0) {
+    query?.categories?.forEach((category) => {
+      if (category)
+        params.append("categories", category);
     });
   }
 
@@ -60,15 +70,18 @@ export default function ManagementAssetPage() {
   const initPageNumber = Number(searchParams.get("pageNumber") ?? "1");
   const initPageSize = Number(searchParams.get("pageSize") ?? "5");
   const initStates = searchParams.getAll("states");
+  const initCategories = searchParams.getAll("categories");
 
   const [order, setOrder] = useState<Order>(searchParams.get("order") as Order ?? "asc");
   const [orderBy, setOrderBy] = useState<OrderByFieldName>(searchParams.get("orderBy") as OrderByFieldName ?? "assetCode");
   const [states, setStates] = useState<string[]>(initStates);
+  const [categories, setCategories] = useState<string[]>(initCategories);
 
   const [query, setQuery] = useState<FilterAssetRequest>({
     search: initSearch,
     states: initStates?.map((state) => AssetState[state as keyof typeof AssetState])
       ?.filter((mappedState) => mappedState !== undefined && mappedState !== null) ?? [],
+    categories: initCategories,
     pageNumber: initPageNumber > 0 ? initPageNumber : 1,
     pageSize: initPageSize > 0 ? initPageSize : 5,
   });
@@ -76,6 +89,7 @@ export default function ManagementAssetPage() {
   const [searchInput, setSearchInput] = useState<string>(initSearch);
 
   const { data, isLoading, error, mutate } = agent.Asset.filter(query);
+  const { data: categoryData, isLoading: categoryLoading, error: categoryError } = agent.Category.all();
 
   useEffect(() => {
     let newQuery: FilterAssetRequest = query;
@@ -184,6 +198,19 @@ export default function ManagementAssetPage() {
     }
   };
 
+  const handleCategoryFilterClick = () => {
+    let newQuery: FilterAssetRequest;
+    if (categories.length === 0 || categories.includes("all")) {
+      newQuery = { ...query, categories: [], pageNumber: 1 };
+      setQuery(newQuery);
+      setFilterSearchParam(newQuery, setSearchParams, order, orderBy);
+    } else {
+      newQuery = { ...query, categories: categories, pageNumber: 1 };
+      setQuery(newQuery);
+      setFilterSearchParam(newQuery, setSearchParams, order, orderBy);
+    }
+  };
+
   return (
     <div className="flex justify-center h-full">
       <div className="container mb-12">
@@ -194,19 +221,28 @@ export default function ManagementAssetPage() {
           direction="row"
           justifyContent="space-between"
           alignItems="center"
-          spacing={2}
+          spacing={16}
           className="mt-3"
         >
           <Stack
             direction="row"
             justifyContent="flex-start"
             alignItems="center"
-            spacing={2}
+            spacing={16}
           >
             <AssetStateFilter
               states={states}
               setStates={setStates}
               onSubmit={handleStateFilterClick}
+            />
+            <CategoryFilter
+              items={categoryData?.items?.result?.map((item: Category) => ({
+                id: item.name ?? "",
+                name: item.name ?? ""
+              })) as SelectedItem[]}
+              categories={categories}
+              setcategories={setCategories}
+              onSubmit={handleCategoryFilterClick}
             />
           </Stack>
           <Stack
@@ -228,8 +264,8 @@ export default function ManagementAssetPage() {
               </div>
             </Stack>
             <AppButton
-              content="Create new user"
-              className="py-[6px]"
+              content="Create new asset"
+              className="py-[6px] min-w-40"
             />
           </Stack>
         </Stack>
