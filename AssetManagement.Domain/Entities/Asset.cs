@@ -1,4 +1,6 @@
-﻿namespace AssetManagement.Domain.Entities
+﻿using AssetManagement.Domain.Enums;
+
+namespace AssetManagement.Domain.Entities
 {
     public class Asset
     {
@@ -7,7 +9,7 @@
         public Guid CategoryId { get; set; }
         public string? Name { get; set; }
         public string? Specification { get; set; }
-        public string? State { get; set; }
+        public AssetState? State { get; set; }
         public DateTime? InstalledDate { get; set; }
         public DateTime? CreatedAt { get; set; }
         public DateTime? LastUpdated { get; set; }

@@ -16,11 +16,10 @@ import { createAssetSchema } from "../../schemas/createAssetSchema";
 import AppTextInput from "../AppTextInput";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { AssetStatus } from "../../types/enum";
+import { AssetStateEnum } from "../../types/enum";
 import { Category } from "../../models/category/Category";
 import agent from "../../api/agent";
 import { AssetCreationForm } from "../../models/asset/AssetCreationRequest";
-import { BaseResult } from "../../models/BaseResult";
 
 interface Props {
   handleCreateAsset: (data: any) => void;
@@ -180,18 +179,18 @@ const CreateAssetForm = ({ handleCreateAsset }: Props) => {
                   {...field}
                   color="warning"
                   id="asset-state-radio"
-                  value={field.value || AssetStatus.Available} // Ensure a default value is set if field.
+                  value={field.value || AssetStateEnum.Available} // Ensure a default value is set if field.
                   onChange={(e) => field.onChange(e.target.value)}
                 >
                   <FormControlLabel
-                    value={AssetStatus.Available}
+                    value={AssetStateEnum.Available}
                     control={
                       <Radio sx={{ "&.Mui-checked": { color: "#cf2338" } }} />
                     }
                     label="Available"
                   />
                   <FormControlLabel
-                    value={AssetStatus.NotAvailable}
+                    value={AssetStateEnum.NotAvailable}
                     control={
                       <Radio sx={{ "&.Mui-checked": { color: "#cf2338" } }} />
                     }

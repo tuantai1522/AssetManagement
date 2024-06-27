@@ -9,9 +9,18 @@ namespace AssetManagement.Data.Data.MappingConfigurations
         {
             #region define index
 
-            builder.HasOne(asset => asset.Category).WithMany(cat => cat.Assets).HasForeignKey(asset => asset.CategoryId).IsRequired();
+            builder
+                .HasOne(asset => asset.Category)
+                .WithMany(cat => cat.Assets)
+                .HasForeignKey(asset => asset.CategoryId)
+                .IsRequired();
 
             #endregion
+
+            builder
+                .Property(e => e.State)
+                .HasConversion<string>();
+
         }
     }
 }

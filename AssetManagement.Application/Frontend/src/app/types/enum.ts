@@ -8,10 +8,10 @@ export enum Type {
     Admin = 'Admin',
 }
 
-export enum AssetStatus {
-    Available = 'Available',
-    NotAvailable = 'NotAvailable',
-    WaitingForRecycling = 'WaitingForRecycling',
-    Recycled = 'Recycled',
-    Assigned = 'Assigned'
+export enum AssetStateEnum {
+    Available = 1,
+    NotAvailable = 2,
+    WaitingForRecycling = 3,
+    Recycled = 4,
+    Assigned = 5
 }
