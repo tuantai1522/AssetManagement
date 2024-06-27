@@ -6,7 +6,6 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { FormControl, FormControlLabel, FormHelperText, MenuItem, Radio, RadioGroup, Select } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { Gender, Type } from "../../types/enum";
-import AppTextInput from "../AppTextInput";
 import AppButton from "../buttons/Button";
 import { createUserSchema } from "../../schemas/createUserSchema";
 import { useEffect } from "react";

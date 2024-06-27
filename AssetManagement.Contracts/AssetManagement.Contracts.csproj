@@ -13,7 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Dtos\AssetDtos\" />
     <Folder Include="Dtos\AuthtorityDtos\" />
   </ItemGroup>
 

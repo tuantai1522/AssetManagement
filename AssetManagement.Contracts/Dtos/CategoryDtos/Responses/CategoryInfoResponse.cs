@@ -1,11 +1,9 @@
-﻿namespace AssetManagement.Domain.Entities
+﻿namespace AssetManagement.Contracts.Dtos.CategoryDtos.Responses
 {
-    public class Category
+    public class CategoryInfoResponse
     {
         public Guid Id { get; set; }
         public string? Name { get; set; }
         public string? Prefix { get; set; }
-
-        public IEnumerable<Asset> Assets { get; set; }
     }
 }

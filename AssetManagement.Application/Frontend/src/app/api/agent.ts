@@ -5,8 +5,9 @@ import { PaginatedResponse } from "../models/Pagination";
 import { BaseResult } from "../models/BaseResult";
 import { User } from "../models/User";
 import { Order } from "../components/table/sortTable";
-import { EditUserRequest } from "../models/user/EditUserRequest";
-import { CreateUserRequest } from "../models/user/CreateUserRequest";
+import { EditUserRequest } from "../models/login/EditUserRequest";
+import { CreateUserRequest } from "../models/login/CreateUserRequest";
+import { AssetCreationRequest } from "../models/asset/AssetCreationRequest";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 axios.defaults.headers.post["Content-Type"] = "application/json";
@@ -78,7 +79,7 @@ axios.interceptors.response.use(
       default:
         break;
     }
-    return Promise.reject(result);
+    return Promise.reject(result.result);
   }
 );
 
@@ -132,10 +133,20 @@ const Authentication = {
     requests.post("api/auth/changepassword", values),
 };
 
+const Category = {
+  all: () => requests.get(`api/category`),
+};
+
+const Asset = {
+  create: (values: AssetCreationRequest) => requests.post('api/asset/create', values)
+};
+
 const agent = {
   Product,
   Authentication,
   Users,
+  Category,
+  Asset
 };
 
 export default agent;
