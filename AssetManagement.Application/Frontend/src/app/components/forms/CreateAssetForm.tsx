@@ -45,7 +45,7 @@ const CreateAssetForm = ({ handleCreateAsset }: Props) => {
       <form onSubmit={handleSubmit(handleCreateAsset)} className="space-y-6">
         <div>
           <div className="flex items-center gap-5 pl-2">
-            <label className="w-[7rem]">Name</label>
+            <label className="w-[7rem]">Name *</label>
             <Controller
               name="name"
               control={control}
@@ -71,7 +71,7 @@ const CreateAssetForm = ({ handleCreateAsset }: Props) => {
 
         <div>
           <div className="flex items-center gap-5 pl-2">
-            <label className="w-[7rem]">Category</label>
+            <label className="w-[7rem]">Category *</label>
             <div className="grow">
               <Controller
                 control={control}
@@ -110,7 +110,7 @@ const CreateAssetForm = ({ handleCreateAsset }: Props) => {
         </div>
         <div>
           <div className="flex gap-5 pl-2">
-            <label className="w-[7rem]">Specification</label>
+            <label className="w-[7rem]">Specification *</label>
             <Controller
               name="specification"
               control={control}
@@ -137,7 +137,7 @@ const CreateAssetForm = ({ handleCreateAsset }: Props) => {
         </div>
         <div>
           <div className="flex items-center gap-5 pl-2">
-            <label className="w-[7rem]">Installed Date</label>
+            <label className="w-[7rem]">Installed Date *</label>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <Controller
                 control={control}
@@ -169,7 +169,7 @@ const CreateAssetForm = ({ handleCreateAsset }: Props) => {
         </div>
 
         <div className="flex gap-5 pl-2">
-          <label className="w-[7rem]">State</label>
+          <label className="w-[7rem]">State *</label>
           <div className="grow">
             <Controller
               control={control}
