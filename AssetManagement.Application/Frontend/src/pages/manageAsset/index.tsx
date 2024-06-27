@@ -125,10 +125,10 @@ export default function ManagementAssetPage() {
 
   const handlePageNumberChange = (value: any) => {
     const pageNumber = Number(value);
-    setQuery((prevQuery) => ({ ...prevQuery, pageNumber }));
-    // mutate(query);
-    //fake api 
-    getAssetQueryString({ ...query, pageNumber });
+    const newQuery = { ...query, pageNumber }
+    setQuery(newQuery);
+    //update search param
+    setFilterSearchParam(newQuery, setSearchParams, order, orderBy);
   };
 
   const handleSearchInputChange = (
