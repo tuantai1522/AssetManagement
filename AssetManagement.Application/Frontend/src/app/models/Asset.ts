@@ -3,8 +3,8 @@ import { Order } from "../components/table/sortTable";
 export interface FilterAssetResponse {
   id: string;
   assetCode: string;
-  assetName?: string;
-  categoryName?: string;
+  name?: string;
+  category?: string;
   state?: string;
 }
 
@@ -44,7 +44,7 @@ export function getAssetQueryString(filter?: FilterAssetRequest) {
     ? `sortAssetName=${filter.sortAssetName === "asc" ? 1 : 2}&`
     : "";
   const sortCategoryNameParam = filter.sortCategoryName
-    ? `sortCategoryName=${filter.sortCategoryName === "asc" ? 1 : 2}&`
+    ? `sortCategory=${filter.sortCategoryName === "asc" ? 1 : 2}&`
     : "";
   const sortStateParam = filter.sortState
     ? `sortState=${filter.sortState === "asc" ? 1 : 2}&`
@@ -56,6 +56,6 @@ export function getAssetQueryString(filter?: FilterAssetRequest) {
   const sizeParam = `pageSize=${filter.pageSize ?? 5}`;
 
   const queryString = `${nameParam}${statesParam}${categoryIdsParam}${sortAssetCodeParam}${sortAssetNameParam}${sortCategoryNameParam}${sortStateParam}${sortLastUpdateParam}${pageParam}${sizeParam}`;
-  console.log(`queryString: ${queryString}`);
+  // console.log(`queryString: ${queryString}`);
   return queryString;
 }
