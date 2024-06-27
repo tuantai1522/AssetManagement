@@ -17,15 +17,11 @@ namespace AssetManagement.Application.Controllers;
 [ApiController]
 public class AssetController : ControllerBase
 {
-    private readonly IUserService _userService;
     private readonly IAssetService _assetService;
-    private readonly IUnitOfWork _unitOfWork;
 
-    public AssetController(IUserService userService, IAssetService assetService, IUnitOfWork unitOfWork)
+    public AssetController(IAssetService assetService)
     {
-        _userService = userService;
         _assetService = assetService;
-        _unitOfWork = unitOfWork;
     }
 
     [HttpGet]
@@ -44,5 +40,18 @@ public class AssetController : ControllerBase
         };
         return Ok(result);
     }
-}
 
+    [HttpPost("create")]
+    [Authorize(Roles = $"{RoleConstant.AdminRole}")]
+    public async Task<ActionResult<BaseResult<AssetResponse>>> CreateAssetAsync([FromBody] AssetCreationRequest request)
+    {
+        var data = await _assetService.CreateAssetAsync(request);
+        var result = new BaseResult<AssetResponse>()
+        {
+            IsSuccess = true,
+            Error = null,
+            Result = data
+        };
+        return Ok(result);
+    }
+}

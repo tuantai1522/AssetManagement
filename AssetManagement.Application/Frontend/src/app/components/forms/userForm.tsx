@@ -6,12 +6,12 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { FormControl, FormControlLabel, FormHelperText, MenuItem, Radio, RadioGroup, Select } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { Gender, Type } from "../../types/enum";
-import AppTextInput from "../AppTextInput";
 import AppButton from "../buttons/Button";
 import { createFormSchema } from "../../schemas/createFormSchema";
 import { useEffect } from "react";
 import dayjs from "dayjs";
 import { UserInfoResponse } from "../../models/login/UserInfoResponse";
+import AppTextInput from "../AppTextInput";
 
 
 interface IFormInput extends FieldValues {

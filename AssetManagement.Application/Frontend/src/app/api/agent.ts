@@ -6,6 +6,7 @@ import { BaseResult } from "../models/BaseResult";
 import { User, UserQuery, getUserQueryString } from "../models/User";
 import { EditUserRequest } from "../models/login/EditUserRequest";
 import { CreateUserRequest } from "../models/login/CreateUserRequest";
+import { AssetCreationRequest } from "../models/asset/AssetCreationRequest";
 import { FilterAssetRequest, getAssetQueryString } from "../models/Asset";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
@@ -78,7 +79,7 @@ axios.interceptors.response.use(
       default:
         break;
     }
-    return Promise.reject(result);
+    return Promise.reject(result.result);
   }
 );
 
@@ -132,18 +133,24 @@ const Authentication = {
     requests.post("api/auth/changepassword", values),
 };
 
+const Category = {
+  all: () => requests.get(`api/category`),
+};
+
 const Asset = {
-  filter: (query?: FilterAssetRequest) => {
+filter: (query?: FilterAssetRequest) => {
     const queryString = getAssetQueryString(query);
     return requests.get(`api/Asset?${queryString}`);
   },
-}
+  create: (values: AssetCreationRequest) => requests.post('api/asset/create', values)
+};
 
 const agent = {
   Product,
   Authentication,
   Users,
-  Asset: Asset
+  Category,
+  Asset
 };
 
 export default agent;
