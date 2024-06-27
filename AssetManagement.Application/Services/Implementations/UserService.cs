@@ -115,7 +115,7 @@ public class UserService : IUserService
         var firstName = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(request.FirstName.ToLower());
         var lastName = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(request.LastName.ToLower());
         var userName = await GenerateUsernameAsync(firstName, lastName);
-        var password = userName + Constants.PASSWORD_SEPERATOR + request.DateOfBirth.ToString("ddmmyyyy");
+        var password = userName + Constants.PASSWORD_SEPERATOR + request.DateOfBirth.ToString("ddMMyyyy");
 
         var user = new AppUser()
         {
