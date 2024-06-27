@@ -47,7 +47,7 @@ namespace AssetManagement.Application.Services.Implementations
 
         public async Task UpdateAssetAsync(AssetUpdateRequest request)
         {
-            if (request.Id.Equals(Guid.Empty))
+            if (request.AssetId.Equals(Guid.Empty))
                 throw new BadRequestException("Please provide id to update asset");
 
             if (string.IsNullOrEmpty(request.AssetName) ||
@@ -58,7 +58,7 @@ namespace AssetManagement.Application.Services.Implementations
 
 
             var assetToUpdate = _unitOfWork.AssetRepo
-                .Get(x => x.Id.Equals(request.Id), orderBy: null, includeProperties: "Category")
+                .Get(x => x.Id.Equals(request.AssetId), orderBy: null, includeProperties: "Category")
                 .FirstOrDefault()
                 ?? throw new NotFoundException("Can't find asset");
 

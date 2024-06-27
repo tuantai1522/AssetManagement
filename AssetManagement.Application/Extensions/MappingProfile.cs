@@ -17,6 +17,7 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Type, src => src.MapFrom(src => src.UserRoles.FirstOrDefault()!.Role.Name));
         //Assert
         CreateMap<Asset, AssetDetailsResponse>()
+            .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))
             .ForMember(des => des.AssetCode, act => act.MapFrom(src => src.AssetCode))
             .ForMember(des => des.AssetName, act => act.MapFrom(src => src.Name))
             .ForMember(des => des.CategoryName, act => act.MapFrom(src => src.Category != null ? src.Category.Name : string.Empty))

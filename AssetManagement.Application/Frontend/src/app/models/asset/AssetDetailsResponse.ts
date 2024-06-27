@@ -5,6 +5,7 @@ interface AssignmentResponse {
   returnedDate: Date;
 }
 interface AssetDetailsResponse {
+  assetId: string;
   assetCode: string;
   assetName: string;
   categoryName: string;

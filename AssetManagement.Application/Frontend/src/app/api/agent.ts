@@ -7,6 +7,7 @@ import { User } from "../models/User";
 import { Order } from "../components/table/sortTable";
 import { EditUserRequest } from "../models/login/EditUserRequest";
 import { CreateUserRequest } from "../models/login/CreateUserRequest";
+import { AssetUpdationRequest } from "../models/asset/UpdateAssetRequest";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 axios.defaults.headers.post["Content-Type"] = "application/json";
@@ -135,6 +136,9 @@ const Authentication = {
 };
 
 const Asset = {
+  update: (params: AssetUpdationRequest) =>
+    requests.put(`api/asset/updateAssetById`, params),
+
   details: (id: string) => requests.get(`/api/asset/getAssetById?Id=${id}`),
 };
 

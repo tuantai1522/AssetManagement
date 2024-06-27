@@ -34,7 +34,7 @@ public class AssetController : ControllerBase
 
     [HttpPut("updateAssetById")]
     [Authorize(Roles = $"{RoleConstant.AdminRole}")]
-    public async Task<ActionResult<BaseResult<object>>> UpdateAssetById([FromQuery] AssetUpdateRequest request)
+    public async Task<ActionResult<BaseResult<object>>> UpdateAssetById([FromBody] AssetUpdateRequest request)
     {
         await _assetService.UpdateAssetAsync(request);
         var result = new BaseResult<object>()
