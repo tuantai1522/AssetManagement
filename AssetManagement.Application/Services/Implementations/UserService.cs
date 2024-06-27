@@ -158,7 +158,7 @@ public class UserService : IUserService
     }
     public async Task<UserInfoResponse> UpdateUserAsync(Guid userId, UpdateUserRequest request)
     {
-		ValidateGender(request.Gender);
+        ValidateGender(request.Gender);
         ValidateDateOfBirth(request.DateOfBirth);
         ValidateJoinedDate(request.DateOfBirth, request.JoinedDate);
         await ValidateTypeAsync(request.Type);
@@ -289,14 +289,14 @@ public class UserService : IUserService
     private async Task ValidateLocationAsync(Guid userId)
     {
         var adminId = _currentUser.UserId;
-		var adminUser = await _userManager.FindByIdAsync(adminId.ToString()) ?? throw new NotFoundException(ErrorStrings.USER_NOT_FOUND);
+        var adminUser = await _userManager.FindByIdAsync(adminId.ToString()) ?? throw new NotFoundException(ErrorStrings.USER_NOT_FOUND);
 
-		var currentUser = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new NotFoundException(ErrorStrings.USER_NOT_FOUND);
+        var currentUser = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new NotFoundException(ErrorStrings.USER_NOT_FOUND);
         if (adminUser.Location != currentUser.Location)
         {
             throw new BadRequestException(ErrorStrings.LOCATION_NOT_VALID);
         }
-	}
+    }
     private async Task<string> GetAndValidateLocationAsync()
     {
         var currentAdminId = _currentUser.UserId;
