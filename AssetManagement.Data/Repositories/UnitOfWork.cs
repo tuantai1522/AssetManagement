@@ -7,15 +7,15 @@ public class UnitOfWork : IUnitOfWork, IAsyncDisposable
 {
     private readonly AssetManagementDbContext _dbContext;
     private readonly ILogger<UnitOfWork> _logger;
-    public IAssetRepository AssetRepo { get; private set; }
-    public ICategoryRepository CategoryRepo { get; private set; }
+    public IAssetRepository AssetRepository { get; private set; }
+    public ICategoryRepository CategoryRepository { get; private set; }
 
     public UnitOfWork(AssetManagementDbContext dbContext, ILogger<UnitOfWork> logger)
     {
         _dbContext = dbContext;
         _logger = logger;
-        AssetRepo = new AssetRepository(dbContext);
-        CategoryRepo = new CategoryRepository(dbContext);
+        AssetRepository = new AssetRepository(dbContext);
+        CategoryRepository = new CategoryRepository(dbContext);
     }
 
     public async Task SaveChangesAsync()

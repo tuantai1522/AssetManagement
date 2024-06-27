@@ -1,8 +1,9 @@
 ﻿namespace AssetManagement.Data.Interfaces;
 public interface IUnitOfWork
 {
-    IAssetRepository AssetRepo { get; }
-    ICategoryRepository CategoryRepo { get; }
+    public ICategoryRepository CategoryRepository { get; }
+    public IAssetRepository AssetRepository { get; }
+
     Task SaveChangesAsync();
     ValueTask DisposeAsync();
 }

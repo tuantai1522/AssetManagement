@@ -127,6 +127,8 @@ public static class ServiceExtension
         //Add service DI
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+
+        services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IAssetService, AssetService>();
 
