@@ -9,7 +9,7 @@ export interface FilterAssetResponse {
 }
 
 export interface FilterAssetRequest {
-  name?: string;
+  search?: string;
   states?: string[];
   categoryIds?: string[];
   sortAssetCode?: Order;
@@ -26,7 +26,7 @@ export function getAssetQueryString(filter?: FilterAssetRequest) {
     return "";
   }
 
-  const nameParam = filter.name ? `name=${filter.name}&` : "";
+  const searchParam = filter.search ? `search=${filter.search}&` : "";
   let statesParam = "";
   if (filter.states && filter.states.length > 0) {
     statesParam = filter.states.map((state) => `states=${state}&`).join("");
@@ -55,7 +55,7 @@ export function getAssetQueryString(filter?: FilterAssetRequest) {
   const pageParam = `pageNumber=${filter.pageNumber ?? 1}&`;
   const sizeParam = `pageSize=${filter.pageSize ?? 5}`;
 
-  const queryString = `${nameParam}${statesParam}${categoryIdsParam}${sortAssetCodeParam}${sortAssetNameParam}${sortCategoryNameParam}${sortStateParam}${sortLastUpdateParam}${pageParam}${sizeParam}`;
+  const queryString = `${searchParam}${statesParam}${categoryIdsParam}${sortAssetCodeParam}${sortAssetNameParam}${sortCategoryNameParam}${sortStateParam}${sortLastUpdateParam}${pageParam}${sizeParam}`;
   // console.log(`queryString: ${queryString}`);
   return queryString;
 }

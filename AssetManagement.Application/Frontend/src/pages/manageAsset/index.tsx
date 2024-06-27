@@ -20,6 +20,10 @@ type OrderByFieldName =
 function setFilterSearchParam(query: FilterAssetRequest, setSearchParams: SetURLSearchParams, order?: Order, orderBy?: OrderByFieldName) {
   const params = new URLSearchParams();
 
+  if (query?.search) {
+    params.set("search", query.search.toString());
+  }
+
   if (orderBy) {
     params.set("orderBy", orderBy.toString());
   }
@@ -28,11 +32,11 @@ function setFilterSearchParam(query: FilterAssetRequest, setSearchParams: SetURL
     params.set("order", order.toString());
   }
 
-  if (query.pageNumber) {
+  if (query?.pageNumber) {
     params.set("pageNumber", query.pageNumber.toString());
   }
 
-  if (query.pageSize) {
+  if (query?.pageSize) {
     params.set("pageSize", query.pageSize.toString());
   }
 
@@ -46,12 +50,17 @@ export default function ManagementAssetPage() {
   const [order, setOrder] = useState<Order>(searchParams.get("order") as Order);
   const [orderBy, setOrderBy] = useState<OrderByFieldName>(searchParams.get("orderBy") as OrderByFieldName);
 
+  const initSearch = searchParams.get("search") ?? "";
+  const initPageNumber = Number(searchParams.get("pageNumber") ?? "1");
+  const initPageSize = Number(searchParams.get("pageSize") ?? "5");
+
   const [query, setQuery] = useState<FilterAssetRequest>({
-    pageNumber: Number(searchParams.get("pageNumber") ?? 1),
-    pageSize: Number(searchParams.get("pageSize") ?? 5),
+    search: initSearch,
+    pageNumber: initPageNumber > 0 ? initPageNumber : 1,
+    pageSize: initPageSize > 0 ? initPageSize : 5,
   });
 
-  const [searchInput, setSearchInput] = useState<string>("");
+  const [searchInput, setSearchInput] = useState<string>(initSearch);
 
   const { data, isLoading, error, mutate } = agent.Asset.filter(query);
 
@@ -124,8 +133,9 @@ export default function ManagementAssetPage() {
   }, [orderBy, order]);
 
   const handlePageNumberChange = (value: any) => {
-    const pageNumber = Number(value);
-    const newQuery = { ...query, pageNumber }
+    let pageNumber = Number(value);
+    pageNumber = !pageNumber || pageNumber <= 0 ? 1 : pageNumber;
+    const newQuery: FilterAssetRequest = { ...query, pageNumber };
     setQuery(newQuery);
     //update search param
     setFilterSearchParam(newQuery, setSearchParams, order, orderBy);
@@ -139,18 +149,10 @@ export default function ManagementAssetPage() {
   };
 
   const handleSearchSubmit = () => {
-    setQuery((prevQuery) => ({
-      ...prevQuery,
-      pageNumber: 1,
-      name: searchInput?.trim(),
-    }));
-    // mutate();
-    //fake api 
-    getAssetQueryString({
-      ...query,
-      pageNumber: 1,
-      name: searchInput?.trim(),
-    });
+    const newQuery: FilterAssetRequest = { ...query, pageNumber: 1, search: searchInput?.trim(), };
+    setQuery(newQuery);
+    //update search param
+    setFilterSearchParam(newQuery, setSearchParams, order, orderBy);
   }
 
   return (
