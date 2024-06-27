@@ -1,5 +1,5 @@
 import AssetList, { AssetRowData } from "./assetList";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FilterAssetRequest, FilterAssetResponse, getAssetQueryString } from "../../app/models/Asset";
 import agent from "../../app/api/agent";
 import { Order } from "../../app/components/table/sortTable";
@@ -7,6 +7,7 @@ import { Stack } from "@mui/material";
 import { Search } from "@mui/icons-material";
 import AppButton from "../../app/components/buttons/Button";
 import AppSearchInput from "../../app/components/AppSearchInput";
+import { SetURLSearchParams, useSearchParams } from "react-router-dom";
 
 type OrderByFieldName =
   | "assetCode"
@@ -15,15 +16,38 @@ type OrderByFieldName =
   | "state"
   | "lastUpdate";
 
+function setFilterSearchParam(query: FilterAssetRequest, order?: Order, orderBy?: OrderByFieldName, setSearchParams: SetURLSearchParams) {
+  const params = new URLSearchParams();
+
+  if (orderBy !== undefined) {
+    params.set("orderBy", orderBy.toString());
+  }
+
+  if (order !== undefined) {
+    params.set("order", order.toString());
+  }
+
+  if (query.pageNumber !== undefined) {
+    params.set("pageNumber", query.pageNumber.toString());
+  }
+
+  if (query.pageSize !== undefined) {
+    params.set("pageSize", query.pageSize.toString());
+  }
+
+  setSearchParams(params);
+}
+
 export default function ManagementAssetPage() {
 
-  const [order, setOrder] = useState<Order>("asc");
-  const [orderBy, setOrderBy] = useState<OrderByFieldName>("assetCode");
+  const [searchParams, setSearchParams] = useSearchParams({});
+
+  const [order, setOrder] = useState<Order>(searchParams.get("order") as Order);
+  const [orderBy, setOrderBy] = useState<OrderByFieldName>(searchParams.get("orderBy") as OrderByFieldName);
 
   const [query, setQuery] = useState<FilterAssetRequest>({
-    sortAssetName: "asc",
-    pageNumber: 1,
-    pageSize: 5,
+    pageNumber: Number(searchParams.get("pageNumber") ?? 1),
+    pageSize: Number(searchParams.get("pageSize") ?? 5),
   });
 
   const [searchInput, setSearchInput] = useState<string>("");
@@ -31,74 +55,70 @@ export default function ManagementAssetPage() {
   const { data, isLoading, error, mutate } = agent.Asset.filter(query);
 
   useEffect(() => {
+    let newQuery: FilterAssetRequest = query;
     switch (orderBy) {
       case "assetCode": {
-        setQuery((query) => ({
+        newQuery = {
           ...query,
           sortAssetCode: order,
           sortAssetName: undefined,
           sortCategoryName: undefined,
           sortState: undefined,
           sortLastUpdate: undefined,
-        }));
-        //refresh
-        mutate();
+        };
         break;
       }
       case "name": {
-        setQuery((query) => ({
+        newQuery = {
           ...query,
           sortAssetCode: undefined,
           sortAssetName: order,
           sortCategoryName: undefined,
           sortState: undefined,
           sortLastUpdate: undefined,
-        }));
-        //refresh
-        mutate();
+        }
         break;
       }
       case "category": {
-        setQuery((query) => ({
+        newQuery = {
           ...query,
           sortAssetCode: undefined,
           sortAssetName: undefined,
           sortCategoryName: order,
           sortState: undefined,
           sortLastUpdate: undefined,
-        }));
-        //refresh
-        mutate();
+        }
         break;
       }
       case "state": {
-        setQuery((query) => ({
+        newQuery = {
           ...query,
           sortAssetCode: undefined,
           sortAssetName: undefined,
           sortCategoryName: undefined,
           sortState: order,
           sortLastUpdate: undefined,
-        }));
-        //refresh
-        mutate();
+        }
         break;
       }
       case "lastUpdate": {
-        setQuery((query) => ({
+        newQuery = {
           ...query,
           sortAssetCode: undefined,
           sortAssetName: undefined,
           sortCategoryName: undefined,
           sortState: undefined,
           sortLastUpdate: order,
-        }));
-        //refresh
-        mutate();
+        }
         break;
       }
       default:
         break;
+    }
+    if (newQuery !== query) {
+      setQuery(newQuery);
+      //update search param
+      setFilterSearchParam(newQuery, order, orderBy, setSearchParams);
     }
   }, [orderBy, order]);
 
