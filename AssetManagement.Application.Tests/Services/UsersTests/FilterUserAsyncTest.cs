@@ -8,9 +8,9 @@ using Moq;
 
 namespace AssetManagement.Application.Tests.Services.UsersTests
 {
-    public class FilterProductAsyncTest : UserServiceTestBase
+    public class FilterUserAsyncTest : UserServiceTestBase
     {
-        public FilterProductAsyncTest() : base()
+        public FilterUserAsyncTest() : base()
         {
         }
 
@@ -21,7 +21,7 @@ namespace AssetManagement.Application.Tests.Services.UsersTests
         [InlineData(1, 0)]
         [InlineData(1, -1)]
         [InlineData(null, 4)]
-        public async Task FilterAsync_ShouldReturnDefaultPageSize_WhenPageSizeIsInvalid(int? page, int? size)
+        public async Task FilterUsersAsync_ShouldReturnDefaultPageSize_WhenPageSizeIsInvalid(int? page, int? size)
         {
             //Arrange
             var defaultSize = 5;
@@ -51,6 +51,8 @@ namespace AssetManagement.Application.Tests.Services.UsersTests
                 .With(r => r.Name, "Admin")
                 .Create()).CreateMany(1).ToList()).CreateMany(8).ToList();
 
+            mockData.Add(admin);
+
             var mock = mockData.AsQueryable().BuildMock();
 
             CurrentUserMock.Setup(m => m.UserId)
@@ -58,9 +60,6 @@ namespace AssetManagement.Application.Tests.Services.UsersTests
 
             UserManagerMock.Setup(m => m.Users)
                 .Returns(mock);
-
-            UserManagerMock.Setup(m => m.FindByIdAsync(admin.Id.ToString()))
-                .ReturnsAsync(admin);
 
             //Act
             var result = await UserService.FilterUserAsync(filter);
@@ -80,7 +79,7 @@ namespace AssetManagement.Application.Tests.Services.UsersTests
         [InlineData(null, null, SortOption.Desc, null, "Admin 10")]
         [InlineData(null, null, null, SortOption.Asc, "Admin 1")]
         [InlineData(null, null, null, SortOption.Desc, "Staff 2")]
-        public async Task FilterProductAsync_ShouldReturnCorrectSortOrder(
+        public async Task FilterUsersAsync_ShouldReturnCorrectSortOrder(
             SortOption? sortFullName,
             SortOption? sortJoinedDate,
             SortOption? sortStaffCode,
