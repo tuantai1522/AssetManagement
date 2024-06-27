@@ -45,6 +45,9 @@ const Header = () => {
         case "edit-user":
           breadcrumb += "Edit User"
           break;
+        case "create-asset":
+          breadcrumb += "Create New Asset"
+          break;
         default:
           breadcrumb += "";
       }
