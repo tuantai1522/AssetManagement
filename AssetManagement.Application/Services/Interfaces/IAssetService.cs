@@ -6,5 +6,8 @@ namespace AssetManagement.Application.Services.Interfaces
     public interface IAssetService
     {
         Task<AssetDetailsResponse> GetAssetByIdAsync(AssetDetailsRequest request);
+
+        Task UpdateAssetAsync(AssetUpdateRequest request);
+
     }
 }

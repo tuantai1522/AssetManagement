@@ -7,8 +7,6 @@ using AssetManagement.Domain.Entities;
 using AssetManagement.Domain.Exceptions;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using System.Text.RegularExpressions;
 
 namespace AssetManagement.Application.Services.Implementations
 {
@@ -16,9 +14,9 @@ namespace AssetManagement.Application.Services.Implementations
     {
         private readonly ICurrentUser _currentUser;
         private readonly UserManager<AppUser> _userManager;
-
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
+
         public AssetService(ICurrentUser currentUser, IMapper mapper, IUnitOfWork unitOfWork, UserManager<AppUser> userManager)
         {
             _currentUser = currentUser;
@@ -45,6 +43,39 @@ namespace AssetManagement.Application.Services.Implementations
 
             return _mapper.Map<AssetDetailsResponse>(asset);
 
+        }
+
+        public async Task UpdateAssetAsync(AssetUpdateRequest request)
+        {
+            if (request.Id.Equals(Guid.Empty))
+                throw new BadRequestException("Please provide id to update asset");
+
+            if (string.IsNullOrEmpty(request.AssetName) ||
+               string.IsNullOrEmpty(request.State) ||
+               string.IsNullOrEmpty(request.Specification) ||
+               !request.InstalledDate.HasValue)
+                throw new BadRequestException("Please provide full info to update asset");
+
+
+            var assetToUpdate = _unitOfWork.AssetRepo
+                .Get(x => x.Id.Equals(request.Id), orderBy: null, includeProperties: "Category")
+                .FirstOrDefault()
+                ?? throw new NotFoundException("Can't find asset");
+
+            var userLogin = await _userManager.FindByIdAsync(_currentUser.UserId.ToString())
+                ?? throw new NotFoundException("Can't find user to update");
+
+            if (!userLogin.Location!.Equals(assetToUpdate.Location) || userLogin.IsDisabled)
+                throw new UnauthorizedException("This user can't update this asset");
+
+            assetToUpdate.Name = request.AssetName;
+            assetToUpdate.Specification = request.Specification;
+            assetToUpdate.InstalledDate = request.InstalledDate;
+            assetToUpdate.State = request.State;
+
+            _unitOfWork.AssetRepo.Update(assetToUpdate);
+
+            await _unitOfWork.SaveChangesAsync();
         }
     }
 }

@@ -31,4 +31,18 @@ public class AssetController : ControllerBase
         };
         return Ok(result);
     }
+
+    [HttpPut("updateAssetById")]
+    [Authorize(Roles = $"{RoleConstant.AdminRole}")]
+    public async Task<ActionResult<BaseResult<object>>> UpdateAssetById([FromQuery] AssetUpdateRequest request)
+    {
+        await _assetService.UpdateAssetAsync(request);
+        var result = new BaseResult<object>()
+        {
+            IsSuccess = true,
+            Error = null,
+            Result = null,
+        };
+        return Ok(result);
+    }
 }
