@@ -15,7 +15,7 @@ namespace AssetManagement.Application.Tests.Services.CategoryTests
         {
             //Arrange
             int categoriesCount = 10;
-            var mockCategories = _fixture.Build<Category>().CreateMany(categoriesCount).ToList().AsQueryable().BuildMock();
+            var mockCategories = _fixture.Build<Category>().CreateMany(categoriesCount).AsQueryable().BuildMock();
             _mockCategoryRepository.Setup(c => c.All()).ReturnsAsync(mockCategories);
             _mockUnitOfWork.Setup(u => u.CategoryRepository).Returns(_mockCategoryRepository.Object);
 
