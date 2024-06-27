@@ -102,7 +102,7 @@ export default function ManagementUserPage() {
           sortType: undefined,
           sortLastUpdate: undefined,
         }));
-        mutate(query);
+        mutate();
         break;
       }
       case "fullName": {
@@ -114,7 +114,7 @@ export default function ManagementUserPage() {
           sortType: undefined,
           sortLastUpdate: undefined,
         }));
-        mutate(query);
+        mutate();
         break;
       }
       case "joinedDate": {
@@ -126,7 +126,7 @@ export default function ManagementUserPage() {
           sortType: undefined,
           sortLastUpdate: undefined,
         }));
-        mutate(query);
+        mutate();
         break;
       }
       case "type": {
@@ -138,7 +138,7 @@ export default function ManagementUserPage() {
           sortType: order,
           sortLastUpdate: undefined,
         }));
-        mutate(query);
+        mutate();
         break;
       }
       case "lastUpdate": {
@@ -150,7 +150,7 @@ export default function ManagementUserPage() {
           sortType: undefined,
           sortLastUpdate: order,
         }));
-        mutate(query);
+        mutate();
         break;
       }
       default:
@@ -161,7 +161,7 @@ export default function ManagementUserPage() {
   const handlePageNumberChange = (value: any) => {
     const pageNumber = Number(value);
     setQuery((prevQuery) => ({ ...prevQuery, pageNumber }));
-    mutate(query);
+    mutate();
   };
 
   const handleQueryInputChange = (
@@ -185,12 +185,12 @@ export default function ManagementUserPage() {
   };
 
   const handleFilterClick = () => {
-    if (types.length === 0 || types.includes("All")) {
+    if (types.length === 0 || types.includes("all")) {
       setQuery((query) => ({ ...query, type: [], pageNumber: 1 }));
     } else {
       setQuery((query) => ({ ...query, type: types, pageNumber: 1 }));
     }
-    mutate(query);
+    mutate();
   };
 
   return (

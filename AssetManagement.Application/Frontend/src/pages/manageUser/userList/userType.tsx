@@ -1,7 +1,6 @@
 import AppSelectedInput from "../../../app/components/AppSelectedInput";
 
 const items = [
-  { id: "All", name: "All" },
   { id: "Admin", name: "Admin" },
   { id: "Staff", name: "Staff" },
 ];
