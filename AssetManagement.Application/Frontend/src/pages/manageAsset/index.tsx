@@ -25,6 +25,12 @@ function setFilterSearchParam(query: FilterAssetRequest, setSearchParams: SetURL
     params.set("search", query.search.toString());
   }
 
+  if (query?.states && query.states.length > 0) {
+    query.states.forEach((state) => {
+      params.append("states", state);
+    });
+  }
+
   if (orderBy) {
     params.set("orderBy", orderBy.toString());
   }
@@ -46,18 +52,20 @@ function setFilterSearchParam(query: FilterAssetRequest, setSearchParams: SetURL
 
 export default function ManagementAssetPage() {
 
-  const [searchParams, setSearchParams] = useSearchParams({});
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const [order, setOrder] = useState<Order>(searchParams.get("order") as Order);
-  const [orderBy, setOrderBy] = useState<OrderByFieldName>(searchParams.get("orderBy") as OrderByFieldName);
-  const [states, setStates] = useState<string[]>([]);
-  
   const initSearch = searchParams.get("search") ?? "";
   const initPageNumber = Number(searchParams.get("pageNumber") ?? "1");
   const initPageSize = Number(searchParams.get("pageSize") ?? "5");
+  const initStates = searchParams.getAll("states");
+
+  const [order, setOrder] = useState<Order>(searchParams.get("order") as Order ?? "asc");
+  const [orderBy, setOrderBy] = useState<OrderByFieldName>(searchParams.get("orderBy") as OrderByFieldName ?? "assetCode");
+  const [states, setStates] = useState<string[]>(initStates);
 
   const [query, setQuery] = useState<FilterAssetRequest>({
     search: initSearch,
+    states: initStates,
     pageNumber: initPageNumber > 0 ? initPageNumber : 1,
     pageSize: initPageSize > 0 ? initPageSize : 5,
   });
@@ -158,16 +166,16 @@ export default function ManagementAssetPage() {
   }
 
   const handleStateFilterClick = () => {
-    if (states.length === 0 || states.includes("All")) {
-      setQuery((query) => ({ ...query, states: [], pageNumber: 1 }));
+    let newQuery: FilterAssetRequest;
+    if (states.length === 0 || states.includes("all")) {
+      newQuery = { ...query, states: [], pageNumber: 1 };
+      setQuery(newQuery);
+      setFilterSearchParam(newQuery, setSearchParams, order, orderBy);
     } else {
-      setQuery((query) => ({ ...query, states: states, pageNumber: 1 }));
+      newQuery = { ...query, states: states, pageNumber: 1 };
+      setQuery(newQuery);
+      setFilterSearchParam(newQuery, setSearchParams, order, orderBy);
     }
-    // mutate(query);
-    //fake api
-    getAssetQueryString({
-      ...query, states: states, pageNumber: 1 
-    });
   };
 
   return (

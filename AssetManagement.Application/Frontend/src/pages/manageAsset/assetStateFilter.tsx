@@ -1,11 +1,11 @@
 import AppSelectedInput from "../../app/components/AppSelectedInput";
 
 const items = [
-  { id: "assigned", name: "Assigned" },
-  { id: "available", name: "Available" },
-  { id: "notAvailable", name: "Not available" },
-  { id: "watingForRecycling", name: "Wating for recycling" },
-  { id: "recycled", name: "Recycled" },
+  { id: "Assigned", name: "Assigned" },
+  { id: "Available", name: "Available" },
+  { id: "NotAvailable", name: "Not available" },
+  { id: "WaitingForRecycling", name: "Wating for recycling" },
+  { id: "Recycled", name: "Recycled" },
 ];
 
 export interface AssetStateFilterProp {
