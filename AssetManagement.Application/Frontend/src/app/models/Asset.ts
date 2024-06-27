@@ -3,13 +3,13 @@ import { Order } from "../components/table/sortTable";
 export interface FilterAssetResponse {
   id: string;
   assetCode: string;
-  assetName?: string;
-  categoryName?: string;
+  name?: string;
+  category?: string;
   state?: string;
 }
 
 export interface FilterAssetRequest {
-  name?: string;
+  search?: string;
   states?: string[];
   categoryIds?: string[];
   sortAssetCode?: Order;
@@ -26,7 +26,7 @@ export function getAssetQueryString(filter?: FilterAssetRequest) {
     return "";
   }
 
-  const nameParam = filter.name ? `name=${filter.name}&` : "";
+  const searchParam = filter.search ? `search=${filter.search}&` : "";
   let statesParam = "";
   if (filter.states && filter.states.length > 0) {
     if (!filter.states.includes("all"))
@@ -45,7 +45,7 @@ export function getAssetQueryString(filter?: FilterAssetRequest) {
     ? `sortAssetName=${filter.sortAssetName === "asc" ? 1 : 2}&`
     : "";
   const sortCategoryNameParam = filter.sortCategoryName
-    ? `sortCategoryName=${filter.sortCategoryName === "asc" ? 1 : 2}&`
+    ? `sortCategory=${filter.sortCategoryName === "asc" ? 1 : 2}&`
     : "";
   const sortStateParam = filter.sortState
     ? `sortState=${filter.sortState === "asc" ? 1 : 2}&`
@@ -56,7 +56,7 @@ export function getAssetQueryString(filter?: FilterAssetRequest) {
   const pageParam = `pageNumber=${filter.pageNumber ?? 1}&`;
   const sizeParam = `pageSize=${filter.pageSize ?? 5}`;
 
-  const queryString = `${nameParam}${statesParam}${categoryIdsParam}${sortAssetCodeParam}${sortAssetNameParam}${sortCategoryNameParam}${sortStateParam}${sortLastUpdateParam}${pageParam}${sizeParam}`;
-  console.log(`queryString: ${queryString}`);
+  const queryString = `${searchParam}${statesParam}${categoryIdsParam}${sortAssetCodeParam}${sortAssetNameParam}${sortCategoryNameParam}${sortStateParam}${sortLastUpdateParam}${pageParam}${sizeParam}`;
+  // console.log(`queryString: ${queryString}`);
   return queryString;
 }

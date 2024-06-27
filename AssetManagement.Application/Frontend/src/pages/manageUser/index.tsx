@@ -1,12 +1,12 @@
 // import { useState } from "react";
 import { useEffect, useState } from "react";
-import agent, { UserQuery } from "../../app/api/agent";
+import agent from "../../app/api/agent";
 import { Order } from "../../app/components/table/sortTable";
 import UserInfo from "../../app/components/userInfo/userInfo";
 import ConfirmModal from "../../app/components/confirmModal";
 import UserList from "./userList/userList";
 import { convertUtcToLocalDate } from "../../app/utils/dateUtils";
-import { FilterUser } from "../../app/models/User";
+import { FilterUser, UserQuery } from "../../app/models/User";
 import { Alert, Snackbar, Stack } from "@mui/material";
 import UsePagination from "../../app/components/paginationButtons/paginationButtons";
 import { Search } from "@mui/icons-material";

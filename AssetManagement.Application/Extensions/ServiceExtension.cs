@@ -129,6 +129,7 @@ public static class ServiceExtension
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IAssetService, AssetService>();
 
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddScoped<ICurrentUser, CurrentUser>();
@@ -138,7 +139,7 @@ public static class ServiceExtension
     {
         //Add repository DI
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-        //services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
     }
 
     public static void AddAuthentication(this IServiceCollection services,
