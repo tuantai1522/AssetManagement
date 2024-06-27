@@ -13,6 +13,7 @@ import ManagementAssetPage from "../../pages/manageAsset";
 import ManagementAssignmentPage from "../../pages/manageAssignment";
 import ManagementRequestForReturningPage from "../../pages/requestForReturning";
 import ManagementReportPage from "../../pages/report";
+import CreateAssetPage from "../../pages/manageAsset/createAsset";
 
 export const router = createBrowserRouter([
   {
@@ -38,6 +39,7 @@ export const router = createBrowserRouter([
             children: [
               { path: "manage-user", element: <ManagementUserPage /> },
               { path: "manage-asset", element: <ManagementAssetPage /> },
+              { path: "manage-asset/create-asset", element: <CreateAssetPage />},
               {
                 path: "manage-assignment",
                 element: <ManagementAssignmentPage />,
