@@ -4,8 +4,8 @@ import { visuallyHidden } from '@mui/utils';
 
 export interface CustomTableHeadProp {
     onRequestSort: (event: React.MouseEvent<unknown>, property: any) => void;
-    order: Order;
-    orderBy: any;
+    order?: Order;
+    orderBy?: any;
     columns: ColumnDefinition[]
 }
 export type Order = 'asc' | 'desc';
@@ -43,9 +43,9 @@ export interface AppTableCell {
 }
 
 export interface AppTableProp<T> {
-    order: Order,
+    order?: Order,
     setOrder: (order: Order) => void,
-    orderByFieldName: any,
+    orderByFieldName?: any,
     setOrderByFieldName: (orderBy: any) => void,
     handleClick: (event: React.MouseEvent<unknown>, id: any) => void,
     columns: ColumnDefinition[],
@@ -54,8 +54,9 @@ export interface AppTableProp<T> {
 }
 
 function CustomTableHead(props: CustomTableHeadProp) {
-    const { order, orderBy, onRequestSort } =
+    let { order, orderBy, onRequestSort } =
         props;
+    order = order ?? "asc";
     const createSortHandler =
         (property: any) => (event: React.MouseEvent<unknown>) => {
             onRequestSort(event, property);
@@ -82,7 +83,7 @@ function CustomTableHead(props: CustomTableHeadProp) {
                                 IconComponent={ArrowDropUp}
                                 className={`font-bold ${column.className} ${column.rowRatio}`}
                                 classes={column.classNames}
-                                sx={{...column.style, minWidth: column.minWidth}}
+                                sx={{ ...column.style, minWidth: column.minWidth }}
                                 disabled={column.disableSort ?? false}
                             >
                                 {column.label}
@@ -197,7 +198,7 @@ export function AppTable<T>(props: AppTableProp<T>) {
                                                     align="left"
                                                     className={item.ratio ?? ""}
                                                     key={index}
-                                                    sx={{...item.bodyStyle, minWidth: item.minWidth}}
+                                                    sx={{ ...item.bodyStyle, minWidth: item.minWidth }}
                                                 >
                                                     {item.renderCell ?? item.value ?? ''}
                                                 </TableCell>

@@ -3,6 +3,7 @@ import {
   FormControlLabel,
   Grid,
   Popover,
+  Stack,
   TextField,
 } from "@mui/material";
 import { UseControllerProps } from "react-hook-form";
@@ -14,7 +15,6 @@ import SelectedItem from "../models/SelectedItem";
 interface Props extends UseControllerProps {
   id?: string;
   sx?: any;
-
   items: Array<SelectedItem>;
   checked?: string[];
   onChangeSelectedBox: (event: any) => void;
@@ -39,13 +39,28 @@ export default function AppSelectedInput({ ...props }: Props) {
   const [checkedItems, setCheckedItems] = useState(props.checked || []);
 
   const handleChecked = (value: string) => {
-    const currentIndex = checkedItems.findIndex((item) => item === value);
     let newChecked: string[] = [];
+    if (value === "all") {
+      if (props?.items?.length > checkedItems?.length - 1) {
+        newChecked = ["all", ...props?.items?.map((i, index) => i.id) ?? []];
+      } else {
+        newChecked = [];
+      }
+    } else {
+      const currentIndex = checkedItems.findIndex((item) => item === value);
 
-    //chưa được chọn trước đó => thêm vào danh sách được chọn
-    if (currentIndex === -1) newChecked = [...checkedItems, value];
-    //đã chọn trước đó => bỏ chọn
-    else newChecked = checkedItems.filter((i) => i !== value);
+      //chưa được chọn trước đó => thêm vào danh sách được chọn
+      if (currentIndex === -1) {
+        newChecked = [...checkedItems, value];
+        if (newChecked.length === props.items.length) {
+          newChecked = ["all", ...newChecked]
+        }
+      }
+      //đã chọn trước đó => bỏ chọn
+      else {
+        newChecked = checkedItems.filter((i) => i !== value && i !== "all");
+      }
+    }
 
     setCheckedItems(newChecked);
     props.onChangeSelectedBox(newChecked);
@@ -53,39 +68,53 @@ export default function AppSelectedInput({ ...props }: Props) {
 
   return (
     <>
-      <Grid width={240} sx={{ ...props.sx }}>
+      <Grid width={150} sx={{ ...props.sx }}>
         <Grid item>
-          <Grid container justifyContent="center" alignItems="center">
-            <Grid item xs={10}>
-              <TextField
-                fullWidth
-                defaultValue={props.name}
-                id={props.id}
-                size="small"
-                variant="outlined"
-                InputProps={{
-                  readOnly: true,
-                }}
-                onClick={handleClick}
-              />
-            </Grid>
-            <Grid
-              item
-              xs={2}
-              sx={{
-                border: 1,
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: 0.9,
-                borderRadius: 1,
+          <Stack
+            direction="row"
+            justifyContent="flex-start"
+            alignItems="center"
+            spacing={2}
+          >
+            <TextField
+              fullWidth
+              defaultValue={props.name}
+              id={props.id}
+              size="small"
+              variant="outlined"
+              InputProps={{
+                readOnly: true,
               }}
+              className="hover:text-red-600"
+              onClick={handleClick}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  '& > fieldset': {
+                    border: "1px solid gray",
+                    borderRadius: "6px 0  0 6px",
+                  },
+                  '&.Mui-focused fieldset': {
+                    border: "2px solid #cf2338",
+                    borderRadius: "6px 0  0 6px"
+                  },
+                  '&.Mui-focused fieldset:hover': {
+                    border: "2px solid #cf2338",
+                    borderRadius: "6px 0  0 6px",
+                    cursor: "pointer"
+                  }
+                },
+                minWidth: "180px",
+                maxWidth: "250px",
+              }}
+            />
+            <div
+              className="border border-gray-500 border-l-0 rounded-r-md mx-0 hover:cursor-pointer"
+              style={{ margin: 0, padding: "6px" }}
               onClick={props.onSubmit}
             >
-              <FilterAltIcon />
-            </Grid>
-          </Grid>
+              <FilterAltIcon className="mx-0" />
+            </div>
+          </Stack>
         </Grid>
         <Grid item>
           <Popover
@@ -102,15 +131,40 @@ export default function AppSelectedInput({ ...props }: Props) {
             }}
           >
             <Grid width={240}>
+              <Grid item >
+                <FormControlLabel
+                  value={"all"}
+                  sx={{ padding: 1 }}
+                  control={
+                    <Checkbox
+                      sx={{
+                        '&.Mui-checked': {
+                          color: "#CF2338",
+                        },
+                      }}
+                      checked={props.checked?.indexOf("all") !== -1 ?? false}
+                      onClick={() => handleChecked("all")}
+                    />
+                  }
+                  label={"All"}
+                />
+              </Grid>
               {props.items.map((option) => (
                 <Grid item key={option.id}>
                   <FormControlLabel
                     value={option.id}
-                    sx={{ padding: 1 }}
+                    sx={{
+                      padding: 1,
+                    }}
                     control={
                       <Checkbox
-                        checked={props.checked?.indexOf(option.name) !== -1 ?? false}
-                        onClick={() => handleChecked(option.name)}
+                        checked={props.checked?.indexOf(option.id) !== -1 ?? false}
+                        onClick={() => handleChecked(option.id)}
+                        sx={{
+                          '&.Mui-checked': {
+                            color: "#CF2338",
+                          },
+                        }}
                       />
                     }
                     label={option.name}

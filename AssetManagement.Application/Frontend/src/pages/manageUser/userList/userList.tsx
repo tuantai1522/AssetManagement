@@ -132,7 +132,6 @@ export default function UserList(props: UserListProp) {
       ),
     },
   ];
-  
 
   return (
     <div className="min-h-60">

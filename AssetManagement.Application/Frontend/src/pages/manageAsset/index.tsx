@@ -9,6 +9,7 @@ import AppButton from "../../app/components/buttons/Button";
 import AppSearchInput from "../../app/components/AppSearchInput";
 import { SetURLSearchParams, useSearchParams } from "react-router-dom";
 import AppPagination from "../../app/components/paginationButtons/paginationButtons";
+import AssetStateFilter from "./assetStateFilter";
 
 type OrderByFieldName =
   | "assetCode"
@@ -22,6 +23,12 @@ function setFilterSearchParam(query: FilterAssetRequest, setSearchParams: SetURL
 
   if (query?.search) {
     params.set("search", query.search.toString());
+  }
+
+  if (query?.states && query.states.length > 0) {
+    query.states.forEach((state) => {
+      params.append("states", state);
+    });
   }
 
   if (orderBy) {
@@ -45,17 +52,20 @@ function setFilterSearchParam(query: FilterAssetRequest, setSearchParams: SetURL
 
 export default function ManagementAssetPage() {
 
-  const [searchParams, setSearchParams] = useSearchParams({});
-
-  const [order, setOrder] = useState<Order>(searchParams.get("order") as Order);
-  const [orderBy, setOrderBy] = useState<OrderByFieldName>(searchParams.get("orderBy") as OrderByFieldName);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const initSearch = searchParams.get("search") ?? "";
   const initPageNumber = Number(searchParams.get("pageNumber") ?? "1");
   const initPageSize = Number(searchParams.get("pageSize") ?? "5");
+  const initStates = searchParams.getAll("states");
+
+  const [order, setOrder] = useState<Order>(searchParams.get("order") as Order ?? "asc");
+  const [orderBy, setOrderBy] = useState<OrderByFieldName>(searchParams.get("orderBy") as OrderByFieldName ?? "assetCode");
+  const [states, setStates] = useState<string[]>(initStates);
 
   const [query, setQuery] = useState<FilterAssetRequest>({
     search: initSearch,
+    states: initStates,
     pageNumber: initPageNumber > 0 ? initPageNumber : 1,
     pageSize: initPageSize > 0 ? initPageSize : 5,
   });
@@ -155,6 +165,19 @@ export default function ManagementAssetPage() {
     setFilterSearchParam(newQuery, setSearchParams, order, orderBy);
   }
 
+  const handleStateFilterClick = () => {
+    let newQuery: FilterAssetRequest;
+    if (states.length === 0 || states.includes("all")) {
+      newQuery = { ...query, states: [], pageNumber: 1 };
+      setQuery(newQuery);
+      setFilterSearchParam(newQuery, setSearchParams, order, orderBy);
+    } else {
+      newQuery = { ...query, states: states, pageNumber: 1 };
+      setQuery(newQuery);
+      setFilterSearchParam(newQuery, setSearchParams, order, orderBy);
+    }
+  };
+
   return (
     <div className="flex justify-center h-full">
       <div className="container mb-12">
@@ -168,7 +191,18 @@ export default function ManagementAssetPage() {
           spacing={2}
           className="mt-3"
         >
-          <div></div>
+          <Stack
+            direction="row"
+            justifyContent="flex-start"
+            alignItems="center"
+            spacing={2}
+          >
+            <AssetStateFilter
+              states={states}
+              setStates={setStates}
+              onSubmit={handleStateFilterClick}
+            />
+          </Stack>
           <Stack
             direction="row"
             justifyContent="flex-end"
