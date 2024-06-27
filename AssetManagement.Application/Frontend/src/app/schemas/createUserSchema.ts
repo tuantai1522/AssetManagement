@@ -1,7 +1,7 @@
 import yup from "../types/yupGlobal"
 
 
-export const createFormSchema = yup.object().shape({
+export const createUserSchema = yup.object().shape({
     firstName: yup.string()
         .max(50, 'Must not exceed 50 characters long')
         .required("Please Type First Name")

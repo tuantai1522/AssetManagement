@@ -12,7 +12,7 @@ import UsePagination from "../../app/components/paginationButtons/paginationButt
 import { Search } from "@mui/icons-material";
 import AppSearchInput from "../../app/components/AppSearchInput";
 import AppButton from "../../app/components/buttons/Button";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import UserType from "./userList/userType";
 import { BaseResult } from "../../app/models/BaseResult";
 
@@ -32,55 +32,38 @@ const isOrderByFieldName = (value: any): value is OrderByFieldName => {
 const isOrder = (value: any): value is Order => {
   return ["asc", "desc"].includes(value);
 };
+const defaultQuery: UserQuery = {
+  sortJoinedDate: "desc",
+  pageNumber: 1,
+  pageSize: 5,
+};
+
 
 export default function ManagementUserPage() {
   const navigate = useNavigate();
   const [clickOnUser, setClickOnUser] = useState<boolean>(false);
   const [userId, setUserId] = useState<string>("0");
   const [types, setTypes] = useState<string[]>([]);
+  const [query, setQuery] = useState<UserQuery>(defaultQuery);
+  const [isDisablingModalOpen, setIsDisablingModalOpen] = useState(false);
+  const [currentDisablingId, setCurrentDisablingId] = useState("");
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
+  const [searchInput, setSearchInput] = useState<string>("");
+  const [order, setOrder] = useState<Order>("desc");
+  const [orderBy, setOrderBy] = useState<OrderByFieldName>("joinedDate");
+  const [searchParams] = useSearchParams();
+  const passedOrderBy = searchParams.get("passedOrderBy") ?? undefined;
+  const passedOrder = searchParams.get("passedOrder") ?? undefined;
 
-  const [query, setQuery] = useState<UserQuery>({
-    sortJoinedDate: "desc",
-    pageNumber: 1,
-    pageSize: 5,
-  });
+
+ 
+  const [currentErrorMessage, setCurrentErrorMessage] = useState("");
   const { data, isLoading, error, mutate } = agent.Users.filter(query);
   const {
     data: userData,
     isLoading: userLoading,
     error: userError,
   } = agent.Users.details(userId);
-
-  const [isDisablingModalOpen, setIsDisablingModalOpen] = useState(false);
-  const [currentDisablingId, setCurrentDisablingId] = useState("");
-
-  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
-  const [currentErrorMessage, setCurrentErrorMessage] = useState("");
-
-  const handleDisable = async (id: string) => {
-    try {
-      await agent.Users.disable(id).then(mutate);
-    } catch (e) {
-      const err = e as BaseResult<any>;
-      if (err?.error) {
-        if (err?.error?.message) setCurrentErrorMessage(err?.error?.message);
-      } else {
-        setCurrentErrorMessage(
-          "An unexpected error happened. Please try again!"
-        );
-      }
-      setIsErrorModalOpen(true);
-    }
-  };
-
-  const [searchInput, setSearchInput] = useState<string>("");
-
-  const [order, setOrder] = useState<Order>("desc");
-  const [orderBy, setOrderBy] = useState<OrderByFieldName>("joinedDate");
-
-  const [searchParams] = useSearchParams();
-  const passedOrderBy = searchParams.get("passedOrderBy") ?? undefined;
-  const passedOrder = searchParams.get("passedOrder") ?? undefined;
 
   useEffect(() => {
     if (passedOrderBy && isOrderByFieldName(passedOrderBy)) {
@@ -89,7 +72,14 @@ export default function ManagementUserPage() {
     if (passedOrder && isOrder(passedOrder)) {
       setOrder(passedOrder);
     }
-  }, [passedOrderBy, passedOrder]);
+    
+    if (window.location.search) {
+      navigate(window.location.pathname, {
+        replace: true,
+      });
+    }
+  }, [navigate, searchParams, passedOrderBy, passedOrder]);
+
 
   useEffect(() => {
     switch (orderBy) {
@@ -193,6 +183,22 @@ export default function ManagementUserPage() {
     mutate(query);
   };
 
+  const handleDisable = async (id: string) => {
+    try {
+      await agent.Users.disable(id).then(mutate);
+    } catch (e) {
+      const err = e as BaseResult<any>;
+      if (err?.error) {
+        if (err?.error?.message) setCurrentErrorMessage(err?.error?.message);
+      } else {
+        setCurrentErrorMessage(
+          "An unexpected error happened. Please try again!"
+        );
+      }
+      setIsErrorModalOpen(true);
+    }
+  };
+
   return (
     <div className="flex justify-center h-full">
       <div className="container">
@@ -259,7 +265,7 @@ export default function ManagementUserPage() {
               content="Create new user"
               className="py-[6px]"
               onClickOn={() => {
-                navigate(`/manage-user/create-user`);
+                navigate(`/manage-user/create-user`, {state: {query}});
               }}
             />
           </Stack>

@@ -152,7 +152,7 @@ export interface UserQuery {
   pageSize?: number;
 }
 
-function getUserQueryString(filter?: UserQuery) {
+export function getUserQueryString(filter?: UserQuery) {
   if (!filter) {
     return "";
   }

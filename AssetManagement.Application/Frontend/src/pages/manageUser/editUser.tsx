@@ -29,7 +29,7 @@ const EditUserPage = () => {
             Type: formData.type,
         }
         await agent.Users.update(id, updateData);
-        navigate(`/manage-user?passedOrderBy=${encodeURIComponent('lastUpdate')}&passedOrderBy=${encodeURIComponent('desc')}`);
+        navigate(`/manage-user?passedOrderBy=${encodeURIComponent('lastUpdate')}&passedOrder=${encodeURIComponent('desc')}`);
     }
 
     if (isLoading) {

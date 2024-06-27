@@ -8,22 +8,25 @@ import { useNavigate } from "react-router-dom";
 import { Gender, Type } from "../../types/enum";
 import AppTextInput from "../AppTextInput";
 import AppButton from "../buttons/Button";
-import { createFormSchema } from "../../schemas/createFormSchema";
+import { createUserSchema } from "../../schemas/createUserSchema";
 import { useEffect } from "react";
 import dayjs from "dayjs";
 import { UserInfoResponse } from "../../models/login/UserInfoResponse";
 import { UserCreateForm } from "../../models/user/UserCreateForm";
+import { UserQuery, getUserQueryString } from "../../api/agent";
 
 interface UserFormProps {
     onSubmit: (data: any) => void;
     isEditing?: boolean;
     data?: UserInfoResponse;
+    query?: UserQuery;
 }
 
 const UserForm = ({
     onSubmit,
     isEditing = false,
-    data
+    data,
+    query
 }: UserFormProps) => {
     const navigate = useNavigate();
 
@@ -32,7 +35,7 @@ const UserForm = ({
     }
 
     const { handleSubmit, control, reset, formState: {isValid} } = useForm({
-        resolver: yupResolver<UserCreateForm>(createFormSchema),
+        resolver: yupResolver<UserCreateForm>(createUserSchema),
         defaultValues: {
             gender: Gender.Female, // Set default value for gender
         },
@@ -208,7 +211,11 @@ const UserForm = ({
 
                 <div className="flex justify-end space-x-4">
                     <AppButton content="Save" isFormSubmit={true} isDisabled={!isValid} />
-                    <AppButton content="Cancel" styleType="Secondary" onClickOn={() => { navigate(-1) }} />
+                    <AppButton content="Cancel" styleType="Secondary" onClickOn={() => {
+                        const queryString = getUserQueryString(query);
+                        navigate(`/manage-user?${queryString}`);
+                    }}
+                    />
                 </div>
             </form>
         </div>

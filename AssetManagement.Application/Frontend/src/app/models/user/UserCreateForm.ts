@@ -1,6 +1,6 @@
 import { FieldValues } from "react-hook-form";
 
-export interface UserCreateRequest {
+export interface UserCreateForm extends FieldValues {
     firstName: string,
     lastName: string,
     dateOfBirth: Date,
@@ -9,5 +9,4 @@ export interface UserCreateRequest {
     type: string,
 }
 
-export interface UserCreateForm extends UserCreateRequest, FieldValues { }
-export interface UserEditForm extends UserCreateRequest, FieldValues {}
+export interface UserEditForm extends UserCreateForm {}
