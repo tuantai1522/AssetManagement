@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AssetManagement.Application.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/category")]
     [ApiController]
     public class CategoryController : ControllerBase
     {
@@ -23,7 +23,7 @@ namespace AssetManagement.Application.Controllers
         public async Task<ActionResult<ICollection<CategoryInfoResponse>>> GetAllAsync([FromQuery] GetAllCategoryRequest request)
         {
             var data = await _categoryService.GetAllAsync(request);
-            PaginationMetaData metaData = new PaginationMetaData(data.TotalItemCount, data.PageSize, data.CurrentPage);
+            PaginationMetaData metaData = new(data.TotalItemCount, data.PageSize, data.CurrentPage);
             Response.AddPaginationHeader(metaData);
 
             var result = new BaseResult<List<CategoryInfoResponse>>()
