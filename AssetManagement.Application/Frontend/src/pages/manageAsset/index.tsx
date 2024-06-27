@@ -20,19 +20,19 @@ type OrderByFieldName =
 function setFilterSearchParam(query: FilterAssetRequest, setSearchParams: SetURLSearchParams, order?: Order, orderBy?: OrderByFieldName) {
   const params = new URLSearchParams();
 
-  if (orderBy !== undefined) {
+  if (orderBy) {
     params.set("orderBy", orderBy.toString());
   }
 
-  if (order !== undefined) {
+  if (order) {
     params.set("order", order.toString());
   }
 
-  if (query.pageNumber !== undefined) {
+  if (query.pageNumber) {
     params.set("pageNumber", query.pageNumber.toString());
   }
 
-  if (query.pageSize !== undefined) {
+  if (query.pageSize) {
     params.set("pageSize", query.pageSize.toString());
   }
 
