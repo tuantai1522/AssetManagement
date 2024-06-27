@@ -1,5 +1,5 @@
 import AssetList, { AssetRowData } from "./assetList";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { FilterAssetRequest, FilterAssetResponse, getAssetQueryString } from "../../app/models/Asset";
 import agent from "../../app/api/agent";
 import { Order } from "../../app/components/table/sortTable";
@@ -16,7 +16,7 @@ type OrderByFieldName =
   | "state"
   | "lastUpdate";
 
-function setFilterSearchParam(query: FilterAssetRequest, order?: Order, orderBy?: OrderByFieldName, setSearchParams: SetURLSearchParams) {
+function setFilterSearchParam(query: FilterAssetRequest, setSearchParams: SetURLSearchParams, order?: Order, orderBy?: OrderByFieldName) {
   const params = new URLSearchParams();
 
   if (orderBy !== undefined) {
@@ -118,7 +118,7 @@ export default function ManagementAssetPage() {
     if (newQuery !== query) {
       setQuery(newQuery);
       //update search param
-      setFilterSearchParam(newQuery, order, orderBy, setSearchParams);
+      setFilterSearchParam(newQuery, setSearchParams, order, orderBy);
     }
   }, [orderBy, order]);
 
