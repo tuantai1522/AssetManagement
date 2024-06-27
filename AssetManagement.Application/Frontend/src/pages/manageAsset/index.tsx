@@ -1,6 +1,6 @@
 import AssetList, { AssetRowData } from "./assetList";
 import { useEffect, useState } from "react";
-import { FilterAssetRequest, FilterAssetResponse, getAssetQueryString } from "../../app/models/Asset";
+import { AssetState, FilterAssetRequest, FilterAssetResponse, getAssetQueryString } from "../../app/models/Asset";
 import agent from "../../app/api/agent";
 import { Order } from "../../app/components/table/sortTable";
 import { Stack } from "@mui/material";
@@ -26,8 +26,10 @@ function setFilterSearchParam(query: FilterAssetRequest, setSearchParams: SetURL
   }
 
   if (query?.states && query.states.length > 0) {
-    query.states.forEach((state) => {
-      params.append("states", state);
+    const normalizeState: string[] = query.states.map((item) => AssetState[item] ?? item);
+    normalizeState.forEach((state) => {
+      if (state)
+        params.append("states", state);
     });
   }
 
@@ -65,7 +67,8 @@ export default function ManagementAssetPage() {
 
   const [query, setQuery] = useState<FilterAssetRequest>({
     search: initSearch,
-    states: initStates,
+    states: initStates?.map((state) => AssetState[state as keyof typeof AssetState])
+      ?.filter((mappedState) => mappedState !== undefined && mappedState !== null) ?? [],
     pageNumber: initPageNumber > 0 ? initPageNumber : 1,
     pageSize: initPageSize > 0 ? initPageSize : 5,
   });
@@ -172,7 +175,10 @@ export default function ManagementAssetPage() {
       setQuery(newQuery);
       setFilterSearchParam(newQuery, setSearchParams, order, orderBy);
     } else {
-      newQuery = { ...query, states: states, pageNumber: 1 };
+      newQuery = {
+        ...query, states: states.map((state) => AssetState[state as keyof typeof AssetState])
+          .filter((mappedState) => mappedState !== undefined && mappedState !== null)
+      };
       setQuery(newQuery);
       setFilterSearchParam(newQuery, setSearchParams, order, orderBy);
     }
@@ -234,10 +240,10 @@ export default function ManagementAssetPage() {
               assetCode: item.assetCode,
               name: item.name,
               category: item.category,
-              state: item.state,
+              state: item.state !== undefined ? AssetState[item.state] : undefined,
               action: {
                 id: item.id,
-                state: item.state,
+                state: item.state !== undefined ? AssetState[item.state] : undefined,
               }
             })) as AssetRowData[]}
             error={error}

@@ -5,12 +5,12 @@ export interface FilterAssetResponse {
   assetCode: string;
   name?: string;
   category?: string;
-  state?: string;
+  state?: AssetState;
 }
 
 export interface FilterAssetRequest {
   search?: string;
-  states?: string[];
+  states?: AssetState[];
   categoryIds?: string[];
   sortAssetCode?: Order;
   sortAssetName?: Order;
@@ -29,7 +29,6 @@ export function getAssetQueryString(filter?: FilterAssetRequest) {
   const searchParam = filter.search ? `search=${filter.search}&` : "";
   let statesParam = "";
   if (filter.states && filter.states.length > 0) {
-    if (!filter.states.includes("all"))
       statesParam = filter.states.map((state) => `states=${state}&`).join("");
   }
   let categoryIdsParam = "";
@@ -59,4 +58,12 @@ export function getAssetQueryString(filter?: FilterAssetRequest) {
   const queryString = `${searchParam}${statesParam}${categoryIdsParam}${sortAssetCodeParam}${sortAssetNameParam}${sortCategoryNameParam}${sortStateParam}${sortLastUpdateParam}${pageParam}${sizeParam}`;
   // console.log(`queryString: ${queryString}`);
   return queryString;
+}
+
+export enum AssetState {
+  "Available" = 1,
+  "Not Available" = 2,
+  "Waiting For Recycling" = 3,
+  "Recycled" = 4,
+  "Assigned" = 5,
 }
