@@ -18,16 +18,16 @@ public class UserServiceTestBase
     protected readonly Mock<UserManager<AppUser>> UserManagerMock;
     protected readonly Mock<RoleManager<Role>> RoleManagerMock;
     protected readonly Mock<ICurrentUser> CurrentUserMock;
-    
+
     protected readonly IUserService UserService;
     protected readonly Mock<ILogger<UserService>> LoggerUserMock;
 
-	protected readonly IAssetService AssetServiceMock;
-	protected readonly Mock<ILogger<AssetService>> LoggerAssetMock;
+    protected readonly IAssetService AssetServiceMock;
+    protected readonly Mock<ILogger<AssetService>> LoggerAssetMock;
 
-	protected readonly Fixture Fixture;
+    protected readonly Fixture Fixture;
     protected readonly IMapper _mapperConfig;
-    
+
     protected readonly Mock<IUnitOfWork> UnitOfWorkMock;
     protected readonly Mock<IAssetRepository> AssetRepositoryMock;
 
@@ -43,7 +43,7 @@ public class UserServiceTestBase
         RoleManagerMock = new Mock<RoleManager<Role>>(
             Mock.Of<IRoleStore<Role>>(), null!, null!, null!, null!);
         CurrentUserMock = new Mock<ICurrentUser>();
-		LoggerUserMock = new Mock<ILogger<UserService>>();
+        LoggerUserMock = new Mock<ILogger<UserService>>();
 
         var mappingConfig = new MapperConfiguration(mc =>
         {
@@ -51,7 +51,7 @@ public class UserServiceTestBase
         });
         _mapperConfig = mappingConfig.CreateMapper();
 
-		UserService = new UserService(UserManagerMock.Object, LoggerUserMock.Object, CurrentUserMock.Object, _mapperConfig, RoleManagerMock.Object);
+        UserService = new UserService(UserManagerMock.Object, LoggerUserMock.Object, CurrentUserMock.Object, _mapperConfig, RoleManagerMock.Object);
 
         Fixture = new Fixture();
         Fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList().ForEach(b => Fixture.Behaviors.Remove(b));
@@ -59,10 +59,10 @@ public class UserServiceTestBase
 
         UnitOfWorkMock = new Mock<IUnitOfWork>();
         AssetRepositoryMock = new Mock<IAssetRepository>();
-		LoggerAssetMock = new Mock<ILogger<AssetService>>();
-		AssetServiceMock = new AssetService(LoggerAssetMock.Object, UnitOfWorkMock.Object, CurrentUserMock.Object, UserManagerMock.Object);
+        LoggerAssetMock = new Mock<ILogger<AssetService>>();
+        //AssetServiceMock = new AssetService(LoggerAssetMock.Object, UnitOfWorkMock.Object, CurrentUserMock.Object, UserManagerMock.Object);
 
-		Setup();
+        Setup();
     }
 
     #region setup
@@ -104,8 +104,8 @@ public class UserServiceTestBase
         {
             Users.Add(new AppUser
             {
-				Id = Guid.NewGuid(),
-				FirstName = "Staff",
+                Id = Guid.NewGuid(),
+                FirstName = "Staff",
                 LastName = i.ToString(),
                 StaffCode = $"SD{i:D4}",
                 JoinedDate = DateTime.Now.AddDays(i),
@@ -123,8 +123,8 @@ public class UserServiceTestBase
         Users.Add(
             new AppUser()
             {
-				Id = Guid.NewGuid(),
-				FirstName = "Admin",
+                Id = Guid.NewGuid(),
+                FirstName = "Admin",
                 LastName = "10",
                 StaffCode = "SD0010",
                 JoinedDate = DateTime.Now.AddHours(2),
