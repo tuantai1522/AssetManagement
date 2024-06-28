@@ -32,6 +32,7 @@ const AccountHeader = (props: Props) => {
   }, []);
 
   const handleClickChangePassword = () => {
+    handleClose();
     setIsOpenChangePasswordModal(true);
   };
 
