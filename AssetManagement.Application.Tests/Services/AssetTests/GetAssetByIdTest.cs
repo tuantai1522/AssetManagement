@@ -39,7 +39,7 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
                 Id = Guid.NewGuid()
             };
 
-            _mockUnitOfWork.Setup(x => x.AssetRepo.Get(
+            _mockUnitOfWork.Setup(x => x.AssetRepository.Get(
                                     It.IsAny<Expression<Func<Asset, bool>>>(),
                                     It.IsAny<Func<IQueryable<Asset>, IOrderedQueryable<Asset>>>(), 
                                     It.IsAny<string>() // includeProperties: "Category"
@@ -75,7 +75,7 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
                     _fixture.Create<Asset>(),
                 };
 
-            _mockUnitOfWork.Setup(x => x.AssetRepo.Get(
+            _mockUnitOfWork.Setup(x => x.AssetRepository.Get(
                         It.IsAny<Expression<Func<Asset, bool>>>(),
                         It.IsAny<Func<IQueryable<Asset>, IOrderedQueryable<Asset>>>(),
                         It.IsAny<string>() // includeProperties: "Category"
@@ -115,7 +115,7 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
                     _fixture.Create<Asset>(),
                 };
 
-            _mockUnitOfWork.Setup(x => x.AssetRepo.Get(
+            _mockUnitOfWork.Setup(x => x.AssetRepository.Get(
                         It.IsAny<Expression<Func<Asset, bool>>>(),
                         It.IsAny<Func<IQueryable<Asset>, IOrderedQueryable<Asset>>>(),
                         It.IsAny<string>() // includeProperties: "Category"
@@ -160,7 +160,7 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
                     _fixture.Create<Asset>(),
                 };
 
-            _mockUnitOfWork.Setup(x => x.AssetRepo.Get(
+            _mockUnitOfWork.Setup(x => x.AssetRepository.Get(
                         It.IsAny<Expression<Func<Asset, bool>>>(),
                         It.IsAny<Func<IQueryable<Asset>, IOrderedQueryable<Asset>>>(),
                         It.IsAny<string>() // includeProperties: "Category"

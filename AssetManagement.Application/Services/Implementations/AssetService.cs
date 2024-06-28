@@ -13,7 +13,6 @@ using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using System.Text.RegularExpressions;
 
 namespace AssetManagement.Application.Services.Implementations
 {
@@ -30,41 +29,71 @@ namespace AssetManagement.Application.Services.Implementations
             _unitOfWork = unitOfWork;
             _currentUser = currentUser;
             _userManager = userManager;
+            _mapper = mapper;
         }
         public async Task<PagingDto<FilterAssetResponse>> FilterAssetAsync(FilterAssetRequest filter)
         {
-            var userLogin = await _userManager.FindByIdAsync(_currentUser.UserId.ToString());
-            if (userLogin == null)
+            _logger.LogInformation("*********************Filter Asset*********************");
+            var currentUser = await _userManager.Users
+                .Where(u => _currentUser.UserId.Equals(u.Id))
+                .Select(u => new AppUser()
+                {
+                    Id = u.Id,
+                    IsDisabled = u.IsDisabled,
+                    Location = u.Location,
+                })
+                .FirstOrDefaultAsync()
+                .ContinueWith(t => t.Result ?? throw new UnauthorizedAccessException(ErrorStrings.USER_NOT_LOGIN));
+
+            if (currentUser.IsDisabled)
             {
-                throw new NotFoundException("User is not found!");
-            }
-            else if (userLogin.IsDisabled)
-            {
-                throw new BadRequestException("Your account is disabled!");
+                throw new UnauthorizedAccessException(ErrorStrings.USER_IS_DISABLED);
             }
 
-            var category = await _unitOfWork.CategoryRepo.FindOne(c => c.Id.Equals(request.CategoryId));
-            if (category == null)
+            var queryable = _unitOfWork.AssetRepository.GetQueryableSet().Include(q => q.Category);
+            //set default page size
+            if (!filter.PageNumber.HasValue || !filter.PageSize.HasValue
+                || filter.PageNumber.Value <= 0 || filter.PageSize.Value <= 0)
             {
-                throw new NotFoundException("Category is not found!");
+                filter.PageNumber = 1;
+                filter.PageSize = 5;
             }
-            var newAsset = _mapper.Map<Asset>(request);
-            newAsset.AssetCode = await GenerateAssetCode(category);
-            newAsset.Location = userLogin.Location;
-            newAsset.CreatedAt = DateTime.Now;
-            newAsset.LastUpdated = DateTime.Now;
+            var filterSpecification = GetFilterSpecification(filter, currentUser);
+            var filteredQueryable = queryable.Where(filterSpecification);
 
-            _unitOfWork.AssetRepo.Add(newAsset);
-            await _unitOfWork.SaveChangesAsync();
+            var orderBy = GetOrderByFunction(filter);
+            var finalQueryable = orderBy(filteredQueryable);
 
-            return _mapper.Map<AssetResponse>(newAsset);
+            var result = await finalQueryable
+            .AsNoTracking()
+            .Skip((filter.PageNumber.Value - 1) * filter.PageSize.Value)
+            .Take(filter.PageSize.Value)
+            .Select(u => new FilterAssetResponse()
+            {
+                Id = u.Id,
+                AssetCode = u.AssetCode,
+                Name = u.Name,
+                Category = u.Category != null ? u.Category.Name : string.Empty,
+                State = u.State,
+            }).ToListAsync();
+
+            int totalRecord = await filteredQueryable.CountAsync();
+
+            return new PagingDto<FilterAssetResponse>()
+            {
+                CurrentPage = filter.PageNumber.Value,
+                TotalItemCount = totalRecord,
+                PageSize = filter.PageSize.Value,
+                Data = result
+            };
         }
+
         public async Task<AssetDetailsResponse> GetAssetByIdAsync(AssetDetailsRequest request)
         {
             if (request.Id.Equals(Guid.Empty))
                 throw new BadRequestException("Please provide id to get asset");
 
-            var asset = _unitOfWork.AssetRepo
+            var asset = _unitOfWork.AssetRepository
                             .Get(x => x.Id.Equals(request.Id), orderBy: null, includeProperties: "Category")
                             .FirstOrDefault()
                 ?? throw new NotFoundException("Can't find asset");

@@ -20,8 +20,6 @@ public class MappingProfile : Profile
         CreateMap<Category, CategoryInfoResponse>();
 
         //Assert
-        CreateMap<AssetCreationRequest, Asset>();
-        CreateMap<Asset, AssetResponse>();
         CreateMap<Asset, AssetDetailsResponse>()
             .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))
             .ForMember(des => des.AssetCode, act => act.MapFrom(src => src.AssetCode))
