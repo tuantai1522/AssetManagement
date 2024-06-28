@@ -149,7 +149,7 @@ export default function AppSelectedInput({ ...props }: Props) {
                   label={"All"}
                 />
               </Grid>
-              {props.items.map((option) => (
+              {props.items?.map((option) => (
                 <Grid item key={option.id}>
                   <FormControlLabel
                     value={option.id}

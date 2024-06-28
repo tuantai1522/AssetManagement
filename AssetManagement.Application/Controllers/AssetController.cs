@@ -4,16 +4,14 @@ using AssetManagement.Application.Services.Interfaces;
 using AssetManagement.Contracts.Dtos.AssetDtos.Requests;
 using AssetManagement.Contracts.Dtos.AssetDtos.Responses;
 using AssetManagement.Contracts.Dtos.PaginationDtos;
-using AssetManagement.Contracts.Dtos.UserDtos.Requests;
 using AssetManagement.Contracts.Dtos.UserDtos.Responses;
-using AssetManagement.Data.Interfaces;
 using AssetManagement.Domain.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AssetManagement.Application.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/asset")]
 [ApiController]
 public class AssetController : ControllerBase
 {

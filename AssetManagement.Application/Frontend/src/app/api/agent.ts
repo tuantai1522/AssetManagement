@@ -7,7 +7,7 @@ import { User, UserQuery, getUserQueryString } from "../models/User";
 import { EditUserRequest } from "../models/login/EditUserRequest";
 import { CreateUserRequest } from "../models/login/CreateUserRequest";
 import { AssetCreationRequest } from "../models/asset/AssetCreationRequest";
-import { FilterAssetRequest, getAssetQueryString } from "../models/Asset";
+import { FilterAssetRequest, getAssetQueryString } from "../models/asset/Asset";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 axios.defaults.headers.post["Content-Type"] = "application/json";

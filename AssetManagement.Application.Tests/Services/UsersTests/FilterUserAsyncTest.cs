@@ -8,7 +8,7 @@ using Moq;
 
 namespace AssetManagement.Application.Tests.Services.UsersTests
 {
-    public class FilterUserAsyncTest : UserServiceTestBase
+    public class FilterUserAsyncTest : SetUpUserServiceTest
     {
         public FilterUserAsyncTest() : base()
         {
