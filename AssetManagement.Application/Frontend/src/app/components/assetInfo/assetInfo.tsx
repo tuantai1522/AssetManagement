@@ -1,9 +1,10 @@
+import agent from "../../api/agent";
+import { BaseResult } from "../../models/BaseResult";
 import AssetDetailsResponse from "../../models/asset/AssetDetailsResponse";
+import AppLoader from "../AppLoader";
 
 interface Props {
-  isOpen?: boolean;
-  assetData?: AssetDetailsResponse;
-  isLoading?: boolean;
+  assetId: string;
   errorMessage?: string;
   onClose: () => void;
 }
@@ -30,19 +31,22 @@ const assignments: Array<AssignmentResponse> = [
   },
 ];
 
-const AssetInfo = ({
-  isOpen,
-  assetData,
-  isLoading,
-  errorMessage,
-  onClose,
-}: Props) => {
-  if (!isOpen) return null;
+const AssetInfo = ({ assetId, errorMessage, onClose }: Props) => {
+  const {
+    data,
+    isLoading: assetLoading,
+    error: assetError,
+  } = agent.Asset.details(assetId);
+
+  const assetData: AssetDetailsResponse = data?.result;
+  console.log(assetId);
+  console.log(data);
+
   return (
     <>
       <div className="fixed w-screen h-screen bg-gray-400 top-0 left-0 opacity-50 "></div>
-      <div className="z-10 shadow-2xl absolute top-0 translate-x-[15%]">
-        <div className="bg-white rounded-lg border-gray-400 border-2">
+      <div className="z-10 shadow-2xl absolute top-1/2 -translate-y-1/2">
+        <div className="bg-white rounded-lg border-gray-400 border-2 w-[120%]">
           <div className="bg-slate-100 rounded-t-lg border-b-2 border-gray-400 px-12 py-5 flex justify-between items-center">
             <h2 className="text-lg font-bold text-primary">
               Detailed Asset Infomation
@@ -138,10 +142,8 @@ const AssetInfo = ({
                   })}
                 </div>
               </div>
-            ) : isLoading ? (
-              <div className="min-h-60 flex justify-center items-center">
-                <div className="animate-spin w-10 h-10 border-4 border-primary border-t-white border-b-white rounded-full"></div>
-              </div>
+            ) : assetLoading ? (
+              <AppLoader />
             ) : errorMessage ? (
               <div className="min">
                 <p className="text-primary font-semibold text-lg">Oops!</p>

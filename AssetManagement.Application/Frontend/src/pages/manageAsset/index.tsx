@@ -1,23 +1,27 @@
 import AssetList, { AssetRowData } from "./assetList";
 import { useEffect, useState } from "react";
+import {
+  AssetState,
+  FilterAssetRequest,
+  FilterAssetResponse,
+} from "../../app/models/asset/Asset";
 import agent from "../../app/api/agent";
 import { Order } from "../../app/components/table/sortTable";
 import { Stack } from "@mui/material";
 import { Search } from "@mui/icons-material";
 import AppButton from "../../app/components/buttons/Button";
 import AppSearchInput from "../../app/components/AppSearchInput";
-import { SetURLSearchParams, useSearchParams } from "react-router-dom";
+import {
+  SetURLSearchParams,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import AppPagination from "../../app/components/paginationButtons/paginationButtons";
 import AssetStateFilter from "./assetStateFilter";
 import CategoryFilter from "./categoryFilter";
 import SelectedItem from "../../app/models/SelectedItem";
 import { Category } from "../../app/models/category/Category";
 import AssetInfo from "../../app/components/assetInfo/assetInfo";
-import {
-  AssetState,
-  FilterAssetRequest,
-  FilterAssetResponse,
-} from "../../app/models/asset/Asset";
 
 type OrderByFieldName =
   | "assetCode"
@@ -53,12 +57,6 @@ function setFilterSearchParam(
     });
   }
 
-  if (query?.categories && query.categories.length > 0) {
-    query?.categories?.forEach((category) => {
-      if (category) params.append("categories", category);
-    });
-  }
-
   if (orderBy) {
     params.set("orderBy", orderBy.toString());
   }
@@ -80,6 +78,7 @@ function setFilterSearchParam(
 
 export default function ManagementAssetPage() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const initSearch = searchParams.get("search") ?? "";
   const initPageNumber = Number(searchParams.get("pageNumber") ?? "1");
@@ -121,11 +120,11 @@ export default function ManagementAssetPage() {
     isLoading: categoryLoading,
     error: categoryError,
   } = agent.Category.all();
-  const {
-    data: assetData,
-    isLoading: assetLoading,
-    error: assetError,
-  } = agent.Asset.details(assetId);
+
+  const handleClickOnAsset = (rowId: string) => {
+    setClickOnAsset(true);
+    setAssetId(data.items.result[rowId].id);
+  };
 
   useEffect(() => {
     let newQuery: FilterAssetRequest = query;
@@ -220,11 +219,6 @@ export default function ManagementAssetPage() {
     setQuery(newQuery);
     //update search param
     setFilterSearchParam(newQuery, setSearchParams, order, orderBy);
-  };
-
-  const handleClickOnAsset = (rowId: string) => {
-    setClickOnAsset(true);
-    setAssetId(data.items.result[rowId].id);
   };
 
   const handleStateFilterClick = () => {
@@ -328,6 +322,9 @@ export default function ManagementAssetPage() {
             <AppButton
               content="Create new asset"
               className="py-[6px] min-w-40"
+              onClickOn={() => {
+                navigate(`/manage-asset/create-asset`);
+              }}
             />
           </Stack>
         </Stack>
@@ -371,14 +368,14 @@ export default function ManagementAssetPage() {
             />
           </Stack>
         </div>
-        <AssetInfo
-          isOpen={clickOnAsset}
-          isLoading={assetLoading}
-          assetData={assetData?.result}
-          onClose={() => {
-            setClickOnAsset(false);
-          }}
-        />
+        {clickOnAsset && (
+          <AssetInfo
+            assetId={assetId}
+            onClose={() => {
+              setClickOnAsset(false);
+            }}
+          />
+        )}
       </div>
     </div>
   );

@@ -46,6 +46,10 @@ export const router = createBrowserRouter([
               ]},
               { path: "manage-asset", element: <ManagementAssetPage /> },
               {
+                path: "manage-asset/create-asset",
+                element: <CreateAssetPage />,
+              },
+              {
                 path: "manage-assignment",
                 element: <ManagementAssignmentPage />,
               },
@@ -54,7 +58,6 @@ export const router = createBrowserRouter([
                 element: <ManagementRequestForReturningPage />,
               },
               { path: "report", element: <ManagementReportPage /> },
-               
             ],
           },
         ],

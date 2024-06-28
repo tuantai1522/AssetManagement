@@ -1,4 +1,4 @@
-using AssetManagement.Contracts.Dtos.AssetDtos.Requests;
+﻿using AssetManagement.Contracts.Dtos.AssetDtos.Requests;
 using AssetManagement.Domain.Entities;
 using AssetManagement.Domain.Exceptions;
 using AutoFixture;
@@ -41,14 +41,14 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
 
             _unitOfWorkMock.Setup(x => x.AssetRepository.Get(
                                     It.IsAny<Expression<Func<Asset, bool>>>(),
-                                    It.IsAny<Func<IQueryable<Asset>, IOrderedQueryable<Asset>>>(), 
+                                    It.IsAny<Func<IQueryable<Asset>, IOrderedQueryable<Asset>>>(),
                                     It.IsAny<string>() // includeProperties: "Category"
                                 ))
-                           .Returns((Expression<Func<Asset, bool>> filter, 
-                                     Func<IQueryable<Asset>, 
+                           .Returns((Expression<Func<Asset, bool>> filter,
+                                     Func<IQueryable<Asset>,
                                      IOrderedQueryable<Asset>> orderBy, string includeProperties) =>
                            {
-                               return Enumerable.Empty<Asset>(); 
+                               return Enumerable.Empty<Asset>();
                            });
 
 
@@ -68,7 +68,7 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
             // Mock AssetRepo to return null for any FindByIdAsync call
             var asset = _fixture.Create<Asset>();
 
-            List <Asset> Assets = new List<Asset>
+            List<Asset> Assets = new List<Asset>
                 {
                     _fixture.Create<Asset>(),
                     _fixture.Create<Asset>(),

@@ -88,10 +88,10 @@ axios.interceptors.response.use(
         break;
       default:
         break;
-      }
-      if (result.result) {
-          return Promise.reject(result.result);
-      }
+    }
+    if (result.result) {
+      return Promise.reject(result.result);
+    }
     return Promise.reject(result);
   }
 );
@@ -158,6 +158,8 @@ const Asset = {
     const queryString = getAssetQueryString(query);
     return requests.get(`api/Asset?${queryString}`);
   },
+  create: (values: AssetCreationRequest) =>
+    requests.post("api/asset/create", values),
   details: (id: string) => requests.get(`/api/asset/getAssetById?Id=${id}`),
 };
 
