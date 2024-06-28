@@ -89,10 +89,11 @@ axios.interceptors.response.use(
       default:
         break;
     }
+    debugger; 
     if (result.result) {
       return Promise.reject(result.result);
     }
-    return Promise.reject(result);
+    return Promise.reject(result.error);
   }
 );
 

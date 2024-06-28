@@ -13,6 +13,7 @@ import AppButton from "../../app/components/buttons/Button";
 import AppSearchInput from "../../app/components/AppSearchInput";
 import {
   SetURLSearchParams,
+  useLocation,
   useNavigate,
   useSearchParams,
 } from "react-router-dom";
@@ -57,13 +58,13 @@ function setFilterSearchParam(
     });
   }
 
-  if (orderBy) {
-    params.set("orderBy", orderBy.toString());
-  }
+  // if (orderBy) {
+  //   params.set("orderBy", orderBy.toString());
+  // }
 
-  if (order) {
-    params.set("order", order.toString());
-  }
+  // if (order) {
+  //   params.set("order", order.toString());
+  // }
 
   if (query?.pageNumber) {
     params.set("pageNumber", query.pageNumber.toString());
@@ -79,6 +80,8 @@ function setFilterSearchParam(
 export default function ManagementAssetPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  let { passedOrder, passedOrderBy } = location.state || {};
 
   const initSearch = searchParams.get("search") ?? "";
   const initPageNumber = Number(searchParams.get("pageNumber") ?? "1");
@@ -91,10 +94,12 @@ export default function ManagementAssetPage() {
   const [assetId, setAssetId] = useState<string>("0");
 
   const [order, setOrder] = useState<Order>(
-    (searchParams.get("order") as Order) ?? "asc"
+    passedOrder ?? (searchParams.get("order") as Order) ?? "asc"
   );
   const [orderBy, setOrderBy] = useState<OrderByFieldName>(
-    (searchParams.get("orderBy") as OrderByFieldName) ?? "assetCode"
+    passedOrderBy ??
+      (searchParams.get("orderBy") as OrderByFieldName) ??
+      "assetCode"
   );
   const [states, setStates] = useState<string[]>(initStates);
   const [categories, setCategories] = useState<string[]>(initCategories);
@@ -125,7 +130,11 @@ export default function ManagementAssetPage() {
     setClickOnAsset(true);
     setAssetId(data.items.result[rowId].id);
   };
-
+  useEffect(() => {
+    if (!isLoading) {
+      window.history.replaceState({}, "");
+    }
+  }, [isLoading]);
   useEffect(() => {
     let newQuery: FilterAssetRequest = query;
     switch (orderBy) {
