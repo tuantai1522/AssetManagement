@@ -14,12 +14,16 @@ namespace AssetManagement.Application.Tests.Services.CategoryTests
         public async Task GetAllAsync_ShouldReturnCategories_WhenCategoriesExist()
         {
             //Arrange
-            int categoriesCount = 10;
-            var mockCategories = _fixture.Build<Category>().CreateMany(categoriesCount).ToList().AsQueryable().BuildMock();
-            _mockCategoryRepository.Setup(c => c.All()).ReturnsAsync(mockCategories);
+            int categoriesCount = 100;
+            var mockCategories = _fixture.Build<Category>().CreateMany(categoriesCount).AsQueryable().BuildMock();
+            _mockCategoryRepository.Setup(c => c.GetQueryableSet()).Returns(mockCategories);
             _mockUnitOfWork.Setup(u => u.CategoryRepository).Returns(_mockCategoryRepository.Object);
 
-            var request = new GetAllCategoryRequest();
+            var request = new GetAllCategoryRequest
+            {
+                PageSize = 15,
+                PageNumber = 2
+            };
 
             //Act
             var result = await _categoryService.GetAllAsync(request);
@@ -27,8 +31,9 @@ namespace AssetManagement.Application.Tests.Services.CategoryTests
             //Assert
             Assert.NotNull(result);
             Assert.Equal(result.TotalItemCount, categoriesCount);
-            Assert.Equal(result.PageSize, categoriesCount);
-            Assert.Equal(result.Data.Count, categoriesCount);
+            Assert.Equal(result.PageSize, request.PageSize);
+            Assert.Equal(result.CurrentPage, request.PageNumber);
+            Assert.Equal(result.Data.Count, request.PageSize);
         }
     }
 }

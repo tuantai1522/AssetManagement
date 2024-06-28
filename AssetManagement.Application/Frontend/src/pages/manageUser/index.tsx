@@ -1,27 +1,19 @@
-// import { useState } from "react";
 import { useEffect, useState } from "react";
-import agent, { UserQuery } from "../../app/api/agent";
+import agent from "../../app/api/agent";
 import { Order } from "../../app/components/table/sortTable";
 import UserInfo from "../../app/components/userInfo/userInfo";
 import ConfirmModal from "../../app/components/confirmModal";
 import UserList from "./userList/userList";
 import { convertUtcToLocalDate } from "../../app/utils/dateUtils";
-import { FilterUser } from "../../app/models/User";
+import { FilterUser, OrderByFieldName, UserQuery } from "../../app/models/user/User";
 import { Alert, Snackbar, Stack } from "@mui/material";
 import UsePagination from "../../app/components/paginationButtons/paginationButtons";
 import { Search } from "@mui/icons-material";
 import AppSearchInput from "../../app/components/AppSearchInput";
 import AppButton from "../../app/components/buttons/Button";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, SetURLSearchParams, useNavigate, useSearchParams } from "react-router-dom";
 import UserType from "./userList/userType";
 import { BaseResult } from "../../app/models/BaseResult";
-
-type OrderByFieldName =
-  | "staffCode"
-  | "fullName"
-  | "joinedDate"
-  | "type"
-  | "lastUpdate";
 
 const isOrderByFieldName = (value: any): value is OrderByFieldName => {
   return ["staffCode", "fullName", "joinedDate", "type", "lastUpdate"].includes(
@@ -32,38 +24,81 @@ const isOrderByFieldName = (value: any): value is OrderByFieldName => {
 const isOrder = (value: any): value is Order => {
   return ["asc", "desc"].includes(value);
 };
-const defaultQuery: UserQuery = {
-  sortJoinedDate: "desc",
-  pageNumber: 1,
-  pageSize: 5,
-};
 
+function setFilterSearchParam(query: UserQuery, setSearchParams: SetURLSearchParams) {
+  const params = new URLSearchParams();
+
+  if (query?.name) {
+    params.set("name", query.name.toString());
+  }
+
+  if (query?.types && query.types.length > 0) {
+    query?.types?.forEach((item) => {
+      if (item)
+        params.append("types", item);
+    });
+  }
+
+  if (query?.orderBy) {
+    params.set("orderBy", query?.orderBy.toString());
+  }
+
+  if (query?.order) {
+    params.set("order", query?.order.toString());
+  }
+
+  if (query?.pageNumber) {
+    params.set("pageNumber", query.pageNumber.toString());
+  }
+
+  if (query?.pageSize) {
+    params.set("pageSize", query.pageSize.toString());
+  }
+
+  setSearchParams(params);
+}
 
 export default function ManagementUserPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+
+  const initQueryName = searchParams.get("name") ?? "";
+  const initPageNumber = Number(searchParams.get("pageNumber") ?? "1");
+  const initPageSize = Number(searchParams.get("pageSize") ?? "5");
+  const initTypes = searchParams.getAll("types");
+  const initOrder = searchParams.get("order") as Order;
+  const initOrderBy = searchParams.get("orderBy") as OrderByFieldName;
+
   const [clickOnUser, setClickOnUser] = useState<boolean>(false);
   const [userId, setUserId] = useState<string>("0");
-  const [types, setTypes] = useState<string[]>([]);
-  const [query, setQuery] = useState<UserQuery>(defaultQuery);
-  const [isDisablingModalOpen, setIsDisablingModalOpen] = useState(false);
-  const [currentDisablingId, setCurrentDisablingId] = useState("");
-  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
-  const [searchInput, setSearchInput] = useState<string>("");
-  const [order, setOrder] = useState<Order>("desc");
-  const [orderBy, setOrderBy] = useState<OrderByFieldName>("joinedDate");
-  const [searchParams] = useSearchParams();
-  const passedOrderBy = searchParams.get("passedOrderBy") ?? undefined;
-  const passedOrder = searchParams.get("passedOrder") ?? undefined;
+  const [types, setTypes] = useState<string[]>(initTypes);
 
+  const [query, setQuery] = useState<UserQuery>({
+    name: initQueryName,
+    types: initTypes,
+    pageNumber: initPageNumber > 0 ? initPageNumber : 1,
+    pageSize: initPageSize > 0 ? initPageSize : 5,
+    order: initOrder ?? "desc",
+    orderBy: initOrderBy ?? "joinedDate"
+  });
 
- 
-  const [currentErrorMessage, setCurrentErrorMessage] = useState("");
   const { data, isLoading, error, mutate } = agent.Users.filter(query);
   const {
     data: userData,
     isLoading: userLoading,
     error: userError,
   } = agent.Users.details(userId);
+
+  const [isDisablingModalOpen, setIsDisablingModalOpen] = useState(false);
+  const [currentDisablingId, setCurrentDisablingId] = useState("");
+
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
+  const [currentErrorMessage, setCurrentErrorMessage] = useState("");
+
+  const [searchInput, setSearchInput] = useState<string>(initQueryName);
+
+  const passedOrderBy = searchParams.get("passedOrderBy") ?? undefined;
+  const passedOrder = searchParams.get("passedOrder") ?? undefined;
 
   useEffect(() => {
     if (passedOrderBy && isOrderByFieldName(passedOrderBy)) {
@@ -80,109 +115,6 @@ export default function ManagementUserPage() {
     }
   }, [navigate, searchParams, passedOrderBy, passedOrder]);
 
-
-  useEffect(() => {
-    switch (orderBy) {
-      case "staffCode": {
-        setQuery((query) => ({
-          ...query,
-          sortStaffCode: order,
-          sortFullName: undefined,
-          sortJoinedDate: undefined,
-          sortType: undefined,
-          sortLastUpdate: undefined,
-        }));
-        mutate(query);
-        break;
-      }
-      case "fullName": {
-        setQuery((query) => ({
-          ...query,
-          sortStaffCode: undefined,
-          sortFullName: order,
-          sortJoinedDate: undefined,
-          sortType: undefined,
-          sortLastUpdate: undefined,
-        }));
-        mutate(query);
-        break;
-      }
-      case "joinedDate": {
-        setQuery((query) => ({
-          ...query,
-          sortStaffCode: undefined,
-          sortFullName: undefined,
-          sortJoinedDate: order,
-          sortType: undefined,
-          sortLastUpdate: undefined,
-        }));
-        mutate(query);
-        break;
-      }
-      case "type": {
-        setQuery((query) => ({
-          ...query,
-          sortStaffCode: undefined,
-          sortFullName: undefined,
-          sortJoinedDate: undefined,
-          sortType: order,
-          sortLastUpdate: undefined,
-        }));
-        mutate(query);
-        break;
-      }
-      case "lastUpdate": {
-        setQuery((query) => ({
-          ...query,
-          sortStaffCode: undefined,
-          sortFullName: undefined,
-          sortJoinedDate: undefined,
-          sortType: undefined,
-          sortLastUpdate: order,
-        }));
-        mutate(query);
-        break;
-      }
-      default:
-        break;
-    }
-  }, [orderBy, order]);
-
-  const handlePageNumberChange = (value: any) => {
-    const pageNumber = Number(value);
-    setQuery((prevQuery) => ({ ...prevQuery, pageNumber }));
-    mutate(query);
-  };
-
-  const handleQueryInputChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const { name, value } = event.target;
-    setSearchInput(value);
-  };
-
-  const handleSerchSubmit = () => {
-    setQuery((prevQuery) => ({
-      ...prevQuery,
-      pageNumber: 1,
-      name: searchInput?.trim(),
-    }));
-    mutate();
-  };
-  const handleClickOnUser = (rowId: string) => {
-    setClickOnUser(true);
-    setUserId(data.items.result[rowId].id);
-  };
-
-  const handleFilterClick = () => {
-    if (types.length === 0 || types.includes("All")) {
-      setQuery((query) => ({ ...query, type: [], pageNumber: 1 }));
-    } else {
-      setQuery((query) => ({ ...query, type: types, pageNumber: 1 }));
-    }
-    mutate(query);
-  };
-
   const handleDisable = async (id: string) => {
     try {
       await agent.Users.disable(id).then(mutate);
@@ -197,6 +129,59 @@ export default function ManagementUserPage() {
       }
       setIsErrorModalOpen(true);
     }
+  };
+
+  const setOrderBy = (orderBy: OrderByFieldName) => {
+    const newQuery = { ...query, orderBy: orderBy }
+    setQuery((pre) => ({ ...pre, orderBy: orderBy }));
+    setFilterSearchParam(newQuery, setSearchParams);
+  }
+
+  const setOrder = (order: Order) => {
+    const newQuery = { ...query, order: order }
+    setQuery((pre) => ({ ...pre, order: order }));
+    setFilterSearchParam(newQuery, setSearchParams);
+
+  }
+
+  const handlePageNumberChange = (value: any) => {
+    const pageNumber = Number(value);
+    const newQuery = { ...query, pageNumber }
+    setQuery(newQuery);
+    setFilterSearchParam(newQuery, setSearchParams);
+  };
+
+  const handleQueryInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { name, value } = event.target;
+    setSearchInput(value);
+  };
+
+  const handleSerchSubmit = () => {
+    const newQuery = {
+      ...query,
+      pageNumber: 1,
+      name: searchInput?.trim(),
+    }
+    setQuery(newQuery);
+    setFilterSearchParam(newQuery, setSearchParams);
+  };
+
+  const handleClickOnUser = (rowId: string) => {
+    setClickOnUser(true);
+    setUserId(data.items.result[rowId].id);
+  };
+
+  const handleFilterClick = () => {
+    let newQuery: UserQuery = query;
+    if (types.length === 0 || types.includes("all")) {
+      newQuery = { ...query, types: [], pageNumber: 1 };
+    } else {
+      newQuery = { ...query, types: types, pageNumber: 1 };
+    }
+    setQuery(newQuery);
+    setFilterSearchParam(newQuery, setSearchParams);
   };
 
   return (
@@ -265,7 +250,7 @@ export default function ManagementUserPage() {
               content="Create new user"
               className="py-[6px]"
               onClickOn={() => {
-                navigate(`/manage-user/create-user`, {state: {query}});
+                navigate(`/manage-user/create-user`);
               }}
             />
           </Stack>
@@ -278,9 +263,9 @@ export default function ManagementUserPage() {
             }))}
             error={error}
             isLoading={isLoading}
-            order={order}
+            order={query?.order ?? "asc"}
             setOrder={setOrder}
-            orderBy={orderBy}
+            orderBy={query?.orderBy}
             setOrderBy={setOrderBy}
             setIsOpenDisablingModal={setIsDisablingModalOpen}
             setCurrentDisablingId={setCurrentDisablingId}

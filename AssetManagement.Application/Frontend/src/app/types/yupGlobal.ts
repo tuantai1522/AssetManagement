@@ -2,8 +2,10 @@ import * as yup from 'yup';
 import dayjs from 'dayjs';
 
 // Regular expressions for validation
-const REGEX_FIRST_NAME = /^[a-zA-Z]+$/; // Only contains alphabet letters
-const REGEX_LAST_NAME = /^[a-zA-Z\s]+$/; // Contains multiple words with alphabet letters only
+const REGEX_ALPHABET = /^[a-zA-Z]+$/; // Only contains alphabet letters
+const REGEX_ALPHABET_AND_NUMBER = /^[a-zA-Z0-9]+$/; // Only contains alphabet letters and numbers
+const REGEX_ALPHABET_AND_WHITE_SPACE = /^[a-zA-Z\s]+$/; // Contains multiple words with alphabet letters only
+const REGEX_ALPHABET_NUMBER_AND_WHITE_SPACE = /^[a-zA-Z0-9\s]+$/; // Contains multiple words with alphabet letters and numbers
 // Regular expressions for validation
 // const REGEX_FIRST_NAME = /^[\p{L}]+$/u; // Contains Vietnamese letters
 // const REGEX_LAST_NAME = /^[\p{L}\s]+$/u; // Contains Vietnamese letters
@@ -11,14 +13,28 @@ const REGEX_LAST_NAME = /^[a-zA-Z\s]+$/; // Contains multiple words with alphabe
 
 // Adding custom methods to yup
 yup.addMethod(yup.string, 'firstName', function (message: string) {
-  return this.matches(REGEX_FIRST_NAME, {
+  return this.matches(REGEX_ALPHABET, {
     message,
     excludeEmptyString: true,
   });
 });
 
 yup.addMethod(yup.string, 'lastName', function (message: string) {
-  return this.matches(REGEX_LAST_NAME, {
+  return this.matches(REGEX_ALPHABET_AND_WHITE_SPACE, {
+    message,
+    excludeEmptyString: true,
+  });
+});
+
+yup.addMethod(yup.string, 'categoryName', function (message: string) {
+  return this.matches(REGEX_ALPHABET_NUMBER_AND_WHITE_SPACE, {
+    message,
+    excludeEmptyString: true,
+  });
+});
+
+yup.addMethod(yup.string, 'categoryPrefix', function (message: string) {
+  return this.matches(REGEX_ALPHABET_AND_NUMBER, {
     message,
     excludeEmptyString: true,
   });

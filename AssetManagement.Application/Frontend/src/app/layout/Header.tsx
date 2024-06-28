@@ -1,6 +1,6 @@
 import React from "react";
 import AccountHeader from "./AccountHeader";
-import { User } from "../models/User";
+import { User } from "../models/user/User";
 import { useLocation } from "react-router-dom";
 
 const Header = () => {

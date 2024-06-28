@@ -22,7 +22,7 @@ public class CreateAssetTest : SetupAssetServiceTest
         var userId = Guid.NewGuid();
         var categoryId = Guid.NewGuid();
         var request = _fixture.Build<AssetCreationRequest>()
-            .With(r => r.State, AssetState.Available.ToString())
+            .With(r => r.State, AssetState.Available)
             .With(r => r.CategoryId, categoryId)
             .Create();
 
@@ -41,21 +41,21 @@ public class CreateAssetTest : SetupAssetServiceTest
 
         _currentUserMock.Setup(x => x.UserId).Returns(userId);
         _userManagerMock.Setup(x => x.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
-        _mockUnitOfWork.Setup(x => x.CategoryRepository.FindOne(It.IsAny<Expression<Func<Category, bool>>>())).ReturnsAsync(category);
+        _unitOfWorkMock.Setup(x => x.CategoryRepository.FindOne(It.IsAny<Expression<Func<Category, bool>>>())).ReturnsAsync(category);
 
         var assets = new List<Asset>().AsQueryable().BuildMock(); // Use Moq.AutoMock to create IQueryable mock
-        _mockAssetRepository.Setup(m => m.GetQueryableSet()).Returns(assets);
-        _mockUnitOfWork.Setup(u => u.AssetRepository).Returns(_mockAssetRepository.Object);
+        _assetRepositoryMock.Setup(m => m.GetQueryableSet()).Returns(assets);
+        _unitOfWorkMock.Setup(u => u.AssetRepository).Returns(_assetRepositoryMock.Object);
 
         // Act
         var result = await _assetService.CreateAssetAsync(request);
 
         // Assert
-        _mockUnitOfWork.Verify(x => x.AssetRepository.Add(It.IsAny<Asset>()), Times.Once);
-        _mockUnitOfWork.Verify(x => x.SaveChangesAsync(), Times.Once);
+        _unitOfWorkMock.Verify(x => x.AssetRepository.Add(It.IsAny<Asset>()), Times.Once);
+        _unitOfWorkMock.Verify(x => x.SaveChangesAsync(), Times.Once);
         Assert.NotNull(result);
         Assert.Equal(user.Location, result.Location);
-        Assert.Equal(request.State, result.State);
+        Assert.Equal(request.State.ToString(), result.State);
         Assert.StartsWith(category.Prefix, result.AssetCode);
     }
 
@@ -67,7 +67,7 @@ public class CreateAssetTest : SetupAssetServiceTest
         _userManagerMock.Setup(x => x.FindByIdAsync(It.IsAny<string>())).ReturnsAsync((AppUser)null);
 
         var request = _fixture.Build<AssetCreationRequest>()
-            .With(r => r.State, AssetState.Available.ToString())
+            .With(r => r.State, AssetState.Available)
             .Create();
 
         // Act & Assert
@@ -83,7 +83,7 @@ public class CreateAssetTest : SetupAssetServiceTest
         _userManagerMock.Setup(x => x.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
 
         var request = _fixture.Build<AssetCreationRequest>()
-            .With(r => r.State, AssetState.Available.ToString())
+            .With(r => r.State, AssetState.Available)
             .Create();
 
         // Act & Assert
@@ -97,10 +97,10 @@ public class CreateAssetTest : SetupAssetServiceTest
         var user = new AppUser { IsDisabled = false };
         _currentUserMock.Setup(x => x.UserId).Returns(Guid.NewGuid());
         _userManagerMock.Setup(x => x.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
-        _mockUnitOfWork.Setup(x => x.CategoryRepository.FindOne(It.IsAny<Expression<Func<Category, bool>>>())).ReturnsAsync((Category)null);
+        _unitOfWorkMock.Setup(x => x.CategoryRepository.FindOne(It.IsAny<Expression<Func<Category, bool>>>())).ReturnsAsync((Category)null);
 
         var request = _fixture.Build<AssetCreationRequest>()
-            .With(r => r.State, AssetState.Available.ToString())
+            .With(r => r.State, AssetState.Available)
             .Create();
 
         // Act & Assert
@@ -130,7 +130,7 @@ public class CreateAssetTest : SetupAssetServiceTest
         var categoryId = Guid.NewGuid();
         var request = _fixture.Build<AssetCreationRequest>()
             .With(r => r.CategoryId, categoryId)
-            .With(r => r.State, AssetState.Available.ToString())
+            .With(r => r.State, AssetState.Available)
             .Create();
 
         var user = new AppUser
@@ -148,19 +148,19 @@ public class CreateAssetTest : SetupAssetServiceTest
 
         _currentUserMock.Setup(x => x.UserId).Returns(userId);
         _userManagerMock.Setup(x => x.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
-        _mockUnitOfWork.Setup(x => x.CategoryRepository.FindOne(It.IsAny<Expression<Func<Category, bool>>>())).ReturnsAsync(category);
+        _unitOfWorkMock.Setup(x => x.CategoryRepository.FindOne(It.IsAny<Expression<Func<Category, bool>>>())).ReturnsAsync(category);
 
         var assets = new List<Asset>().AsQueryable().BuildMock(); // No existing assets
 
-        _mockAssetRepository.Setup(m => m.GetQueryableSet()).Returns(assets);
-        _mockUnitOfWork.Setup(u => u.AssetRepository).Returns(_mockAssetRepository.Object);
+        _assetRepositoryMock.Setup(m => m.GetQueryableSet()).Returns(assets);
+        _unitOfWorkMock.Setup(u => u.AssetRepository).Returns(_assetRepositoryMock.Object);
 
         // Act
         var result = await _assetService.CreateAssetAsync(request);
 
         // Assert
-        _mockUnitOfWork.Verify(x => x.AssetRepository.Add(It.Is<Asset>(a => a.AssetCode == "CAT000001")), Times.Once);
-        _mockUnitOfWork.Verify(x => x.SaveChangesAsync(), Times.Once);
+        _unitOfWorkMock.Verify(x => x.AssetRepository.Add(It.Is<Asset>(a => a.AssetCode == "CAT000001")), Times.Once);
+        _unitOfWorkMock.Verify(x => x.SaveChangesAsync(), Times.Once);
         Assert.NotNull(result);
         Assert.Equal("CAT000001", result.AssetCode);
     }
@@ -172,7 +172,7 @@ public class CreateAssetTest : SetupAssetServiceTest
         var userId = Guid.NewGuid();
         var categoryId = Guid.NewGuid();
         var request = _fixture.Build<AssetCreationRequest>()
-                            .With(b => b.State, AssetState.Available.ToString())
+                            .With(b => b.State, AssetState.Available)
                             .With(b => b.CategoryId, categoryId)
                             .Create();
 
@@ -197,19 +197,19 @@ public class CreateAssetTest : SetupAssetServiceTest
 
         _currentUserMock.Setup(x => x.UserId).Returns(userId);
         _userManagerMock.Setup(x => x.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
-        _mockUnitOfWork.Setup(x => x.CategoryRepository.FindOne(It.IsAny<Expression<Func<Category, bool>>>())).ReturnsAsync(category);
+        _unitOfWorkMock.Setup(x => x.CategoryRepository.FindOne(It.IsAny<Expression<Func<Category, bool>>>())).ReturnsAsync(category);
 
         var assets = new List<Asset> { existingAsset }.AsQueryable().BuildMock();
 
-        _mockAssetRepository.Setup(m => m.GetQueryableSet()).Returns(assets);
-        _mockUnitOfWork.Setup(u => u.AssetRepository).Returns(_mockAssetRepository.Object);
+        _assetRepositoryMock.Setup(m => m.GetQueryableSet()).Returns(assets);
+        _unitOfWorkMock.Setup(u => u.AssetRepository).Returns(_assetRepositoryMock.Object);
 
         // Act
         var result = await _assetService.CreateAssetAsync(request);
 
         // Assert
-        _mockUnitOfWork.Verify(x => x.AssetRepository.Add(It.Is<Asset>(a => a.AssetCode == "CAT000002")), Times.Once);
-        _mockUnitOfWork.Verify(x => x.SaveChangesAsync(), Times.Once);
+        _unitOfWorkMock.Verify(x => x.AssetRepository.Add(It.Is<Asset>(a => a.AssetCode == "CAT000002")), Times.Once);
+        _unitOfWorkMock.Verify(x => x.SaveChangesAsync(), Times.Once);
         Assert.NotNull(result);
         Assert.Equal("CAT000002", result.AssetCode);
     }
@@ -221,7 +221,7 @@ public class CreateAssetTest : SetupAssetServiceTest
         var userId = Guid.NewGuid();
         var categoryId = Guid.NewGuid();
         var request = _fixture.Build<AssetCreationRequest>()
-            .With(r => r.State, AssetState.Available.ToString())
+            .With(r => r.State, AssetState.Available)
             .With(r => r.CategoryId, categoryId)
             .Create();
 
@@ -240,19 +240,19 @@ public class CreateAssetTest : SetupAssetServiceTest
 
         _currentUserMock.Setup(x => x.UserId).Returns(userId);
         _userManagerMock.Setup(x => x.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
-        _mockUnitOfWork.Setup(x => x.CategoryRepository.FindOne(It.IsAny<Expression<Func<Category, bool>>>())).ReturnsAsync(category);
+        _unitOfWorkMock.Setup(x => x.CategoryRepository.FindOne(It.IsAny<Expression<Func<Category, bool>>>())).ReturnsAsync(category);
 
         var assets = new List<Asset>().AsQueryable().BuildMock();
 
-        _mockAssetRepository.Setup(m => m.GetQueryableSet()).Returns(assets);
-        _mockUnitOfWork.Setup(u => u.AssetRepository).Returns(_mockAssetRepository.Object);
+        _assetRepositoryMock.Setup(m => m.GetQueryableSet()).Returns(assets);
+        _unitOfWorkMock.Setup(u => u.AssetRepository).Returns(_assetRepositoryMock.Object);
 
         // Act
         var result = await _assetService.CreateAssetAsync(request);
 
         // Assert
-        _mockUnitOfWork.Verify(x => x.AssetRepository.Add(It.Is<Asset>(a => a.Location == user.Location)), Times.Once);
-        _mockUnitOfWork.Verify(x => x.SaveChangesAsync(), Times.Once);
+        _unitOfWorkMock.Verify(x => x.AssetRepository.Add(It.Is<Asset>(a => a.Location == user.Location)), Times.Once);
+        _unitOfWorkMock.Verify(x => x.SaveChangesAsync(), Times.Once);
         Assert.NotNull(result);
         Assert.Equal(user.Location, result.Location);
     }
