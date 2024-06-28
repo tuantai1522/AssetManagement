@@ -54,14 +54,14 @@ export default function ManagementUserPage() {
   const navigate = useNavigate();
   const location = useLocation();
   let { passedOrder, passedOrderBy } = location.state || {};
-  
+
   const initQueryName = searchParams.get("name") ?? "";
   const initPageNumber = Number(searchParams.get("pageNumber") ?? "1");
   const initPageSize = Number(searchParams.get("pageSize") ?? "5");
   const initTypes = searchParams.getAll("types");
   const initOrder = passedOrder ?? searchParams.get("order") as Order;
   const initOrderBy = passedOrderBy ?? searchParams.get("orderBy") as OrderByFieldName;
-  
+
   const [clickOnUser, setClickOnUser] = useState<boolean>(false);
   const [userId, setUserId] = useState<string>("0");
   const [types, setTypes] = useState<string[]>(initTypes);
@@ -76,43 +76,22 @@ export default function ManagementUserPage() {
   });
 
   const { data, isLoading: filterLoading, error, mutate } = agent.Users.filter(query);
-  const {
-    data: userData,
-    isLoading: userLoading,
-    error: userError,
-  } = agent.Users.details(userId);
 
   const [isDisablingModalOpen, setIsDisablingModalOpen] = useState(false);
   const [currentDisablingId, setCurrentDisablingId] = useState("");
 
-  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
-  const [currentErrorMessage, setCurrentErrorMessage] = useState("");
-
   const [searchInput, setSearchInput] = useState<string>(initQueryName);
 
   useEffect(() => {
-    if (!filterLoading)
-    {
+    if (!filterLoading) {
       window.history.replaceState({}, '');
     }
-  
+
   }, [filterLoading])
-  
+
 
   const handleDisable = async (id: string) => {
-    try {
-      await agent.Users.disable(id).then(mutate);
-    } catch (e) {
-      const err = e as BaseResult<any>;
-      if (err?.error) {
-        if (err?.error?.message) setCurrentErrorMessage(err?.error?.message);
-      } else {
-        setCurrentErrorMessage(
-          "An unexpected error happened. Please try again!"
-        );
-      }
-      setIsErrorModalOpen(true);
-    }
+    await agent.Users.disable(id).then(mutate);
   };
 
   const setOrderBy = (orderBy: OrderByFieldName) => {
@@ -171,21 +150,6 @@ export default function ManagementUserPage() {
   return (
     <div className="flex justify-center h-full">
       <div className="container">
-        <Snackbar
-          anchorOrigin={{ vertical: "top", horizontal: "right" }}
-          open={isErrorModalOpen}
-          autoHideDuration={5000}
-          onClose={() => setIsErrorModalOpen(false)}
-        >
-          <Alert
-            onClose={() => setIsErrorModalOpen(false)}
-            severity="error"
-            variant="outlined"
-            sx={{ width: "100%", bgcolor: "background.paper" }}
-          >
-            {currentErrorMessage}
-          </Alert>
-        </Snackbar>
         <p className="text-primary text-xl font-bold justify-start items-start">
           User List
         </p>
@@ -279,14 +243,18 @@ export default function ManagementUserPage() {
           handleDisable(currentDisablingId);
         }}
       />
-      <UserInfo
-        isOpen={clickOnUser}
-        isLoading={userLoading}
-        userData={userData?.result}
-        onClose={() => {
-          setClickOnUser(false);
-        }}
-      ></UserInfo>
+      {
+        clickOnUser ?
+          <UserInfo
+            userId={userId}
+            onClose={() => {
+              setClickOnUser(false);
+            }}
+          ></UserInfo>
+          :
+          <></>
+      }
+
     </div>
   );
 }

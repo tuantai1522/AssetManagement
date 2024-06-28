@@ -39,40 +39,19 @@ const CreateCategoryForm = ({ refetchCategories }: Props) => {
   const [prefixText, setPrefixText] = useState("");
 
   const onSubmit = async (formData: any) => {
-    try {
-      setIsSubmitting(true);
-      const request: CreateCategoryRequest = {
-        name: formData.categoryName,
-        prefix: formData.categoryPrefix.toUpperCase(),
-      };
-      await agent.Category.create(request).then(() => {
-        setIsSubmitting(false);
-        setToastSeverity("success");
-        setToastMessage("New category created successfully!");
-        setIsToastOpen(true);
-        setIsFormVisible(false);
-        refetchCategories();
-      });
-    } catch (e) {
+    setIsSubmitting(true);
+    const request: CreateCategoryRequest = {
+      name: formData.categoryName,
+      prefix: formData.categoryPrefix.toUpperCase(),
+    };
+    await agent.Category.create(request).then(() => {
       setIsSubmitting(false);
-      const err = e as BaseResult<any>;
-      const message =
-        err?.error?.message ??
-        "An unexpected error happened. Please try again!";
-      setToastSeverity("error");
-      setToastMessage(message);
-      setIsToastOpen(true);
-    }
+      refetchCategories();
+    });
   };
 
   return (
     <>
-      <Toast
-        isOpen={isToastOpen}
-        onClose={() => setIsToastOpen(false)}
-        severity={toastSeverity}
-        message={toastMessage}
-      />
       {!isFormVisible ? (
         <>
           <button

@@ -18,7 +18,7 @@ import AppTextInput from "../AppTextInput";
 interface UserFormProps {
     onSubmit: (data: any) => void;
     isEditing?: boolean;
-    data?: UserInfoResponse;
+    data?: UserInfoResponse | null;
 }
 
 const UserForm = ({

@@ -1,21 +1,23 @@
+import agent from "../../api/agent";
+import { BaseResult } from "../../models/BaseResult";
 import { UserInfoResponse } from "../../models/login/UserInfoResponse";
 
 interface Props {
-  isOpen?: boolean;
-  userData?: UserInfoResponse;
-  isLoading?: boolean;
-  errorMessage?: string;
+  userId: string;
   onClose: () => void;
 }
 
 const UserInfo = ({
-  isOpen,
-  userData,
-  isLoading,
-  errorMessage,
+  userId,
   onClose,
 }: Props) => {
-  if (!isOpen) return null;
+  const {
+    data,
+    isLoading: userLoading,
+  } = agent.Users.details(userId);
+  
+  const userData: UserInfoResponse = data?.result; 
+
   return (
     <>
       <div className="fixed w-screen h-screen bg-gray-400 top-0 left-0 opacity-50 "></div>
@@ -77,18 +79,12 @@ const UserInfo = ({
                 <div className="col-span-2">Location</div>
                 <div className="col-span-5">{userData?.location}</div>
               </div>
-            ) : isLoading ? (
+            ) : userLoading ? (
               <div className="min-h-60 flex justify-center items-center">
                 <div className="animate-spin w-10 h-10 border-4 border-primary border-t-white border-b-white rounded-full"></div>
               </div>
-            ) : errorMessage ? (
-              <div className="min">
-                <p className="text-primary font-semibold text-lg">Oops!</p>
-                <p className="text-secondary">Sorry, {errorMessage}</p>
-              </div>
-            ) : (
-              ""
-            )}
+            ) : ""
+            }
           </div>
         </div>
       </div>
