@@ -20,11 +20,6 @@ export interface FilterUser {
 export interface UserQuery {
   name?: string;
   types?: string[];
-  sortStaffCode?: Order;
-  sortFullName?: Order;
-  sortJoinedDate?: Order;
-  sortType?: Order;
-  sortLastUpdate?: Order;
   pageNumber?: number;
   pageSize?: number;
   order?: Order;
