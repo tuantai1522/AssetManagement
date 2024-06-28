@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace AssetManagement.Application.Tests.Services.UsersTests
 {
-	public class UpdateUserAsyncTests : UserServiceTestBase
+	public class UpdateUserAsyncTests : SetUpUserServiceTest
 	{
 		public UpdateUserAsyncTests() : base() { }
 		[Fact]

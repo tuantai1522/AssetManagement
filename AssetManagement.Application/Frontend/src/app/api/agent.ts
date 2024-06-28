@@ -3,10 +3,13 @@ import { router } from "../routes/router";
 import useSWR from "swr";
 import { PaginatedResponse } from "../models/Pagination";
 import { BaseResult } from "../models/BaseResult";
-import { User } from "../models/User";
-import { Order } from "../components/table/sortTable";
-import { EditUserRequest } from "../models/login/EditUserRequest";
-import { CreateUserRequest } from "../models/login/CreateUserRequest";
+import { User, UserQuery, getUserQueryString } from "../models/user/User";
+import { AssetCreationRequest } from "../models/asset/AssetCreationRequest";
+import { FilterAssetRequest, getAssetQueryString } from "../models/asset/Asset";
+import { EditUserRequest } from "../models/user/EditUserRequest";
+import { CreateUserRequest } from "../models/user/CreateUserRequest";
+import { useNotification } from "../components/toast/NotifyContext";
+import eventEmitter from "../hooks/EventMitter";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 axios.defaults.headers.post["Content-Type"] = "application/json";
@@ -28,7 +31,6 @@ axios.interceptors.request.use((config) => {
 
   return config;
 });
-
 axios.interceptors.response.use(
   async (response) => {
     // Get pagination response from header and data response from api
@@ -44,31 +46,40 @@ axios.interceptors.response.use(
   },
   (error: AxiosError) => {
     const result = error.response!.data as BaseResult<any>;
-    switch (result.error.status) {
+    const errorStatus = result.error ? result.error.status : result.status;
+    switch (errorStatus){
       case 400:
-        // if ((result.error.message as any).errors) {
-        //   const modalStateErrors: string[] = [];
-        //   for (const key in (result.error.message as any).errors) {
-        //     if ((result.error.message as any).errors[key]) {
-        //       modalStateErrors.push((result.error.message as any).errors[key]);
-        //     }
-        //   }
+        if (result?.errors) {
+          const modalStateErrors: string[] = [];
+          for (const key in result.errors) {
+            if (result.errors[key]) {
+              result.errors[key].forEach((errorMsg) => {
+                modalStateErrors.push(`${key}: ${errorMsg}`);
+              });
+            }
+          }
 
-        //   console.log(modalStateErrors.toString());
-        // }
-        console.log(result.error.message);
+          eventEmitter.emit('notification', modalStateErrors.join(', '), 'error');
+        } else if (result.error)
+        {
+          eventEmitter.emit('notification', result.error.message, 'error');
+          }
         break;
       case 401:
         console.log(result.error.message);
+        eventEmitter.emit('notification', result.error.message, 'error');
         break;
       case 403:
         console.log(result.error.message);
+        eventEmitter.emit('notification', result.error.message, 'error');
         break;
       case 404:
         console.log(result.error.message);
+        eventEmitter.emit('notification', result.error.message, 'error');
         break;
       case 409:
         console.log(result.error.message);
+        eventEmitter.emit('notification', result.error.message, 'error');
         break;
       case 500:
         console.log("Catch 500");
@@ -78,7 +89,11 @@ axios.interceptors.response.use(
       default:
         break;
     }
-    return Promise.reject(result);
+    debugger; 
+    if (result.result) {
+      return Promise.reject(result.result);
+    }
+    return Promise.reject(result.error);
   }
 );
 
@@ -122,8 +137,10 @@ const Users = {
   },
   details: (id: string) => requests.get(`/api/users/${id}`),
   disable: (id: string) => requests.put(`api/users/disable/${id}`, {}),
-  update: (id: string, values: EditUserRequest) => requests.put(`/api/users/${id}`, values),
-  create: (values: CreateUserRequest) => requests.post('api/users/create', values)
+  update: (id: string, values: EditUserRequest) =>
+    requests.put(`/api/users/${id}`, values),
+  create: (values: CreateUserRequest) =>
+    requests.post("api/users/create", values),
 };
 
 const Authentication = {
@@ -132,54 +149,27 @@ const Authentication = {
     requests.post("api/auth/changepassword", values),
 };
 
+const Category = {
+  all: () => requests.get(`api/category`),
+  create: (values: {}) => requests.post("api/category", values),
+};
+
+const Asset = {
+  filter: (query?: FilterAssetRequest) => {
+    const queryString = getAssetQueryString(query);
+    return requests.get(`api/Asset?${queryString}`);
+  },
+  create: (values: AssetCreationRequest) =>
+    requests.post("api/asset/create", values),
+  details: (id: string) => requests.get(`/api/asset/getAssetById?Id=${id}`),
+};
+
 const agent = {
   Product,
   Authentication,
   Users,
+  Category,
+  Asset,
 };
 
 export default agent;
-
-export interface UserQuery {
-  name?: string;
-  type?: string[];
-  sortStaffCode?: Order;
-  sortFullName?: Order;
-  sortJoinedDate?: Order;
-  sortType?: Order;
-  sortLastUpdate?: Order;
-  pageNumber?: number;
-  pageSize?: number;
-}
-
-function getUserQueryString(filter?: UserQuery) {
-  if (!filter) {
-    return "";
-  }
-
-  const nameParam = filter.name ? `name=${filter.name}&` : "";
-  let typeParam = "";
-  if (filter.type && filter.type.length > 0) {
-    typeParam = filter.type.map((type) => `types=${type}&`).join("");
-  }
-  const sortStaffCodeParam = filter.sortStaffCode
-    ? `sortStaffCode=${filter.sortStaffCode === "asc" ? 1 : 2}&`
-    : "";
-  const sortFullNameParam = filter.sortFullName
-    ? `sortFullName=${filter.sortFullName === "asc" ? 1 : 2}&`
-    : "";
-  const sortJoinedDateParam = filter.sortJoinedDate
-    ? `sortJoinedDate=${filter.sortJoinedDate === "asc" ? 1 : 2}&`
-    : "";
-  const sortTypeParam = filter.sortType
-    ? `sortType=${filter.sortType === "asc" ? 1 : 2}&`
-    : "";
-    const sortLastUpdate = filter.sortLastUpdate
-    ? `sortLastUpdate=${filter.sortLastUpdate === "asc" ? 1 : 2}&`
-    : "";
-
-  const pageParam = `pageNumber=${filter.pageNumber ?? 1}&`;
-  const sizeParam = `pageSize=${filter.pageSize ?? 5}`;
-
-  const queryString = `${nameParam}${typeParam}${sortStaffCodeParam}${sortFullNameParam}${sortJoinedDateParam}${sortTypeParam}${sortLastUpdate}${pageParam}${sizeParam}`;  return queryString;
-}

@@ -16,8 +16,8 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     }
 
     public virtual IEnumerable<T> Get(
-           Expression<Func<T, bool>> filter = null,
-           Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
+           Expression<Func<T, bool>> filter,
+           Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
            string includeProperties = "")
     {
         IQueryable<T> query = dbSet;
@@ -101,7 +101,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         return await dbSet.Where(predicate).ToListAsync();
     }
 
-    public async Task<T> FindOne(Expression<Func<T, bool>> predicate)
+    public async Task<T?> FindOne(Expression<Func<T, bool>> predicate)
     {
         return await dbSet.Where(predicate).FirstOrDefaultAsync();
     }

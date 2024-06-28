@@ -33,26 +33,33 @@ public class UserService : IUserService
         _roleManager = roleManager;
     }
 
-    public async Task<PagingDto<FilterUserResponse>> FilterUserAsync(FilterUserRequest request)
+    public async Task<PagingDto<FilterUserResponse>> FilterUserAsync(FilterUserRequest filter)
     {
         var queryable = _userManager.Users;
 
-        var currentUser = await _userManager.FindByIdAsync(_currentUser.UserId.ToString())
-            .ContinueWith(t => t.Result ?? throw new UnauthorizedAccessException("User do not login"));
+        var currentUser = await queryable
+            .Where(u => _currentUser.UserId.Equals(u.Id))
+            .FirstOrDefaultAsync()
+            .ContinueWith(t => t.Result ?? throw new UnauthorizedAccessException(ErrorStrings.USER_NOT_LOGIN));
 
-        //set default page size
-        if (!request.PageNumber.HasValue || !request.PageSize.HasValue
-            || request.PageNumber.Value <= 0 || request.PageSize.Value <= 0)
+        if (currentUser.IsDisabled)
         {
-            request.PageNumber = 1;
-            request.PageSize = 5;
+            throw new UnauthorizedAccessException(ErrorStrings.USER_IS_DISABLED);
+		}
+
+		//set default page size
+		if (!filter.PageNumber.HasValue || !filter.PageSize.HasValue
+            || filter.PageNumber.Value <= 0 || filter.PageSize.Value <= 0)
+        {
+			filter.PageNumber = 1;
+			filter.PageSize = 5;
         }
 
-        var orderBy = GetOrderByExpression(request);
+        var orderBy = GetOrderByExpression(filter);
 
         Expression<Func<AppUser, bool>> filterSpecification = u =>
-           (string.IsNullOrEmpty(request.Name) || (u.FirstName + " " + u.LastName).Contains(request.Name) || u.StaffCode.Contains(request.Name))
-            && (request.Types == null || request.Types.Length == 0 || request.Types.Contains(u.UserRoles.Select(ur => ur.Role.Name).FirstOrDefault()))
+           (string.IsNullOrEmpty(filter.Name) || (u.FirstName + " " + u.LastName).Contains(filter.Name) || u.StaffCode.Contains(filter.Name))
+            && (filter.Types == null || filter.Types.Length == 0 || filter.Types.Contains(u.UserRoles.Select(ur => ur.Role.Name).FirstOrDefault()))
             && u.Location == currentUser.Location
             && !u.IsDisabled;
 
@@ -63,8 +70,8 @@ public class UserService : IUserService
         var result = await queryable
             .AsNoTracking()
             .Where(filterSpecification)
-            .Skip((request.PageNumber.Value - 1) * request.PageSize.Value)
-            .Take(request.PageSize.Value)
+            .Skip((filter.PageNumber.Value - 1) * filter.PageSize.Value)
+            .Take(filter.PageSize.Value)
             .Select(u => new FilterUserResponse()
             {
                 Id = u.Id,
@@ -77,9 +84,9 @@ public class UserService : IUserService
 
         return new PagingDto<FilterUserResponse>()
         {
-            CurrentPage = request.PageNumber.Value,
+            CurrentPage = filter.PageNumber.Value,
             TotalItemCount = totalRecord,
-            PageSize = request.PageSize.Value,
+            PageSize = filter.PageSize.Value,
             Data = result
         };
     }
@@ -158,7 +165,7 @@ public class UserService : IUserService
     }
     public async Task<UserInfoResponse> UpdateUserAsync(Guid userId, UpdateUserRequest request)
     {
-		ValidateGender(request.Gender);
+        ValidateGender(request.Gender);
         ValidateDateOfBirth(request.DateOfBirth);
         ValidateJoinedDate(request.DateOfBirth, request.JoinedDate);
         await ValidateTypeAsync(request.Type);
@@ -289,14 +296,14 @@ public class UserService : IUserService
     private async Task ValidateLocationAsync(Guid userId)
     {
         var adminId = _currentUser.UserId;
-		var adminUser = await _userManager.FindByIdAsync(adminId.ToString()) ?? throw new NotFoundException(ErrorStrings.USER_NOT_FOUND);
+        var adminUser = await _userManager.FindByIdAsync(adminId.ToString()) ?? throw new NotFoundException(ErrorStrings.USER_NOT_FOUND);
 
-		var currentUser = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new NotFoundException(ErrorStrings.USER_NOT_FOUND);
+        var currentUser = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new NotFoundException(ErrorStrings.USER_NOT_FOUND);
         if (adminUser.Location != currentUser.Location)
         {
             throw new BadRequestException(ErrorStrings.LOCATION_NOT_VALID);
         }
-	}
+    }
     private async Task<string> GetAndValidateLocationAsync()
     {
         var currentAdminId = _currentUser.UserId;

@@ -1,4 +1,4 @@
-import { Controller, FieldValues, useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -6,33 +6,25 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { FormControl, FormControlLabel, FormHelperText, MenuItem, Radio, RadioGroup, Select } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { Gender, Type } from "../../types/enum";
-import AppTextInput from "../AppTextInput";
 import AppButton from "../buttons/Button";
-import { createFormSchema } from "../../schemas/createFormSchema";
+import { createUserSchema } from "../../schemas/createUserSchema";
 import { useEffect } from "react";
 import dayjs from "dayjs";
 import { UserInfoResponse } from "../../models/login/UserInfoResponse";
+import { UserCreateForm } from "../../models/user/UserCreateForm";
+import AppTextInput from "../AppTextInput";
 
-
-interface IFormInput extends FieldValues {
-    firstName: string,
-    lastName: string,
-    dateOfBirth: Date,
-    joinedDate: Date,
-    gender: string,
-    type: string,
-}
 
 interface UserFormProps {
     onSubmit: (data: any) => void;
     isEditing?: boolean;
-    data?: UserInfoResponse;
+    data?: UserInfoResponse | null;
 }
 
 const UserForm = ({
     onSubmit,
     isEditing = false,
-    data
+    data,
 }: UserFormProps) => {
     const navigate = useNavigate();
 
@@ -41,7 +33,7 @@ const UserForm = ({
     }
 
     const { handleSubmit, control, reset, formState: {isValid} } = useForm({
-        resolver: yupResolver<IFormInput>(createFormSchema),
+        resolver: yupResolver<UserCreateForm>(createUserSchema),
         defaultValues: {
             gender: Gender.Female, // Set default value for gender
         },
@@ -217,7 +209,10 @@ const UserForm = ({
 
                 <div className="flex justify-end space-x-4">
                     <AppButton content="Save" isFormSubmit={true} isDisabled={!isValid} />
-                    <AppButton content="Cancel" styleType="Secondary" onClickOn={() => { navigate(-1) }} />
+                    <AppButton content="Cancel" styleType="Secondary" onClickOn={() => {
+                        navigate(-1);
+                    }}
+                    />
                 </div>
             </form>
         </div>

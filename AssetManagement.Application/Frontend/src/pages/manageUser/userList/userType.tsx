@@ -1,9 +1,6 @@
-import { Dispatch, SetStateAction, useState } from "react";
 import AppSelectedInput from "../../../app/components/AppSelectedInput";
-import { types } from "util";
 
 const items = [
-  { id: "All", name: "All" },
   { id: "Admin", name: "Admin" },
   { id: "Staff", name: "Staff" },
 ];
@@ -17,10 +14,6 @@ export interface UserTypeOption {
 function UserType (props: UserTypeOption) {
   const onChangeSelectedBox = (checkedItems: string[]) => {
     props.setTypes(checkedItems);
-  };
-
-  const onSubmitForm = () => {
-    console.log(props.types);
   };
 
   return (

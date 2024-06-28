@@ -7,7 +7,7 @@ using MockQueryable.Moq;
 
 namespace AssetManagement.Application.Tests.Services.UsersTests
 {
-    public class GetUserByIdAsync : UserServiceTestBase
+    public class GetUserByIdAsync : SetUpUserServiceTest
     {
         public GetUserByIdAsync() : base() { }
         [Fact]

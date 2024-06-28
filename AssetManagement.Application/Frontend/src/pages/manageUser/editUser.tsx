@@ -1,8 +1,11 @@
 import { useNavigate, useParams } from "react-router-dom";
 import UserForm from "../../app/components/forms/userForm";
 import agent from "../../app/api/agent";
-import { EditUserRequest } from "../../app/models/login/EditUserRequest";
+import { EditUserRequest } from "../../app/models/user/EditUserRequest";
 import dayjs from "dayjs";
+import { UserEditForm } from "../../app/models/user/UserCreateForm";
+import AppLoader from "../../app/components/AppLoader";
+import { UserInfoResponse } from "../../app/models/login/UserInfoResponse";
 
 
 const EditUserPage = () => {
@@ -14,9 +17,10 @@ const EditUserPage = () => {
         return null; 
     }
 
-    const { data,  error, isLoading } = agent.Users.details(id);
+    const { data, isLoading } = agent.Users.details(id);
+    const userData: UserInfoResponse = data?.result;
     
-    const onSubmit = async (formData: any) => {
+    const onSubmit = async (formData: UserEditForm) => {
         // Format the dates to 'YYYY-MM-DD'
         const formattedDateOfBirth = dayjs(formData.dateOfBirth).format('YYYY-MM-DD');
         const formattedJoinedDate = dayjs(formData.joinedDate).format('YYYY-MM-DD');
@@ -28,29 +32,23 @@ const EditUserPage = () => {
             Type: formData.type,
         }
         await agent.Users.update(id, updateData);
-        navigate(`/manage-user?passedOrderBy=${encodeURIComponent('lastUpdate')}&passedOrderBy=${encodeURIComponent('desc')}`);
+        navigate('/manage-user', {state: {passedOrder: "desc", passedOrderBy: "lastUpdate"}});
     }
 
     if (isLoading) {
-        return <div>Loading...</div>; // Display a loading state
-    }
-
-    if (error) {
-        console.error(error);
-        return <div>Error loading user data</div>; // Display an error state
-    }
-
-    if (!data || !data.result) {
-        console.error('Unexpected data format:', data);
-        return <div>Error: Unexpected data format</div>;
+        return (
+            <div className="flex items-center justify-center">
+                <AppLoader />
+            </div>
+        )
     }
 
     return (
         <UserForm 
             onSubmit={onSubmit} 
             isEditing={true} 
-            data={data.result} 
-        />
+            data={userData} 
+            />
     );
 }
 

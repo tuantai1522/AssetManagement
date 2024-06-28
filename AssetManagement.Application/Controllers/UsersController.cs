@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AssetManagement.Application.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/users")]
 [ApiController]
 public class UsersController : ControllerBase
 {
@@ -80,10 +80,10 @@ public class UsersController : ControllerBase
         return Ok(result);
     }
 
-	[HttpPut]
-	[Route("{userId}")]
-	[Authorize(Roles = $"{RoleConstant.AdminRole}")]
-    public async Task<ActionResult<BaseResult<UserInfoResponse>>> UpdateAsync([FromRoute]Guid userId, [FromBody] UpdateUserRequest request)
+    [HttpPut]
+    [Route("{userId}")]
+    [Authorize(Roles = $"{RoleConstant.AdminRole}")]
+    public async Task<ActionResult<BaseResult<UserInfoResponse>>> UpdateAsync([FromRoute] Guid userId, [FromBody] UpdateUserRequest request)
     {
         var data = await _userService.UpdateUserAsync(userId, request);
         var result = new BaseResult<UserInfoResponse>()
@@ -92,7 +92,7 @@ public class UsersController : ControllerBase
             Error = null,
             Result = data
         };
-		return Ok(result);
-	}
+        return Ok(result);
+    }
 }
 

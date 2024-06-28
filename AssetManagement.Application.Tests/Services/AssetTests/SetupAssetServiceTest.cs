@@ -1,59 +1,53 @@
 ﻿using AssetManagement.Application.Common.Credential;
 using AssetManagement.Application.Extensions;
 using AssetManagement.Application.Services.Implementations;
-using AssetManagement.Application.Services.Interfaces;
+using AssetManagement.Data.Interfaces;
 using AssetManagement.Domain.Entities;
 using AssetManagement.Domain.Enums;
 using AutoFixture;
+using AutoFixture.AutoMoq;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace AssetManagement.Application.Tests.Services.UsersTests;
-public class UserServiceTestBase
+namespace AssetManagement.Application.Tests.Services.AssetTests;
+public class SetupAssetServiceTest
 {
+    protected readonly IFixture _fixture;
 
-    protected readonly Mock<UserManager<AppUser>> UserManagerMock;
-    protected readonly Mock<ICurrentUser> CurrentUserMock;
-    protected readonly IUserService UserService;
-    protected readonly Mock<ILogger<UserService>> LoggerMock;
-    protected readonly Fixture Fixture;
+    protected readonly Mock<ICurrentUser> _currentUserMock;
+    protected readonly Mock<UserManager<AppUser>> _userManagerMock;
     protected readonly IMapper _mapperConfig;
-    protected readonly Mock<RoleManager<Role>> RoleManagerMock;
+    protected readonly Mock<IUnitOfWork> _unitOfWorkMock;
+    protected readonly Mock<ILogger<AssetService>> _mockLogger;
+
+    protected readonly Mock<IAssetRepository> _assetRepositoryMock;
+    protected readonly AssetService _assetService;
 
     protected List<Role> Roles;
-
     protected List<AppUser> Users;
 
-    public UserServiceTestBase()
+    public SetupAssetServiceTest()
     {
-        UserManagerMock = new Mock<UserManager<AppUser>>(Mock.Of<IUserStore<AppUser>>(), null!, null!, null!, null!, null!,
-            null!, null!, null!);
+        _fixture = new Fixture().Customize(new AutoMoqCustomization());
+        _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
-        RoleManagerMock = new Mock<RoleManager<Role>>(
-            Mock.Of<IRoleStore<Role>>(), null!, null!, null!, null!);
-
-
-        CurrentUserMock = new Mock<ICurrentUser>();
-
-        LoggerMock = new Mock<ILogger<UserService>>();
-
+        _currentUserMock = new Mock<ICurrentUser>();
+        _userManagerMock = _fixture.Freeze<Mock<UserManager<AppUser>>>();
         var mappingConfig = new MapperConfiguration(mc =>
         {
             mc.AddProfile(new MappingProfile());
         });
         _mapperConfig = mappingConfig.CreateMapper();
+        _unitOfWorkMock = new Mock<IUnitOfWork>();
+        _assetRepositoryMock = new Mock<IAssetRepository>();
+        _mockLogger = new Mock<ILogger<AssetService>>();
 
-        UserService = new UserService(UserManagerMock.Object, LoggerMock.Object, CurrentUserMock.Object, _mapperConfig, RoleManagerMock.Object);
-
-        Fixture = new Fixture();
-        Fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList().ForEach(b => Fixture.Behaviors.Remove(b));
-        Fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+        _assetService = new AssetService(_mockLogger.Object, _unitOfWorkMock.Object, _currentUserMock.Object, _mapperConfig, _userManagerMock.Object);
 
         Setup();
     }
-
     #region setup
     protected void Setup()
     {
@@ -93,8 +87,8 @@ public class UserServiceTestBase
         {
             Users.Add(new AppUser
             {
-				Id = Guid.NewGuid(),
-				FirstName = "Staff",
+                Id = Guid.NewGuid(),
+                FirstName = "Staff",
                 LastName = i.ToString(),
                 StaffCode = $"SD{i:D4}",
                 JoinedDate = DateTime.Now.AddDays(i),
@@ -112,8 +106,8 @@ public class UserServiceTestBase
         Users.Add(
             new AppUser()
             {
-				Id = Guid.NewGuid(),
-				FirstName = "Admin",
+                Id = Guid.NewGuid(),
+                FirstName = "Admin",
                 LastName = "10",
                 StaffCode = "SD0010",
                 JoinedDate = DateTime.Now.AddHours(2),
@@ -130,4 +124,3 @@ public class UserServiceTestBase
     }
     #endregion
 }
-
