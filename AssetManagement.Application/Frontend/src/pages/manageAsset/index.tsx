@@ -121,12 +121,6 @@ export default function ManagementAssetPage() {
     error: categoryError,
   } = agent.Category.all();
 
-  const {
-    data: assetData,
-    isLoading: assetLoading,
-    error: assetError,
-  } = agent.Asset.details(assetId);
-
   const handleClickOnAsset = (rowId: string) => {
     setClickOnAsset(true);
     setAssetId(data.items.result[rowId].id);
@@ -374,14 +368,14 @@ export default function ManagementAssetPage() {
             />
           </Stack>
         </div>
-        <AssetInfo
-          isOpen={clickOnAsset}
-          isLoading={assetLoading}
-          assetData={assetData?.result}
-          onClose={() => {
-            setClickOnAsset(false);
-          }}
-        />
+        {clickOnAsset && (
+          <AssetInfo
+            assetId={assetId}
+            onClose={() => {
+              setClickOnAsset(false);
+            }}
+          />
+        )}
       </div>
     </div>
   );

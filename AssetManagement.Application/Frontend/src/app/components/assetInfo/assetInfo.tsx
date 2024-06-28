@@ -1,10 +1,10 @@
+import agent from "../../api/agent";
+import { BaseResult } from "../../models/BaseResult";
 import AssetDetailsResponse from "../../models/asset/AssetDetailsResponse";
 import AppLoader from "../AppLoader";
 
 interface Props {
-  isOpen?: boolean;
-  assetData?: AssetDetailsResponse;
-  isLoading?: boolean;
+  assetId: string;
   errorMessage?: string;
   onClose: () => void;
 }
@@ -31,14 +31,17 @@ const assignments: Array<AssignmentResponse> = [
   },
 ];
 
-const AssetInfo = ({
-  isOpen,
-  assetData,
-  isLoading,
-  errorMessage,
-  onClose,
-}: Props) => {
-  if (!isOpen) return null;
+const AssetInfo = ({ assetId, errorMessage, onClose }: Props) => {
+  const {
+    data,
+    isLoading: assetLoading,
+    error: assetError,
+  } = agent.Asset.details(assetId);
+
+  const assetData: AssetDetailsResponse = data?.result;
+  console.log(assetId);
+  console.log(data);
+
   return (
     <>
       <div className="fixed w-screen h-screen bg-gray-400 top-0 left-0 opacity-50 "></div>
@@ -139,7 +142,7 @@ const AssetInfo = ({
                   })}
                 </div>
               </div>
-            ) : isLoading ? (
+            ) : assetLoading ? (
               <AppLoader />
             ) : errorMessage ? (
               <div className="min">
