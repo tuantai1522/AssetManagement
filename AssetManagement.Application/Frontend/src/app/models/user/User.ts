@@ -43,11 +43,7 @@ export function getUserQueryString(filter?: UserQuery) {
     return "";
   }
 
-  let sortStaffCodeParam: string = "";
-  let sortFullNameParam: string = "";
-  let sortJoinedDateParam: string = "";
-  let sortTypeParam: string = "";
-  let sortLastUpdate: string = "";
+  let sortOption: string = "";
 
   const nameParam = filter.name ? `name=${filter.name}&` : "";
   let typeParam = "";
@@ -57,25 +53,23 @@ export function getUserQueryString(filter?: UserQuery) {
 
   switch (filter?.orderBy) {
     case "staffCode": {
-      sortStaffCodeParam = `sortStaffCode=${filter?.order === "asc" ? 1 : 2}&`;
+      sortOption = `sortStaffCode=${filter?.order === "asc" ? 1 : 2}&`;
       break;
     }
     case "fullName": {
-      sortFullNameParam = `sortFullName=${filter?.order === "asc" ? 1 : 2}&`;
+      sortOption = `sortFullName=${filter?.order === "asc" ? 1 : 2}&`;
       break;
     }
     case "joinedDate": {
-      sortJoinedDateParam = `sortJoinedDate=${
-        filter?.order === "asc" ? 1 : 2
-      }&`;
+      sortOption = `sortJoinedDate=${filter?.order === "asc" ? 1 : 2}&`;
       break;
     }
     case "type": {
-      sortTypeParam = `sortType=${filter?.order === "asc" ? 1 : 2}&`;
+      sortOption = `sortType=${filter?.order === "asc" ? 1 : 2}&`;
       break;
     }
     case "lastUpdate": {
-      sortTypeParam = `sortLastUpdate=${filter?.order === "asc" ? 1 : 2}&`;
+      sortOption = `sortLastUpdate=${filter?.order === "asc" ? 1 : 2}&`;
       break;
     }
     default: {
@@ -86,6 +80,6 @@ export function getUserQueryString(filter?: UserQuery) {
   const pageParam = `pageNumber=${filter.pageNumber ?? 1}&`;
   const sizeParam = `pageSize=${filter.pageSize ?? 5}`;
 
-  const queryString = `${nameParam}${typeParam}${sortStaffCodeParam}${sortFullNameParam}${sortJoinedDateParam}${sortTypeParam}${sortLastUpdate}${pageParam}${sizeParam}`;
+  const queryString = `${nameParam}${typeParam}${sortOption}${pageParam}${sizeParam}`;
   return queryString;
 }
