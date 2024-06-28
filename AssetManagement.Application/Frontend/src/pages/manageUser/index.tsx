@@ -61,8 +61,6 @@ export default function ManagementUserPage() {
   const initTypes = searchParams.getAll("types");
   const initOrder = passedOrder ?? searchParams.get("order") as Order;
   const initOrderBy = passedOrderBy ?? searchParams.get("orderBy") as OrderByFieldName;
-  console.log('passedOrder', passedOrder); 
-  console.log('passedOrderBy', passedOrderBy); 
   
   const [clickOnUser, setClickOnUser] = useState<boolean>(false);
   const [userId, setUserId] = useState<string>("0");
@@ -76,7 +74,6 @@ export default function ManagementUserPage() {
     order: initOrder ?? "desc",
     orderBy: initOrderBy ?? "joinedDate"
   });
-
 
   const { data, isLoading: filterLoading, error, mutate } = agent.Users.filter(query);
   const {
