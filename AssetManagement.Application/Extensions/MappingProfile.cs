@@ -19,6 +19,12 @@ public class MappingProfile : Profile
         //Asset
         CreateMap<AssetCreationRequest, Asset>();
         CreateMap<Asset, AssetResponse>();
+        CreateMap<Asset, AssetDetailsResponse>()
+            .ForMember(des => des.CategoryName, act => act.MapFrom(src => src.Category != null ? src.Category.Name : string.Empty))
+            .ForMember(dest => dest.AssetName, src => src.MapFrom(src => src.Name));
+
+
+
         //Category
         CreateMap<Category, CategoryInfoResponse>();
     }
