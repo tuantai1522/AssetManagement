@@ -4,10 +4,12 @@ import useSWR from "swr";
 import { PaginatedResponse } from "../models/Pagination";
 import { BaseResult } from "../models/BaseResult";
 import { User, UserQuery, getUserQueryString } from "../models/user/User";
-import { EditUserRequest } from "../models/login/EditUserRequest";
-import { CreateUserRequest } from "../models/login/CreateUserRequest";
 import { AssetCreationRequest } from "../models/asset/AssetCreationRequest";
 import { FilterAssetRequest, getAssetQueryString } from "../models/asset/Asset";
+import { EditUserRequest } from "../models/user/EditUserRequest";
+import { CreateUserRequest } from "../models/user/CreateUserRequest";
+import { useNotification } from "../components/toast/NotifyContext";
+import eventEmitter from "../hooks/EventMitter";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 axios.defaults.headers.post["Content-Type"] = "application/json";
@@ -29,7 +31,6 @@ axios.interceptors.request.use((config) => {
 
   return config;
 });
-
 axios.interceptors.response.use(
   async (response) => {
     // Get pagination response from header and data response from api
@@ -45,31 +46,40 @@ axios.interceptors.response.use(
   },
   (error: AxiosError) => {
     const result = error.response!.data as BaseResult<any>;
-    switch (result.error.status) {
+    const errorStatus = result.error ? result.error.status : result.status;
+    switch (errorStatus){
       case 400:
-        // if ((result.error.message as any).errors) {
-        //   const modalStateErrors: string[] = [];
-        //   for (const key in (result.error.message as any).errors) {
-        //     if ((result.error.message as any).errors[key]) {
-        //       modalStateErrors.push((result.error.message as any).errors[key]);
-        //     }
-        //   }
+        if (result?.errors) {
+          const modalStateErrors: string[] = [];
+          for (const key in result.errors) {
+            if (result.errors[key]) {
+              result.errors[key].forEach((errorMsg) => {
+                modalStateErrors.push(`${key}: ${errorMsg}`);
+              });
+            }
+          }
 
-        //   console.log(modalStateErrors.toString());
-        // }
-        console.log(result.error.message);
+          eventEmitter.emit('notification', modalStateErrors.join(', '), 'error');
+        } else if (result.error)
+        {
+          eventEmitter.emit('notification', result.error.message, 'error');
+          }
         break;
       case 401:
         console.log(result.error.message);
+        eventEmitter.emit('notification', result.error.message, 'error');
         break;
       case 403:
         console.log(result.error.message);
+        eventEmitter.emit('notification', result.error.message, 'error');
         break;
       case 404:
         console.log(result.error.message);
+        eventEmitter.emit('notification', result.error.message, 'error');
         break;
       case 409:
         console.log(result.error.message);
+        eventEmitter.emit('notification', result.error.message, 'error');
         break;
       case 500:
         console.log("Catch 500");

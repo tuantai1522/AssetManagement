@@ -39,20 +39,6 @@ public class AssetController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost("create")]
-    [Authorize(Roles = $"{RoleConstant.AdminRole}")]
-    public async Task<ActionResult<BaseResult<AssetResponse>>> CreateAssetAsync([FromBody] AssetCreationRequest request)
-    {
-        var data = await _assetService.CreateAssetAsync(request);
-        var result = new BaseResult<AssetResponse>()
-        {
-            IsSuccess = true,
-            Error = null,
-            Result = data
-        };
-        return Ok(result);
-    }
-
     [HttpGet("getAssetById")]
     [Authorize(Roles = $"{RoleConstant.AdminRole}")]
     public async Task<ActionResult<BaseResult<AssetDetailsResponse>>> GetAssetById([FromQuery] AssetDetailsRequest request)
@@ -66,4 +52,18 @@ public class AssetController : ControllerBase
         };
         return Ok(result);
     }
+
+	[HttpPost("create")]
+	[Authorize(Roles = $"{RoleConstant.AdminRole}")]
+	public async Task<ActionResult<BaseResult<AssetResponse>>> CreateAssetAsync([FromBody] AssetCreationRequest request)
+	{
+		var data = await _assetService.CreateAssetAsync(request);
+		var result = new BaseResult<AssetResponse>()
+		{
+			IsSuccess = true,
+			Error = null,
+			Result = data
+		};
+		return Ok(result);
+	}
 }

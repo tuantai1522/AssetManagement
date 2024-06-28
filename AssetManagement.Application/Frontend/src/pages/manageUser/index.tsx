@@ -11,19 +11,10 @@ import UsePagination from "../../app/components/paginationButtons/paginationButt
 import { Search } from "@mui/icons-material";
 import AppSearchInput from "../../app/components/AppSearchInput";
 import AppButton from "../../app/components/buttons/Button";
-import { SetURLSearchParams, useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, SetURLSearchParams, useNavigate, useSearchParams } from "react-router-dom";
 import UserType from "./userList/userType";
 import { BaseResult } from "../../app/models/BaseResult";
 
-const isOrderByFieldName = (value: any): value is OrderByFieldName => {
-  return ["staffCode", "fullName", "joinedDate", "type", "lastUpdate"].includes(
-    value
-  );
-};
-
-const isOrder = (value: any): value is Order => {
-  return ["asc", "desc"].includes(value);
-};
 
 function setFilterSearchParam(query: UserQuery, setSearchParams: SetURLSearchParams) {
   const params = new URLSearchParams();
@@ -61,13 +52,15 @@ function setFilterSearchParam(query: UserQuery, setSearchParams: SetURLSearchPar
 export default function ManagementUserPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  let { passedOrder, passedOrderBy } = location.state || {};
 
   const initQueryName = searchParams.get("name") ?? "";
   const initPageNumber = Number(searchParams.get("pageNumber") ?? "1");
   const initPageSize = Number(searchParams.get("pageSize") ?? "5");
   const initTypes = searchParams.getAll("types");
-  const initOrder = searchParams.get("order") as Order;
-  const initOrderBy = searchParams.get("orderBy") as OrderByFieldName;
+  const initOrder = passedOrder ?? searchParams.get("order") as Order;
+  const initOrderBy = passedOrderBy ?? searchParams.get("orderBy") as OrderByFieldName;
 
   const [clickOnUser, setClickOnUser] = useState<boolean>(false);
   const [userId, setUserId] = useState<string>("0");
@@ -82,47 +75,23 @@ export default function ManagementUserPage() {
     orderBy: initOrderBy ?? "joinedDate"
   });
 
-  const { data, isLoading, error, mutate } = agent.Users.filter(query);
-  const {
-    data: userData,
-    isLoading: userLoading,
-    error: userError,
-  } = agent.Users.details(userId);
+  const { data, isLoading: filterLoading, error, mutate } = agent.Users.filter(query);
 
   const [isDisablingModalOpen, setIsDisablingModalOpen] = useState(false);
   const [currentDisablingId, setCurrentDisablingId] = useState("");
 
-  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
-  const [currentErrorMessage, setCurrentErrorMessage] = useState("");
-
   const [searchInput, setSearchInput] = useState<string>(initQueryName);
 
-  const passedOrderBy = searchParams.get("passedOrderBy") ?? undefined;
-  const passedOrder = searchParams.get("passedOrder") ?? undefined;
-
   useEffect(() => {
-    if (passedOrderBy && isOrderByFieldName(passedOrderBy)) {
-      setOrderBy(passedOrderBy);
+    if (!filterLoading) {
+      window.history.replaceState({}, '');
     }
-    if (passedOrder && isOrder(passedOrder)) {
-      setOrder(passedOrder);
-    }
-  }, [passedOrderBy, passedOrder]);
+
+  }, [filterLoading])
+
 
   const handleDisable = async (id: string) => {
-    try {
-      await agent.Users.disable(id).then(mutate);
-    } catch (e) {
-      const err = e as BaseResult<any>;
-      if (err?.error) {
-        if (err?.error?.message) setCurrentErrorMessage(err?.error?.message);
-      } else {
-        setCurrentErrorMessage(
-          "An unexpected error happened. Please try again!"
-        );
-      }
-      setIsErrorModalOpen(true);
-    }
+    await agent.Users.disable(id).then(mutate);
   };
 
   const setOrderBy = (orderBy: OrderByFieldName) => {
@@ -181,21 +150,6 @@ export default function ManagementUserPage() {
   return (
     <div className="flex justify-center h-full">
       <div className="container">
-        <Snackbar
-          anchorOrigin={{ vertical: "top", horizontal: "right" }}
-          open={isErrorModalOpen}
-          autoHideDuration={5000}
-          onClose={() => setIsErrorModalOpen(false)}
-        >
-          <Alert
-            onClose={() => setIsErrorModalOpen(false)}
-            severity="error"
-            variant="outlined"
-            sx={{ width: "100%", bgcolor: "background.paper" }}
-          >
-            {currentErrorMessage}
-          </Alert>
-        </Snackbar>
         <p className="text-primary text-xl font-bold justify-start items-start">
           User List
         </p>
@@ -256,7 +210,7 @@ export default function ManagementUserPage() {
               joinedDate: convertUtcToLocalDate(item?.joinedDate),
             }))}
             error={error}
-            isLoading={isLoading}
+            isLoading={filterLoading}
             order={query?.order ?? "asc"}
             setOrder={setOrder}
             orderBy={query?.orderBy}
@@ -289,14 +243,18 @@ export default function ManagementUserPage() {
           handleDisable(currentDisablingId);
         }}
       />
-      <UserInfo
-        isOpen={clickOnUser}
-        isLoading={userLoading}
-        userData={userData?.result}
-        onClose={() => {
-          setClickOnUser(false);
-        }}
-      ></UserInfo>
+      {
+        clickOnUser ?
+          <UserInfo
+            userId={userId}
+            onClose={() => {
+              setClickOnUser(false);
+            }}
+          ></UserInfo>
+          :
+          <></>
+      }
+
     </div>
   );
 }

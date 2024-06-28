@@ -1,4 +1,4 @@
-namespace AssetManagement.Contracts.Dtos.AssetDtos.Requests
+﻿namespace AssetManagement.Contracts.Dtos.AssetDtos.Requests
 {
     public class AssetDetailsRequest
     {

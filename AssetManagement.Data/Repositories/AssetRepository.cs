@@ -12,6 +12,5 @@ namespace AssetManagement.Data.Repositories
         {
             _context = dbContext;
         }
-
     }
 }
