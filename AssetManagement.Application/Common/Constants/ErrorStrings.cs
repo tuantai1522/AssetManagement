@@ -20,5 +20,8 @@
         public const string CANNOT_ADD_ROLE_TO_USER = "Cannot Add Role to User";
         public const string CANNOT_UPDATE_USER = "Cannot Update User";
 		public const string LOCATION_NOT_VALID = "Admin is not entitled to edit user due to location";
+
+		public const string USER_NOT_LOGIN = "User do not login";
+		public const string USER_IS_DISABLED = "User is disabled";
 	}
 }

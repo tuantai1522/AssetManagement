@@ -4,8 +4,8 @@ import { visuallyHidden } from '@mui/utils';
 
 export interface CustomTableHeadProp {
     onRequestSort: (event: React.MouseEvent<unknown>, property: any) => void;
-    order: Order;
-    orderBy: any;
+    order?: Order;
+    orderBy?: any;
     columns: ColumnDefinition[]
 }
 export type Order = 'asc' | 'desc';
@@ -19,8 +19,9 @@ export interface ColumnDefinition {
     style?: React.CSSProperties;
     disableSort?: boolean,
     rowRatio?: string,
-    bodyStyle?: any,
+    bodyStyle?: React.CSSProperties,
     renderCell?: (data: any) => JSX.Element,
+    minWidth?: string
 }
 export interface RowDefinition<T> {
     id: any;
@@ -37,13 +38,14 @@ export interface AppTableCell {
     ratio?: string,
     bodyStyle?: React.CSSProperties,
     value?: any,
-    renderCell?: JSX.Element
+    renderCell?: JSX.Element,
+    minWidth?: string
 }
 
 export interface AppTableProp<T> {
-    order: Order,
+    order?: Order,
     setOrder: (order: Order) => void,
-    orderByFieldName: any,
+    orderByFieldName?: any,
     setOrderByFieldName: (orderBy: any) => void,
     handleClick: (event: React.MouseEvent<unknown>, id: any) => void,
     columns: ColumnDefinition[],
@@ -52,8 +54,9 @@ export interface AppTableProp<T> {
 }
 
 function CustomTableHead(props: CustomTableHeadProp) {
-    const { order, orderBy, onRequestSort } =
+    let { order, orderBy, onRequestSort } =
         props;
+    order = order ?? "asc";
     const createSortHandler =
         (property: any) => (event: React.MouseEvent<unknown>) => {
             onRequestSort(event, property);
@@ -78,9 +81,9 @@ function CustomTableHead(props: CustomTableHeadProp) {
                                 direction={orderBy === key ? order : 'asc'}
                                 onClick={createSortHandler(key)}
                                 IconComponent={ArrowDropUp}
-                                className={`font-bold ${column.className}`}
+                                className={`font-bold ${column.className} ${column.rowRatio}`}
                                 classes={column.classNames}
-                                sx={column.style}
+                                sx={{ ...column.style, minWidth: column.minWidth }}
                                 disabled={column.disableSort ?? false}
                             >
                                 {column.label}
@@ -111,7 +114,8 @@ function mapToAppTableRows<T>(
                 value: data,
                 renderCell: column.renderCell ? column.renderCell(data) : undefined,
                 ratio: column.rowRatio,
-                bodyStyle: column.bodyStyle
+                bodyStyle: column.bodyStyle,
+                minWidth: column.minWidth
             };
         });
 
@@ -194,7 +198,7 @@ export function AppTable<T>(props: AppTableProp<T>) {
                                                     align="left"
                                                     className={item.ratio ?? ""}
                                                     key={index}
-                                                    sx={item.bodyStyle}
+                                                    sx={{ ...item.bodyStyle, minWidth: item.minWidth }}
                                                 >
                                                     {item.renderCell ?? item.value ?? ''}
                                                 </TableCell>
