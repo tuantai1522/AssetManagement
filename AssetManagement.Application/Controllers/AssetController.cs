@@ -53,17 +53,4 @@ public class AssetController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("getAssetById")]
-    [Authorize(Roles = $"{RoleConstant.AdminRole}")]
-    public async Task<ActionResult<BaseResult<AssetDetailsResponse>>> GetAssetById([FromQuery] AssetDetailsRequest request)
-    {
-        var data = await _assetService.GetAssetByIdAsync(request);
-        var result = new BaseResult<AssetDetailsResponse>()
-        {
-            IsSuccess = true,
-            Error = null,
-            Result = data
-        };
-        return Ok(result);
-    }
 }

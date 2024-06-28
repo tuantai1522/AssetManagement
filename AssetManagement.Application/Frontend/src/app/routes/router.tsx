@@ -40,14 +40,16 @@ export const router = createBrowserRouter([
               {
                 path: "manage-user", children: [
                   { path: '', element: <ManagementUserPage /> },
-                  { path: "create-user", element: <CreateUserPage />},
-                  { path: "edit-user/:id", element: <EditUserPage />}, 
-                  
-              ]},
-              { path: "manage-asset", element: <ManagementAssetPage /> },
+                  { path: "create-user", element: <CreateUserPage /> },
+                  { path: "edit-user/:id", element: <EditUserPage /> },
+
+                ]
+              },
               {
-                path: "manage-asset/create-asset",
-                element: <CreateAssetPage />,
+                path: "manage-asset", children: [
+                  { path: '', element: <ManagementAssetPage /> },
+                  { path: "create-asset", element: <CreateAssetPage /> },
+                ]
               },
               {
                 path: "manage-assignment",
