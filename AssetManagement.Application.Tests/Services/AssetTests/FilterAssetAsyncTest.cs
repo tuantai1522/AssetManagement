@@ -15,40 +15,40 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
         public async Task FilterAssetAsync_UserNotLoggedIn_ThrowsUnauthorizedAccessException()
         {
             // Arrange
-            _mockUserManager.Setup(u => u.Users).Returns(Users.AsQueryable().BuildMock());
-            _mockCurrentUser.Setup(u => u.UserId).Returns(Guid.Empty);
+            _userManagerMock.Setup(u => u.Users).Returns(Users.AsQueryable().BuildMock());
+            _currentUserMock.Setup(u => u.UserId).Returns(Guid.Empty);
 
             // Act & Assert
             await Assert.ThrowsAsync<UnauthorizedAccessException>(() =>
-                 _mockAssetService.FilterAssetAsync(new FilterAssetRequest()));
+                 _assetService.FilterAssetAsync(new FilterAssetRequest()));
         }
         [Fact]
         public async Task FilterAssetAsync_UserIsDisabled_ThrowsUnauthorizedAccessException()
         {
             // Arrange
             var currentUser = new AppUser { Id = Guid.NewGuid(), IsDisabled = true };
-			_mockUserManager.Setup(u => u.Users).Returns(new[] { currentUser }.AsQueryable().BuildMock());
-			_mockCurrentUser.Setup(c => c.UserId).Returns(currentUser.Id);
+            _userManagerMock.Setup(u => u.Users).Returns(new[] { currentUser }.AsQueryable().BuildMock());
+            _currentUserMock.Setup(c => c.UserId).Returns(currentUser.Id);
 
             // Act & Assert
             await Assert.ThrowsAsync<UnauthorizedAccessException>(() =>
-				_mockAssetService.FilterAssetAsync(new FilterAssetRequest()));
+                _assetService.FilterAssetAsync(new FilterAssetRequest()));
         }
         [Fact]
         public async Task FilterAssetAsync_DefaultPagination_SetsDefaultValues()
         {
             // Arrange
             var currentUser = new AppUser { Id = Guid.NewGuid(), IsDisabled = false, Location = "HCM" };
-			_mockUserManager.Setup(u => u.Users).Returns(new[] { currentUser }.AsQueryable().BuildMock());
-			_mockCurrentUser.Setup(c => c.UserId).Returns(currentUser.Id);
+            _userManagerMock.Setup(u => u.Users).Returns(new[] { currentUser }.AsQueryable().BuildMock());
+            _currentUserMock.Setup(c => c.UserId).Returns(currentUser.Id);
 
             var assets = new[] { new Asset { Id = Guid.NewGuid(), Location = "HCM" } };
-            _mockUnitOfWork.Setup(u => u.AssetRepository.GetQueryableSet()).Returns(assets.AsQueryable().BuildMock());
+            _unitOfWorkMock.Setup(u => u.AssetRepository.GetQueryableSet()).Returns(assets.AsQueryable().BuildMock());
 
             var filter = new FilterAssetRequest();
 
             // Act
-            var result = await _mockAssetService.FilterAssetAsync(filter);
+            var result = await _assetService.FilterAssetAsync(filter);
 
             // Assert
             Assert.NotNull(result);
@@ -60,20 +60,20 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
         {
             // Arrange
             var currentUser = new AppUser { Id = Guid.NewGuid(), IsDisabled = false, Location = "HCM" };
-            _mockUserManager.Setup(u => u.Users).Returns(new[] { currentUser }.AsQueryable().BuildMock());
-            _mockCurrentUser.Setup(c => c.UserId).Returns(currentUser.Id);
+            _userManagerMock.Setup(u => u.Users).Returns(new[] { currentUser }.AsQueryable().BuildMock());
+            _currentUserMock.Setup(c => c.UserId).Returns(currentUser.Id);
 
             var assets = new[]
             {
                 new Asset { Id = Guid.NewGuid(), Name = "Asset1", AssetCode = "A001", Location = "HCM" },
                 new Asset { Id = Guid.NewGuid(), Name = "Asset2", AssetCode = "A002", Location = "HCM" }
             };
-            _mockUnitOfWork.Setup(u => u.AssetRepository.GetQueryableSet()).Returns(assets.AsQueryable().BuildMock());
+            _unitOfWorkMock.Setup(u => u.AssetRepository.GetQueryableSet()).Returns(assets.AsQueryable().BuildMock());
 
             var filter = new FilterAssetRequest { Search = "Asset1" };
 
             // Act
-            var result = await _mockAssetService.FilterAssetAsync(filter);
+            var result = await _assetService.FilterAssetAsync(filter);
 
             // Assert
             Assert.Single(result.Data);
@@ -84,8 +84,8 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
         {
             // Arrange
             var currentUser = new AppUser { Id = Guid.NewGuid(), IsDisabled = false, Location = "HCM" };
-            _mockUserManager.Setup(u => u.Users).Returns(new[] { currentUser }.AsQueryable().BuildMock());
-            _mockCurrentUser.Setup(c => c.UserId).Returns(currentUser.Id);
+            _userManagerMock.Setup(u => u.Users).Returns(new[] { currentUser }.AsQueryable().BuildMock());
+            _currentUserMock.Setup(c => c.UserId).Returns(currentUser.Id);
 
             var assets = new[]
             {
@@ -94,12 +94,12 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
                 new Asset { Id = Guid.NewGuid(), Name = "Asset3", AssetCode = "B001", Location = "HCM" },
                 new Asset { Id = Guid.NewGuid(), Name = "Asset4", AssetCode = "B002", Location = "HCM" },
             };
-            _mockUnitOfWork.Setup(u => u.AssetRepository.GetQueryableSet()).Returns(assets.AsQueryable().BuildMock());
+            _unitOfWorkMock.Setup(u => u.AssetRepository.GetQueryableSet()).Returns(assets.AsQueryable().BuildMock());
 
             var filter = new FilterAssetRequest { Search = "B0" };
 
             // Act
-            var result = await _mockAssetService.FilterAssetAsync(filter);
+            var result = await _assetService.FilterAssetAsync(filter);
 
             // Assert
             Assert.Equal(2, result.Data.Count);
@@ -111,8 +111,8 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
         {
             // Arrange
             var currentUser = new AppUser { Id = Guid.NewGuid(), IsDisabled = false, Location = "HCM" };
-            _mockUserManager.Setup(u => u.Users).Returns(new[] { currentUser }.AsQueryable().BuildMock());
-            _mockCurrentUser.Setup(c => c.UserId).Returns(currentUser.Id);
+            _userManagerMock.Setup(u => u.Users).Returns(new[] { currentUser }.AsQueryable().BuildMock());
+            _currentUserMock.Setup(c => c.UserId).Returns(currentUser.Id);
 
             var assets = new[]
             {
@@ -125,12 +125,12 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
                 new Asset { Id = Guid.NewGuid(), Name = "AssetB2", AssetCode = "B002", Location = "HCM", State = AssetState.NotAvailable,
                     Category = new Category { Id = Guid.NewGuid(), Name = "Monitor" } },
         };
-            _mockUnitOfWork.Setup(u => u.AssetRepository.GetQueryableSet()).Returns(assets.AsQueryable().BuildMock());
+            _unitOfWorkMock.Setup(u => u.AssetRepository.GetQueryableSet()).Returns(assets.AsQueryable().BuildMock());
 
             var filter = new FilterAssetRequest { States = new AssetState[] { AssetState.Available }, Categories = new[] { "Laptop", "Monitor" } };
 
             // Act
-            var result = await _mockAssetService.FilterAssetAsync(filter);
+            var result = await _assetService.FilterAssetAsync(filter);
 
             // Assert
             Assert.Equal(2, result.Data.Count);
@@ -142,26 +142,26 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
         {
             // Arrange
             var currentUser = new AppUser { Id = Guid.NewGuid(), IsDisabled = false, Location = "HCM" };
-            _mockUserManager.Setup(u => u.Users).Returns(new[] { currentUser }.AsQueryable().BuildMock());
-            _mockCurrentUser.Setup(c => c.UserId).Returns(currentUser.Id);
+            _userManagerMock.Setup(u => u.Users).Returns(new[] { currentUser }.AsQueryable().BuildMock());
+            _currentUserMock.Setup(c => c.UserId).Returns(currentUser.Id);
 
             var assets = new[]
             {
-			    new Asset { Id = Guid.NewGuid(), Name = "AssetA1", AssetCode = "A001", Location = "HCM", State = AssetState.Available,
-					Category = new Category { Id = Guid.NewGuid(), Name = "Laptop" } },
-				new Asset { Id = Guid.NewGuid(), Name = "AssetA2", AssetCode = "A002", Location = "HCM", State = AssetState.NotAvailable,
-					Category = new Category { Id = Guid.NewGuid(), Name = "Laptop" } },
-				new Asset { Id = Guid.NewGuid(), Name = "AssetB1", AssetCode = "B001", Location = "HCM", State = AssetState.Available,
-					Category = new Category { Id = Guid.NewGuid(), Name = "Monitor" } },
-				new Asset { Id = Guid.NewGuid(), Name = "AssetB2", AssetCode = "B002", Location = "HCM", State = AssetState.NotAvailable,
-					Category = new Category { Id = Guid.NewGuid(), Name = "Monitor" } },
-		};
-            _mockUnitOfWork.Setup(u => u.AssetRepository.GetQueryableSet()).Returns(assets.AsQueryable().BuildMock());
+                new Asset { Id = Guid.NewGuid(), Name = "AssetA1", AssetCode = "A001", Location = "HCM", State = AssetState.Available,
+                    Category = new Category { Id = Guid.NewGuid(), Name = "Laptop" } },
+                new Asset { Id = Guid.NewGuid(), Name = "AssetA2", AssetCode = "A002", Location = "HCM", State = AssetState.NotAvailable,
+                    Category = new Category { Id = Guid.NewGuid(), Name = "Laptop" } },
+                new Asset { Id = Guid.NewGuid(), Name = "AssetB1", AssetCode = "B001", Location = "HCM", State = AssetState.Available,
+                    Category = new Category { Id = Guid.NewGuid(), Name = "Monitor" } },
+                new Asset { Id = Guid.NewGuid(), Name = "AssetB2", AssetCode = "B002", Location = "HCM", State = AssetState.NotAvailable,
+                    Category = new Category { Id = Guid.NewGuid(), Name = "Monitor" } },
+        };
+            _unitOfWorkMock.Setup(u => u.AssetRepository.GetQueryableSet()).Returns(assets.AsQueryable().BuildMock());
 
             var filter = new FilterAssetRequest { SortAssetCode = SortOption.Asc };
 
             // Act
-            var result = await _mockAssetService.FilterAssetAsync(filter);
+            var result = await _assetService.FilterAssetAsync(filter);
 
             // Assert
             Assert.Equal(4, result.Data.Count);
