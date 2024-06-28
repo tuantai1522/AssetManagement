@@ -15,15 +15,6 @@ import { useLocation, SetURLSearchParams, useNavigate, useSearchParams } from "r
 import UserType from "./userList/userType";
 import { BaseResult } from "../../app/models/BaseResult";
 
-const isOrderByFieldName = (value: any): value is OrderByFieldName => {
-  return ["staffCode", "fullName", "joinedDate", "type", "lastUpdate"].includes(
-    value
-  );
-};
-
-const isOrder = (value: any): value is Order => {
-  return ["asc", "desc"].includes(value);
-};
 
 function setFilterSearchParam(query: UserQuery, setSearchParams: SetURLSearchParams) {
   const params = new URLSearchParams();
@@ -61,14 +52,18 @@ function setFilterSearchParam(query: UserQuery, setSearchParams: SetURLSearchPar
 export default function ManagementUserPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-
+  const location = useLocation();
+  let { passedOrder, passedOrderBy } = location.state || {};
+  
   const initQueryName = searchParams.get("name") ?? "";
   const initPageNumber = Number(searchParams.get("pageNumber") ?? "1");
   const initPageSize = Number(searchParams.get("pageSize") ?? "5");
   const initTypes = searchParams.getAll("types");
-  const initOrder = searchParams.get("order") as Order;
-  const initOrderBy = searchParams.get("orderBy") as OrderByFieldName;
-
+  const initOrder = passedOrder ?? searchParams.get("order") as Order;
+  const initOrderBy = passedOrderBy ?? searchParams.get("orderBy") as OrderByFieldName;
+  console.log('passedOrder', passedOrder); 
+  console.log('passedOrderBy', passedOrderBy); 
+  
   const [clickOnUser, setClickOnUser] = useState<boolean>(false);
   const [userId, setUserId] = useState<string>("0");
   const [types, setTypes] = useState<string[]>(initTypes);
@@ -82,7 +77,8 @@ export default function ManagementUserPage() {
     orderBy: initOrderBy ?? "joinedDate"
   });
 
-  const { data, isLoading, error, mutate } = agent.Users.filter(query);
+
+  const { data, isLoading: filterLoading, error, mutate } = agent.Users.filter(query);
   const {
     data: userData,
     isLoading: userLoading,
@@ -97,23 +93,14 @@ export default function ManagementUserPage() {
 
   const [searchInput, setSearchInput] = useState<string>(initQueryName);
 
-  const passedOrderBy = searchParams.get("passedOrderBy") ?? undefined;
-  const passedOrder = searchParams.get("passedOrder") ?? undefined;
-
   useEffect(() => {
-    if (passedOrderBy && isOrderByFieldName(passedOrderBy)) {
-      setOrderBy(passedOrderBy);
+    if (!filterLoading)
+    {
+      window.history.replaceState({}, '');
     }
-    if (passedOrder && isOrder(passedOrder)) {
-      setOrder(passedOrder);
-    }
-    
-    if (window.location.search) {
-      navigate(window.location.pathname, {
-        replace: true,
-      });
-    }
-  }, [navigate, searchParams, passedOrderBy, passedOrder]);
+  
+  }, [filterLoading])
+  
 
   const handleDisable = async (id: string) => {
     try {
@@ -262,7 +249,7 @@ export default function ManagementUserPage() {
               joinedDate: convertUtcToLocalDate(item?.joinedDate),
             }))}
             error={error}
-            isLoading={isLoading}
+            isLoading={filterLoading}
             order={query?.order ?? "asc"}
             setOrder={setOrder}
             orderBy={query?.orderBy}

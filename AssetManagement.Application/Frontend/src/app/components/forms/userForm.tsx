@@ -12,21 +12,19 @@ import { useEffect } from "react";
 import dayjs from "dayjs";
 import { UserInfoResponse } from "../../models/login/UserInfoResponse";
 import { UserCreateForm } from "../../models/user/UserCreateForm";
-import { UserQuery, getUserQueryString } from "../../api/agent";
 import AppTextInput from "../AppTextInput";
+
 
 interface UserFormProps {
     onSubmit: (data: any) => void;
     isEditing?: boolean;
     data?: UserInfoResponse;
-    query?: UserQuery;
 }
 
 const UserForm = ({
     onSubmit,
     isEditing = false,
     data,
-    query
 }: UserFormProps) => {
     const navigate = useNavigate();
 
@@ -212,8 +210,7 @@ const UserForm = ({
                 <div className="flex justify-end space-x-4">
                     <AppButton content="Save" isFormSubmit={true} isDisabled={!isValid} />
                     <AppButton content="Cancel" styleType="Secondary" onClickOn={() => {
-                        const queryString = getUserQueryString(query);
-                        navigate(`/manage-user?${queryString}`);
+                        navigate(-1);
                     }}
                     />
                 </div>

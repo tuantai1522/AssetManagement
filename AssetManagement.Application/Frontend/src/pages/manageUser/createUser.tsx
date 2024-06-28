@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import agent, { UserQuery } from "../../app/api/agent";
+import agent from "../../app/api/agent";
 import UserForm from "../../app/components/forms/userForm";
 import { CreateUserRequest } from "../../app/models/user/CreateUserRequest";
 import { UserInfoResponse } from "../../app/models/login/UserInfoResponse";
@@ -10,7 +10,6 @@ import { UserCreateForm } from "../../app/models/user/UserCreateForm";
 const CreateUserPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { query } = location.state as {query: UserQuery};
 
     const onSubmit = async (formData: UserCreateForm) => {
         // Format the dates to 'YYYY-MM-DD'
@@ -26,12 +25,12 @@ const CreateUserPage = () => {
             Type: formData.type,
         }
         const response: BaseResult<UserInfoResponse> = await agent.Users.create(createData);
-        navigate(`/manage-user?orderBy=${encodeURIComponent('lastUpdate')}&order=${encodeURIComponent('desc')}`);
+        // navigate(`/manage-user?orderBy=${encodeURIComponent('lastUpdate')}&order=${encodeURIComponent('desc')}`);
+        navigate('/manage-user', {state: {passedOrder: "desc", passedOrderBy: "lastUpdate"}});
     }
 
     return <UserForm
         onSubmit={onSubmit}
-        query={query}
     />;
 }
 
