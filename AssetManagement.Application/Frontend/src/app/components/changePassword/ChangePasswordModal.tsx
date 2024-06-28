@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { ChangePasswordRequest } from "../../models/changePassword/ChangePasswordRequest";
 import agent from "../../api/agent";
 import { BaseResult } from "../../models/BaseResult";
-import { User } from "../../models/User";
+import { User } from "../../models/user/User";
 
 interface Props {
   user: User | null;

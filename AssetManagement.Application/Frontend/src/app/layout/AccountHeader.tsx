@@ -3,7 +3,7 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { IconButton, Menu, MenuItem } from "@mui/material";
 import ChangePasswordModal from "../components/changePassword/ChangePasswordModal";
 import { useNavigate } from "react-router-dom";
-import { User } from "../models/User";
+import { User } from "../models/user/User";
 
 interface Props {
   user: User | null;
