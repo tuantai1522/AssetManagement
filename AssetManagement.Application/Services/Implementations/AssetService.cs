@@ -105,6 +105,7 @@ namespace AssetManagement.Application.Services.Implementations
 
             return _mapper.Map<AssetResponse>(newAsset);
         }
+
         #region Private methods
         private Func<IQueryable<Asset>, IOrderedQueryable<Asset>> GetOrderByFunction(FilterAssetRequest filter)
         {

@@ -138,10 +138,11 @@ const Authentication = {
 
 const Category = {
   all: () => requests.get(`api/category`),
+  create: (values: {}) => requests.post("api/category", values),
 };
 
 const Asset = {
-filter: (query?: FilterAssetRequest) => {
+  filter: (query?: FilterAssetRequest) => {
     const queryString = getAssetQueryString(query);
     return requests.get(`api/Asset?${queryString}`);
   },
