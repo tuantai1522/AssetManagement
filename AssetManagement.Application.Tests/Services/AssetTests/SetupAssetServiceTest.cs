@@ -1,7 +1,6 @@
 ﻿using AssetManagement.Application.Common.Credential;
 using AssetManagement.Application.Extensions;
 using AssetManagement.Application.Services.Implementations;
-using AssetManagement.Application.Services.Interfaces;
 using AssetManagement.Data.Interfaces;
 using AssetManagement.Domain.Entities;
 using AssetManagement.Domain.Enums;
@@ -11,21 +10,20 @@ using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System.Data;
 
 namespace AssetManagement.Application.Tests.Services.AssetTests;
 public class SetupAssetServiceTest
 {
     protected readonly IFixture _fixture;
 
-    protected readonly Mock<ICurrentUser> _mockCurrentUser;
-    protected readonly Mock<UserManager<AppUser>> _mockUserManager;
+    protected readonly Mock<ICurrentUser> _currentUserMock;
+    protected readonly Mock<UserManager<AppUser>> _userManagerMock;
     protected readonly IMapper _mapperConfig;
-    protected readonly Mock<IUnitOfWork> _mockUnitOfWork;
+    protected readonly Mock<IUnitOfWork> _unitOfWorkMock;
     protected readonly Mock<ILogger<AssetService>> _mockLogger;
 
-    protected readonly Mock<IAssetRepository> _mockAssetRepository;
-    protected readonly AssetService _mockAssetService;
+    protected readonly Mock<IAssetRepository> _assetRepositoryMock;
+    protected readonly AssetService _assetService;
 
     protected List<Role> Roles;
     protected List<AppUser> Users;
@@ -35,18 +33,18 @@ public class SetupAssetServiceTest
         _fixture = new Fixture().Customize(new AutoMoqCustomization());
         _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
-        _mockCurrentUser = new Mock<ICurrentUser>();
-        _mockUserManager = _fixture.Freeze<Mock<UserManager<AppUser>>>();
+        _currentUserMock = new Mock<ICurrentUser>();
+        _userManagerMock = _fixture.Freeze<Mock<UserManager<AppUser>>>();
         var mappingConfig = new MapperConfiguration(mc =>
         {
             mc.AddProfile(new MappingProfile());
         });
         _mapperConfig = mappingConfig.CreateMapper();
-        _mockUnitOfWork = new Mock<IUnitOfWork>();
-        _mockAssetRepository = new Mock<IAssetRepository>();
+        _unitOfWorkMock = new Mock<IUnitOfWork>();
+        _assetRepositoryMock = new Mock<IAssetRepository>();
         _mockLogger = new Mock<ILogger<AssetService>>();
 
-        _mockAssetService = new AssetService(_mockLogger.Object, _mockUnitOfWork.Object, _mockCurrentUser.Object, _mapperConfig, _mockUserManager.Object);
+        _assetService = new AssetService(_mockLogger.Object, _unitOfWorkMock.Object, _currentUserMock.Object, _mapperConfig, _userManagerMock.Object);
 
         Setup();
     }
@@ -69,7 +67,7 @@ public class SetupAssetServiceTest
         ];
 
         Users = [
-             new AppUser (){
+           new AppUser (){
             Id = Guid.NewGuid(),
             FirstName = "Admin",
             LastName = "1",
