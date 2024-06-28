@@ -1,6 +1,6 @@
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { User } from "../models/User";
+import { User } from "../models/user/User";
 
 interface Props {
   roles?: string[];

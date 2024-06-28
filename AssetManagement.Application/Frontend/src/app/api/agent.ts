@@ -3,7 +3,7 @@ import { router } from "../routes/router";
 import useSWR from "swr";
 import { PaginatedResponse } from "../models/Pagination";
 import { BaseResult } from "../models/BaseResult";
-import { User, UserQuery, getUserQueryString } from "../models/User";
+import { User, UserQuery, getUserQueryString } from "../models/user/User";
 import { EditUserRequest } from "../models/login/EditUserRequest";
 import { CreateUserRequest } from "../models/login/CreateUserRequest";
 import { AssetCreationRequest } from "../models/asset/AssetCreationRequest";
