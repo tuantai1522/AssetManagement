@@ -78,8 +78,11 @@ axios.interceptors.response.use(
         break;
       default:
         break;
-    }
-    return Promise.reject(result.result);
+      }
+      if (result.result) {
+          return Promise.reject(result.result);
+      }
+    return Promise.reject(result);
   }
 );
 
