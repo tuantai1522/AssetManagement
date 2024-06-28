@@ -3,6 +3,7 @@ import AppButton from "../buttons/Button";
 import { useNavigate } from "react-router-dom";
 import { Controller, FieldValues, useForm } from "react-hook-form";
 import {
+  Divider,
   FormControl,
   FormControlLabel,
   FormHelperText,
@@ -20,13 +21,15 @@ import { AssetStateEnum } from "../../types/enum";
 import { Category } from "../../models/category/Category";
 import agent from "../../api/agent";
 import { AssetCreationForm } from "../../models/asset/AssetCreationRequest";
+import CreateCategoryForm from "./CreateCategoryForm";
+import AppLoader from "../AppLoader";
 
 interface Props {
   handleCreateAsset: (data: any) => void;
 }
 
 const CreateAssetForm = ({ handleCreateAsset }: Props) => {
-  const categories = agent.Category.all();
+  const { data: categories, isLoading: categoriesIsLoading, mutate: mutateCategories } = agent.Category.all();
 
   const {
     handleSubmit,
@@ -86,14 +89,23 @@ const CreateAssetForm = ({ handleCreateAsset }: Props) => {
                       value={field.value || ""}
                       onChange={(e) => field.onChange(e.target.value)}
                     >
-                      {categories.data &&
-                        (
-                          (categories.data.items.result as Category[]) ?? []
-                        ).map((category, index) => (
-                          <MenuItem key={index} value={category.id}>
-                            {category.name}
-                          </MenuItem>
-                        ))}
+                      {categoriesIsLoading ? (
+                        <div className="flex items-center justify-center mb-2">
+                          <AppLoader border={2} height={5} width={5} />
+                        </div>
+                      ) : categories ? (
+                        (categories.items.result as Category[]).map(
+                          (category, index) => (
+                            <MenuItem key={index} value={category.id}>
+                              {category.name}
+                            </MenuItem>
+                          )
+                        )
+                      ) : (
+                        <p className="ml-4 mb-2">No Category found!</p>
+                      )}
+                      <Divider />
+                      <CreateCategoryForm refetchCategories={mutateCategories} />
                     </Select>
                   </FormControl>
                 )}

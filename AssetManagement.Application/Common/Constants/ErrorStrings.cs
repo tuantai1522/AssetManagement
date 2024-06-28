@@ -5,7 +5,7 @@
         public const string USER_NOT_FOUND = "User not found";
         public const string UNAUTHORIZED_USER = "Unauthorized user";
         public const string INVALID_FIRSTNAME_CHARACTERS = "First name can only contain alphabet characters";
-        public const string INVALID_LASTNAME_CHARACTERS = "last name can only contain alphabet characters and white spaces";
+        public const string INVALID_LASTNAME_CHARACTERS = "Last name can only contain alphabet characters and white spaces";
         public const string INVALID_FIRSTNAME_NUMBER_OF_WORDS = "First name cannot be more than one word";
         public const string INVALID_ROLE = "Type of user is invalid";
         public const string INVALID_DATE_OF_BIRTH = "User is under 18. Please select a different date";
@@ -23,5 +23,10 @@
 
 		public const string USER_NOT_LOGIN = "User do not login";
 		public const string USER_IS_DISABLED = "User is disabled";
+
+        public const string INVALID_CATEGORY_NAME_CHARACTERS = "Category name can only contain alphabet characters, numbers and white spaces";
+        public const string CATEGORY_NAME_ALREADY_EXISTS = "Category is already existed. Please enter a different category";
+        public const string INVALID_CATEGORY_PREFIX_CHARACTERS = "Category prefix can only contain alphabet characters and numbers";
+        public const string CATEGORY_PREFIX_ALREADY_EXISTS = "Prefix is already existed. Please enter a different prefix";
 	}
 }

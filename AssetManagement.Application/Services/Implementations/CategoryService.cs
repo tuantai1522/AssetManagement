@@ -1,8 +1,10 @@
 ﻿using AssetManagement.Application.Services.Interfaces;
+using AssetManagement.Application.Common.Validations;
 using AssetManagement.Contracts.Dtos.CategoryDtos.Requests;
 using AssetManagement.Contracts.Dtos.CategoryDtos.Responses;
 using AssetManagement.Contracts.Dtos.PaginationDtos;
 using AssetManagement.Data.Interfaces;
+using AssetManagement.Domain.Exceptions;
 using AutoMapper;
 using System.Text.RegularExpressions;
 using AssetManagement.Application.Common.Constants;
@@ -34,6 +36,25 @@ public class CategoryService : ICategoryService
             PageSize = request.PageSize,
             Data = result
         };
+    }
+
+    public async Task<CategoryInfoResponse> CreateAsync(CreateCategoryRequest request)
+    {
+        if (!Regex.IsMatch(request.Name, RegexPatterns.AlphabetWhiteSpaceAndNumber)) throw new BadRequestException(ErrorStrings.INVALID_CATEGORY_NAME_CHARACTERS);
+        if (!Regex.IsMatch(request.Prefix, RegexPatterns.AlphabetAndNumber)) throw new BadRequestException(ErrorStrings.INVALID_CATEGORY_PREFIX_CHARACTERS);
+        var categoryWithSameName = await _unitOfWork.CategoryRepository.FindOne(c => c.Name == request.Name);
+        if (categoryWithSameName != null) throw new BadRequestException(ErrorStrings.CATEGORY_NAME_ALREADY_EXISTS);
+        var categoryWithSamePrefix = await _unitOfWork.CategoryRepository.FindOne(c => c.Prefix == request.Prefix);
+        if (categoryWithSamePrefix != null) throw new BadRequestException(ErrorStrings.CATEGORY_PREFIX_ALREADY_EXISTS);
+
+        var category = new Category
+        {
+            Name = request.Name,
+            Prefix = request.Prefix.ToUpper(),
+        };
+        var result = _unitOfWork.CategoryRepository.Add(category);
+        await _unitOfWork.SaveChangesAsync();
+        return _mapper.Map<CategoryInfoResponse>(result);
     }
 }
 

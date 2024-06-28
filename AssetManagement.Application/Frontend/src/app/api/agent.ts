@@ -140,6 +140,7 @@ const Authentication = {
 
 const Category = {
   all: () => requests.get(`api/category`),
+  create: (values: {}) => requests.post("api/category", values),
 };
 
 const Asset = {

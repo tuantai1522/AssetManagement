@@ -2,11 +2,12 @@ using AssetManagement.Application.Common;
 using AssetManagement.Application.Services.Interfaces;
 using AssetManagement.Contracts.Dtos.AuthDtos.Requests;
 using AssetManagement.Contracts.Dtos.LoginDtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AssetManagement.Application.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/auth")]
     [ApiController]
     public class AuthController : ControllerBase
     {
@@ -32,6 +33,7 @@ namespace AssetManagement.Application.Controllers
         }
 
         [HttpPost("ChangePassword")]
+        [Authorize]
         public async Task<ActionResult<BaseResult<LoginResponse>>> ChangePassword(ChangePasswordRequest request)
         {
             var data = await _authService.ChangePassword(request);
