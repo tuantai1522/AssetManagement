@@ -1,6 +1,11 @@
 import AssetList, { AssetRowData } from "./assetList";
 import { useEffect, useState } from "react";
-import { AssetState, FilterAssetRequest, FilterAssetResponse, getAssetQueryString } from "../../app/models/Asset";
+import {
+  AssetState,
+  FilterAssetRequest,
+  FilterAssetResponse,
+  getAssetQueryString,
+} from "../../app/models/Asset";
 import agent from "../../app/api/agent";
 import { Order } from "../../app/components/table/sortTable";
 import { Stack } from "@mui/material";
@@ -10,6 +15,7 @@ import AppSearchInput from "../../app/components/AppSearchInput";
 import { SetURLSearchParams, useSearchParams } from "react-router-dom";
 import AppPagination from "../../app/components/paginationButtons/paginationButtons";
 import AssetStateFilter from "./assetStateFilter";
+import AssetInfo from "../../app/components/assetInfo/assetInfo";
 
 type OrderByFieldName =
   | "assetCode"
@@ -18,7 +24,12 @@ type OrderByFieldName =
   | "state"
   | "lastUpdate";
 
-function setFilterSearchParam(query: FilterAssetRequest, setSearchParams: SetURLSearchParams, order?: Order, orderBy?: OrderByFieldName) {
+function setFilterSearchParam(
+  query: FilterAssetRequest,
+  setSearchParams: SetURLSearchParams,
+  order?: Order,
+  orderBy?: OrderByFieldName
+) {
   const params = new URLSearchParams();
 
   if (query?.search) {
@@ -26,10 +37,11 @@ function setFilterSearchParam(query: FilterAssetRequest, setSearchParams: SetURL
   }
 
   if (query?.states && query.states.length > 0) {
-    const normalizeState: string[] = query.states.map((item) => AssetState[item] ?? item);
+    const normalizeState: string[] = query.states.map(
+      (item) => AssetState[item] ?? item
+    );
     normalizeState.forEach((state) => {
-      if (state)
-        params.append("states", state);
+      if (state) params.append("states", state);
     });
   }
 
@@ -53,7 +65,6 @@ function setFilterSearchParam(query: FilterAssetRequest, setSearchParams: SetURL
 }
 
 export default function ManagementAssetPage() {
-
   const [searchParams, setSearchParams] = useSearchParams();
 
   const initSearch = searchParams.get("search") ?? "";
@@ -61,14 +72,26 @@ export default function ManagementAssetPage() {
   const initPageSize = Number(searchParams.get("pageSize") ?? "5");
   const initStates = searchParams.getAll("states");
 
-  const [order, setOrder] = useState<Order>(searchParams.get("order") as Order ?? "asc");
-  const [orderBy, setOrderBy] = useState<OrderByFieldName>(searchParams.get("orderBy") as OrderByFieldName ?? "assetCode");
+  //Details
+  const [clickOnAsset, setClickOnAsset] = useState<boolean>(false);
+  const [assetId, setAssetId] = useState<string>("0");
+
+  const [order, setOrder] = useState<Order>(
+    (searchParams.get("order") as Order) ?? "asc"
+  );
+  const [orderBy, setOrderBy] = useState<OrderByFieldName>(
+    (searchParams.get("orderBy") as OrderByFieldName) ?? "assetCode"
+  );
   const [states, setStates] = useState<string[]>(initStates);
 
   const [query, setQuery] = useState<FilterAssetRequest>({
     search: initSearch,
-    states: initStates?.map((state) => AssetState[state as keyof typeof AssetState])
-      ?.filter((mappedState) => mappedState !== undefined && mappedState !== null) ?? [],
+    states:
+      initStates
+        ?.map((state) => AssetState[state as keyof typeof AssetState])
+        ?.filter(
+          (mappedState) => mappedState !== undefined && mappedState !== null
+        ) ?? [],
     pageNumber: initPageNumber > 0 ? initPageNumber : 1,
     pageSize: initPageSize > 0 ? initPageSize : 5,
   });
@@ -76,6 +99,11 @@ export default function ManagementAssetPage() {
   const [searchInput, setSearchInput] = useState<string>(initSearch);
 
   const { data, isLoading, error, mutate } = agent.Asset.filter(query);
+  const {
+    data: assetData,
+    isLoading: assetLoading,
+    error: assetError,
+  } = agent.Asset.details(assetId);
 
   useEffect(() => {
     let newQuery: FilterAssetRequest = query;
@@ -99,7 +127,7 @@ export default function ManagementAssetPage() {
           sortCategoryName: undefined,
           sortState: undefined,
           sortLastUpdate: undefined,
-        }
+        };
         break;
       }
       case "category": {
@@ -110,7 +138,7 @@ export default function ManagementAssetPage() {
           sortCategoryName: order,
           sortState: undefined,
           sortLastUpdate: undefined,
-        }
+        };
         break;
       }
       case "state": {
@@ -121,7 +149,7 @@ export default function ManagementAssetPage() {
           sortCategoryName: undefined,
           sortState: order,
           sortLastUpdate: undefined,
-        }
+        };
         break;
       }
       case "lastUpdate": {
@@ -132,7 +160,7 @@ export default function ManagementAssetPage() {
           sortCategoryName: undefined,
           sortState: undefined,
           sortLastUpdate: order,
-        }
+        };
         break;
       }
       default:
@@ -162,11 +190,20 @@ export default function ManagementAssetPage() {
   };
 
   const handleSearchSubmit = () => {
-    const newQuery: FilterAssetRequest = { ...query, pageNumber: 1, search: searchInput?.trim(), };
+    const newQuery: FilterAssetRequest = {
+      ...query,
+      pageNumber: 1,
+      search: searchInput?.trim(),
+    };
     setQuery(newQuery);
     //update search param
     setFilterSearchParam(newQuery, setSearchParams, order, orderBy);
-  }
+  };
+
+  const handleClickOnAsset = (rowId: string) => {
+    setClickOnAsset(true);
+    setAssetId(data.items.result[rowId].id);
+  };
 
   const handleStateFilterClick = () => {
     let newQuery: FilterAssetRequest;
@@ -176,8 +213,12 @@ export default function ManagementAssetPage() {
       setFilterSearchParam(newQuery, setSearchParams, order, orderBy);
     } else {
       newQuery = {
-        ...query, states: states.map((state) => AssetState[state as keyof typeof AssetState])
-          .filter((mappedState) => mappedState !== undefined && mappedState !== null)
+        ...query,
+        states: states
+          .map((state) => AssetState[state as keyof typeof AssetState])
+          .filter(
+            (mappedState) => mappedState !== undefined && mappedState !== null
+          ),
       };
       setQuery(newQuery);
       setFilterSearchParam(newQuery, setSearchParams, order, orderBy);
@@ -213,46 +254,60 @@ export default function ManagementAssetPage() {
             direction="row"
             justifyContent="flex-end"
             alignItems="center"
-            spacing={8}>
+            spacing={8}
+          >
             <Stack
               direction="row"
               justifyContent="flex-start"
               alignItems="center"
-              spacing={2}>
-              <AppSearchInput type="text" placeholder="Search" name="name" value={searchInput} onChange={handleSearchInputChange}
+              spacing={2}
+            >
+              <AppSearchInput
+                type="text"
+                placeholder="Search"
+                name="name"
+                value={searchInput}
+                onChange={handleSearchInputChange}
                 className="!rounded-l-md !border !border-gray-400 !border-r-0"
               />
 
-              <div onClick={handleSearchSubmit} className="border border-gray-500 border-l-0 rounded-r-md mx-0 hover:cursor-pointer" style={{ margin: 0, padding: "6px" }}>
+              <div
+                onClick={handleSearchSubmit}
+                className="border border-gray-500 border-l-0 rounded-r-md mx-0 hover:cursor-pointer"
+                style={{ margin: 0, padding: "6px" }}
+              >
                 <Search className="mx-0" />
               </div>
             </Stack>
-            <AppButton
-              content="Create new user"
-              className="py-[6px]"
-            />
+            <AppButton content="Create new user" className="py-[6px]" />
           </Stack>
         </Stack>
         <div className="mt-3">
           <AssetList
-            data={data?.items?.result?.map((item: FilterAssetResponse) => ({
-              id: item.id,
-              assetCode: item.assetCode,
-              name: item.name,
-              category: item.category,
-              state: item.state !== undefined ? AssetState[item.state] : undefined,
-              action: {
+            data={
+              data?.items?.result?.map((item: FilterAssetResponse) => ({
                 id: item.id,
-                state: item.state !== undefined ? AssetState[item.state] : undefined,
-              }
-            })) as AssetRowData[]}
+                assetCode: item.assetCode,
+                name: item.name,
+                category: item.category,
+                state:
+                  item.state !== undefined ? AssetState[item.state] : undefined,
+                action: {
+                  id: item.id,
+                  state:
+                    item.state !== undefined
+                      ? AssetState[item.state]
+                      : undefined,
+                },
+              })) as AssetRowData[]
+            }
             error={error}
             isLoading={isLoading}
             order={order}
             setOrder={setOrder}
             orderBy={orderBy}
             setOrderBy={setOrderBy}
-            handleClick={(event, rowId) => { }}
+            handleClick={(event, rowId) => handleClickOnAsset(rowId)}
           />
 
           <Stack
@@ -268,6 +323,14 @@ export default function ManagementAssetPage() {
           </Stack>
         </div>
       </div>
+      <AssetInfo
+        isOpen={clickOnAsset}
+        isLoading={assetLoading}
+        assetData={assetData?.result}
+        onClose={() => {
+          setClickOnAsset(false);
+        }}
+      />
     </div>
   );
 }
