@@ -1,5 +1,10 @@
 import AssetList, { AssetRowData } from "./assetList";
 import { useEffect, useState } from "react";
+import {
+  AssetState,
+  FilterAssetRequest,
+  FilterAssetResponse,
+} from "../../app/models/asset/Asset";
 import agent from "../../app/api/agent";
 import { Order } from "../../app/components/table/sortTable";
 import { Stack } from "@mui/material";
@@ -17,11 +22,6 @@ import CategoryFilter from "./categoryFilter";
 import SelectedItem from "../../app/models/SelectedItem";
 import { Category } from "../../app/models/category/Category";
 import AssetInfo from "../../app/components/assetInfo/assetInfo";
-import {
-  AssetState,
-  FilterAssetRequest,
-  FilterAssetResponse,
-} from "../../app/models/asset/Asset";
 
 type OrderByFieldName =
   | "assetCode"
@@ -57,12 +57,6 @@ function setFilterSearchParam(
     });
   }
 
-  if (query?.categories && query.categories.length > 0) {
-    query?.categories?.forEach((category) => {
-      if (category) params.append("categories", category);
-    });
-  }
-
   if (orderBy) {
     params.set("orderBy", orderBy.toString());
   }
@@ -84,6 +78,7 @@ function setFilterSearchParam(
 
 export default function ManagementAssetPage() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const initSearch = searchParams.get("search") ?? "";
   const initPageNumber = Number(searchParams.get("pageNumber") ?? "1");
@@ -125,13 +120,12 @@ export default function ManagementAssetPage() {
     isLoading: categoryLoading,
     error: categoryError,
   } = agent.Category.all();
+
   const {
     data: assetData,
     isLoading: assetLoading,
     error: assetError,
   } = agent.Asset.details(assetId);
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     let newQuery: FilterAssetRequest = query;
@@ -228,11 +222,6 @@ export default function ManagementAssetPage() {
     setFilterSearchParam(newQuery, setSearchParams, order, orderBy);
   };
 
-  const handleClickOnAsset = (rowId: string) => {
-    setClickOnAsset(true);
-    setAssetId(data.items.result[rowId].id);
-  };
-
   const handleStateFilterClick = () => {
     let newQuery: FilterAssetRequest;
     if (states.length === 0 || states.includes("all")) {
@@ -267,8 +256,8 @@ export default function ManagementAssetPage() {
   };
 
   return (
-    <div className="flex justify-center h-full items-center">
-      <div className="relative container mb-12">
+    <div className="flex justify-center h-full">
+      <div className="container mb-12">
         <p className="text-primary text-xl font-bold justify-start items-start">
           Asset List
         </p>
@@ -365,7 +354,7 @@ export default function ManagementAssetPage() {
             setOrder={setOrder}
             orderBy={orderBy}
             setOrderBy={setOrderBy}
-            handleClick={(event, rowId) => handleClickOnAsset(rowId)}
+            handleClick={(event, rowId) => {}}
           />
 
           <Stack
