@@ -3,7 +3,7 @@ import AppTable, {
   ColumnDefinition,
   Order,
 } from "../../../app/components/table/sortTable";
-import { FilterUser } from "../../../app/models/User";
+import { FilterUser } from "../../../app/models/user/User";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import EditIcon from '@mui/icons-material/Edit';
 import { useNavigate } from "react-router-dom";
