@@ -11,7 +11,7 @@ using MockQueryable.Moq;
 using Moq;
 
 namespace AssetManagement.Application.Tests.Services.UsersTests;
-public class CreateUserAsyncTest : UserServiceTestBase
+public class CreateUserAsyncTest : SetUpUserServiceTest
 {
     public CreateUserAsyncTest() : base() { }
 

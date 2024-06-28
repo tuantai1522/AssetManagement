@@ -8,7 +8,7 @@ using Moq;
 
 namespace AssetManagement.Application.Tests.Services.UsersTests
 {
-    public class DisableUserAsyncTest : UserServiceTestBase
+    public class DisableUserAsyncTest : SetUpUserServiceTest
     {
         [Fact]
         public async Task DisableUserAsync_UserFoundAndDisabled_ReturnsDisableUserResponse()
