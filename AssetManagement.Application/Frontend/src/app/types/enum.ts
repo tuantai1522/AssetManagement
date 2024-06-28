@@ -15,3 +15,11 @@ export enum AssetStateEnum {
   Recycled = 4,
   Assigned = 5,
 }
+
+export enum AssetStateEnum {
+    Available = 1,
+    NotAvailable = 2,
+    WaitingForRecycling = 3,
+    Recycled = 4,
+    Assigned = 5
+}

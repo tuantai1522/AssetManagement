@@ -1,6 +1,7 @@
 ﻿
 using AssetManagement.Contracts.Dtos.AssetDtos.Requests;
 using AssetManagement.Contracts.Dtos.AssetDtos.Responses;
+using AssetManagement.Contracts.Dtos.CategoryDtos.Responses;
 using AssetManagement.Contracts.Dtos.UserDtos.Responses;
 using AssetManagement.Domain.Entities;
 using AutoMapper;
@@ -15,6 +16,12 @@ public class MappingProfile : Profile
         CreateMap<AppUser, UserInfoResponse>()
             .ForMember(dest => dest.FullName, src => src.MapFrom(src => string.Concat(src.FirstName, " ", src.LastName)))
             .ForMember(dest => dest.Type, src => src.MapFrom(src => src.UserRoles.FirstOrDefault()!.Role.Name));
+        //Asset
+        CreateMap<AssetCreationRequest, Asset>();
+        CreateMap<Asset, AssetResponse>();
+        //Category
+        CreateMap<Category, CategoryInfoResponse>();
+
         //Assert
         CreateMap<Asset, AssetDetailsResponse>()
             .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))

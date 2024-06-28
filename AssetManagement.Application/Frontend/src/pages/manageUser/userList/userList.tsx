@@ -3,7 +3,7 @@ import AppTable, {
   ColumnDefinition,
   Order,
 } from "../../../app/components/table/sortTable";
-import { FilterUser } from "../../../app/models/User";
+import { FilterUser } from "../../../app/models/user/User";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import EditIcon from '@mui/icons-material/Edit';
 import { useNavigate } from "react-router-dom";
@@ -20,8 +20,6 @@ export interface UserListProp {
   setCurrentDisablingId: Dispatch<SetStateAction<string>>;
 }
 
-const rows: FilterUser[] = [];
-
 export default function UserList(props: UserListProp) {
   const navigate = useNavigate();
 
@@ -33,10 +31,11 @@ export default function UserList(props: UserListProp) {
         label: 'Staff Code',
         className: "font-bold",
         rowRatio: "w-1/12",
+        minWidth: "100px",
         style: {
             border: "none",
             borderBottom: "none",
-            minWidth: "100px"
+            
         }
     },
     {
@@ -45,10 +44,11 @@ export default function UserList(props: UserListProp) {
       disablePadding: false,
       label: 'Full Name',
       className: "font-bold",
+      minWidth: "250px",
       style: {
           border: "none",
           borderBottom: "none",
-          minWidth: "250px"
+          
       },
 
       rowRatio: "w-4/12",
@@ -72,10 +72,10 @@ export default function UserList(props: UserListProp) {
       disablePadding: false,
       label: 'Joined Date',
       className: "font-bold ",
+      minWidth: "120px",
       style: {
         border: "none",
         borderBottom: "none",
-        minWidth: "120px",
       },
       rowRatio: "w-2/12",
     },
@@ -85,10 +85,10 @@ export default function UserList(props: UserListProp) {
       disablePadding: false,
       label: 'Type',
       className: "font-bold ",
+      minWidth: "80px",
       style: {
           border: "none",
           borderBottom: "none",
-          minWidth: "80px",
       },
       rowRatio: "w-2/12",
     },
@@ -102,8 +102,9 @@ export default function UserList(props: UserListProp) {
         borderBottom: "none",
       },
       rowRatio: "w-1/12",
+      minWidth: "40px",
       renderCell: (params) => (
-        <div className="flex w-fit justify-end">
+        <div className="flex w-fit justify-end items-center">
           <button
             color="primary"
             className="text-gray-500"
@@ -131,7 +132,6 @@ export default function UserList(props: UserListProp) {
       ),
     },
   ];
-  
 
   return (
     <div className="min-h-60">

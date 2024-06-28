@@ -5,6 +5,8 @@ declare module 'yup' {
   interface StringSchema {
     firstName(message: string): this;
     lastName(message: string): this;
+    categoryName(message: string): this;
+    categoryPrefix(message: string): this;
   }
 
   interface DateSchema {

@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { ChangePasswordRequest } from "../../models/changePassword/ChangePasswordRequest";
 import agent from "../../api/agent";
 import { BaseResult } from "../../models/BaseResult";
-import { User } from "../../models/User";
+import { User } from "../../models/user/User";
 
 interface Props {
   user: User | null;
@@ -73,7 +73,6 @@ export default function ChangePasswordModal({ user, isOpen, onClose }: Props) {
 
   async function onSubmit(data: FormValues) {
     try {
-      debugger;
       if (!user) return;
       const requestData: ChangePasswordRequest = {
         NewPassword: data.newPassword,
@@ -153,35 +152,37 @@ export default function ChangePasswordModal({ user, isOpen, onClose }: Props) {
                     </div>
                     {errors.oldPassword && (
                       <div className=" flex items-end justify-end">
-                        <span className="text-[#d32f2f] font-normal text-xs w-[270px] mt-1">{errors.oldPassword.message as string}</span>
+                        <span className="text-[#d32f2f] font-normal text-xs w-[270px] mt-1">
+                          {errors.oldPassword.message as string}
+                        </span>
                       </div>
                     )}
                   </div>
-                 
                 )}
                 <div>
-                <div className="flex justify-between items-center">
-                  <label className="w-32 font-normal">New password</label>
-                  <Controller
-                    name="newPassword"
-                    control={control}
-                    render={({ field }) => (
-                      <AppPasswordInput
-                        {...field}
-                        id="newPassword"
-                        control={control}
-                        isApplyHelperText={false}
-                      />
-                    )}
-                  />
+                  <div className="flex justify-between items-center">
+                    <label className="w-32 font-normal">New password</label>
+                    <Controller
+                      name="newPassword"
+                      control={control}
+                      render={({ field }) => (
+                        <AppPasswordInput
+                          {...field}
+                          id="newPassword"
+                          control={control}
+                          isApplyHelperText={false}
+                        />
+                      )}
+                    />
+                  </div>
+                  {errors.newPassword && (
+                    <div className=" flex items-end justify-end">
+                      <span className="text-[#d32f2f] font-normal text-xs w-[270px] mt-1">
+                        {errors.newPassword.message as string}
+                      </span>
+                    </div>
+                  )}
                 </div>
-                {errors.newPassword && (
-                      <div className=" flex items-end justify-end">
-                        <span className="text-[#d32f2f] font-normal text-xs w-[270px] mt-1">{errors.newPassword.message as string}</span>
-                      </div>
-                    )}
-                </div>
-                
               </div>
             )}
             <div className="flex justify-end gap-6">
