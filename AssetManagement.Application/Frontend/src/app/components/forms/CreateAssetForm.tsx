@@ -174,6 +174,7 @@ const CreateAssetForm = ({ handleCreateAsset }: Props) => {
             <Controller
               control={control}
               name="state"
+              defaultValue={AssetStateEnum.Available}
               render={({ field }) => (
                 <RadioGroup
                   {...field}

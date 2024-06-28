@@ -22,7 +22,7 @@ public class CreateAssetTest : SetupAssetServiceTest
         var userId = Guid.NewGuid();
         var categoryId = Guid.NewGuid();
         var request = _fixture.Build<AssetCreationRequest>()
-            .With(r => r.State, AssetState.Available.ToString())
+            .With(r => r.State, AssetState.Available)
             .With(r => r.CategoryId, categoryId)
             .Create();
 
@@ -55,7 +55,7 @@ public class CreateAssetTest : SetupAssetServiceTest
         _mockUnitOfWork.Verify(x => x.SaveChangesAsync(), Times.Once);
         Assert.NotNull(result);
         Assert.Equal(user.Location, result.Location);
-        Assert.Equal(request.State, result.State);
+        Assert.Equal(request.State.ToString(), result.State);
         Assert.StartsWith(category.Prefix, result.AssetCode);
     }
 
@@ -67,7 +67,7 @@ public class CreateAssetTest : SetupAssetServiceTest
         _userManagerMock.Setup(x => x.FindByIdAsync(It.IsAny<string>())).ReturnsAsync((AppUser)null);
 
         var request = _fixture.Build<AssetCreationRequest>()
-            .With(r => r.State, AssetState.Available.ToString())
+            .With(r => r.State, AssetState.Available)
             .Create();
 
         // Act & Assert
@@ -83,7 +83,7 @@ public class CreateAssetTest : SetupAssetServiceTest
         _userManagerMock.Setup(x => x.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
 
         var request = _fixture.Build<AssetCreationRequest>()
-            .With(r => r.State, AssetState.Available.ToString())
+            .With(r => r.State, AssetState.Available)
             .Create();
 
         // Act & Assert
@@ -100,7 +100,7 @@ public class CreateAssetTest : SetupAssetServiceTest
         _mockUnitOfWork.Setup(x => x.CategoryRepository.FindOne(It.IsAny<Expression<Func<Category, bool>>>())).ReturnsAsync((Category)null);
 
         var request = _fixture.Build<AssetCreationRequest>()
-            .With(r => r.State, AssetState.Available.ToString())
+            .With(r => r.State, AssetState.Available)
             .Create();
 
         // Act & Assert
@@ -130,7 +130,7 @@ public class CreateAssetTest : SetupAssetServiceTest
         var categoryId = Guid.NewGuid();
         var request = _fixture.Build<AssetCreationRequest>()
             .With(r => r.CategoryId, categoryId)
-            .With(r => r.State, AssetState.Available.ToString())
+            .With(r => r.State, AssetState.Available)
             .Create();
 
         var user = new AppUser
@@ -172,7 +172,7 @@ public class CreateAssetTest : SetupAssetServiceTest
         var userId = Guid.NewGuid();
         var categoryId = Guid.NewGuid();
         var request = _fixture.Build<AssetCreationRequest>()
-                            .With(b => b.State, AssetState.Available.ToString())
+                            .With(b => b.State, AssetState.Available)
                             .With(b => b.CategoryId, categoryId)
                             .Create();
 
@@ -221,7 +221,7 @@ public class CreateAssetTest : SetupAssetServiceTest
         var userId = Guid.NewGuid();
         var categoryId = Guid.NewGuid();
         var request = _fixture.Build<AssetCreationRequest>()
-            .With(r => r.State, AssetState.Available.ToString())
+            .With(r => r.State, AssetState.Available)
             .With(r => r.CategoryId, categoryId)
             .Create();
 
