@@ -7,7 +7,6 @@ using AssetManagement.Domain.Entities;
 using AssetManagement.Domain.Enums;
 using AutoFixture;
 using AutoFixture.AutoMoq;
-using AutoFixture.AutoMoq;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;

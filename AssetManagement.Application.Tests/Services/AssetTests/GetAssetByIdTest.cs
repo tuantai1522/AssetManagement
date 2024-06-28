@@ -25,7 +25,7 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<BadRequestException>
-                (() => _assetService.GetAssetByIdAsync(request));
+                (() => _mockAssetService.GetAssetByIdAsync(request));
 
             Assert.Equal("Please provide id to get asset", exception.Message);
         }
@@ -53,7 +53,7 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
 
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<NotFoundException>(() => _assetService.GetAssetByIdAsync(request));
+            var exception = await Assert.ThrowsAsync<NotFoundException>(() => _mockAssetService.GetAssetByIdAsync(request));
             Assert.Equal("Can't find asset", exception.Message);
         }
 
@@ -88,11 +88,11 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
                });
 
             // Mock UserManager to return null for any FindByIdAsync call
-            _userManagerMock.Setup(um => um.FindByIdAsync(It.IsAny<string>()))
+            _mockUserManager.Setup(um => um.FindByIdAsync(It.IsAny<string>()))
                             .ReturnsAsync(null as AppUser);
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<NotFoundException>(() => _assetService.GetAssetByIdAsync(request));
+            var exception = await Assert.ThrowsAsync<NotFoundException>(() => _mockAssetService.GetAssetByIdAsync(request));
             Assert.Equal("Can't find user", exception.Message);
         }
 
@@ -132,11 +132,11 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
                                .Create();
 
             // Mock UserManager to return null for any FindByIdAsync call
-            _userManagerMock.Setup(um => um.FindByIdAsync(It.IsAny<string>()))
+            _mockUserManager.Setup(um => um.FindByIdAsync(It.IsAny<string>()))
                             .ReturnsAsync(user);
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<UnauthorizedException>(() => _assetService.GetAssetByIdAsync(request));
+            var exception = await Assert.ThrowsAsync<UnauthorizedException>(() => _mockAssetService.GetAssetByIdAsync(request));
             Assert.Equal("This user can't view this asset", exception.Message);
         }
 
@@ -177,11 +177,11 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
                                .Create();
 
             // Mock UserManager to return null for any FindByIdAsync call
-            _userManagerMock.Setup(um => um.FindByIdAsync(It.IsAny<string>()))
+            _mockUserManager.Setup(um => um.FindByIdAsync(It.IsAny<string>()))
                             .ReturnsAsync(user);
 
             // Act & Assert
-            var response = await _assetService.GetAssetByIdAsync(request);
+            var response = await _mockAssetService.GetAssetByIdAsync(request);
 
             Assert.NotNull(response);
         }

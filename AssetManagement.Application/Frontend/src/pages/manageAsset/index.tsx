@@ -1,11 +1,5 @@
 import AssetList, { AssetRowData } from "./assetList";
 import { useEffect, useState } from "react";
-import {
-  AssetState,
-  FilterAssetRequest,
-  FilterAssetResponse,
-  getAssetQueryString,
-} from "../../app/models/Asset";
 import agent from "../../app/api/agent";
 import { Order } from "../../app/components/table/sortTable";
 import { Stack } from "@mui/material";
@@ -19,6 +13,11 @@ import CategoryFilter from "./categoryFilter";
 import SelectedItem from "../../app/models/SelectedItem";
 import { Category } from "../../app/models/category/Category";
 import AssetInfo from "../../app/components/assetInfo/assetInfo";
+import {
+  AssetState,
+  FilterAssetRequest,
+  FilterAssetResponse,
+} from "../../app/models/asset/Asset";
 
 type OrderByFieldName =
   | "assetCode"
@@ -326,7 +325,6 @@ export default function ManagementAssetPage() {
                 <Search className="mx-0" />
               </div>
             </Stack>
-            <AppButton content="Create new user" className="py-[6px]" />
             <AppButton
               content="Create new asset"
               className="py-[6px] min-w-40"
