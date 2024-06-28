@@ -29,7 +29,6 @@ const EditUserPage = () => {
             Type: formData.type,
         }
         await agent.Users.update(id, updateData);
-        // navigate(`/manage-user?passedOrderBy=${encodeURIComponent('lastUpdate')}&passedOrder=${encodeURIComponent('desc')}`);
         navigate('/manage-user', {state: {passedOrder: "desc", passedOrderBy: "lastUpdate"}});
     }
 

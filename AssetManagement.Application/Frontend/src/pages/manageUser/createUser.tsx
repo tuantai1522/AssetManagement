@@ -25,7 +25,6 @@ const CreateUserPage = () => {
             Type: formData.type,
         }
         const response: BaseResult<UserInfoResponse> = await agent.Users.create(createData);
-        // navigate(`/manage-user?orderBy=${encodeURIComponent('lastUpdate')}&order=${encodeURIComponent('desc')}`);
         navigate('/manage-user', {state: {passedOrder: "desc", passedOrderBy: "lastUpdate"}});
     }
 
