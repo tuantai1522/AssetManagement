@@ -127,6 +127,11 @@ export default function ManagementAssetPage() {
     error: assetError,
   } = agent.Asset.details(assetId);
 
+  const handleClickOnAsset = (rowId: string) => {
+    setClickOnAsset(true);
+    setAssetId(data.items.result[rowId].id);
+  };
+
   useEffect(() => {
     let newQuery: FilterAssetRequest = query;
     switch (orderBy) {
@@ -256,8 +261,8 @@ export default function ManagementAssetPage() {
   };
 
   return (
-    <div className="flex justify-center h-full">
-      <div className="container mb-12">
+    <div className="flex justify-center h-full items-center">
+      <div className="relative container mb-12">
         <p className="text-primary text-xl font-bold justify-start items-start">
           Asset List
         </p>
@@ -354,7 +359,7 @@ export default function ManagementAssetPage() {
             setOrder={setOrder}
             orderBy={orderBy}
             setOrderBy={setOrderBy}
-            handleClick={(event, rowId) => {}}
+            handleClick={(event, rowId) => handleClickOnAsset(rowId)}
           />
 
           <Stack
