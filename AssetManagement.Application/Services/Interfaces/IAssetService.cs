@@ -8,6 +8,7 @@ namespace AssetManagement.Application.Services.Interfaces
     {
         Task<PagingDto<FilterAssetResponse>> FilterAssetAsync(FilterAssetRequest filter);
         Task<AssetDetailsResponse> GetAssetByIdAsync(AssetDetailsRequest request);
+		Task<AssetResponse> CreateAssetAsync(AssetCreationRequest request);
 
-    }
+	}
 }
