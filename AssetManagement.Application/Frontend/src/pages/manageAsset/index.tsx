@@ -261,8 +261,8 @@ export default function ManagementAssetPage() {
   };
 
   return (
-    <div className="flex justify-center h-full">
-      <div className="container mb-12">
+    <div className="flex justify-center h-full items-center">
+      <div className="relative container mb-12">
         <p className="text-primary text-xl font-bold justify-start items-start">
           Asset List
         </p>
@@ -371,15 +371,15 @@ export default function ManagementAssetPage() {
             />
           </Stack>
         </div>
+        <AssetInfo
+          isOpen={clickOnAsset}
+          isLoading={assetLoading}
+          assetData={assetData?.result}
+          onClose={() => {
+            setClickOnAsset(false);
+          }}
+        />
       </div>
-      <AssetInfo
-        isOpen={clickOnAsset}
-        isLoading={assetLoading}
-        assetData={assetData?.result}
-        onClose={() => {
-          setClickOnAsset(false);
-        }}
-      />
     </div>
   );
 }
