@@ -5,6 +5,5 @@ namespace AssetManagement.Data.Interfaces
 {
     public interface IAssetRepository : IGenericRepository<Asset>
     {
-
     }
 }

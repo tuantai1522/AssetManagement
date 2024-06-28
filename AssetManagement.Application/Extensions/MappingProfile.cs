@@ -21,5 +21,16 @@ public class MappingProfile : Profile
         CreateMap<Asset, AssetResponse>();
         //Category
         CreateMap<Category, CategoryInfoResponse>();
+
+        //Assert
+        CreateMap<Asset, AssetDetailsResponse>()
+            .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))
+            .ForMember(des => des.AssetCode, act => act.MapFrom(src => src.AssetCode))
+            .ForMember(des => des.AssetName, act => act.MapFrom(src => src.Name))
+            .ForMember(des => des.CategoryName, act => act.MapFrom(src => src.Category != null ? src.Category.Name : string.Empty))
+            .ForMember(des => des.InstalledDate, act => act.MapFrom(src => src.InstalledDate))
+            .ForMember(des => des.State, act => act.MapFrom(src => src.State))
+            .ForMember(des => des.Location, act => act.MapFrom(src => src.Location))
+            .ForMember(des => des.Specification, act => act.MapFrom(src => src.Specification));
     }
 }
