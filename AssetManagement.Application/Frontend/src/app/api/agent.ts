@@ -126,8 +126,10 @@ const Users = {
   },
   details: (id: string) => requests.get(`/api/users/${id}`),
   disable: (id: string) => requests.put(`api/users/disable/${id}`, {}),
-  update: (id: string, values: EditUserRequest) => requests.put(`/api/users/${id}`, values),
-  create: (values: CreateUserRequest) => requests.post('api/users/create', values)
+  update: (id: string, values: EditUserRequest) =>
+    requests.put(`/api/users/${id}`, values),
+  create: (values: CreateUserRequest) =>
+    requests.post("api/users/create", values),
 };
 
 const Authentication = {
@@ -146,7 +148,7 @@ const Asset = {
     const queryString = getAssetQueryString(query);
     return requests.get(`api/Asset?${queryString}`);
   },
-  create: (values: AssetCreationRequest) => requests.post('api/asset/create', values)
+  details: (id: string) => requests.get(`/api/asset/getAssetById?Id=${id}`),
 };
 
 const agent = {
@@ -154,8 +156,7 @@ const agent = {
   Authentication,
   Users,
   Category,
-  Asset
+  Asset,
 };
 
 export default agent;
-

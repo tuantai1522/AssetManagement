@@ -39,12 +39,12 @@ public class AssetController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost("create")]
+    [HttpGet("getAssetById")]
     [Authorize(Roles = $"{RoleConstant.AdminRole}")]
-    public async Task<ActionResult<BaseResult<AssetResponse>>> CreateAssetAsync([FromBody] AssetCreationRequest request)
+    public async Task<ActionResult<BaseResult<AssetDetailsResponse>>> GetAssetById([FromQuery] AssetDetailsRequest request)
     {
-        var data = await _assetService.CreateAssetAsync(request);
-        var result = new BaseResult<AssetResponse>()
+        var data = await _assetService.GetAssetByIdAsync(request);
+        var result = new BaseResult<AssetDetailsResponse>()
         {
             IsSuccess = true,
             Error = null,

@@ -1,16 +1,21 @@
-import agent from "../../api/agent";
 import { UserInfoResponse } from "../../models/login/UserInfoResponse";
 
 interface Props {
   isOpen?: boolean;
-  userData? : UserInfoResponse;
-  isLoading?: boolean
-  errorMessage?: string ;
+  userData?: UserInfoResponse;
+  isLoading?: boolean;
+  errorMessage?: string;
   onClose: () => void;
 }
 
-const UserInfo = ({isOpen, userData, isLoading, errorMessage, onClose }: Props) => {
-    if (!isOpen) return null;
+const UserInfo = ({
+  isOpen,
+  userData,
+  isLoading,
+  errorMessage,
+  onClose,
+}: Props) => {
+  if (!isOpen) return null;
   return (
     <>
       <div className="fixed w-screen h-screen bg-gray-400 top-0 left-0 opacity-50 "></div>
@@ -39,58 +44,51 @@ const UserInfo = ({isOpen, userData, isLoading, errorMessage, onClose }: Props) 
             </div>
           </div>
           <div className="w-full h-full px-12 py-7">
-            {userData 
-            ?
-            <div className="grid grid-cols-7 gap-4 text-secondary">
+            {userData ? (
+              <div className="grid grid-cols-7 gap-4 text-secondary">
                 <div className="col-span-2">Staff Code</div>
                 <div className="col-span-5">{userData?.staffCode}</div>
                 <div className="col-span-2">Full Name</div>
-                <div className="col-span-5">{userData?.firstName} {userData?.lastName}</div>
+                <div className="col-span-5">
+                  {userData?.firstName} {userData?.lastName}
+                </div>
                 <div className="col-span-2">Username</div>
                 <div className="col-span-5">{userData?.username} </div>
                 <div className="col-span-2">Date of Birth</div>
-                <div className="col-span-5">{new Date(userData?.dateOfBirth).toLocaleString("vi-VI", {
+                <div className="col-span-5">
+                  {new Date(userData?.dateOfBirth).toLocaleString("vi-VI", {
                     year: "numeric",
                     month: "2-digit",
                     day: "2-digit",
-                })}
+                  })}
                 </div>
                 <div className="col-span-2">Gender</div>
-                <div className="col-span-5">{userData?.gender}
-                </div>
+                <div className="col-span-5">{userData?.gender}</div>
                 <div className="col-span-2">Joined Date</div>
-                <div className="col-span-5">{new Date(userData?.joinedDate).toLocaleString('vi-VN', {
+                <div className="col-span-5">
+                  {new Date(userData?.joinedDate).toLocaleString("vi-VN", {
                     year: "numeric",
                     month: "2-digit",
                     day: "2-digit",
-                })}
+                  })}
                 </div>
                 <div className="col-span-2">Type</div>
-                <div className="col-span-5">{userData?.type}
-                </div>
+                <div className="col-span-5">{userData?.type}</div>
                 <div className="col-span-2">Location</div>
-                <div className="col-span-5">{userData?.location}
-                </div>
-            </div>
-            : isLoading 
-            ?
-            <div className="min-h-60 flex justify-center items-center">
+                <div className="col-span-5">{userData?.location}</div>
+              </div>
+            ) : isLoading ? (
+              <div className="min-h-60 flex justify-center items-center">
                 <div className="animate-spin w-10 h-10 border-4 border-primary border-t-white border-b-white rounded-full"></div>
-            </div>
-            :
-            errorMessage
-            ?
-            <div className="min">
-                <p className="text-primary font-semibold text-lg">
-                    Oops!
-                </p>
-                <p className="text-secondary">
-                    Sorry, {errorMessage}
-                </p>
-            </div>
-            :
-            ""
-            }
+              </div>
+            ) : errorMessage ? (
+              <div className="min">
+                <p className="text-primary font-semibold text-lg">Oops!</p>
+                <p className="text-secondary">Sorry, {errorMessage}</p>
+              </div>
+            ) : (
+              ""
+            )}
           </div>
         </div>
       </div>
