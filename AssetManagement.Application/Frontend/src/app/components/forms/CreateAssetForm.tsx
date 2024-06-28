@@ -3,6 +3,7 @@ import AppButton from "../buttons/Button";
 import { useNavigate } from "react-router-dom";
 import { Controller, FieldValues, useForm } from "react-hook-form";
 import {
+  CircularProgress,
   FormControl,
   FormControlLabel,
   FormHelperText,
@@ -20,6 +21,7 @@ import { AssetStateEnum } from "../../types/enum";
 import { Category } from "../../models/category/Category";
 import agent from "../../api/agent";
 import { AssetCreationForm } from "../../models/asset/AssetCreationRequest";
+import AppLoader from "../AppLoader";
 
 interface Props {
   handleCreateAsset: (data: any) => void;
@@ -86,14 +88,21 @@ const CreateAssetForm = ({ handleCreateAsset }: Props) => {
                       value={field.value || ""}
                       onChange={(e) => field.onChange(e.target.value)}
                     >
-                      {categories.data &&
-                        (
-                          (categories.data.items.result as Category[]) ?? []
-                        ).map((category, index) => (
-                          <MenuItem key={index} value={category.id}>
-                            {category.name}
-                          </MenuItem>
-                        ))}
+                      {categories.isLoading ? (
+                        <div className="flex items-center justify-center">
+                          <AppLoader border={2} height={5} width={5} />
+                        </div>
+                      ) : categories.data ? (
+                        (categories.data.items.result as Category[]).map(
+                          (category, index) => (
+                            <MenuItem key={index} value={category.id}>
+                              {category.name}
+                            </MenuItem>
+                          )
+                        )
+                      ) : (
+                        <p className="ml-3">No Category found!</p>
+                      )}
                     </Select>
                   </FormControl>
                 )}
@@ -174,6 +183,7 @@ const CreateAssetForm = ({ handleCreateAsset }: Props) => {
             <Controller
               control={control}
               name="state"
+              defaultValue={AssetStateEnum.Available}
               render={({ field }) => (
                 <RadioGroup
                   {...field}
