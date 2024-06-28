@@ -16,10 +16,15 @@ public class MappingProfile : Profile
         CreateMap<AppUser, UserInfoResponse>()
             .ForMember(dest => dest.FullName, src => src.MapFrom(src => string.Concat(src.FirstName, " ", src.LastName)))
             .ForMember(dest => dest.Type, src => src.MapFrom(src => src.UserRoles.FirstOrDefault()!.Role.Name));
-        //Assert
+        //Asset
         CreateMap<AssetCreationRequest, Asset>();
         CreateMap<Asset, AssetResponse>();
-        //Asset
+        CreateMap<Asset, AssetDetailsResponse>()
+            .ForMember(des => des.CategoryName, act => act.MapFrom(src => src.Category != null ? src.Category.Name : string.Empty))
+            .ForMember(dest => dest.AssetName, src => src.MapFrom(src => src.Name));
+
+
+
         //Category
         CreateMap<Category, CategoryInfoResponse>();
     }

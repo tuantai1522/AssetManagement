@@ -105,6 +105,26 @@ namespace AssetManagement.Application.Services.Implementations
 
             return _mapper.Map<AssetResponse>(newAsset);
         }
+
+        public async Task<AssetDetailsResponse> GetAssetByIdAsync(AssetDetailsRequest request)
+        {
+            if (request.Id.Equals(Guid.Empty))
+                throw new BadRequestException("Please provide id to get asset");
+
+            var asset = _unitOfWork.AssetRepository
+                            .Get(x => x.Id.Equals(request.Id), orderBy: null, includeProperties: "Category")
+                            .FirstOrDefault()
+                ?? throw new NotFoundException("Can't find asset");
+
+            var userLogin = await _userManager.FindByIdAsync(_currentUser.UserId.ToString())
+                ?? throw new NotFoundException("Can't find user");
+
+            if (!userLogin.Location!.Equals(asset.Location))
+                throw new UnauthorizedException("This user can't view this asset");
+
+            return _mapper.Map<AssetDetailsResponse>(asset);
+        }
+
         #region Private methods
         private Func<IQueryable<Asset>, IOrderedQueryable<Asset>> GetOrderByFunction(FilterAssetRequest filter)
         {

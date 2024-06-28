@@ -14,7 +14,7 @@ import LoginRequest from "../../app/models/login/LoginRequest";
 import agent from "../../app/api/agent";
 import { BaseResult } from "../../app/models/BaseResult";
 import { useState } from "react";
-import { User } from "../../app/models/User";
+import { User } from "../../app/models/user/User";
 import { Token } from "../../app/models/Token";
 import { useNavigate } from "react-router-dom";
 import { LoginResponse } from "../../app/models/login/LoginReponse";
