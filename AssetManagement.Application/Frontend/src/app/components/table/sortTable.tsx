@@ -78,11 +78,11 @@ function CustomTableHead(props: CustomTableHeadProp) {
     <TableHead>
       <TableRow>
         {props.columns &&
-          props.columns?.map((column) => {
+          props.columns?.map((column, index) => {
             let key = column.id ?? column.fieldName;
             return (
               <TableCell
-                key={key}
+                key={index}
                 align="left"
                 padding={column.disablePadding ? "none" : "normal"}
                 //modify
@@ -196,7 +196,6 @@ export function AppTable<T>(props: AppTableProp<T>) {
               data.length > 0 &&
               data.map((row, index) => {
                 return (
-                  <>
                     <TableRow
                       onClick={(event) => {
                         props.handleClick(event, row.id);
@@ -218,7 +217,6 @@ export function AppTable<T>(props: AppTableProp<T>) {
                         );
                       })}
                     </TableRow>
-                  </>
                 );
               })}
           </TableBody>
