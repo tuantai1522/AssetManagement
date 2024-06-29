@@ -20,16 +20,8 @@ const CreateAssetPage = () => {
       state: data.state,
     };
 
-    console.log("Data", data);
-    console.log("Data Request", dataRequest);
-
     const response: BaseResult<Asset> = await agent.Asset.create(dataRequest);
     if (response.isSuccess) {
-      // navigate(
-      //   `/manage-asset?passedOrderBy=${encodeURIComponent(
-      //     "lastUpdate"
-      //   )}&passedOrder=${encodeURIComponent("desc")}`
-      // );
       navigate("/manage-asset", {
         state: { passedOrder: "desc", passedOrderBy: "lastUpdate" },
       });

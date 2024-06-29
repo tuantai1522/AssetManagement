@@ -90,14 +90,11 @@ export default function ChangePasswordModal({ user, isOpen, onClose }: Props) {
         }
       }
     } catch (error: any) {
-      console.log(error);
-      if (!error.isSuccess) {
-        setIsSuccessed(false);
-        setError("oldPassword", {
-          type: "validate",
-          message: "Password is incorrect",
-        });
-      }
+      setIsSuccessed(false);
+      setError("oldPassword", {
+        type: "validate",
+        message: "Password is incorrect",
+      });
     }
   }
 
