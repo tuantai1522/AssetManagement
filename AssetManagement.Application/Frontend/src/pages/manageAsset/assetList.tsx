@@ -3,7 +3,7 @@ import AppTable, {
   ColumnDefinition,
   Order,
 } from "../../app/components/table/sortTable";
-import { IconButton, Stack, Tooltip } from "@mui/material";
+import { Stack } from "@mui/material";
 
 export interface AssetRowData {
   id: string;
@@ -37,7 +37,7 @@ export default function AssetList(props: AssetListProp) {
       label: "Asset Code",
       className: "font-bold",
       rowRatio: "w-1/12",
-      minWidth: "100px",
+      minWidth: "120px",
       style: {
         border: "none",
         borderBottom: "none",

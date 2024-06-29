@@ -19,10 +19,6 @@ public class MappingProfile : Profile
         //Asset
         CreateMap<AssetCreationRequest, Asset>();
         CreateMap<Asset, AssetResponse>();
-        //Category
-        CreateMap<Category, CategoryInfoResponse>();
-
-        //Assert
         CreateMap<Asset, AssetDetailsResponse>()
             .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))
             .ForMember(des => des.AssetCode, act => act.MapFrom(src => src.AssetCode))
@@ -32,5 +28,12 @@ public class MappingProfile : Profile
             .ForMember(des => des.State, act => act.MapFrom(src => src.State))
             .ForMember(des => des.Location, act => act.MapFrom(src => src.Location))
             .ForMember(des => des.Specification, act => act.MapFrom(src => src.Specification));
+
+
+
+        //Category
+        CreateMap<Category, CategoryInfoResponse>();
+
+
     }
 }
