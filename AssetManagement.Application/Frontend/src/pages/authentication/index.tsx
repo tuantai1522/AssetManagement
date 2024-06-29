@@ -71,13 +71,11 @@ const LoginPage = () => {
           isPasswordChanged: response.result.isPasswordChanged,
         };
         localStorage.setItem("user", JSON.stringify(user));
-
+        debugger;
         navigate("/");
       }
     } catch (error: any) {
-      if (!error.isSuccess) {
-        setErrorMessage(error.error.message);
-      }
+      setErrorMessage(error.message);
     }
   };
 
