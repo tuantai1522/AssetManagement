@@ -4,6 +4,8 @@ import AppTable, {
   Order,
 } from "../../app/components/table/sortTable";
 import { Stack } from "@mui/material";
+import { AssetUpdationRequest } from "../../app/models/asset/UpdateAssetRequest";
+import { useNavigate } from "react-router-dom";
 
 export interface AssetRowData {
   id: string;
@@ -29,6 +31,8 @@ export interface AssetListProp {
 }
 
 export default function AssetList(props: AssetListProp) {
+  const navigate = useNavigate();
+
   const columns: ColumnDefinition[] = [
     {
       id: "assetCode",
@@ -109,10 +113,21 @@ export default function AssetList(props: AssetListProp) {
               className="text-gray-500"
               onClick={(e) => {
                 e.stopPropagation();
-                alert(params?.id);
+
+                const data = {
+                  assetId: params?.id,
+                  assetName: params?.name,
+                  installedDate: new Date(),
+                  specification: "added",
+                  state: params?.state,
+                  categoryName: params?.category,
+                };
+
+                navigate("/manage-asset/edit-asset", {
+                  state: { assetToUpdate: data },
+                });
               }}
             >
-              {" "}
               <Edit />
             </button>
 
@@ -125,7 +140,6 @@ export default function AssetList(props: AssetListProp) {
                 alert(params?.id);
               }}
             >
-              {" "}
               <HighlightOff />
             </button>
           </Stack>

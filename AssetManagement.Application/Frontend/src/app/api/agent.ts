@@ -10,6 +10,7 @@ import { EditUserRequest } from "../models/user/EditUserRequest";
 import { CreateUserRequest } from "../models/user/CreateUserRequest";
 import { useNotification } from "../components/toast/NotifyContext";
 import eventEmitter from "../hooks/EventMitter";
+import { AssetUpdationRequest } from "../models/asset/UpdateAssetRequest";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 axios.defaults.headers.post["Content-Type"] = "application/json";
@@ -95,7 +96,7 @@ axios.interceptors.response.use(
     if (result.result) {
       return Promise.reject(result.result);
     }
-    return Promise.reject(result);
+    return Promise.reject(result.error);
   }
 );
 
@@ -163,6 +164,9 @@ const Asset = {
   },
   create: (values: AssetCreationRequest) =>
     requests.post("api/asset/create", values),
+  details: (id: string) => requests.get(`/api/asset/getAssetById?Id=${id}`),
+  update: (params: AssetUpdationRequest) =>
+    requests.put(`api/asset/updateAssetById`, params),
 };
 
 const agent = {

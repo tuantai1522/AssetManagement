@@ -23,6 +23,7 @@ import CategoryFilter from "./categoryFilter";
 import SelectedItem from "../../app/models/SelectedItem";
 import { Category } from "../../app/models/category/Category";
 import AssetInfo from "../../app/components/assetInfo/assetInfo";
+import { AssetUpdationRequest } from "../../app/models/asset/UpdateAssetRequest";
 
 type OrderByFieldName =
   | "assetCode"
@@ -353,6 +354,8 @@ export default function ManagementAssetPage() {
                     item.state !== undefined
                       ? AssetState[item.state]
                       : undefined,
+                  category: item.category,
+                  name: item.name,
                 },
               })) as AssetRowData[]
             }

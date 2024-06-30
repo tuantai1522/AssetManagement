@@ -13,6 +13,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using System.Text.RegularExpressions;
 
 namespace AssetManagement.Application.Services.Implementations
 {
@@ -129,13 +130,13 @@ namespace AssetManagement.Application.Services.Implementations
                 throw new BadRequestException("Please provide id to update asset");
 
             if (string.IsNullOrEmpty(request.AssetName) ||
-               string.IsNullOrEmpty(request.State) ||
+               !request.State.HasValue ||
                string.IsNullOrEmpty(request.Specification) ||
                !request.InstalledDate.HasValue)
                 throw new BadRequestException("Please provide full info to update asset");
 
 
-            var assetToUpdate = _unitOfWork.AssetRepo
+            var assetToUpdate = _unitOfWork.AssetRepository
                 .Get(x => x.Id.Equals(request.AssetId), orderBy: null, includeProperties: "Category")
                 .FirstOrDefault()
                 ?? throw new NotFoundException("Can't find asset");
@@ -149,9 +150,9 @@ namespace AssetManagement.Application.Services.Implementations
             assetToUpdate.Name = request.AssetName;
             assetToUpdate.Specification = request.Specification;
             assetToUpdate.InstalledDate = request.InstalledDate;
-            assetToUpdate.State = request.State;
+            assetToUpdate.State = request.State.Value;
 
-            _unitOfWork.AssetRepo.Update(assetToUpdate);
+            _unitOfWork.AssetRepository.Update(assetToUpdate);
 
             await _unitOfWork.SaveChangesAsync();
         }

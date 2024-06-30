@@ -1,28 +1,27 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import agent from "../../app/api/agent";
 import { BaseResult } from "../../app/models/BaseResult";
 import {
   AssetUpdationForm,
   AssetUpdationRequest,
 } from "../../app/models/asset/UpdateAssetRequest";
-import UpdateAssetForm from "../../app/components/forms/UpdateAssetForm";
-import AssetDetailsResponse from "../../app/models/asset/AssetDetailsResponse";
+import EditAssetForm from "../../app/components/forms/EditAssetForm";
+import { states } from "../../app/utils/helper";
 
-const fakeData: AssetDetailsResponse = {
-  assetId: "db2f356e-6a9c-4279-ab8d-fa8b22d77194",
-  assetCode: "456",
-  assetName: "Macbook Pro 2024",
-  assignments: [],
-  categoryName: "Personal computer",
-  installedDate: new Date("2024-08-09"),
-  location: "HCM",
-  specification: "Macbook for adults",
-  state: "Available",
-};
-const UpdateAssetPage = () => {
+const EditAssetPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const { assetToUpdate: data } = location.state || {}; // Default to empty object if state is undefined
 
   const handleSubmit = async (data: AssetUpdationForm) => {
+    const idxState =
+      states.findIndex(
+        (x) => x.label.toUpperCase() === data.state.toUpperCase()
+      ) + 1;
+
+    data.state = idxState.toString();
+
     const dataRequest: AssetUpdationRequest = {
       assetId: data.assetId,
       assetName: data.assetName,
@@ -46,12 +45,9 @@ const UpdateAssetPage = () => {
 
   return (
     <div>
-      <UpdateAssetForm
-        assetToUpdate={fakeData}
-        handleUpdateAsset={handleSubmit}
-      />
+      <EditAssetForm assetToUpdate={data} handleUpdateAsset={handleSubmit} />
     </div>
   );
 };
 
-export default UpdateAssetPage;
+export default EditAssetPage;
