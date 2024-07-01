@@ -21,10 +21,12 @@ interface Props extends UseControllerProps {
   disabled?: boolean;
   onKeyDown?: any;
   isApplyHelperText?: boolean;
+  isApplyError?: boolean;
 }
 
 export default function AppPasswordInput({
   isApplyHelperText = true,
+  isApplyError = true,
   ...props
 }: Props) {
   const { fieldState, field } = useController({ ...props, defaultValue: "" });
@@ -50,7 +52,7 @@ export default function AppPasswordInput({
       onKeyDown={props.onKeyDown}
       value={props.value}
       className={props.className}
-      error={isApplyHelperText ? props.error || !!fieldState.error : undefined}
+      error={ isApplyError ? props.error || !!fieldState.error : undefined}
       helperText={
         isApplyHelperText
           ? props.error

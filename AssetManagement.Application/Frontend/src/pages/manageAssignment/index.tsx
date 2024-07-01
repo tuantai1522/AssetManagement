@@ -1,5 +1,3 @@
-import ManagementMyAssignmentPage from "../myAssignment";
-
 export default function ManagementAssignmentPage() {
   return (
     <>
