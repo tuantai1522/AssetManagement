@@ -4,8 +4,8 @@ import { AssetState } from "../../app/models/asset/Asset";
 const items = [
   { id: AssetState[AssetState.Assigned], name: "Assigned" },
   { id: AssetState[AssetState.Available], name: "Available" },
-  { id: AssetState[AssetState["Not Available"]], name: "Not available" },
-  { id: AssetState[AssetState["Waiting For Recycling"]], name: "Wating for recycling" },
+  { id: AssetState[AssetState["Not available"]], name: "Not available" },
+  { id: AssetState[AssetState["Waiting for recycling"]], name: "Wating for recycling" },
   { id: AssetState[AssetState.Recycled], name: "Recycled" },
 ];
 

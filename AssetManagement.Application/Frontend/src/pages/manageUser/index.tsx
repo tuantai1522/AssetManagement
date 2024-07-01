@@ -157,7 +157,7 @@ export default function ManagementUserPage() {
           direction="row"
           justifyContent="space-between"
           alignItems="center"
-          spacing={2}
+          spacing={12}
           className="mt-3"
         >
           <UserType
@@ -196,7 +196,7 @@ export default function ManagementUserPage() {
             </Stack>
             <AppButton
               content="Create new user"
-              className="py-[6px]"
+              className="py-[6px] min-w-40"
               onClickOn={() => {
                 navigate(`/manage-user/create-user`);
               }}
@@ -220,17 +220,19 @@ export default function ManagementUserPage() {
             handleClick={(event, rowId) => handleClickOnUser(rowId)}
           />
 
-          <Stack
-            direction="row"
-            justifyContent="flex-end"
-            alignItems="baseline"
-          >
-            <UsePagination
-              totalPage={data?.metaData?.totalPageCount ?? 1}
-              onChange={handlePageNumberChange}
-              currentPage={data?.metaData?.currentPage ?? 1}
-            />
-          </Stack>
+          <div className="w-full overflow-visible">
+            <Stack
+              direction="row"
+              justifyContent="flex-end"
+              alignItems="baseline"
+            >
+              <UsePagination
+                totalPage={data?.metaData?.totalPageCount ?? 1}
+                onChange={handlePageNumberChange}
+                currentPage={data?.metaData?.currentPage ?? 1}
+              />
+            </Stack>
+          </div>
         </div>
       </div>
       <ConfirmModal

@@ -33,8 +33,8 @@ export interface FilterAssetRequest {
 
 export enum AssetState {
   "Available" = 1,
-  "Not Available" = 2,
-  "Waiting For Recycling" = 3,
+  "Not available" = 2,
+  "Waiting for recycling" = 3,
   "Recycled" = 4,
   "Assigned" = 5,
 }

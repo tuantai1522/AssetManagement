@@ -158,7 +158,9 @@ export function AppTable<T>(props: AppTableProp<T>) {
   const data: AppTableRow[] = mapToAppTableRows<T>(props.columns, rowData);
   return (
     <Box sx={{ width: "100%" }}>
-      <TableContainer sx={{ width: "100%", mb: 2 }}>
+      <TableContainer sx={{ width: "100%", mb: 2,
+      overflowX: "unset"
+       }}>
         <Table
           sx={{
             minWidth: 800,
@@ -181,6 +183,7 @@ export function AppTable<T>(props: AppTableProp<T>) {
               borderBottom: "1px solid black",
               fontWeight: "bold",
             },
+            
           }}
           aria-labelledby="tableTitle"
           size={"small"}

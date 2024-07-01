@@ -6,10 +6,10 @@ const DefaultLayout = () => {
     return(
         <div>
             <Header></Header>
-            <div className="flex justify-center">
-                <div className="w-[90%] flex gap-40">
+            <div className="flex justify-center items-start">
+                <div className="w-[95%] flex gap-40">
                     <Sidebar></Sidebar>
-                    <div className="mt-20 flex-1">
+                    <div className="mt-20 flex-1 overflow-x-auto ">
                         <Outlet />
                     </div>
                 </div>
