@@ -81,7 +81,7 @@ export default function ManagementAssetPage() {
   const initStates = searchParams.getAll("states");
   const initCategories = searchParams.getAll("categories");
   const initOrder = passedOrder ?? searchParams.get("order") as Order ?? "asc";
-  const initOrderBy = passedOrderBy ?? searchParams.get("orderBy") as OrderByFieldName ?? "assetCode";
+  const initOrderBy = passedOrderBy ?? searchParams.get("orderBy") as OrderByFieldName ?? "name";
 
   //Details
   const [clickOnAsset, setClickOnAsset] = useState<boolean>(false);

@@ -71,7 +71,6 @@ const LoginPage = () => {
           isPasswordChanged: response.result.isPasswordChanged,
         };
         localStorage.setItem("user", JSON.stringify(user));
-        debugger;
         navigate("/");
       }
     } catch (error: any) {
