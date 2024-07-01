@@ -4,6 +4,7 @@ import {
   AssetState,
   FilterAssetRequest,
   FilterAssetResponse,
+  OrderByFieldName,
 } from "../../app/models/asset/Asset";
 import agent from "../../app/api/agent";
 import { Order } from "../../app/components/table/sortTable";
@@ -24,18 +25,9 @@ import SelectedItem from "../../app/models/SelectedItem";
 import { Category } from "../../app/models/category/Category";
 import AssetInfo from "../../app/components/assetInfo/assetInfo";
 
-type OrderByFieldName =
-  | "assetCode"
-  | "name"
-  | "category"
-  | "state"
-  | "lastUpdate";
-
 function setFilterSearchParam(
   query: FilterAssetRequest,
-  setSearchParams: SetURLSearchParams,
-  order?: Order,
-  orderBy?: OrderByFieldName
+  setSearchParams: SetURLSearchParams
 ) {
   const params = new URLSearchParams();
 
@@ -58,13 +50,13 @@ function setFilterSearchParam(
     });
   }
 
-  // if (orderBy) {
-  //   params.set("orderBy", orderBy.toString());
-  // }
+  if (query?.orderBy) {
+    params.set("orderBy", query.orderBy.toString());
+  }
 
-  // if (order) {
-  //   params.set("order", order.toString());
-  // }
+  if (query?.order) {
+    params.set("order", query.order.toString());
+  }
 
   if (query?.pageNumber) {
     params.set("pageNumber", query.pageNumber.toString());
@@ -86,21 +78,21 @@ export default function ManagementAssetPage() {
   const initSearch = searchParams.get("search") ?? "";
   const initPageNumber = Number(searchParams.get("pageNumber") ?? "1");
   const initPageSize = Number(searchParams.get("pageSize") ?? "5");
-  const initStates = searchParams.getAll("states");
+  const initStates = searchParams.getAll("states")?.length === 0
+  ? [AssetState[AssetState.Assigned], AssetState[AssetState.Available], AssetState[AssetState["Not available"]]]
+  : searchParams.getAll("states");
   const initCategories = searchParams.getAll("categories");
+  const initOrder =
+    passedOrder ?? (searchParams.get("order") as Order) ?? "asc";
+  const initOrderBy =
+    passedOrderBy ??
+    (searchParams.get("orderBy") as OrderByFieldName) ??
+    "name";
 
   //Details
   const [clickOnAsset, setClickOnAsset] = useState<boolean>(false);
   const [assetId, setAssetId] = useState<string>("0");
 
-  const [order, setOrder] = useState<Order>(
-    passedOrder ?? (searchParams.get("order") as Order) ?? "asc"
-  );
-  const [orderBy, setOrderBy] = useState<OrderByFieldName>(
-    passedOrderBy ??
-      (searchParams.get("orderBy") as OrderByFieldName) ??
-      "assetCode"
-  );
   const [states, setStates] = useState<string[]>(initStates);
   const [categories, setCategories] = useState<string[]>(initCategories);
 
@@ -115,6 +107,8 @@ export default function ManagementAssetPage() {
     categories: initCategories,
     pageNumber: initPageNumber > 0 ? initPageNumber : 1,
     pageSize: initPageSize > 0 ? initPageSize : 5,
+    order: initOrder,
+    orderBy: initOrderBy,
   });
 
   const [searchInput, setSearchInput] = useState<string>(initSearch);
@@ -126,90 +120,35 @@ export default function ManagementAssetPage() {
     error: categoryError,
   } = agent.Category.all();
 
-  const handleClickOnAsset = (rowId: string) => {
-    setClickOnAsset(true);
-    setAssetId(data.items.result[rowId].id);
-  };
   useEffect(() => {
     if (!isLoading) {
       window.history.replaceState({}, "");
     }
   }, [isLoading]);
-  useEffect(() => {
-    let newQuery: FilterAssetRequest = query;
-    switch (orderBy) {
-      case "assetCode": {
-        newQuery = {
-          ...query,
-          sortAssetCode: order,
-          sortAssetName: undefined,
-          sortCategoryName: undefined,
-          sortState: undefined,
-          sortLastUpdate: undefined,
-        };
-        break;
-      }
-      case "name": {
-        newQuery = {
-          ...query,
-          sortAssetCode: undefined,
-          sortAssetName: order,
-          sortCategoryName: undefined,
-          sortState: undefined,
-          sortLastUpdate: undefined,
-        };
-        break;
-      }
-      case "category": {
-        newQuery = {
-          ...query,
-          sortAssetCode: undefined,
-          sortAssetName: undefined,
-          sortCategoryName: order,
-          sortState: undefined,
-          sortLastUpdate: undefined,
-        };
-        break;
-      }
-      case "state": {
-        newQuery = {
-          ...query,
-          sortAssetCode: undefined,
-          sortAssetName: undefined,
-          sortCategoryName: undefined,
-          sortState: order,
-          sortLastUpdate: undefined,
-        };
-        break;
-      }
-      case "lastUpdate": {
-        newQuery = {
-          ...query,
-          sortAssetCode: undefined,
-          sortAssetName: undefined,
-          sortCategoryName: undefined,
-          sortState: undefined,
-          sortLastUpdate: order,
-        };
-        break;
-      }
-      default:
-        break;
-    }
-    if (newQuery !== query) {
-      setQuery(newQuery);
-      //update search param
-      setFilterSearchParam(newQuery, setSearchParams, order, orderBy);
-    }
-  }, [orderBy, order]);
+
+  const setOrderBy = (orderBy: OrderByFieldName) => {
+    const newQuery = { ...query, orderBy: orderBy };
+    setQuery((pre) => ({ ...pre, orderBy: orderBy }));
+    setFilterSearchParam(newQuery, setSearchParams);
+  };
+
+  const setOrder = (order: Order) => {
+    const newQuery = { ...query, order: order };
+    setQuery((pre) => ({ ...pre, order: order }));
+    setFilterSearchParam(newQuery, setSearchParams);
+  };
+
+  const handleClickOnAsset = (rowId: string) => {
+    setClickOnAsset(true);
+    setAssetId(data.items.result[rowId].id);
+  };
 
   const handlePageNumberChange = (value: any) => {
     let pageNumber = Number(value);
     pageNumber = !pageNumber || pageNumber <= 0 ? 1 : pageNumber;
     const newQuery: FilterAssetRequest = { ...query, pageNumber };
     setQuery(newQuery);
-    //update search param
-    setFilterSearchParam(newQuery, setSearchParams, order, orderBy);
+    setFilterSearchParam(newQuery, setSearchParams);
   };
 
   const handleSearchInputChange = (
@@ -226,8 +165,7 @@ export default function ManagementAssetPage() {
       search: searchInput?.trim(),
     };
     setQuery(newQuery);
-    //update search param
-    setFilterSearchParam(newQuery, setSearchParams, order, orderBy);
+    setFilterSearchParam(newQuery, setSearchParams);
   };
 
   const handleStateFilterClick = () => {
@@ -235,7 +173,7 @@ export default function ManagementAssetPage() {
     if (states.length === 0 || states.includes("all")) {
       newQuery = { ...query, states: [], pageNumber: 1 };
       setQuery(newQuery);
-      setFilterSearchParam(newQuery, setSearchParams, order, orderBy);
+      setFilterSearchParam(newQuery, setSearchParams);
     } else {
       newQuery = {
         ...query,
@@ -246,7 +184,7 @@ export default function ManagementAssetPage() {
           ),
       };
       setQuery(newQuery);
-      setFilterSearchParam(newQuery, setSearchParams, order, orderBy);
+      setFilterSearchParam(newQuery, setSearchParams);
     }
   };
 
@@ -255,17 +193,17 @@ export default function ManagementAssetPage() {
     if (categories.length === 0 || categories.includes("all")) {
       newQuery = { ...query, categories: [], pageNumber: 1 };
       setQuery(newQuery);
-      setFilterSearchParam(newQuery, setSearchParams, order, orderBy);
+      setFilterSearchParam(newQuery, setSearchParams);
     } else {
       newQuery = { ...query, categories: categories, pageNumber: 1 };
       setQuery(newQuery);
-      setFilterSearchParam(newQuery, setSearchParams, order, orderBy);
+      setFilterSearchParam(newQuery, setSearchParams);
     }
   };
 
   return (
-    <div className="flex justify-center h-full items-center">
-      <div className="relative container mb-12">
+    <div className="flex justify-center h-full">
+      <div className="container">
         <p className="text-primary text-xl font-bold justify-start items-start">
           Asset List
         </p>
@@ -273,14 +211,14 @@ export default function ManagementAssetPage() {
           direction="row"
           justifyContent="space-between"
           alignItems="center"
-          spacing={16}
+          spacing={12}
           className="mt-3"
         >
           <Stack
             direction="row"
             justifyContent="flex-start"
             alignItems="center"
-            spacing={16}
+            spacing={12}
           >
             <AssetStateFilter
               states={states}
@@ -303,7 +241,7 @@ export default function ManagementAssetPage() {
             direction="row"
             justifyContent="flex-end"
             alignItems="center"
-            spacing={8}
+            spacing={4}
           >
             <Stack
               direction="row"
@@ -353,14 +291,16 @@ export default function ManagementAssetPage() {
                     item.state !== undefined
                       ? AssetState[item.state]
                       : undefined,
+                  category: item.category,
+                  name: item.name,
                 },
               })) as AssetRowData[]
             }
             error={error}
             isLoading={isLoading}
-            order={order}
+            order={query?.order ?? "asc"}
             setOrder={setOrder}
-            orderBy={orderBy}
+            orderBy={query?.orderBy}
             setOrderBy={setOrderBy}
             handleClick={(event, rowId) => handleClickOnAsset(rowId)}
           />
@@ -377,6 +317,7 @@ export default function ManagementAssetPage() {
             />
           </Stack>
         </div>
+      </div>
         {clickOnAsset && (
           <AssetInfo
             assetId={assetId}
@@ -385,7 +326,6 @@ export default function ManagementAssetPage() {
             }}
           />
         )}
-      </div>
     </div>
   );
 }

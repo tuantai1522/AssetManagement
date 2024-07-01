@@ -4,6 +4,7 @@ import AppTable, {
   Order,
 } from "../../app/components/table/sortTable";
 import { Stack } from "@mui/material";
+import { AssetState } from "../../app/models/asset/Asset";
 
 export interface AssetRowData {
   id: string;
@@ -89,48 +90,42 @@ export default function AssetList(props: AssetListProp) {
       label: "",
       className: "font-bold",
       rowRatio: "w-1/12",
-      minWidth: "100px",
+      minWidth: "40px",
       style: {
         border: "none",
         borderBottom: "none",
         maxWidth: "120px",
       },
-      renderCell: (params) => {
-        return (
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-            spacing={2}
+      disableSort: true,
+      renderCell: (params) => (
+        <div className="flex w-fit justify-end items-center">
+          <button
+            disabled={params?.state === AssetState.Assigned}
+            color="primary"
+            className="text-gray-500"
+            onClick={(e) => {
+              e.stopPropagation();
+              alert(params?.id);
+            }}
           >
-            <button
-              disabled={params?.state === "Assigned"}
-              color="primary"
-              className="text-gray-500"
-              onClick={(e) => {
-                e.stopPropagation();
-                alert(params?.id);
-              }}
-            >
-              {" "}
-              <Edit />
-            </button>
+            {" "}
+            <Edit />
+          </button>
 
-            <button
-              disabled={params?.state === "Assigned"}
-              color="primary"
-              className="text-red-500"
-              onClick={(e) => {
-                e.stopPropagation();
-                alert(params?.id);
-              }}
-            >
-              {" "}
-              <HighlightOff />
-            </button>
-          </Stack>
-        );
-      },
+          <button
+            disabled={params?.state === AssetState.Assigned}
+            color="primary"
+            className="text-red-500"
+            onClick={(e) => {
+              e.stopPropagation();
+              alert(params?.id);
+            }}
+          >
+            {" "}
+            <HighlightOff />
+          </button>
+        </div>
+      )
     },
   ];
 

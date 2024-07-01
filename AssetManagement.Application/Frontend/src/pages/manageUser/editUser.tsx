@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import UserForm from "../../app/components/forms/userForm";
+import UserForm from "../../app/components/forms/UserForm";
 import agent from "../../app/api/agent";
 import { EditUserRequest } from "../../app/models/user/EditUserRequest";
 import dayjs from "dayjs";

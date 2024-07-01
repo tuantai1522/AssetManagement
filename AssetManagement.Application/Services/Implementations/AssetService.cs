@@ -138,7 +138,7 @@ namespace AssetManagement.Application.Services.Implementations
                 { SortState: SortOption.Desc } => q => q.OrderByDescending(a => a.State),
                 { SortLastUpdate: SortOption.Asc } => q => q.OrderBy(a => a.LastUpdated),
                 { SortLastUpdate: SortOption.Desc } => q => q.OrderByDescending(a => a.LastUpdated),
-                _ => q => q.OrderBy(a => a.AssetCode)
+                _ => q => q.OrderBy(a => a.Name)
             };
         }
         private Expression<Func<Asset, bool>> GetFilterSpecification(FilterAssetRequest filter, AppUser currentUser)
@@ -155,7 +155,7 @@ namespace AssetManagement.Application.Services.Implementations
 
             if (filter.States != null && filter.States.Length > 0)
             {
-                filterSpecification = filterSpecification.And(a => filter.States.Where(s => s == a.State).Any());
+                filterSpecification = filterSpecification.And(a => filter.States.Any(s => s == a.State));
             }
 
             if (filter.Categories != null && filter.Categories.Length > 0)

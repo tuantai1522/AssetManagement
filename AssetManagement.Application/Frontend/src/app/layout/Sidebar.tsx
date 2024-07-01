@@ -7,7 +7,7 @@ const Sidebar = () => {
   const user: User | null = userJson ? (JSON.parse(userJson) as User) : null;
 
   return (
-    <div className="w-fit bg-white h-fit mt-10">
+    <div className="min-w-max bg-white h-fit mt-10">
       <div className="logo">
         <div className="logo-image w-[6rem]">
           <img

@@ -32,7 +32,7 @@ const UserForm = ({
         return dayjs(date);
     }
 
-    const { handleSubmit, control, reset, formState: {isValid} } = useForm({
+    const { handleSubmit, control, getValues, trigger, reset, formState: {isValid} } = useForm({
         resolver: yupResolver<UserCreateForm>(createUserSchema),
         defaultValues: {
             gender: Gender.Female, // Set default value for gender
@@ -118,6 +118,11 @@ const UserForm = ({
                                     format="DD/MM/YYYY"
                                     disableFuture
                                     className="grow"
+                                    onChange={(date) => {
+                                        field.onChange(date);
+                                        if (!!getValues('joinedDate')) 
+                                            trigger('joinedDate');
+                                    }}
                                     slotProps={{
                                         textField: {
                                             size: 'small',
@@ -144,7 +149,7 @@ const UserForm = ({
                                     color="warning"
                                     id="gender-radio-form"
                                     value={field.value || Gender.Female} // Ensure a default value is set if field.value is undefined
-                                    onChange={(e) => field.onChange(e.target.value)}
+                                    // onChange={(e) => field.onChange(e.target.value)}
                                 >
                                     <FormControlLabel value={Gender.Female} control={<Radio sx={{ '&.Mui-checked': { color: '#cf2338' } }} />} label="Female" />
                                     <FormControlLabel value={Gender.Male}  control={<Radio sx={{ '&.Mui-checked': { color: '#cf2338' } }} />} label="Male" />
@@ -193,7 +198,7 @@ const UserForm = ({
                                         id="type-selection-form"
                                         error={!!error}
                                         value={field.value || ''}
-                                        onChange={(e) => field.onChange(e.target.value)}
+                                        // onChange={(e) => field.onChange(e.target.value)}
                                     >
                                         <MenuItem value={Type.Staff}>Staff</MenuItem>
                                         <MenuItem value={Type.Admin}>Admin</MenuItem>

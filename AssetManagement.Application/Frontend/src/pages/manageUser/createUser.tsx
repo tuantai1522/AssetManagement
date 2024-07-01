@@ -1,11 +1,11 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import agent from "../../app/api/agent";
-import UserForm from "../../app/components/forms/userForm";
 import { CreateUserRequest } from "../../app/models/user/CreateUserRequest";
 import { UserInfoResponse } from "../../app/models/login/UserInfoResponse";
 import { BaseResult } from "../../app/models/BaseResult";
 import dayjs from "dayjs";
 import { UserCreateForm } from "../../app/models/user/UserCreateForm";
+import UserForm from "../../app/components/forms/UserForm";
 
 const CreateUserPage = () => {
     const navigate = useNavigate();

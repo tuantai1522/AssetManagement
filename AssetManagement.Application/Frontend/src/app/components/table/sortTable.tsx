@@ -78,11 +78,11 @@ function CustomTableHead(props: CustomTableHeadProp) {
     <TableHead>
       <TableRow>
         {props.columns &&
-          props.columns?.map((column) => {
+          props.columns?.map((column, index) => {
             let key = column.id ?? column.fieldName;
             return (
               <TableCell
-                key={key}
+                key={index}
                 align="left"
                 padding={column.disablePadding ? "none" : "normal"}
                 //modify
@@ -158,7 +158,9 @@ export function AppTable<T>(props: AppTableProp<T>) {
   const data: AppTableRow[] = mapToAppTableRows<T>(props.columns, rowData);
   return (
     <Box sx={{ width: "100%" }}>
-      <TableContainer sx={{ width: "100%", mb: 2 }}>
+      <TableContainer sx={{ width: "100%", mb: 2,
+      overflowX: "unset"
+       }}>
         <Table
           sx={{
             minWidth: 800,
@@ -181,6 +183,7 @@ export function AppTable<T>(props: AppTableProp<T>) {
               borderBottom: "1px solid black",
               fontWeight: "bold",
             },
+            
           }}
           aria-labelledby="tableTitle"
           size={"small"}
@@ -196,7 +199,6 @@ export function AppTable<T>(props: AppTableProp<T>) {
               data.length > 0 &&
               data.map((row, index) => {
                 return (
-                  <>
                     <TableRow
                       onClick={(event) => {
                         props.handleClick(event, row.id);
@@ -218,7 +220,6 @@ export function AppTable<T>(props: AppTableProp<T>) {
                         );
                       })}
                     </TableRow>
-                  </>
                 );
               })}
           </TableBody>
