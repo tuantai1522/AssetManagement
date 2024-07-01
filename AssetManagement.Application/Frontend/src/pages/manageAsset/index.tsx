@@ -80,8 +80,12 @@ export default function ManagementAssetPage() {
   const initPageSize = Number(searchParams.get("pageSize") ?? "5");
   const initStates = searchParams.getAll("states");
   const initCategories = searchParams.getAll("categories");
-  const initOrder = passedOrder ?? searchParams.get("order") as Order ?? "asc";
-  const initOrderBy = passedOrderBy ?? searchParams.get("orderBy") as OrderByFieldName ?? "name";
+  const initOrder =
+    passedOrder ?? (searchParams.get("order") as Order) ?? "asc";
+  const initOrderBy =
+    passedOrderBy ??
+    (searchParams.get("orderBy") as OrderByFieldName) ??
+    "name";
 
   //Details
   const [clickOnAsset, setClickOnAsset] = useState<boolean>(false);
@@ -102,7 +106,7 @@ export default function ManagementAssetPage() {
     pageNumber: initPageNumber > 0 ? initPageNumber : 1,
     pageSize: initPageSize > 0 ? initPageSize : 5,
     order: initOrder,
-    orderBy: initOrderBy
+    orderBy: initOrderBy,
   });
 
   const [searchInput, setSearchInput] = useState<string>(initSearch);
@@ -121,16 +125,16 @@ export default function ManagementAssetPage() {
   }, [isLoading]);
 
   const setOrderBy = (orderBy: OrderByFieldName) => {
-    const newQuery = { ...query, orderBy: orderBy }
+    const newQuery = { ...query, orderBy: orderBy };
     setQuery((pre) => ({ ...pre, orderBy: orderBy }));
     setFilterSearchParam(newQuery, setSearchParams);
-  }
+  };
 
   const setOrder = (order: Order) => {
-    const newQuery = { ...query, order: order }
+    const newQuery = { ...query, order: order };
     setQuery((pre) => ({ ...pre, order: order }));
     setFilterSearchParam(newQuery, setSearchParams);
-  }
+  };
 
   const handleClickOnAsset = (rowId: string) => {
     setClickOnAsset(true);
@@ -285,6 +289,8 @@ export default function ManagementAssetPage() {
                     item.state !== undefined
                       ? AssetState[item.state]
                       : undefined,
+                  category: item.category,
+                  name: item.name,
                 },
               })) as AssetRowData[]
             }

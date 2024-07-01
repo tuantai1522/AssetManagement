@@ -1,11 +1,10 @@
 import agent from "../../api/agent";
-import { BaseResult } from "../../models/BaseResult";
 import AssetDetailsResponse from "../../models/asset/AssetDetailsResponse";
+import { states } from "../../utils/helper";
 import AppLoader from "../AppLoader";
 
 interface Props {
   assetId: string;
-  errorMessage?: string;
   onClose: () => void;
 }
 
@@ -31,48 +30,45 @@ const assignments: Array<AssignmentResponse> = [
   },
 ];
 
-const AssetInfo = ({ assetId, errorMessage, onClose }: Props) => {
-  const {
-    data,
-    isLoading: assetLoading,
-    error: assetError,
-  } = agent.Asset.details(assetId);
+const AssetInfo = ({ assetId, onClose }: Props) => {
+  const { data, isLoading: assetLoading } = agent.Asset.details(assetId);
 
   const assetData: AssetDetailsResponse = data?.result;
-  console.log(assetId);
-  console.log(data);
+
+  //mutate state of asset
+  const item = states.find((x) => x.value === assetData?.state);
 
   return (
     <>
       <div className="fixed w-screen h-screen bg-gray-400 top-0 left-0 opacity-50 "></div>
-      <div className="z-10 shadow-2xl absolute top-1/2 -translate-y-1/2">
-        <div className="bg-white rounded-lg border-gray-400 border-2 w-[120%]">
-          <div className="bg-slate-100 rounded-t-lg border-b-2 border-gray-400 px-12 py-5 flex justify-between items-center">
-            <h2 className="text-lg font-bold text-primary">
-              Detailed Asset Infomation
-            </h2>
-            <div
-              onClick={onClose}
-              className="border-2 border-primary rounded-sm text-primary cursor-pointer transition-all hover:text-white hover:bg-primary"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="4.5"
-                stroke="currentColor"
-                className="size-4"
+      {assetData ? (
+        <div className="z-10 shadow-2xl absolute top-0 translate-x-[15%]">
+          <div className="bg-white rounded-lg border-gray-400 border-2">
+            <div className="bg-slate-100 rounded-t-lg border-b-2 border-gray-400 px-12 py-5 flex justify-between items-center">
+              <h2 className="text-lg font-bold text-primary">
+                Detailed Asset Information
+              </h2>
+              <div
+                onClick={onClose}
+                className="border-2 border-primary rounded-sm text-primary cursor-pointer transition-all hover:text-white hover:bg-primary"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M6 18 18 6M6 6l12 12"
-                />
-              </svg>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="4.5"
+                  stroke="currentColor"
+                  className="size-4"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18 18 6M6 6l12 12"
+                  />
+                </svg>
+              </div>
             </div>
-          </div>
-          <div className="w-full h-full px-12 py-7">
-            {assetData ? (
+            <div className="w-full h-full px-12 py-7">
               <div className="grid grid-cols-6 gap-4 text-secondary">
                 <div className="col-span-1">Asset Code</div>
                 <div className="col-span-5">{assetData?.assetCode}</div>
@@ -89,7 +85,7 @@ const AssetInfo = ({ assetId, errorMessage, onClose }: Props) => {
                   })}
                 </div>
                 <div className="col-span-1">State</div>
-                <div className="col-span-5">{assetData?.state}</div>
+                <div className="col-span-5">{item?.label}</div>
                 <div className="col-span-1">Location</div>
                 <div className="col-span-5">{assetData?.location}</div>
                 <div className="col-span-1">Specification</div>
@@ -142,19 +138,16 @@ const AssetInfo = ({ assetId, errorMessage, onClose }: Props) => {
                   })}
                 </div>
               </div>
-            ) : assetLoading ? (
-              <AppLoader />
-            ) : errorMessage ? (
-              <div className="min">
-                <p className="text-primary font-semibold text-lg">Oops!</p>
-                <p className="text-secondary">Sorry, {errorMessage}</p>
-              </div>
-            ) : (
-              ""
-            )}
+            </div>
           </div>
         </div>
-      </div>
+      ) : (
+        assetLoading && (
+          <div className="flex justify-center items-center">
+            <AppLoader />
+          </div>
+        )
+      )}
     </>
   );
 };
