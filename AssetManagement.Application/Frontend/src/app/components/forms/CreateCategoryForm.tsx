@@ -44,10 +44,12 @@ const CreateCategoryForm = ({ refetchCategories }: Props) => {
       name: formData.categoryName,
       prefix: formData.categoryPrefix.toUpperCase(),
     };
-    await agent.Category.create(request).then(() => {
-      setIsSubmitting(false);
+    await agent.Category.create(request)
+    .then(() => {
       refetchCategories();
-    });
+    }).catch((error: any) => {console.log(error)});
+    
+    setIsSubmitting(false);
   };
 
   return (
