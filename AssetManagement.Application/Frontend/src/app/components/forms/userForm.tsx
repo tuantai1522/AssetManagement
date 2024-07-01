@@ -32,7 +32,7 @@ const UserForm = ({
         return dayjs(date);
     }
 
-    const { handleSubmit, control, reset, formState: {isValid} } = useForm({
+    const { handleSubmit, control, trigger, reset, formState: {isValid} } = useForm({
         resolver: yupResolver<UserCreateForm>(createUserSchema),
         defaultValues: {
             gender: Gender.Female, // Set default value for gender
@@ -118,6 +118,10 @@ const UserForm = ({
                                     format="DD/MM/YYYY"
                                     disableFuture
                                     className="grow"
+                                    onChange={(date) => {
+                                        field.onChange(date);
+                                        trigger('joinedDate');
+                                    }}
                                     slotProps={{
                                         textField: {
                                             size: 'small',
