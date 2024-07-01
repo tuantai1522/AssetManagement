@@ -6,10 +6,8 @@ import AppTextInput from "../AppTextInput";
 import { CategoryCreateForm } from "../../models/category/CategoryCreateForm";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
-import Toast from "../toast";
 import agent from "../../api/agent";
 import { CreateCategoryRequest } from "../../models/category/CreateCategoryRequest";
-import { BaseResult } from "../../models/BaseResult";
 
 interface Props {
   refetchCategories: () => void;
@@ -21,7 +19,7 @@ const CreateCategoryForm = ({ refetchCategories }: Props) => {
     control,
     reset,
     formState: { errors },
-    getValues
+    getValues,
   } = useForm({
     resolver: yupResolver<CategoryCreateForm>(createCategorySchema),
     defaultValues: {},
@@ -29,14 +27,7 @@ const CreateCategoryForm = ({ refetchCategories }: Props) => {
   });
 
   const [isFormVisible, setIsFormVisible] = useState(false);
-
-  const [isToastOpen, setIsToastOpen] = useState(false);
-  const [toastSeverity, setToastSeverity] = useState<
-    "error" | "success" | "info" | "warning"
-  >("success");
-  const [toastMessage, setToastMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [prefixText, setPrefixText] = useState("");
 
   const onSubmit = async (formData: any) => {
     setIsSubmitting(true);
@@ -45,11 +36,17 @@ const CreateCategoryForm = ({ refetchCategories }: Props) => {
       prefix: formData.categoryPrefix.toUpperCase(),
     };
     await agent.Category.create(request)
-    .then(() => {
-      refetchCategories();
-    }).catch((error: any) => {console.log(error)});
-    
-    setIsSubmitting(false);
+      .then(() => {
+        reset();
+        setIsFormVisible(false);
+        refetchCategories();
+      })
+      .catch((error: any) => {
+        console.log(error);
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
   };
 
   return (
