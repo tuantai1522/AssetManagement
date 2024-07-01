@@ -103,6 +103,7 @@ export default function UserList(props: UserListProp) {
       },
       rowRatio: "w-1/12",
       minWidth: "40px",
+      disableSort: true,
       renderCell: (params) => (
         <div className="flex w-fit justify-end items-center">
           <button

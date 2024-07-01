@@ -1,5 +1,4 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
-import { router } from "../routes/router";
 import useSWR from "swr";
 import { PaginatedResponse } from "../models/Pagination";
 import { BaseResult } from "../models/BaseResult";
@@ -8,8 +7,8 @@ import { AssetCreationRequest } from "../models/asset/AssetCreationRequest";
 import { FilterAssetRequest, getAssetQueryString } from "../models/asset/Asset";
 import { EditUserRequest } from "../models/user/EditUserRequest";
 import { CreateUserRequest } from "../models/user/CreateUserRequest";
-import { useNotification } from "../components/toast/NotifyContext";
 import eventEmitter from "../hooks/EventMitter";
+import { IgnoreErrorMessage } from "../constants/IgnoreErrorMessage";
 import { AssetUpdationRequest } from "../models/asset/UpdateAssetRequest";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
@@ -24,7 +23,6 @@ axios.interceptors.request.use((config) => {
 
   if (user) {
     const userToken = user.token;
-    console.log(userToken);
 
     if (userToken) config.headers.Authorization = `Bearer ${userToken}`;
     return config;
@@ -48,55 +46,66 @@ axios.interceptors.response.use(
   (error: AxiosError) => {
     const result = error.response!.data as BaseResult<any>;
     const errorStatus = result.error ? result.error.status : result.status;
-    switch (errorStatus) {
-      case 400:
-        if (result?.errors) {
-          const modalStateErrors: string[] = [];
-          for (const key in result.errors) {
-            if (result.errors[key]) {
-              result.errors[key].forEach((errorMsg) => {
-                modalStateErrors.push(`${key}: ${errorMsg}`);
-              });
-            }
-          }
-
-          eventEmitter.emit(
-            "notification",
-            modalStateErrors.join(", "),
-            "error"
-          );
-        } else if (result.error) {
-          eventEmitter.emit("notification", result.error.message, "error");
-        }
-        break;
-      case 401:
-        console.log(result.error.message);
-        eventEmitter.emit("notification", result.error.message, "error");
-        break;
-      case 403:
-        console.log(result.error.message);
-        eventEmitter.emit("notification", result.error.message, "error");
-        break;
-      case 404:
-        console.log(result.error.message);
-        eventEmitter.emit("notification", result.error.message, "error");
-        break;
-      case 409:
-        console.log(result.error.message);
-        eventEmitter.emit("notification", result.error.message, "error");
-        break;
-      case 500:
-        console.log("Catch 500");
-        console.log(result.error.message);
-        router.navigate("/server-error");
-        break;
-      default:
-        break;
+    let isShowToastError = true;
+    if (
+      result.error &&
+      IgnoreErrorMessage.some((s) => s === result.error.message)
+    ) {
+      isShowToastError = false;
     }
+
+    if (isShowToastError) {
+      switch (errorStatus) {
+        case 400:
+          if (result?.errors) {
+            const modalStateErrors: string[] = [];
+            for (const key in result.errors) {
+              if (result.errors[key]) {
+                result.errors[key].forEach((errorMsg) => {
+                  modalStateErrors.push(`${key}: ${errorMsg}`);
+                });
+              }
+            }
+
+            eventEmitter.emit(
+              "notification",
+              modalStateErrors.join(", "),
+              "error"
+            );
+          } else if (result.error) {
+            eventEmitter.emit("notification", result.error.message, "error");
+          }
+          break;
+        case 401:
+          console.log(result.error.message);
+          eventEmitter.emit("notification", result.error.message, "error");
+          break;
+        case 403:
+          console.log(result.error.message);
+          eventEmitter.emit("notification", result.error.message, "error");
+          break;
+        case 404:
+          console.log(result.error.message);
+          eventEmitter.emit("notification", result.error.message, "error");
+          break;
+        case 409:
+          console.log(result.error.message);
+          eventEmitter.emit("notification", result.error.message, "error");
+          break;
+        case 500:
+          console.log(result.error.message);
+          eventEmitter.emit("notification", result.error.message, "error");
+          // router.navigate("/server-error");
+          break;
+        default:
+          break;
+      }
+    }
+
     if (result.result) {
       return Promise.reject(result.result);
     }
-    return Promise.reject(result.error);
+    return Promise.reject(result?.error);
   }
 );
 

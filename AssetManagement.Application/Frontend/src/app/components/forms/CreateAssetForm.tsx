@@ -29,7 +29,11 @@ interface Props {
 }
 
 const CreateAssetForm = ({ handleCreateAsset }: Props) => {
-  const { data: categories, isLoading: categoriesIsLoading, mutate: mutateCategories } = agent.Category.all();
+  const {
+    data: categories,
+    isLoading: categoriesIsLoading,
+    mutate: mutateCategories,
+  } = agent.Category.all();
 
   const {
     handleSubmit,
@@ -105,7 +109,9 @@ const CreateAssetForm = ({ handleCreateAsset }: Props) => {
                         <p className="ml-4 mb-2">No Category found!</p>
                       )}
                       <Divider />
-                      <CreateCategoryForm refetchCategories={mutateCategories} />
+                      <CreateCategoryForm
+                        refetchCategories={mutateCategories}
+                      />
                     </Select>
                   </FormControl>
                 )}
@@ -215,7 +221,7 @@ const CreateAssetForm = ({ handleCreateAsset }: Props) => {
           </div>
         </div>
         <div className="flex justify-end space-x-4">
-          <AppButton content="Save" isFormSubmit={true} />
+          <AppButton content="Save" isFormSubmit={true} isDisabled={!isValid} />
           <AppButton
             content="Cancel"
             styleType="Secondary"

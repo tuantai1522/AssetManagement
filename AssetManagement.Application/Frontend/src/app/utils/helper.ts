@@ -15,4 +15,8 @@ export const states = [
     label: "Recycled",
     value: "Recycled",
   },
+  {
+    label: "Assigned",
+    value: "Assigned",
+  },
 ];
