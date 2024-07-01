@@ -1,5 +1,4 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
-import { router } from "../routes/router";
 import useSWR from "swr";
 import { PaginatedResponse } from "../models/Pagination";
 import { BaseResult } from "../models/BaseResult";
@@ -8,7 +7,6 @@ import { AssetCreationRequest } from "../models/asset/AssetCreationRequest";
 import { FilterAssetRequest, getAssetQueryString } from "../models/asset/Asset";
 import { EditUserRequest } from "../models/user/EditUserRequest";
 import { CreateUserRequest } from "../models/user/CreateUserRequest";
-import { useNotification } from "../components/toast/NotifyContext";
 import eventEmitter from "../hooks/EventMitter";
 import { IgnoreErrorMessage } from "../constants/IgnoreErrorMessage";
 
@@ -52,6 +50,7 @@ axios.interceptors.response.use(
     {
       isShowToastError = false;
     }
+  
     if(isShowToastError)
       {
         switch (errorStatus){
@@ -97,11 +96,11 @@ axios.interceptors.response.use(
             break;
         }
       }
-  
+    
     if (result.result) {
       return Promise.reject(result.result);
     }
-    return Promise.reject(result.error);
+    return Promise.reject(result?.error);
   }
 );
 
