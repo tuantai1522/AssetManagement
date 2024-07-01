@@ -169,7 +169,7 @@ export default function ManagementUserPage() {
             direction="row"
             justifyContent="flex-end"
             alignItems="center"
-            spacing={8}
+            spacing={4}
           >
             <Stack
               direction="row"

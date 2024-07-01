@@ -130,7 +130,7 @@ export default function AppSelectedInput({ ...props }: Props) {
               horizontal: "left",
             }}
           >
-            <Grid width={240}>
+            <Grid width={220}>
               <Grid item >
                 <FormControlLabel
                   value={"all"}

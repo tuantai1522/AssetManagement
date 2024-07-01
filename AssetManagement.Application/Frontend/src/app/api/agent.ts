@@ -24,7 +24,6 @@ axios.interceptors.request.use((config) => {
 
   if (user) {
     const userToken = user.token;
-    console.log(userToken);
 
     if (userToken) config.headers.Authorization = `Bearer ${userToken}`;
     return config;
