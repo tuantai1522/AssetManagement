@@ -19,8 +19,9 @@ namespace AssetManagement.Data.Data
             base.OnModelCreating(builder);
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
-            UserSeeder.SeedUsers(builder);
-            AssetSeeder.SeedAssets(builder);
+            // UserSeeder.SeedUsers(builder);
+            // AssetSeeder.SeedAssets(builder);
+            AssignmentSeeder.SeedAssignments(builder);
         }
     }
 }
