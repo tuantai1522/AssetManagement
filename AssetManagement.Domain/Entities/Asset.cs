@@ -16,5 +16,7 @@ namespace AssetManagement.Domain.Entities
         public string? Location { get; set; }
 
         public Category? Category { get; set; }
+        public virtual ICollection<Assignment> Assignments { get; set; } = [];
+
     }
 }

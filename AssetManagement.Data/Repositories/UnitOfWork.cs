@@ -9,6 +9,7 @@ public class UnitOfWork : IUnitOfWork, IAsyncDisposable
     private readonly ILogger<UnitOfWork> _logger;
     public IAssetRepository AssetRepository { get; private set; }
     public ICategoryRepository CategoryRepository { get; private set; }
+    public IAssignmentRepository AssignmentRepository { get; private set; }
 
     public UnitOfWork(AssetManagementDbContext dbContext, ILogger<UnitOfWork> logger)
     {

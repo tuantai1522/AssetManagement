@@ -6,6 +6,7 @@
         public string? Name { get; set; }
         public string? Prefix { get; set; }
 
-        public IEnumerable<Asset> Assets { get; set; }
+        public virtual ICollection<Asset> Assets { get; set; } = [];
+
     }
 }
