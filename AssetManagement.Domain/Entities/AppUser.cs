@@ -17,5 +17,9 @@ namespace AssetManagement.Domain.Entities
         public DateTime? LastUpdatedDateTime { get; set; }
 
         public virtual ICollection<UserRole> UserRoles { get; set; } = [];
+
+        public virtual ICollection<Assignment> AssignedToAssignments { get; set; } = [];
+        public virtual ICollection<Assignment> AssignedByAssignments { get; set; } = [];
+
     }
 }
