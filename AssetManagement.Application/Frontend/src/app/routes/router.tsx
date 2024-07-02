@@ -14,6 +14,7 @@ import ManagementAssignmentPage from "../../pages/manageAssignment";
 import ManagementRequestForReturningPage from "../../pages/requestForReturning";
 import ManagementReportPage from "../../pages/report";
 import CreateAssetPage from "../../pages/manageAsset/createAsset";
+import CreateAssignment from "../../pages/myAssignment/CreateAssignment";
 
 export const router = createBrowserRouter([
   {
@@ -38,22 +39,29 @@ export const router = createBrowserRouter([
             element: <DefaultLayout />,
             children: [
               {
-                path: "manage-user", children: [
-                  { path: '', element: <ManagementUserPage /> },
+                path: "manage-user",
+                children: [
+                  { path: "", element: <ManagementUserPage /> },
                   { path: "create-user", element: <CreateUserPage /> },
                   { path: "edit-user/:id", element: <EditUserPage /> },
-
-                ]
+                ],
               },
               {
-                path: "manage-asset", children: [
-                  { path: '', element: <ManagementAssetPage /> },
+                path: "manage-asset",
+                children: [
+                  { path: "", element: <ManagementAssetPage /> },
                   { path: "create-asset", element: <CreateAssetPage /> },
-                ]
+                ],
               },
               {
                 path: "manage-assignment",
-                element: <ManagementAssignmentPage />,
+                children: [
+                  { path: "", element: <ManagementAssignmentPage /> },
+                  {
+                    path: "create-assignment",
+                    element: <CreateAssignment />,
+                  },
+                ],
               },
               {
                 path: "request-for-returning",
