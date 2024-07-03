@@ -1,9 +1,10 @@
 ﻿using AssetManagement.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AssetManagement.Data.Data.MappingConfigurations
 {
-    internal class AssetConfiguration
+    internal class AssetConfiguration : IEntityTypeConfiguration<Asset>
     {
         public void Configure(EntityTypeBuilder<Asset> builder)
         {
@@ -16,11 +17,6 @@ namespace AssetManagement.Data.Data.MappingConfigurations
                 .IsRequired();
 
             #endregion
-
-            builder
-                .Property(e => e.State)
-                .HasConversion<string>();
-
         }
     }
 }

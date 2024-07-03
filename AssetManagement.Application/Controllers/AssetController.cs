@@ -53,17 +53,31 @@ public class AssetController : ControllerBase
         return Ok(result);
     }
 
-	[HttpPost("create")]
-	[Authorize(Roles = $"{RoleConstant.AdminRole}")]
-	public async Task<ActionResult<BaseResult<AssetResponse>>> CreateAssetAsync([FromBody] AssetCreationRequest request)
-	{
-		var data = await _assetService.CreateAssetAsync(request);
-		var result = new BaseResult<AssetResponse>()
-		{
-			IsSuccess = true,
-			Error = null,
-			Result = data
-		};
-		return Ok(result);
-	}
+    [HttpPut("updateAssetById")]
+    [Authorize(Roles = $"{RoleConstant.AdminRole}")]
+    public async Task<ActionResult<BaseResult<object>>> UpdateAssetById([FromBody] AssetUpdateRequest request)
+    {
+        await _assetService.UpdateAssetAsync(request);
+        var result = new BaseResult<object>()
+        {
+            IsSuccess = true,
+            Error = null,
+            Result = null,
+        };
+        return Ok(result);
+    }
+
+    [HttpPost("create")]
+    [Authorize(Roles = $"{RoleConstant.AdminRole}")]
+    public async Task<ActionResult<BaseResult<AssetResponse>>> CreateAssetAsync([FromBody] AssetCreationRequest request)
+    {
+        var data = await _assetService.CreateAssetAsync(request);
+        var result = new BaseResult<AssetResponse>()
+        {
+            IsSuccess = true,
+            Error = null,
+            Result = data
+        };
+        return Ok(result);
+    }
 }

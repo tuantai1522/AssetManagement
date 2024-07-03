@@ -24,6 +24,7 @@ import CategoryFilter from "./categoryFilter";
 import SelectedItem from "../../app/models/SelectedItem";
 import { Category } from "../../app/models/category/Category";
 import AssetInfo from "../../app/components/assetInfo/assetInfo";
+import { AssetUpdationRequest } from "../../app/models/asset/UpdateAssetRequest";
 
 function setFilterSearchParam(
   query: FilterAssetRequest,
@@ -78,9 +79,14 @@ export default function ManagementAssetPage() {
   const initSearch = searchParams.get("search") ?? "";
   const initPageNumber = Number(searchParams.get("pageNumber") ?? "1");
   const initPageSize = Number(searchParams.get("pageSize") ?? "5");
-  const initStates = searchParams.getAll("states")?.length === 0
-  ? [AssetState[AssetState.Assigned], AssetState[AssetState.Available], AssetState[AssetState["Not available"]]]
-  : searchParams.getAll("states");
+  const initStates =
+    searchParams.getAll("states")?.length === 0
+      ? [
+          AssetState[AssetState.Assigned],
+          AssetState[AssetState.Available],
+          AssetState[AssetState["Not available"]],
+        ]
+      : searchParams.getAll("states");
   const initCategories = searchParams.getAll("categories");
   const initOrder =
     passedOrder ?? (searchParams.get("order") as Order) ?? "asc";
@@ -293,6 +299,8 @@ export default function ManagementAssetPage() {
                       : undefined,
                   category: item.category,
                   name: item.name,
+                  specification: item.specification,
+                  installedDate: item.installedDate,
                 },
               })) as AssetRowData[]
             }
@@ -318,14 +326,14 @@ export default function ManagementAssetPage() {
           </Stack>
         </div>
       </div>
-        {clickOnAsset && (
-          <AssetInfo
-            assetId={assetId}
-            onClose={() => {
-              setClickOnAsset(false);
-            }}
-          />
-        )}
+      {clickOnAsset && (
+        <AssetInfo
+          assetId={assetId}
+          onClose={() => {
+            setClickOnAsset(false);
+          }}
+        />
+      )}
     </div>
   );
 }

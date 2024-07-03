@@ -7,16 +7,10 @@ interface Props {
   onClose: () => void;
 }
 
-const UserInfo = ({
-  userId,
-  onClose,
-}: Props) => {
-  const {
-    data,
-    isLoading: userLoading,
-  } = agent.Users.details(userId);
-  
-  const userData: UserInfoResponse = data?.result; 
+const UserInfo = ({ userId, onClose }: Props) => {
+  const { data, isLoading: userLoading } = agent.Users.details(userId);
+
+  const userData: UserInfoResponse = data?.result;
 
   return (
     <>
@@ -83,8 +77,9 @@ const UserInfo = ({
               <div className="min-h-60 flex justify-center items-center">
                 <div className="animate-spin w-10 h-10 border-4 border-primary border-t-white border-b-white rounded-full"></div>
               </div>
-            ) : ""
-            }
+            ) : (
+              ""
+            )}
           </div>
         </div>
       </div>

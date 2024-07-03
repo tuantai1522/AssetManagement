@@ -3,8 +3,8 @@ import AppTable, {
   ColumnDefinition,
   Order,
 } from "../../app/components/table/sortTable";
-import { Stack } from "@mui/material";
 import { AssetState } from "../../app/models/asset/Asset";
+import { useNavigate } from "react-router-dom";
 
 export interface AssetRowData {
   id: string;
@@ -12,6 +12,8 @@ export interface AssetRowData {
   name?: string;
   category?: string;
   state?: string;
+  specification?: string;
+  installedDate?: Date;
   action: {
     id: string;
     state?: string;
@@ -30,6 +32,8 @@ export interface AssetListProp {
 }
 
 export default function AssetList(props: AssetListProp) {
+  const navigate = useNavigate();
+
   const columns: ColumnDefinition[] = [
     {
       id: "assetCode",
@@ -100,32 +104,57 @@ export default function AssetList(props: AssetListProp) {
       renderCell: (params) => (
         <div className="flex w-fit justify-end items-center">
           <button
-            disabled={params?.state === AssetState.Assigned}
+            disabled={
+              AssetState.Available !==
+              AssetState[params?.state as keyof typeof AssetState]
+            }
             color="primary"
-            className="text-gray-500"
+            className={` ${
+              AssetState.Available !==
+              AssetState[params?.state as keyof typeof AssetState]
+                ? "opacity-50 cursor-not-allowed"
+                : ""
+            }`}
             onClick={(e) => {
               e.stopPropagation();
-              alert(params?.id);
+              const data = {
+                assetId: params?.id,
+                assetName: params?.name,
+                installedDate: params?.installedDate,
+                specification: params?.specification,
+                state: params?.state,
+                categoryName: params?.category,
+              };
+
+              navigate("/manage-asset/edit-asset", {
+                state: { assetToUpdate: data },
+              });
             }}
           >
-            {" "}
             <Edit />
           </button>
 
           <button
-            disabled={params?.state === AssetState.Assigned}
+            disabled={
+              AssetState.Available !==
+              AssetState[params?.state as keyof typeof AssetState]
+            }
             color="primary"
-            className="text-red-500"
+            className={` ${
+              AssetState.Available !==
+              AssetState[params?.state as keyof typeof AssetState]
+                ? "opacity-50 cursor-not-allowed"
+                : ""
+            }`}
             onClick={(e) => {
               e.stopPropagation();
               alert(params?.id);
             }}
           >
-            {" "}
             <HighlightOff />
           </button>
         </div>
-      )
+      ),
     },
   ];
 

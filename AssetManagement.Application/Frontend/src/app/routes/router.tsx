@@ -10,10 +10,12 @@ import EditUserPage from "../../pages/manageUser/editUser";
 import LoginPage from "../../pages/authentication";
 import RequireAuth from "./RequireAuth";
 import ManagementAssetPage from "../../pages/manageAsset";
-import ManagementAssignmentPage from "../../pages/manageAssignment";
 import ManagementRequestForReturningPage from "../../pages/requestForReturning";
 import ManagementReportPage from "../../pages/report";
 import CreateAssetPage from "../../pages/manageAsset/createAsset";
+import ManagementAssignmentPage from "../../pages/manageAssignment";
+import CreateAssignmentPage from "../../pages/manageAssignment/createAssignment";
+import EditAssetPage from "../../pages/manageAsset/editAsset";
 
 export const router = createBrowserRouter([
   {
@@ -38,22 +40,30 @@ export const router = createBrowserRouter([
             element: <DefaultLayout />,
             children: [
               {
-                path: "manage-user", children: [
-                  { path: '', element: <ManagementUserPage /> },
+                path: "manage-user",
+                children: [
+                  { path: "", element: <ManagementUserPage /> },
                   { path: "create-user", element: <CreateUserPage /> },
                   { path: "edit-user/:id", element: <EditUserPage /> },
-
-                ]
+                ],
               },
               {
-                path: "manage-asset", children: [
-                  { path: '', element: <ManagementAssetPage /> },
+                path: "manage-asset",
+                children: [
+                  { path: "", element: <ManagementAssetPage /> },
                   { path: "create-asset", element: <CreateAssetPage /> },
-                ]
+                  { path: "edit-asset", element: <EditAssetPage /> },
+                ],
               },
               {
                 path: "manage-assignment",
-                element: <ManagementAssignmentPage />,
+                children: [
+                  { path: "", element: <ManagementAssignmentPage /> },
+                  {
+                    path: "create-assignment",
+                    element: <CreateAssignmentPage />,
+                  },
+                ],
               },
               {
                 path: "request-for-returning",

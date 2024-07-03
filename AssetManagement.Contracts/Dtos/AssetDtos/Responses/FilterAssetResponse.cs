@@ -8,5 +8,7 @@ public class FilterAssetResponse
     public string? Name { get; set; }
     public string? Category { get; set; }
     public AssetState? State { get; set; }
+    public string? Specification { get; set; }
+    public DateTime? InstalledDate { get; set; }
 }
 

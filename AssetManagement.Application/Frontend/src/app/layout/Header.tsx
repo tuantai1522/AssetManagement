@@ -11,29 +11,29 @@ const Header = () => {
   const location = useLocation();
   const pathName = location.pathname.split("/");
   let breadcrumb = "";
-    let pageName = pathName[1];
-    switch(pageName) {
-      case "":
-        breadcrumb = "Home";
-        break;
-      case "manage-user":
-        breadcrumb = "Manage User";
-        break;
-      case "manage-asset":
-        breadcrumb = "Manage Asset";
-        break;
-      case "manage-assignment":
-        breadcrumb = "Manage Assignment";
-        break;
-      case "request-for-returning":
-        breadcrumb = "Request for Returning";
-        break;
-      case "report":
-        breadcrumb = "Report"
-        break;
-      default:
-        breadcrumb = "";
-    }
+  let pageName = pathName[1];
+  switch (pageName) {
+    case "":
+      breadcrumb = "Home";
+      break;
+    case "manage-user":
+      breadcrumb = "Manage User";
+      break;
+    case "manage-asset":
+      breadcrumb = "Manage Asset";
+      break;
+    case "manage-assignment":
+      breadcrumb = "Manage Assignment";
+      break;
+    case "request-for-returning":
+      breadcrumb = "Request for Returning";
+      break;
+    case "report":
+      breadcrumb = "Report";
+      break;
+    default:
+      breadcrumb = "";
+  }
 
     if (pathName.length >= 3) {
       breadcrumb += " > ";
@@ -48,11 +48,16 @@ const Header = () => {
         case "create-asset":
           breadcrumb += "Create New Asset"
           break;
+        case "edit-asset":
+          breadcrumb += "Edit Asset";
+          break;
+        case "create-assignment":
+          breadcrumb += "Create New Assignment"
+          break;
         default:
           breadcrumb += "";
       }
     }
-
 
   return (
     <div className="bg-primary h-14 flex justify-center text-lg font-semibold">

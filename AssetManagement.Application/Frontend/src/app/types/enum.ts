@@ -1,17 +1,17 @@
 export enum Gender {
-    Male = 'Male',
-    Female = 'Female',
+  Male = "Male",
+  Female = "Female",
 }
 
 export enum Type {
-    Staff = 'Staff',
-    Admin = 'Admin',
+  Staff = "Staff",
+  Admin = "Admin",
 }
 
 export enum AssetStateEnum {
-    Available = 1,
-    NotAvailable = 2,
-    WaitingForRecycling = 3,
-    Recycled = 4,
-    Assigned = 5
+  Available = 1,
+  NotAvailable = 2,
+  WaitingForRecycling = 3,
+  Recycled = 4,
+  Assigned = 5,
 }
