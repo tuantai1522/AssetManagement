@@ -10,11 +10,11 @@ import EditUserPage from "../../pages/manageUser/editUser";
 import LoginPage from "../../pages/authentication";
 import RequireAuth from "./RequireAuth";
 import ManagementAssetPage from "../../pages/manageAsset";
-import ManagementAssignmentPage from "../../pages/manageAssignment";
 import ManagementRequestForReturningPage from "../../pages/requestForReturning";
 import ManagementReportPage from "../../pages/report";
 import CreateAssetPage from "../../pages/manageAsset/createAsset";
-import CreateAssignment from "../../pages/myAssignment/CreateAssignment";
+import CreateAssignmentPage from "../../pages/manageAssignment/createAssignment";
+import ManagementAssignmentPage from "../../pages/manageAssignment";
 
 export const router = createBrowserRouter([
   {
@@ -59,7 +59,7 @@ export const router = createBrowserRouter([
                   { path: "", element: <ManagementAssignmentPage /> },
                   {
                     path: "create-assignment",
-                    element: <CreateAssignment />,
+                    element: <CreateAssignmentPage />,
                   },
                 ],
               },

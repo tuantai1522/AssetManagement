@@ -12,7 +12,9 @@ import { FilterAssetResponse } from "../../models/asset/Asset";
 import { Search } from "@mui/icons-material";
 import { InputAdornment } from "@mui/material";
 import dayjs from "dayjs";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import UserModal from "../../../pages/manageAssignment/createAssignment/userModal";
+import AssetModal from "../../../pages/manageAssignment/createAssignment/assetModal";
 
 interface Props {
   handleCreateAssignment: (data: any) => void;
@@ -45,8 +47,30 @@ export default function CreateAssignmentForm({
     setValue("assetId", asset?.id);
   };
 
+  const [selectedUserValue, setSelectedUserValue] = useState<
+  FilterUser | undefined
+  >(undefined);
+  const [isOpenUserSelection, setIsOpenUserSelection] = useState<boolean>(false);
+
+  console.log(selectedUserValue);
+
+  const [selectedAssetValue, setSelectedAssetValue] = useState<
+  FilterAssetResponse | undefined
+>(undefined);
+  const [isOpenAssetSelection, setIsOpenAssetSelection] = useState<boolean>(false);
+
+  const handleCancelAssetModal = () => {
+    setIsOpenAssetSelection(false);
+    setSelectedAssetValue(undefined);
+  }
+
+  const handleCancelUserModal = () => {
+    setIsOpenUserSelection(false);
+    setSelectedUserValue(undefined);
+  }
+
   return (
-    <div className="bg-white w-[35rem] mx-auto">
+    <div className="bg-white w-[35rem]">
       <h2 className="text-2xl font-bold text-primary mb-5">
         Create New Assignment
       </h2>
@@ -57,27 +81,32 @@ export default function CreateAssignmentForm({
         <div>
           <div className="flex items-center gap-5 cursor-pointer">
             <label className="w-[7rem]">User</label>
-            <Controller
-              name="user"
-              control={control}
-              render={({ field }) => (
-                <AppTextInput
-                  {...field}
-                  id="user"
-                  control={control}
-                  className="grow cursor-none"
-                  isApplyHelperText={false}
-                  InputProps={{
-                    readOnly: true,
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <Search className="mx-0" />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              )}
-            />
+            <div className="relative grow flex" onClick={() => setIsOpenUserSelection(true)}>
+              <Controller
+                name="user"
+                control={control}
+                render={({ field }) => (
+                  <AppTextInput
+                    {...field}
+                    id="user"
+                    control={control}
+                    className="grow cursor-none"
+                    isApplyHelperText={false}
+                    InputProps={{
+                      readOnly: true,
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <Search className="mx-0" />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                )}
+              />
+              {isOpenUserSelection &&
+                <UserModal style={"top-0"} selectedValue={selectedUserValue} setSelectedValue={(value) =>{setSelectedUserValue(value)}} onClickCancel={handleCancelUserModal} onClickSave={() => setIsOpenUserSelection(false)}/>
+              }
+            </div>
           </div>
           {errors.user && (
             <div className="flex items-end justify-end">
@@ -91,29 +120,34 @@ export default function CreateAssignmentForm({
         <div>
           <div className="flex items-center gap-5">
             <label className="w-[7rem]">Asset</label>
-            <Controller
-              name="asset"
-              control={control}
-              render={({ field }) => (
-                <>
-                  <AppTextInput
-                    {...field}
-                    id="asset"
-                    control={control}
-                    className="grow"
-                    isApplyHelperText={false}
-                    InputProps={{
-                      readOnly: true,
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <Search className="mx-0" />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </>
-              )}
-            />
+            <div className="relative grow flex" onClick={() => setIsOpenAssetSelection(true)}>
+              <Controller
+                name="asset"
+                control={control}
+                render={({ field }) => (
+                  <>
+                    <AppTextInput
+                      {...field}
+                      id="asset"
+                      control={control}
+                      className="grow"
+                      isApplyHelperText={false}
+                      InputProps={{
+                        readOnly: true,
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <Search className="mx-0" />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </>
+                )}
+              />
+              {isOpenAssetSelection &&
+                <AssetModal style={"top-0"} selectedValue={selectedAssetValue} setSelectedValue={(value) =>{setSelectedAssetValue(value)}} onClickCancel={handleCancelAssetModal} onClickSave={() => setIsOpenAssetSelection(false)}/>
+              }
+            </div>
           </div>
           {errors.asset && (
             <div className="flex items-end justify-end">

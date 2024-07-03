@@ -24,7 +24,6 @@ namespace AssetManagement.Application.Services.Implementations
 
         public async Task<Guid> CreateAssignmentAsync(AssignmentCreationRequest request)
         {
-            await ValidateCurrentUserLogined();
             var userAssignedTo = await GetUserAssignedById(request.UserId);
 
             var asset = await GetAssetById(request.AssetId);

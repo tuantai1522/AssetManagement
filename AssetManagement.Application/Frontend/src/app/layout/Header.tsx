@@ -48,6 +48,9 @@ const Header = () => {
         case "create-asset":
           breadcrumb += "Create New Asset"
           break;
+          case "create-assignment":
+            breadcrumb += "Create New Assignment"
+            break;
         default:
           breadcrumb += "";
       }
