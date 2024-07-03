@@ -77,22 +77,5 @@ namespace AssetManagement.Application.Services.Implementations
             }
             return asset;
         }
-
-        private async Task ValidateCurrentUserLogined()
-        {
-            if (_currentUser != null)
-            {
-                var currentUser = await _userManager.FindByIdAsync(_currentUser.UserId.ToString());
-                if (currentUser == null)
-                {
-                    throw new UnauthorizedException("User logined is not found!");
-                }
-                else if (currentUser.IsDisabled)
-                {
-                    throw new UnauthorizedException("Your account is disabled!");
-                }
-            }
-        }
-
     }
 }
