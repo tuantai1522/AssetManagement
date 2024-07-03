@@ -32,6 +32,7 @@ export default function UserModal({
   const [query, setQuery] = useState<UserQuery>({
     pageNumber: 1,
     pageSize: 5,
+    orderBy: "joinedDate",
   });
 
   const [searchInput, setSearchInput] = useState<string>();

@@ -34,6 +34,8 @@ export default function AssetModal({
     pageNumber: 1,
     pageSize: 5,
     states: [AssetState.Available],
+    order: "asc",
+    orderBy: "name",
   });
 
   const [searchInput, setSearchInput] = useState<string>();

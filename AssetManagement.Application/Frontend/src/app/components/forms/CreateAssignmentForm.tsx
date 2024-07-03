@@ -40,6 +40,7 @@ export default function CreateAssignmentForm({
     setValue,
     getValues,
     trigger,
+
     formState: { isValid, errors },
   } = useForm({
     resolver: yupResolver<AssignmentCreationForm>(createAssignmentSchema),
@@ -66,13 +67,17 @@ export default function CreateAssignmentForm({
   };
 
   const handleCancelAssetModal = () => {
+    setIsOpenUserSelection(false);
     setIsOpenAssetSelection(false);
-    setSelectedAssetValue(undefined);
+    const assetValue: FilterAssetResponse | undefined = getValues("asset");
+    setSelectedAssetValue(assetValue);
   };
 
   const handleCancelUserModal = () => {
     setIsOpenUserSelection(false);
     setIsOpenAssetSelection(false);
+    const userValue: FilterUser | undefined = getValues("user");
+    setSelectedUserValue(userValue);
   };
 
   return (
@@ -119,7 +124,7 @@ export default function CreateAssignmentForm({
               {isOpenUserSelection && (
                 <UserModal
                   style={"top-0"}
-                  selectedValue={selectedUserValue}
+                  selectedValue={selectedUserValue || getValues("user")}
                   setSelectedValue={(value) => setSelectedUserValue(value)}
                   onClickCancel={handleCancelUserModal}
                   onClickSave={handleSelectUser}
@@ -173,7 +178,7 @@ export default function CreateAssignmentForm({
               {isOpenAssetSelection && (
                 <AssetModal
                   style={"top-0"}
-                  selectedValue={selectedAssetValue}
+                  selectedValue={selectedAssetValue || getValues("asset")}
                   setSelectedValue={(value) => setSelectedAssetValue(value)}
                   onClickCancel={handleCancelAssetModal}
                   onClickSave={handleSelectAsset}
