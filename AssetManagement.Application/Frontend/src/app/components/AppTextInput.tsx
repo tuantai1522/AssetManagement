@@ -2,7 +2,7 @@ import { PropaneSharp } from "@mui/icons-material";
 import { InputBaseComponentProps, SxProps, TextField } from "@mui/material";
 import { useController, UseControllerProps } from "react-hook-form";
 interface Props extends UseControllerProps {
-  id?: string
+  id?: string;
   label?: string;
   placeholder?: string;
   size?: "small" | "medium";
@@ -20,6 +20,7 @@ interface Props extends UseControllerProps {
   disabled?: boolean;
   onKeyDown?: any;
   onChange?: any;
+  onClick?: any;
   isApplyHelperText?: boolean;
 }
 
@@ -30,7 +31,7 @@ export default function AppTextInput({
   const { fieldState, field } = useController({ ...props, defaultValue: "" });
 
   return (
-    <TextField 
+    <TextField
       control
       {...props}
       {...field}
@@ -48,6 +49,7 @@ export default function AppTextInput({
       disabled={props.disabled}
       variant="outlined"
       onKeyDown={props.onKeyDown}
+      onClick={props.onClick}
       value={props.value}
       className={props.className}
       onChange={props.onChange}
@@ -59,7 +61,7 @@ export default function AppTextInput({
             : fieldState.error?.message
           : undefined
       }
-      inputProps={props.InputProps} 
+      inputProps={props.InputProps}
     />
   );
 }

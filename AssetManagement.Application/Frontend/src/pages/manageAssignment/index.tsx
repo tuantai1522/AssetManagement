@@ -1,7 +1,11 @@
-export default function ManagementAssignmentPage() {
-  return (
-    <>
-      <h1>Assignment list</h1>
-    </>
-  );
-}
+import React from 'react';
+
+const ManagementAssignmentPage = () => {
+    return (
+        <div>
+            
+        </div>
+    );
+};
+
+export default ManagementAssignmentPage;
