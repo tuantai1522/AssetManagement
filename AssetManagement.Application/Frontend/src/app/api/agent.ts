@@ -9,6 +9,7 @@ import { EditUserRequest } from "../models/user/EditUserRequest";
 import { CreateUserRequest } from "../models/user/CreateUserRequest";
 import eventEmitter from "../hooks/EventMitter";
 import { IgnoreErrorMessage } from "../constants/IgnoreErrorMessage";
+import { AssignmentCreationRequest } from "../models/assignment/AssignmentCreationRequest";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 axios.defaults.headers.post["Content-Type"] = "application/json";
@@ -171,12 +172,16 @@ const Asset = {
   details: (id: string) => requests.get(`/api/asset/getAssetById?Id=${id}`),
 };
 
+const Assignment = {
+  create: (values: AssignmentCreationRequest) => requests.post("api/assignment/create", values),
+}
 const agent = {
   Product,
   Authentication,
   Users,
   Category,
   Asset,
+  Assignment
 };
 
 export default agent;

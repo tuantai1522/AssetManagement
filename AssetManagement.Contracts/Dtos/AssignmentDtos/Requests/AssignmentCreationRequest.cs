@@ -19,6 +19,6 @@ public class PastDateAttribute : ValidationAttribute
     public override bool IsValid(object value)
     {
         DateTime dateTime = (DateTime)value;
-        return dateTime >= DateTime.Now;
+        return dateTime >= DateTime.Now.Date;
     }
 }

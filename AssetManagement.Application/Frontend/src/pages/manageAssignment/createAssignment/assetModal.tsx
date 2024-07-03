@@ -15,21 +15,25 @@ import AssetListInAssignment from "./assetListInAssignment";
 import AppButton from "../../../app/components/buttons/Button";
 import { Order } from "../../../app/components/table/AssetAssignmentTable";
 
-
 interface Props {
-  style?: string
-  selectedValue?: FilterAssetResponse
-  setSelectedValue: (value:FilterAssetResponse ) => void;
+  style?: string;
+  selectedValue?: FilterAssetResponse;
+  setSelectedValue: (value: FilterAssetResponse) => void;
   onClickSave: () => void;
   onClickCancel: () => void;
 }
 
-
-export default function AssetModal({style, selectedValue, setSelectedValue, onClickCancel, onClickSave}:Props) {
-
+export default function AssetModal({
+  style,
+  selectedValue,
+  setSelectedValue,
+  onClickCancel,
+  onClickSave,
+}: Props) {
   const [query, setQuery] = useState<FilterAssetRequest>({
     pageNumber: 1,
     pageSize: 5,
+    states: [AssetState.Available],
   });
 
   const [searchInput, setSearchInput] = useState<string>();
@@ -68,7 +72,10 @@ export default function AssetModal({style, selectedValue, setSelectedValue, onCl
   };
 
   return (
-    <div className={`flex justify-center absolute bg-white z-10 ${style}`} onClick={(e) => e.stopPropagation()}>
+    <div
+      className={`flex justify-center absolute bg-white z-10 ${style}`}
+      onClick={(e) => e.stopPropagation()}
+    >
       <div className="container w-max p-5 border-[1px] border-gray-800 min-h-96">
         <Stack
           direction="row"
@@ -91,9 +98,9 @@ export default function AssetModal({style, selectedValue, setSelectedValue, onCl
               name="name"
               value={searchInput}
               onChange={handleSearchInputChange}
-              onKeyDown={(event:any) => {
+              onKeyDown={(event: any) => {
                 if (event.code === "Enter") {
-                  handleSearchSubmit()
+                  handleSearchSubmit();
                 }
               }}
               className="!rounded-l-md !border !border-gray-400 !border-r-0"
@@ -151,8 +158,16 @@ export default function AssetModal({style, selectedValue, setSelectedValue, onCl
           </Stack>
         </div>
         <div className="flex justify-end gap-3 mt-5">
-          <AppButton content="Save" onClickOn={onClickSave} isDisabled={!selectedValue}></AppButton>
-          <AppButton content="Cancel" styleType="secondary" onClickOn={onClickCancel}></AppButton>
+          <AppButton
+            content="Save"
+            onClickOn={onClickSave}
+            isDisabled={!selectedValue}
+          ></AppButton>
+          <AppButton
+            content="Cancel"
+            styleType="secondary"
+            onClickOn={onClickCancel}
+          ></AppButton>
         </div>
       </div>
     </div>

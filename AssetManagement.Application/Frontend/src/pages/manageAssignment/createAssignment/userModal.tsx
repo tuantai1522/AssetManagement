@@ -5,23 +5,30 @@ import { Search } from "@mui/icons-material";
 import AppSearchInput from "../../../app/components/AppSearchInput";
 import AppPagination from "../../../app/components/paginationButtons/paginationButtons";
 import AppButton from "../../../app/components/buttons/Button";
-import { FilterUser, OrderByFieldName, UserQuery } from "../../../app/models/user/User";
+import {
+  FilterUser,
+  OrderByFieldName,
+  UserQuery,
+} from "../../../app/models/user/User";
 import UserListInAssignment from "./userListInAssignment";
 import { convertUtcToLocalDate } from "../../../app/utils/dateUtils";
 import { Order } from "../../../app/components/table/AssetAssignmentTable";
 
-
 interface Props {
-  style?: string
-  selectedValue?: FilterUser
-  setSelectedValue: (value:FilterUser ) => void;
+  style?: string;
+  selectedValue?: FilterUser;
+  setSelectedValue: (value: FilterUser) => void;
   onClickSave: () => void;
   onClickCancel: () => void;
 }
 
-
-export default function UserModal({style, selectedValue, setSelectedValue, onClickCancel, onClickSave}:Props) {
-
+export default function UserModal({
+  style,
+  selectedValue,
+  setSelectedValue,
+  onClickCancel,
+  onClickSave,
+}: Props) {
   const [query, setQuery] = useState<UserQuery>({
     pageNumber: 1,
     pageSize: 5,
@@ -63,7 +70,10 @@ export default function UserModal({style, selectedValue, setSelectedValue, onCli
   };
 
   return (
-    <div className={`flex justify-center absolute bg-white z-10 ${style}`} onClick={(e) => e.stopPropagation()}>
+    <div
+      className={`flex justify-center absolute bg-white z-10 ${style} cursor-default`}
+      onClick={(e) => e.stopPropagation()}
+    >
       <div className="container w-max p-5 border-[1px] border-gray-800 min-h-96">
         <Stack
           direction="row"
@@ -86,9 +96,9 @@ export default function UserModal({style, selectedValue, setSelectedValue, onCli
               name="name"
               value={searchInput}
               onChange={handleSearchInputChange}
-              onKeyDown={(event:any) => {
+              onKeyDown={(event: any) => {
                 if (event.code === "Enter") {
-                  handleSearchSubmit()
+                  handleSearchSubmit();
                 }
               }}
               className="!rounded-l-md !border !border-gray-400 !border-r-0"
@@ -105,13 +115,13 @@ export default function UserModal({style, selectedValue, setSelectedValue, onCli
         <div className="mt-3">
           <UserListInAssignment
             data={data?.items?.result?.map((item: FilterUser) => ({
-                ...item,
-                joinedDate: convertUtcToLocalDate(item?.joinedDate),
-                action: {
-                    id: item.id,
-                    name: item.fullName,
-                  },
-              }))}
+              ...item,
+              joinedDate: convertUtcToLocalDate(item?.joinedDate),
+              action: {
+                id: item.id,
+                name: item.fullName,
+              },
+            }))}
             error={error}
             isLoading={isLoading}
             order={query?.order ?? "asc"}
@@ -135,8 +145,16 @@ export default function UserModal({style, selectedValue, setSelectedValue, onCli
           </Stack>
         </div>
         <div className="flex justify-end gap-3 mt-5">
-          <AppButton content="Save" onClickOn={onClickSave} isDisabled={!selectedValue}></AppButton>
-          <AppButton content="Cancel" styleType="secondary" onClickOn={onClickCancel}></AppButton>
+          <AppButton
+            content="Save"
+            onClickOn={onClickSave}
+            isDisabled={!selectedValue}
+          ></AppButton>
+          <AppButton
+            content="Cancel"
+            styleType="secondary"
+            onClickOn={onClickCancel}
+          ></AppButton>
         </div>
       </div>
     </div>

@@ -13,8 +13,8 @@ import ManagementAssetPage from "../../pages/manageAsset";
 import ManagementRequestForReturningPage from "../../pages/requestForReturning";
 import ManagementReportPage from "../../pages/report";
 import CreateAssetPage from "../../pages/manageAsset/createAsset";
-import CreateAssignmentPage from "../../pages/manageAssignment/createAssignment";
 import ManagementAssignmentPage from "../../pages/manageAssignment";
+import CreateAssignmentPage from "../../pages/manageAssignment/createAssignment";
 
 export const router = createBrowserRouter([
   {

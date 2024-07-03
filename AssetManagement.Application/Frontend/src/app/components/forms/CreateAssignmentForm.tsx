@@ -22,6 +22,18 @@ interface Props {
 export default function CreateAssignmentForm({
   handleCreateAssignment,
 }: Props) {
+  const [selectedUserValue, setSelectedUserValue] = useState<
+    FilterUser | undefined
+  >(undefined);
+  const [isOpenUserSelection, setIsOpenUserSelection] =
+    useState<boolean>(false);
+
+  const [selectedAssetValue, setSelectedAssetValue] = useState<
+    FilterAssetResponse | undefined
+  >(undefined);
+  const [isOpenAssetSelection, setIsOpenAssetSelection] =
+    useState<boolean>(false);
+
   const {
     handleSubmit,
     control,
@@ -31,7 +43,7 @@ export default function CreateAssignmentForm({
     formState: { isValid, errors },
   } = useForm({
     resolver: yupResolver<AssignmentCreationForm>(createAssignmentSchema),
-    mode: "all",
+    mode: "onChange",
   });
   const navigate = useNavigate();
 
@@ -40,34 +52,26 @@ export default function CreateAssignmentForm({
   }, []);
 
   const handleSelectUser = (user: FilterUser) => {
-    setValue("userId", user?.id);
+    setValue("userId", user.id);
+    setValue("user", user);
+    setSelectedUserValue(user);
   };
 
   const handleSelectAsset = (asset: FilterAssetResponse) => {
     setValue("assetId", asset?.id);
+    setValue("asset", asset);
+    setSelectedAssetValue(asset);
   };
-
-  const [selectedUserValue, setSelectedUserValue] = useState<
-  FilterUser | undefined
-  >(undefined);
-  const [isOpenUserSelection, setIsOpenUserSelection] = useState<boolean>(false);
-
-  console.log(selectedUserValue);
-
-  const [selectedAssetValue, setSelectedAssetValue] = useState<
-  FilterAssetResponse | undefined
->(undefined);
-  const [isOpenAssetSelection, setIsOpenAssetSelection] = useState<boolean>(false);
 
   const handleCancelAssetModal = () => {
     setIsOpenAssetSelection(false);
     setSelectedAssetValue(undefined);
-  }
+  };
 
   const handleCancelUserModal = () => {
     setIsOpenUserSelection(false);
-    setSelectedUserValue(undefined);
-  }
+    setIsOpenAssetSelection(false);
+  };
 
   return (
     <div className="bg-white w-[35rem]">
@@ -81,7 +85,13 @@ export default function CreateAssignmentForm({
         <div>
           <div className="flex items-center gap-5 cursor-pointer">
             <label className="w-[7rem]">User</label>
-            <div className="relative grow flex" onClick={() => setIsOpenUserSelection(true)}>
+            <div
+              className="relative grow flex"
+              onClick={() => {
+                setIsOpenUserSelection(true);
+                setIsOpenAssetSelection(false);
+              }}
+            >
               <Controller
                 name="user"
                 control={control}
@@ -89,6 +99,7 @@ export default function CreateAssignmentForm({
                   <AppTextInput
                     {...field}
                     id="user"
+                    value={field.value?.fullName || ""}
                     control={control}
                     className="grow cursor-none"
                     isApplyHelperText={false}
@@ -103,9 +114,15 @@ export default function CreateAssignmentForm({
                   />
                 )}
               />
-              {isOpenUserSelection &&
-                <UserModal style={"top-0"} selectedValue={selectedUserValue} setSelectedValue={(value) =>{setSelectedUserValue(value)}} onClickCancel={handleCancelUserModal} onClickSave={() => setIsOpenUserSelection(false)}/>
-              }
+              {isOpenUserSelection && (
+                <UserModal
+                  style={"top-0"}
+                  selectedValue={selectedUserValue}
+                  setSelectedValue={handleSelectUser}
+                  onClickCancel={handleCancelUserModal}
+                  onClickSave={() => setIsOpenUserSelection(false)}
+                />
+              )}
             </div>
           </div>
           {errors.user && (
@@ -120,7 +137,13 @@ export default function CreateAssignmentForm({
         <div>
           <div className="flex items-center gap-5">
             <label className="w-[7rem]">Asset</label>
-            <div className="relative grow flex" onClick={() => setIsOpenAssetSelection(true)}>
+            <div
+              className="relative grow flex"
+              onClick={() => {
+                setIsOpenAssetSelection(true);
+                setIsOpenUserSelection(false);
+              }}
+            >
               <Controller
                 name="asset"
                 control={control}
@@ -129,6 +152,7 @@ export default function CreateAssignmentForm({
                     <AppTextInput
                       {...field}
                       id="asset"
+                      value={field.value?.name}
                       control={control}
                       className="grow"
                       isApplyHelperText={false}
@@ -144,9 +168,15 @@ export default function CreateAssignmentForm({
                   </>
                 )}
               />
-              {isOpenAssetSelection &&
-                <AssetModal style={"top-0"} selectedValue={selectedAssetValue} setSelectedValue={(value) =>{setSelectedAssetValue(value)}} onClickCancel={handleCancelAssetModal} onClickSave={() => setIsOpenAssetSelection(false)}/>
-              }
+              {isOpenAssetSelection && (
+                <AssetModal
+                  style={"top-0"}
+                  selectedValue={selectedAssetValue}
+                  setSelectedValue={handleSelectAsset}
+                  onClickCancel={handleCancelAssetModal}
+                  onClickSave={() => setIsOpenAssetSelection(false)}
+                />
+              )}
             </div>
           </div>
           {errors.asset && (
@@ -220,7 +250,7 @@ export default function CreateAssignmentForm({
         </div>
 
         <div className="flex justify-end space-x-4">
-          <AppButton content="Save" isFormSubmit={true} />
+          <AppButton content="Save" isFormSubmit={true} isDisabled={!isValid} />
           <AppButton
             content="Cancel"
             styleType="Secondary"
