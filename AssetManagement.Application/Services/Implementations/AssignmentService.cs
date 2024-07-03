@@ -22,7 +22,7 @@ namespace AssetManagement.Application.Services.Implementations
             _userManager = userManager;
         }
 
-        public async Task<bool> CreateAssignmentAsync(AssignmentCreationRequest request)
+        public async Task<Guid> CreateAssignmentAsync(AssignmentCreationRequest request)
         {
             await ValidateCurrentUserLogined();
             var userAssignedTo = await GetUserAssignedById(request.UserId);
@@ -39,12 +39,15 @@ namespace AssetManagement.Application.Services.Implementations
                 AssignedDate = request.AssignedDate,
                 State = AssignmentState.WaitingForAcceptance,
             };
+
             _unitOfWork.AssignmentRepository.Add(newAssignment);
+
             //Update state of asset
             asset.State = AssetState.NotAvailable;
             _unitOfWork.AssetRepository.Update(asset);
+
             await _unitOfWork.SaveChangesAsync();
-            return true;
+            return newAssignment.Id;
         }
 
         private async Task<AppUser> GetUserAssignedById(Guid userId)

@@ -23,14 +23,14 @@ namespace AssetManagement.Application.Controllers
         [Authorize(Roles = $"{RoleConstant.AdminRole}")]
         public async Task<ActionResult<BaseResult<AssetResponse>>> CreateAssetAsync([FromBody] AssignmentCreationRequest request)
         {
-            await _assignmentService.CreateAssignmentAsync(request);
+            var newAssignmentId = await _assignmentService.CreateAssignmentAsync(request);
             var result = new BaseResult<AssetResponse>()
             {
                 IsSuccess = true,
                 Error = null,
                 Result = null
             };
-            return Ok(result);
+            return Created($"assignment/{newAssignmentId}", result);
         }
     }
 }
