@@ -3,6 +3,7 @@ using AssetManagement.Domain.Entities;
 using AssetManagement.Domain.Enums;
 using AssetManagement.Domain.Exceptions;
 using AutoFixture;
+using Microsoft.AspNetCore.Routing;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -21,135 +22,89 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
         }
 
         [Fact]
-        public async Task UpdateAssetById_IdIsEmpty_ThrowsBadRequestException()
-        {
-            // Arrange
-            var request = new AssetUpdateRequest
-            {
-                AssetId = Guid.Empty
-            };
-
-            // Act & Assert
-            var exception = await Assert.ThrowsAsync<BadRequestException>
-                (() => _assetService.UpdateAssetAsync(request));
-
-            Assert.Equal("Please provide id to update asset", exception.Message);
-        }
-
-        [Fact]
-        public async Task UpdateAssetById_AnyFieldIsEmpty_ThrowsBadRequestException()
-        {
-            // Arrange
-            var request = new AssetUpdateRequest
-            {
-                AssetId = Guid.NewGuid(),
-                AssetName = "",
-            };
-
-            // Act & Assert
-            var exception = await Assert.ThrowsAsync<BadRequestException>
-                (() => _assetService.UpdateAssetAsync(request));
-
-            Assert.Equal("Please provide full info to update asset", exception.Message);
-        }
-
-        [Fact]
-        public async Task UpdateAssetById_CanNotFindAsset_ThrowsNotFoundException()
+        public async Task Update_Asset_Which_Can_Not_Found()
         {
             // Arrange
             var request = _fixture.Create<AssetUpdateRequest>();
-
-            _unitOfWorkMock.Setup(x => x.AssetRepository.Get(
-                                    It.IsAny<Expression<Func<Asset, bool>>>(),
-                                    It.IsAny<Func<IQueryable<Asset>, IOrderedQueryable<Asset>>>(),
-                                    It.IsAny<string>() // includeProperties: "Category"
-                                ))
-                           .Returns((Expression<Func<Asset, bool>> filter,
-                                     Func<IQueryable<Asset>,
-                                     IOrderedQueryable<Asset>> orderBy, string includeProperties) =>
-                           {
-                               return Enumerable.Empty<Asset>();
-                           });
-
-
-            // Act & Assert
-            var exception = await Assert.ThrowsAsync<NotFoundException>(() => _assetService.UpdateAssetAsync(request));
-            Assert.Equal("Can't find asset", exception.Message);
-        }
-
-        [Fact]
-        public async Task UpdateAssetById_CanNotFindUser_ThrowsNotFoundException()
-        {
-            // Arrange
-            var request = _fixture.Create<AssetUpdateRequest>();
-
-            // Mock AssetRepo to return null for any FindByIdAsync call
-            List<Asset> Assets = new List<Asset>
-                {
-                    _fixture.Create<Asset>(),
-                    _fixture.Create<Asset>(),
-                    _fixture.Create<Asset>(),
-                };
-
-            _unitOfWorkMock.Setup(x => x.AssetRepository.Get(
-                        It.IsAny<Expression<Func<Asset, bool>>>(),
-                        It.IsAny<Func<IQueryable<Asset>, IOrderedQueryable<Asset>>>(),
-                        It.IsAny<string>() // includeProperties: "Category"
-                    ))
-               .Returns((Expression<Func<Asset, bool>> filter,
-                         Func<IQueryable<Asset>,
-                         IOrderedQueryable<Asset>> orderBy, string includeProperties) =>
-               {
-                   return Assets;
-               });
-
-            // Mock UserManager to return null for any FindByIdAsync call
-            _userManagerMock.Setup(um => um.FindByIdAsync(It.IsAny<string>()))
-                            .ReturnsAsync(null as AppUser);
-
-            // Act & Assert
-            var exception = await Assert.ThrowsAsync<NotFoundException>(() => _assetService.UpdateAssetAsync(request));
-            Assert.Equal("Can't find user to update", exception.Message);
-        }
-
-        [Fact]
-        public async Task UpdateAssetById_UserIsDisabledCanNotUpdate_ThrowsUnauthorizedException()
-        {
-            // Arrange
-            var request = _fixture.Create<AssetUpdateRequest>();
-
-            // Mock AssetRepo to return null for any FindByIdAsync call
-
-            List<Asset> Assets = new List<Asset>
-                {
-                    _fixture.Create<Asset>(),
-                    _fixture.Create<Asset>(),
-                    _fixture.Create<Asset>(),
-                };
-
-            _unitOfWorkMock.Setup(x => x.AssetRepository.Get(
-                        It.IsAny<Expression<Func<Asset, bool>>>(),
-                        It.IsAny<Func<IQueryable<Asset>, IOrderedQueryable<Asset>>>(),
-                        It.IsAny<string>() // includeProperties: "Category"
-                    ))
-               .Returns((Expression<Func<Asset, bool>> filter,
-                         Func<IQueryable<Asset>,
-                         IOrderedQueryable<Asset>> orderBy, string includeProperties) =>
-               {
-                   return Assets;
-               });
-
             var user = _fixture.Build<AppUser>()
-                               .With(r => r.IsDisabled, true)
+                               .With(x => x.IsDisabled, false)
                                .Create();
 
-            // Mock UserManager to return null for any FindByIdAsync call
-            _userManagerMock.Setup(um => um.FindByIdAsync(It.IsAny<string>()))
-                            .ReturnsAsync(user);
+            _userManagerMock.Setup(m => m.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
+            _unitOfWorkMock.Setup(m => m.AssetRepository.FindOne(It.IsAny<Expression<Func<Asset, bool>>>()))
+                           .ReturnsAsync(null as Asset);
 
-            // Act & Assert
-            var exception = await Assert.ThrowsAsync<UnauthorizedException>(() => _assetService.UpdateAssetAsync(request));
-            Assert.Equal("This user can't update this asset", exception.Message);
+            // Act
+            var ex = await Assert.ThrowsAsync<NotFoundException>(() => _assetService.UpdateAssetAsync(request));
+            Assert.Equal("Can't find asset", ex.Message);
+
+            //Assert
+            _unitOfWorkMock.Verify(m => m.AssetRepository.Update(It.IsAny<Asset>()), Times.Never);
+            _unitOfWorkMock.Verify(m => m.SaveChangesAsync(), Times.Never);
+        }
+
+        [Fact]
+        public async Task Can_Not_Find_User_To_Update_Asset()
+        {
+            // Arrange
+            var request = _fixture.Create<AssetUpdateRequest>();
+
+            _userManagerMock.Setup(m => m.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(null as AppUser);
+
+            // Act
+            var ex = await Assert.ThrowsAsync<NotFoundException>(() => _assetService.UpdateAssetAsync(request));
+            Assert.Equal("User is not found!", ex.Message);
+
+            //Assert
+            _unitOfWorkMock.Verify(m => m.AssetRepository.Update(It.IsAny<Asset>()), Times.Never);
+            _unitOfWorkMock.Verify(m => m.SaveChangesAsync(), Times.Never);
+        }
+
+        [Fact]
+        public async Task User_Disabled_Can_Not_Update_Asset()
+        {
+            // Arrange
+            var request = _fixture.Create<AssetUpdateRequest>();
+            var user = _fixture.Build<AppUser>()
+                               .With(x => x.IsDisabled, true)
+                               .Create();
+
+            _userManagerMock.Setup(m => m.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
+
+            // Act
+            var ex = await Assert.ThrowsAsync<BadRequestException>(() => _assetService.UpdateAssetAsync(request));
+            Assert.Equal("Your account is disabled!", ex.Message);
+
+            //Assert
+            _unitOfWorkMock.Verify(m => m.AssetRepository.Update(It.IsAny<Asset>()), Times.Never);
+            _unitOfWorkMock.Verify(m => m.SaveChangesAsync(), Times.Never);
+        }
+
+        [Fact]
+        public async Task User_And_Asset_Are_Different_Location()
+        {
+            // Arrange
+            var request = _fixture.Create<AssetUpdateRequest>();
+            var user = _fixture.Build<AppUser>()
+                               .With(x => x.IsDisabled, false)
+                               .With(x => x.Location, "DifferentLocation")
+                               .Create();
+
+            var asset = _fixture.Build<Asset>()
+                               .With(x => x.Location, "OtherLocations")
+                               .Create();
+
+            _userManagerMock.Setup(m => m.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
+
+            _unitOfWorkMock.Setup(m => m.AssetRepository.FindOne(It.IsAny<Expression<Func<Asset, bool>>>()))
+               .ReturnsAsync(asset);
+            // Act
+            var ex = await Assert.ThrowsAsync<UnauthorizedException>(() => _assetService.UpdateAssetAsync(request));
+            Assert.Equal("This asset doesn't belong to this user", ex.Message);
+
+            //Assert
+            _unitOfWorkMock.Verify(m => m.AssetRepository.Update(It.IsAny<Asset>()), Times.Never);
+            _unitOfWorkMock.Verify(m => m.SaveChangesAsync(), Times.Never);
         }
 
         [Fact]
@@ -157,42 +112,25 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
         {
             // Arrange
             var request = _fixture.Create<AssetUpdateRequest>();
-
-            // Mock AssetRepo to return null for any FindByIdAsync call
-            List<Asset> Assets = new List<Asset>
-                {
-                    _fixture.Build<Asset>()
-                            .With(x => x.Location, "HCM")
-                            .Create(),
-                    _fixture.Create<Asset>(),
-                    _fixture.Create<Asset>(),
-                };
-
-            _unitOfWorkMock.Setup(x => x.AssetRepository.Get(
-                        It.IsAny<Expression<Func<Asset, bool>>>(),
-                        It.IsAny<Func<IQueryable<Asset>, IOrderedQueryable<Asset>>>(),
-                        It.IsAny<string>() // includeProperties: "Category"
-                    ))
-               .Returns((Expression<Func<Asset, bool>> filter,
-                         Func<IQueryable<Asset>,
-                         IOrderedQueryable<Asset>> orderBy, string includeProperties) =>
-               {
-                   return Assets;
-               });
-
             var user = _fixture.Build<AppUser>()
-                               .With(r => r.IsDisabled, false)
-                               .With(x => x.Location, "HCM")
+                               .With(x => x.IsDisabled, false)
+                               .With(x => x.Location, "SameLocation")
                                .Create();
 
-            // Mock UserManager to return null for any FindByIdAsync call
-            _userManagerMock.Setup(um => um.FindByIdAsync(It.IsAny<string>()))
-                            .ReturnsAsync(user);
-            
-            // Act & Assert
+            var asset = _fixture.Build<Asset>()
+                               .With(x => x.Location, "SameLocation")
+                               .Create();
+
+            _userManagerMock.Setup(m => m.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
+
+            _unitOfWorkMock.Setup(m => m.AssetRepository.FindOne(It.IsAny<Expression<Func<Asset, bool>>>()))
+               .ReturnsAsync(asset);
+
+            // Act
             await _assetService.UpdateAssetAsync(request);
 
-            _unitOfWorkMock.Verify(repo => repo.AssetRepository.Update(Assets[0]), Times.Once);
+            // Assert
+            _unitOfWorkMock.Verify(repo => repo.AssetRepository.Update(It.IsAny<Asset>()), Times.Once);
             _unitOfWorkMock.Verify(repo => repo.SaveChangesAsync(), Times.Once);
         }
 

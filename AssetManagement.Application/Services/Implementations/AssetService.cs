@@ -128,31 +128,15 @@ namespace AssetManagement.Application.Services.Implementations
 
         public async Task UpdateAssetAsync(AssetUpdateRequest request)
         {
-            if (request.AssetId.Equals(Guid.Empty))
-                throw new BadRequestException("Please provide id to update asset");
+            var userLogin = await GetUserLogined();
+            var assetToUpdate = await GetAsset(request.AssetId);
 
-            if (string.IsNullOrEmpty(request.AssetName) ||
-               !request.State.HasValue ||
-               string.IsNullOrEmpty(request.Specification) ||
-               !request.InstalledDate.HasValue)
-                throw new BadRequestException("Please provide full info to update asset");
-
-
-            var assetToUpdate = _unitOfWork.AssetRepository
-                .Get(x => x.Id.Equals(request.AssetId), orderBy: null, includeProperties: "Category")
-                .FirstOrDefault()
-                ?? throw new NotFoundException("Can't find asset");
-
-            var userLogin = await _userManager.FindByIdAsync(_currentUser.UserId.ToString())
-                ?? throw new NotFoundException("Can't find user to update");
-
-            if (!userLogin.Location!.Equals(assetToUpdate.Location) || userLogin.IsDisabled)
-                throw new UnauthorizedException("This user can't update this asset");
+            CheckAssetBelongsToLocationOfUser(userLogin, assetToUpdate);
 
             assetToUpdate.Name = request.AssetName;
             assetToUpdate.Specification = request.Specification;
             assetToUpdate.InstalledDate = request.InstalledDate;
-            assetToUpdate.State = request.State.Value;
+            assetToUpdate.State = request.State!.Value;
             assetToUpdate.LastUpdated = DateTime.Now;
 
             _unitOfWork.AssetRepository.Update(assetToUpdate);
@@ -239,6 +223,22 @@ namespace AssetManagement.Application.Services.Implementations
                 throw new NotFoundException("Category is not found!");
             }
             return category;
+        }
+        private async Task<Asset> GetAsset(Guid assetId)
+        {
+            var asset = await _unitOfWork.AssetRepository
+                                 .FindOne(c => c.Id.Equals(assetId));
+
+            if (asset == null)
+                throw new NotFoundException("Can't find asset");
+
+            return asset;
+        }
+
+        private void CheckAssetBelongsToLocationOfUser(AppUser user, Asset asset)
+        {
+            if (!user.Location!.Equals(asset.Location))
+                throw new UnauthorizedException("This asset doesn't belong to this user");
         }
         #endregion
     }
