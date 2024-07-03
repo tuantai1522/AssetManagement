@@ -1,6 +1,5 @@
 using AssetManagement.Application.Common;
 using AssetManagement.Application.Services.Interfaces;
-using AssetManagement.Contracts.Dtos.AssetDtos.Responses;
 using AssetManagement.Contracts.Dtos.AssignmentDtos.Requests;
 using AssetManagement.Domain.Constants;
 using Microsoft.AspNetCore.Authorization;
@@ -21,14 +20,14 @@ namespace AssetManagement.Application.Controllers
 
         [HttpPost("create")]
         [Authorize(Roles = $"{RoleConstant.AdminRole}")]
-        public async Task<ActionResult<BaseResult<AssetResponse>>> CreateAssetAsync([FromBody] AssignmentCreationRequest request)
+        public async Task<ActionResult<BaseResult<bool>>> CreateAssignmentAsync([FromBody] AssignmentCreationRequest request)
         {
             var newAssignmentId = await _assignmentService.CreateAssignmentAsync(request);
-            var result = new BaseResult<AssetResponse>()
+            var result = new BaseResult<bool>()
             {
                 IsSuccess = true,
                 Error = null,
-                Result = null
+                Result = true
             };
             return Created($"assignment/{newAssignmentId}", result);
         }

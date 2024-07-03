@@ -222,10 +222,10 @@ export default function CreateAssignmentForm({
               />
             </LocalizationProvider>
           </div>
-          {errors.installedDate && (
+          {errors.assignedDate && (
             <div className="flex items-end justify-end">
               <span className="text-[#d32f2f] font-normal text-xs w-[420px] mt-1">
-                {errors.installedDate.message as string}
+                {errors.assignedDate.message as string}
               </span>
             </div>
           )}
