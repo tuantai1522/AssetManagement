@@ -131,6 +131,7 @@ public static class ServiceExtension
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IAssetService, AssetService>();
+        services.AddScoped<IAssignmentService, AssignmentService>();
 
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddScoped<ICurrentUser, CurrentUser>();
