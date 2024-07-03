@@ -16,6 +16,7 @@ namespace AssetManagement.Contracts.Dtos.AssetDtos.Requests
         public DateTime? InstalledDate { get; set; }
 
         [JsonConverter(typeof(JsonStringEnumConverter))]
+        [EnumDataType(typeof(AssetState))]
         public AssetState? State { get; set; }
 
     }

@@ -104,9 +104,17 @@ export default function AssetList(props: AssetListProp) {
       renderCell: (params) => (
         <div className="flex w-fit justify-end items-center">
           <button
-            disabled={params?.state === AssetState.Assigned}
+            disabled={
+              AssetState.Available !==
+              AssetState[params?.state as keyof typeof AssetState]
+            }
             color="primary"
-            className="text-gray-500"
+            className={` ${
+              AssetState.Available !==
+              AssetState[params?.state as keyof typeof AssetState]
+                ? "opacity-50 cursor-not-allowed"
+                : ""
+            }`}
             onClick={(e) => {
               e.stopPropagation();
               const data = {
@@ -127,9 +135,17 @@ export default function AssetList(props: AssetListProp) {
           </button>
 
           <button
-            disabled={params?.state === AssetState.Assigned}
+            disabled={
+              AssetState.Available !==
+              AssetState[params?.state as keyof typeof AssetState]
+            }
             color="primary"
-            className="text-red-500"
+            className={` ${
+              AssetState.Available !==
+              AssetState[params?.state as keyof typeof AssetState]
+                ? "opacity-50 cursor-not-allowed"
+                : ""
+            }`}
             onClick={(e) => {
               e.stopPropagation();
               alert(params?.id);

@@ -44,12 +44,44 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
         }
 
         [Fact]
+        public async Task Update_Asset_Which_Is_Not_Available()
+        {
+            // Arrange
+            var request = _fixture.Create<AssetUpdateRequest>();
+            var user = _fixture.Build<AppUser>()
+                               .With(x => x.IsDisabled, false)
+                               .Create();
+
+            var asset = _fixture.Build<Asset>()
+                   .With(x => x.State, AssetState.NotAvailable)
+                   .Create();
+
+            _userManagerMock.Setup(m => m.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
+            _unitOfWorkMock.Setup(m => m.AssetRepository.FindOne(It.IsAny<Expression<Func<Asset, bool>>>()))
+                           .ReturnsAsync(asset);
+
+            // Act
+            var ex = await Assert.ThrowsAsync<BadRequestException>(() => _assetService.UpdateAssetAsync(request));
+            Assert.Equal("Can't edit asset whose state is not Available", ex.Message);
+
+            //Assert
+            _unitOfWorkMock.Verify(m => m.AssetRepository.Update(It.IsAny<Asset>()), Times.Never);
+            _unitOfWorkMock.Verify(m => m.SaveChangesAsync(), Times.Never);
+        }
+
+        [Fact]
         public async Task Can_Not_Find_User_To_Update_Asset()
         {
             // Arrange
             var request = _fixture.Create<AssetUpdateRequest>();
 
+            var asset = _fixture.Build<Asset>()
+                       .With(x => x.State, AssetState.Available)
+                       .Create();
+
             _userManagerMock.Setup(m => m.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(null as AppUser);
+            _unitOfWorkMock.Setup(m => m.AssetRepository.FindOne(It.IsAny<Expression<Func<Asset, bool>>>()))
+               .ReturnsAsync(asset);
 
             // Act
             var ex = await Assert.ThrowsAsync<NotFoundException>(() => _assetService.UpdateAssetAsync(request));
@@ -69,8 +101,13 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
                                .With(x => x.IsDisabled, true)
                                .Create();
 
-            _userManagerMock.Setup(m => m.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
+            var asset = _fixture.Build<Asset>()
+                               .With(x => x.State, AssetState.Available)
+                               .Create();
 
+            _userManagerMock.Setup(m => m.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
+            _unitOfWorkMock.Setup(m => m.AssetRepository.FindOne(It.IsAny<Expression<Func<Asset, bool>>>()))
+                .ReturnsAsync(asset);
             // Act
             var ex = await Assert.ThrowsAsync<BadRequestException>(() => _assetService.UpdateAssetAsync(request));
             Assert.Equal("Your account is disabled!", ex.Message);
@@ -92,6 +129,7 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
 
             var asset = _fixture.Build<Asset>()
                                .With(x => x.Location, "OtherLocations")
+                               .With(x => x.State, AssetState.Available)
                                .Create();
 
             _userManagerMock.Setup(m => m.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
@@ -108,7 +146,7 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
         }
 
         [Fact]
-        public async Task UpdateAssetById_UserCanUpdateAsset_ShouldReturnNull()
+        public async Task User_Can_Update_Asset()
         {
             // Arrange
             var request = _fixture.Create<AssetUpdateRequest>();
@@ -119,6 +157,7 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
 
             var asset = _fixture.Build<Asset>()
                                .With(x => x.Location, "SameLocation")
+                               .With(x => x.State, AssetState.Available)
                                .Create();
 
             _userManagerMock.Setup(m => m.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);

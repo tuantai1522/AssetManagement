@@ -8,6 +8,7 @@ using AssetManagement.Contracts.Dtos.PaginationDtos;
 using AssetManagement.Contracts.Enums;
 using AssetManagement.Data.Interfaces;
 using AssetManagement.Domain.Entities;
+using AssetManagement.Domain.Enums;
 using AssetManagement.Domain.Exceptions;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
@@ -128,8 +129,12 @@ namespace AssetManagement.Application.Services.Implementations
 
         public async Task UpdateAssetAsync(AssetUpdateRequest request)
         {
-            var userLogin = await GetUserLogined();
             var assetToUpdate = await GetAsset(request.AssetId);
+
+            if (assetToUpdate.State != AssetState.Available)
+                throw new BadRequestException("Can't edit asset whose state is not Available");
+
+            var userLogin = await GetUserLogined();
 
             CheckAssetBelongsToLocationOfUser(userLogin, assetToUpdate);
 
