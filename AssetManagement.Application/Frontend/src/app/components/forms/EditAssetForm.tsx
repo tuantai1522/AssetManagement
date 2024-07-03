@@ -63,7 +63,10 @@ const EditAssetForm = ({ handleUpdateAsset, assetToUpdate }: Props) => {
   return (
     <div className="bg-white w-[35rem] mx-auto">
       <h2 className="text-2xl font-bold text-primary mb-5">Edit Asset</h2>
-      <form onSubmit={handleSubmit(handleUpdateAsset)} className="space-y-6">
+      <form
+        onSubmit={handleSubmit(handleUpdateAsset)}
+        className="space-y-6 p-1"
+      >
         <div>
           <div className="flex items-center gap-5 pl-2">
             <label className="w-[7rem]">Name</label>
@@ -190,22 +193,26 @@ const EditAssetForm = ({ handleUpdateAsset, assetToUpdate }: Props) => {
                     handleChangeState(e.target.value);
                   }}
                 >
-                  {states.map((key, idx) => (
-                    <FormControlLabel
-                      value={key.label}
-                      id={idx.toString()}
-                      control={
-                        <Radio
-                          checked={
-                            key.label.toLowerCase() ===
-                            getValues().state.toLowerCase()
+                  {states.map(
+                    (key, idx) =>
+                      key.label !== "Assigned" && (
+                        <FormControlLabel
+                          key={idx} // Add a key prop to avoid warnings
+                          value={key.label}
+                          id={idx.toString()}
+                          control={
+                            <Radio
+                              checked={
+                                key.label.toLowerCase() ===
+                                getValues().state.toLowerCase()
+                              }
+                              sx={{ "&.Mui-checked": { color: "#cf2338" } }}
+                            />
                           }
-                          sx={{ "&.Mui-checked": { color: "#cf2338" } }}
+                          label={key.label}
                         />
-                      }
-                      label={key.label}
-                    />
-                  ))}
+                      )
+                  )}
                 </RadioGroup>
               )}
             />

@@ -76,6 +76,8 @@ namespace AssetManagement.Application.Services.Implementations
                 Name = u.Name,
                 Category = u.Category != null ? u.Category.Name : string.Empty,
                 State = u.State,
+                Specification = u.Specification,
+                InstalledDate = u.InstalledDate,
             }).ToListAsync();
 
             int totalRecord = await filteredQueryable.CountAsync();
@@ -151,6 +153,7 @@ namespace AssetManagement.Application.Services.Implementations
             assetToUpdate.Specification = request.Specification;
             assetToUpdate.InstalledDate = request.InstalledDate;
             assetToUpdate.State = request.State.Value;
+            assetToUpdate.LastUpdated = DateTime.Now;
 
             _unitOfWork.AssetRepository.Update(assetToUpdate);
 

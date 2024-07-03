@@ -41,8 +41,8 @@ const AssetInfo = ({ assetId, onClose }: Props) => {
   return (
     <>
       <div className="fixed w-screen h-screen bg-gray-400 top-0 left-0 opacity-50 "></div>
-      {assetData ? (
-        <div className="z-10 shadow-2xl absolute top-1/2 -translate-y-1/2">
+      <div className="z-10 shadow-2xl absolute top-1/2 -translate-y-1/2">
+        {assetData ? (
           <div className="bg-white rounded-lg border-gray-400 border-2">
             <div className="bg-slate-100 rounded-t-lg border-b-2 border-gray-400 px-12 py-5 flex justify-between items-center">
               <h2 className="text-lg font-bold text-primary">
@@ -140,14 +140,14 @@ const AssetInfo = ({ assetId, onClose }: Props) => {
               </div>
             </div>
           </div>
-        </div>
-      ) : (
-        assetLoading && (
-          <div className="flex justify-center items-center">
-            <AppLoader />
-          </div>
-        )
-      )}
+        ) : (
+          assetLoading && (
+            <div className="flex justify-center items-center">
+              <AppLoader />
+            </div>
+          )
+        )}
+      </div>
     </>
   );
 };

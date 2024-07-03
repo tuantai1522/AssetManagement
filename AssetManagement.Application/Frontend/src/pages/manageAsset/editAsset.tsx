@@ -20,6 +20,10 @@ const EditAssetPage = () => {
         (x) => x.label.toUpperCase() === data.state.toUpperCase()
       ) + 1;
 
+    const valueToOrder = states.find(
+      (x) => x.label.toUpperCase() === data.state.toUpperCase()
+    );
+
     data.state = idxState.toString();
 
     const dataRequest: AssetUpdationRequest = {
@@ -32,13 +36,10 @@ const EditAssetPage = () => {
 
     const response: BaseResult<null> = await agent.Asset.update(dataRequest);
 
-    console.log(response);
-
+    const orderValue = valueToOrder?.label.split(" ").join("+");
     if (response.isSuccess) {
       navigate(
-        `/manage-asset?passedOrderBy=${encodeURIComponent(
-          "lastUpdate"
-        )}&passedOrder=${encodeURIComponent("desc")}`
+        `/manage-asset?states=${orderValue}&orderBy=lastUpdate&order=desc`
       );
     }
   };
