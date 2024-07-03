@@ -15,6 +15,7 @@ import ManagementReportPage from "../../pages/report";
 import CreateAssetPage from "../../pages/manageAsset/createAsset";
 import ManagementAssignmentPage from "../../pages/manageAssignment";
 import CreateAssignmentPage from "../../pages/manageAssignment/createAssignment";
+import EditAssetPage from "../../pages/manageAsset/editAsset";
 
 export const router = createBrowserRouter([
   {
@@ -51,6 +52,7 @@ export const router = createBrowserRouter([
                 children: [
                   { path: "", element: <ManagementAssetPage /> },
                   { path: "create-asset", element: <CreateAssetPage /> },
+                  { path: "edit-asset", element: <EditAssetPage /> },
                 ],
               },
               {

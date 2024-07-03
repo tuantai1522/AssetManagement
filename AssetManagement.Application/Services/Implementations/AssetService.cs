@@ -8,6 +8,7 @@ using AssetManagement.Contracts.Dtos.PaginationDtos;
 using AssetManagement.Contracts.Enums;
 using AssetManagement.Data.Interfaces;
 using AssetManagement.Domain.Entities;
+using AssetManagement.Domain.Enums;
 using AssetManagement.Domain.Exceptions;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
@@ -76,6 +77,8 @@ namespace AssetManagement.Application.Services.Implementations
                 Name = u.Name,
                 Category = u.Category != null ? u.Category.Name : string.Empty,
                 State = u.State,
+                Specification = u.Specification,
+                InstalledDate = u.InstalledDate,
             }).ToListAsync();
 
             int totalRecord = await filteredQueryable.CountAsync();
@@ -107,24 +110,48 @@ namespace AssetManagement.Application.Services.Implementations
 
             return _mapper.Map<AssetDetailsResponse>(asset);
         }
-		public async Task<AssetResponse> CreateAssetAsync(AssetCreationRequest request)
-		{
-			var userLogin = await GetUserLogined();
-			var category = await GetCategoryOfAsset(request.CategoryId);
+        public async Task<AssetResponse> CreateAssetAsync(AssetCreationRequest request)
+        {
+            var userLogin = await GetUserLogined();
+            var category = await GetCategoryOfAsset(request.CategoryId);
 
-			var newAsset = _mapper.Map<Asset>(request);
-			newAsset.AssetCode = await GenerateAssetCode(category);
-			newAsset.Location = userLogin.Location;
-			newAsset.CreatedAt = DateTime.Now;
-			newAsset.LastUpdated = DateTime.Now;
+            var newAsset = _mapper.Map<Asset>(request);
+            newAsset.AssetCode = await GenerateAssetCode(category);
+            newAsset.Location = userLogin.Location;
+            newAsset.CreatedAt = DateTime.Now;
+            newAsset.LastUpdated = DateTime.Now;
 
-			_unitOfWork.AssetRepository.Add(newAsset);
-			await _unitOfWork.SaveChangesAsync();
+            _unitOfWork.AssetRepository.Add(newAsset);
+            await _unitOfWork.SaveChangesAsync();
 
-			return _mapper.Map<AssetResponse>(newAsset);
-		}
-		#region Private methods
-		private Func<IQueryable<Asset>, IOrderedQueryable<Asset>> GetOrderByFunction(FilterAssetRequest filter)
+            return _mapper.Map<AssetResponse>(newAsset);
+        }
+
+        public async Task UpdateAssetAsync(AssetUpdateRequest request)
+        {
+            var assetToUpdate = await GetAsset(request.AssetId);
+
+            if (assetToUpdate.State != AssetState.Available)
+                throw new BadRequestException("Can't edit asset whose state is not Available");
+
+            var userLogin = await GetUserLogined();
+
+            CheckAssetBelongsToLocationOfUser(userLogin, assetToUpdate);
+
+            assetToUpdate.Name = request.AssetName;
+            assetToUpdate.Specification = request.Specification;
+            assetToUpdate.InstalledDate = request.InstalledDate;
+            assetToUpdate.State = request.State!.Value;
+            assetToUpdate.LastUpdated = DateTime.Now;
+
+            _unitOfWork.AssetRepository.Update(assetToUpdate);
+
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+
+        #region Private methods
+        private Func<IQueryable<Asset>, IOrderedQueryable<Asset>> GetOrderByFunction(FilterAssetRequest filter)
         {
             return filter switch
             {
@@ -164,48 +191,61 @@ namespace AssetManagement.Application.Services.Implementations
             }
             return filterSpecification;
         }
-		private async Task<string> GenerateAssetCode(Category category)
-		{
-			var lastAssetCode = await _unitOfWork.AssetRepository.GetQueryableSet().Where(a => a.CategoryId.Equals(category.Id)).OrderByDescending(a => a.AssetCode).FirstOrDefaultAsync();
-			string assetCode = "";
-			if (lastAssetCode != null && lastAssetCode.AssetCode != null)
-			{
-				string numberStr = Regex.Match(lastAssetCode.AssetCode, @"\d+").Value;
-				assetCode = string.Concat(category.Prefix, (int.Parse(numberStr) + 1).ToString().PadLeft(6, '0'));
-			}
-			else
-			{
-				assetCode = string.Concat(category.Prefix, "1".PadLeft(6, '0'));
-			}
+        private async Task<string> GenerateAssetCode(Category category)
+        {
+            var lastAssetCode = await _unitOfWork.AssetRepository.GetQueryableSet().Where(a => a.CategoryId.Equals(category.Id)).OrderByDescending(a => a.AssetCode).FirstOrDefaultAsync();
+            string assetCode = "";
+            if (lastAssetCode != null && lastAssetCode.AssetCode != null)
+            {
+                string numberStr = Regex.Match(lastAssetCode.AssetCode, @"\d+").Value;
+                assetCode = string.Concat(category.Prefix, (int.Parse(numberStr) + 1).ToString().PadLeft(6, '0'));
+            }
+            else
+            {
+                assetCode = string.Concat(category.Prefix, "1".PadLeft(6, '0'));
+            }
 
-			return assetCode;
-		}
-		private async Task<AppUser> GetUserLogined()
-		{
-			var userLogin = await _userManager.FindByIdAsync(_currentUser.UserId.ToString());
-			if (userLogin == null)
-			{
-				throw new NotFoundException("User is not found!");
-			}
-			else if (userLogin.IsDisabled)
-			{
-				throw new BadRequestException("Your account is disabled!");
-			}
-			return userLogin;
-		}
-		private async Task<Category> GetCategoryOfAsset(Guid categoryId)
-		{
-			var category = await _unitOfWork.CategoryRepository.FindOne(c => c.Id.Equals(categoryId));
-			if (category == null)
-			{
-				throw new NotFoundException("Category is not found!");
-			}
-			return category;
-		}
-		#endregion
+            return assetCode;
+        }
+        private async Task<AppUser> GetUserLogined()
+        {
+            var userLogin = await _userManager.FindByIdAsync(_currentUser.UserId.ToString());
+            if (userLogin == null)
+            {
+                throw new NotFoundException("User is not found!");
+            }
+            else if (userLogin.IsDisabled)
+            {
+                throw new BadRequestException("Your account is disabled!");
+            }
+            return userLogin;
+        }
+        private async Task<Category> GetCategoryOfAsset(Guid categoryId)
+        {
+            var category = await _unitOfWork.CategoryRepository.FindOne(c => c.Id.Equals(categoryId));
+            if (category == null)
+            {
+                throw new NotFoundException("Category is not found!");
+            }
+            return category;
+        }
+        private async Task<Asset> GetAsset(Guid assetId)
+        {
+            var asset = await _unitOfWork.AssetRepository
+                                 .FindOne(c => c.Id.Equals(assetId));
 
+            if (asset == null)
+                throw new NotFoundException("Can't find asset");
 
+            return asset;
+        }
 
-	}
+        private void CheckAssetBelongsToLocationOfUser(AppUser user, Asset asset)
+        {
+            if (!user.Location!.Equals(asset.Location))
+                throw new UnauthorizedException("This asset doesn't belong to this user");
+        }
+        #endregion
+    }
 
 }

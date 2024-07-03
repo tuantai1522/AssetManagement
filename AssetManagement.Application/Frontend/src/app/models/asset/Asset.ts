@@ -19,6 +19,8 @@ export interface FilterAssetResponse {
   name?: string;
   category?: string;
   state?: AssetState;
+  specification?: string;
+  installedDate?: Date;
 }
 
 export interface FilterAssetRequest {

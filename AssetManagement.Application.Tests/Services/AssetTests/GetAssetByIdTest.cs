@@ -1,4 +1,4 @@
-﻿using AssetManagement.Contracts.Dtos.AssetDtos.Requests;
+using AssetManagement.Contracts.Dtos.AssetDtos.Requests;
 using AssetManagement.Domain.Entities;
 using AssetManagement.Domain.Exceptions;
 using AutoFixture;
@@ -66,8 +66,6 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
                 Id = Guid.NewGuid()
             };
             // Mock AssetRepo to return null for any FindByIdAsync call
-            var asset = _fixture.Create<Asset>();
-
             List<Asset> Assets = new List<Asset>
                 {
                     _fixture.Create<Asset>(),

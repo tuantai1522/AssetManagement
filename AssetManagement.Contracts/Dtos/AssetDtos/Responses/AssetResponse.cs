@@ -1,4 +1,4 @@
-﻿namespace AssetManagement.Contracts.Dtos.AssetDtos.Responses;
+namespace AssetManagement.Contracts.Dtos.AssetDtos.Responses;
 public class AssetResponse
 {
     public Guid Id { get; set; }

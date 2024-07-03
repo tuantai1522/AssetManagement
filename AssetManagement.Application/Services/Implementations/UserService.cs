@@ -45,14 +45,14 @@ public class UserService : IUserService
         if (currentUser.IsDisabled)
         {
             throw new UnauthorizedAccessException(ErrorStrings.USER_IS_DISABLED);
-		}
+        }
 
-		//set default page size
-		if (!filter.PageNumber.HasValue || !filter.PageSize.HasValue
+        //set default page size
+        if (!filter.PageNumber.HasValue || !filter.PageSize.HasValue
             || filter.PageNumber.Value <= 0 || filter.PageSize.Value <= 0)
         {
-			filter.PageNumber = 1;
-			filter.PageSize = 5;
+            filter.PageNumber = 1;
+            filter.PageSize = 5;
         }
 
         var orderBy = GetOrderByExpression(filter);
