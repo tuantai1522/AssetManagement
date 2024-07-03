@@ -35,26 +35,29 @@ const Header = () => {
       breadcrumb = "";
   }
 
-  if (pathName.length >= 3) {
-    breadcrumb += " > ";
-    let name = pathName[2];
-    switch (name) {
-      case "create-user":
-        breadcrumb += "Create New User";
-        break;
-      case "edit-user":
-        breadcrumb += "Edit User";
-        break;
-      case "create-asset":
-        breadcrumb += "Create New Asset";
-        break;
-      case "edit-asset":
-        breadcrumb += "Edit Asset";
-        break;
-      default:
-        breadcrumb += "";
+    if (pathName.length >= 3) {
+      breadcrumb += " > ";
+      let name  = pathName[2];
+      switch (name) {
+        case "create-user":
+         breadcrumb += "Create New User"
+         break;
+        case "edit-user":
+          breadcrumb += "Edit User"
+          break;
+        case "create-asset":
+          breadcrumb += "Create New Asset"
+          break;
+        case "edit-asset":
+          breadcrumb += "Edit Asset";
+          break;
+        case "create-assignment":
+          breadcrumb += "Create New Assignment"
+          break;
+        default:
+          breadcrumb += "";
+      }
     }
-  }
 
   return (
     <div className="bg-primary h-14 flex justify-center text-lg font-semibold">
