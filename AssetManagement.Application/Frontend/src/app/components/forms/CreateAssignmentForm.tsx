@@ -51,16 +51,18 @@ export default function CreateAssignmentForm({
     setValue("assignedDate", dayjs(new Date()));
   }, []);
 
-  const handleSelectUser = (user: FilterUser) => {
-    setValue("userId", user.id);
-    setValue("user", user);
-    setSelectedUserValue(user);
+  const handleSelectUser = () => {
+    if (!selectedUserValue) return;
+    setValue("userId", selectedUserValue.id);
+    setValue("user", selectedUserValue);
+    setIsOpenUserSelection(false);
   };
 
-  const handleSelectAsset = (asset: FilterAssetResponse) => {
-    setValue("assetId", asset?.id);
-    setValue("asset", asset);
-    setSelectedAssetValue(asset);
+  const handleSelectAsset = () => {
+    if (!selectedAssetValue) return;
+    setValue("assetId", selectedAssetValue.id);
+    setValue("asset", selectedAssetValue);
+    setIsOpenAssetSelection(false);
   };
 
   const handleCancelAssetModal = () => {
@@ -118,9 +120,9 @@ export default function CreateAssignmentForm({
                 <UserModal
                   style={"top-0"}
                   selectedValue={selectedUserValue}
-                  setSelectedValue={handleSelectUser}
+                  setSelectedValue={(value) => setSelectedUserValue(value)}
                   onClickCancel={handleCancelUserModal}
-                  onClickSave={() => setIsOpenUserSelection(false)}
+                  onClickSave={handleSelectUser}
                 />
               )}
             </div>
@@ -172,9 +174,9 @@ export default function CreateAssignmentForm({
                 <AssetModal
                   style={"top-0"}
                   selectedValue={selectedAssetValue}
-                  setSelectedValue={handleSelectAsset}
+                  setSelectedValue={(value) => setSelectedAssetValue(value)}
                   onClickCancel={handleCancelAssetModal}
-                  onClickSave={() => setIsOpenAssetSelection(false)}
+                  onClickSave={handleSelectAsset}
                 />
               )}
             </div>
