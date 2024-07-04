@@ -96,7 +96,7 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
             {
                 _fixture.Build<Asset>()
                         .With(x => x.Id, request.AssetId)
-                        .With(x => x.State, AssetState.NotAvailable)
+                        .With(x => x.State, AssetState.Available)
                         .With(x => x.InstalledDate, request.InstalledDate)
                         .Create(),
             };
@@ -107,7 +107,7 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
 
             // Act
             var ex = await Assert.ThrowsAsync<BadRequestException>(() => _assetService.UpdateAssetAsync(request));
-            Assert.Equal("Can't edit asset whose state is not Available", ex.Message);
+            Assert.Equal("Can not select and input future date", ex.Message);
 
             //Assert
             _unitOfWorkMock.Verify(m => m.AssetRepository.Update(It.IsAny<Asset>()), Times.Never);
@@ -125,7 +125,7 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
             {
                 _fixture.Build<Asset>()
                         .With(x => x.Id, request.AssetId)
-                        .With(x => x.State, AssetState.NotAvailable)
+                        .With(x => x.State, AssetState.Available)
                         .With(x => x.InstalledDate, request.InstalledDate)
                         .Without(x => x.Assignments)
                         .Create(),
@@ -135,8 +135,8 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
             _unitOfWorkMock.Setup(u => u.AssetRepository.GetQueryableSet()).Returns(assets.AsQueryable().BuildMock());
 
             // Act
-            var ex = await Assert.ThrowsAsync<BadRequestException>(() => _assetService.UpdateAssetAsync(request));
-            Assert.Equal("Can't edit asset whose state is not Available", ex.Message);
+            var ex = await Assert.ThrowsAsync<NotFoundException>(() => _assetService.UpdateAssetAsync(request));
+            Assert.Equal("User is not found!", ex.Message);
 
             //Assert
             _unitOfWorkMock.Verify(m => m.AssetRepository.Update(It.IsAny<Asset>()), Times.Never);
