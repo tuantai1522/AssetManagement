@@ -10,5 +10,6 @@ namespace AssetManagement.Application.Services.Interfaces
         Task<PagingDto<FilterAssetResponse>> FilterAssetAsync(FilterAssetRequest filter);
         Task<AssetDetailsResponse> GetAssetByIdAsync(AssetDetailsRequest request);
         Task UpdateAssetAsync(AssetUpdateRequest request);
+        Task DeleteAssetAsync(Guid Id);
     }
 }

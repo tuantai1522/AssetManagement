@@ -80,4 +80,18 @@ public class AssetController : ControllerBase
         };
         return Ok(result);
     }
+
+    [HttpDelete("delete/{id}")]
+    [Authorize(Roles = $"{RoleConstant.AdminRole}")]
+    public async Task<ActionResult<BaseResult<object>>> DeleteAssetById(Guid id)
+    {
+        await _assetService.DeleteAssetAsync(id);
+        var result = new BaseResult<object>()
+        {
+            IsSuccess = true,
+            Error = null,
+            Result = null,
+        };
+        return Ok(result);
+    }
 }

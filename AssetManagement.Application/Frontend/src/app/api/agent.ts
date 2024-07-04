@@ -11,6 +11,7 @@ import eventEmitter from "../hooks/EventMitter";
 import { IgnoreErrorMessage } from "../constants/IgnoreErrorMessage";
 import { AssignmentCreationRequest } from "../models/assignment/AssignmentCreationRequest";
 import { AssetUpdationRequest } from "../models/asset/UpdateAssetRequest";
+import { FilterAssignmentRequest, getAssignmentQueryString } from "../models/assigment/Assignment";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 axios.defaults.headers.post["Content-Type"] = "application/json";
@@ -177,18 +178,24 @@ const Asset = {
   details: (id: string) => requests.get(`/api/asset/getAssetById?Id=${id}`),
   update: (params: AssetUpdationRequest) =>
     requests.put(`api/asset/updateAssetById`, params),
+  delete: (id: string) => requests.delete(`api/asset/delete/${id}`),
 };
 
 const Assignment = {
+  filter: (query?: FilterAssignmentRequest) => {
+    const queryString = getAssignmentQueryString(query);
+    return requests.get(`/api/assignment?${queryString}`);
+  },
   create: (values: AssignmentCreationRequest) => requests.post("api/assignment/create", values),
-}
+};
+
 const agent = {
   Product,
   Authentication,
   Users,
   Category,
   Asset,
-  Assignment
+  Assignment,
 };
 
 export default agent;

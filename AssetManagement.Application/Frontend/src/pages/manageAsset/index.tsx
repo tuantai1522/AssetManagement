@@ -1,5 +1,5 @@
 import AssetList, { AssetRowData } from "./assetList";
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import {
   AssetState,
   FilterAssetRequest,
@@ -24,7 +24,8 @@ import CategoryFilter from "./categoryFilter";
 import SelectedItem from "../../app/models/SelectedItem";
 import { Category } from "../../app/models/category/Category";
 import AssetInfo from "../../app/components/assetInfo/assetInfo";
-import { AssetUpdationRequest } from "../../app/models/asset/UpdateAssetRequest";
+import ConfirmModal from "../../app/components/confirmModal";
+import NotifyModal from "../../app/components/notifyModal";
 
 function setFilterSearchParam(
   query: FilterAssetRequest,
@@ -126,6 +127,26 @@ export default function ManagementAssetPage() {
     error: categoryError,
   } = agent.Category.all();
 
+  //delete asset
+  const [isDeletingModalOpen, setIsDeletingModalOpen] = useState(false);
+  const [currentDeletingId, setCurrentDeletingId] = useState("");
+
+  const [isOepningNotifyModal, setIsOepningNotifyModal] = useState(false);
+
+  const handleDelete = async (id: string) => {
+    try {
+      await agent.Asset.delete(id).then(mutate);
+    } catch (error: any) {
+      if (
+        error.message ===
+        `Can't delete asset which belongs to one or more historical assignments`
+      ) {
+        setIsOepningNotifyModal(true);
+        console.log(error);
+      }
+    }
+  };
+
   useEffect(() => {
     if (!isLoading) {
       window.history.replaceState({}, "");
@@ -164,7 +185,8 @@ export default function ManagementAssetPage() {
     setSearchInput(value);
   };
 
-  const handleSearchSubmit = () => {
+  const handleSearchSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     const newQuery: FilterAssetRequest = {
       ...query,
       pageNumber: 1,
@@ -188,6 +210,7 @@ export default function ManagementAssetPage() {
           .filter(
             (mappedState) => mappedState !== undefined && mappedState !== null
           ),
+        pageNumber: 1
       };
       setQuery(newQuery);
       setFilterSearchParam(newQuery, setSearchParams);
@@ -249,29 +272,31 @@ export default function ManagementAssetPage() {
             alignItems="center"
             spacing={4}
           >
-            <Stack
-              direction="row"
-              justifyContent="flex-start"
-              alignItems="center"
-              spacing={2}
-            >
-              <AppSearchInput
-                type="text"
-                placeholder="Search"
-                name="name"
-                value={searchInput}
-                onChange={handleSearchInputChange}
-                className="!rounded-l-md !border !border-gray-400 !border-r-0"
-              />
-
-              <div
-                onClick={handleSearchSubmit}
-                className="border border-gray-500 border-l-0 rounded-r-md mx-0 hover:cursor-pointer"
-                style={{ margin: 0, padding: "6px" }}
+            <form onSubmit={handleSearchSubmit} >
+              <Stack
+                direction="row"
+                justifyContent="flex-start"
+                alignItems="center"
+                spacing={2}
               >
-                <Search className="mx-0" />
-              </div>
-            </Stack>
+                <AppSearchInput
+                  type="text"
+                  placeholder="Search"
+                  name="name"
+                  value={searchInput}
+                  onChange={handleSearchInputChange}
+                  className="!rounded-l-md !border !border-gray-400 !border-r-0"
+                />
+
+                <button
+                  type="submit"
+                  className="border border-gray-500 border-l-0 rounded-r-md mx-0 hover:cursor-pointer"
+                  style={{ margin: 0, padding: "6px", height: "40px" }}
+                >
+                  <Search className="mx-0" />
+                </button>
+              </Stack>
+            </form>
             <AppButton
               content="Create new asset"
               className="py-[6px] min-w-40"
@@ -310,6 +335,8 @@ export default function ManagementAssetPage() {
             setOrder={setOrder}
             orderBy={query?.orderBy}
             setOrderBy={setOrderBy}
+            setCurrentDeletingId={setCurrentDeletingId}
+            setIsOpenDeletingModal={setIsDeletingModalOpen}
             handleClick={(event, rowId) => handleClickOnAsset(rowId)}
           />
 
@@ -326,6 +353,23 @@ export default function ManagementAssetPage() {
           </Stack>
         </div>
       </div>
+      <ConfirmModal
+        message="Do you want to delete this asset?"
+        confirmMessage="Delete"
+        isOpen={isDeletingModalOpen}
+        onClose={() => setIsDeletingModalOpen(false)}
+        onConfirm={() => {
+          setIsDeletingModalOpen(false);
+          handleDelete(currentDeletingId);
+        }}
+      />
+
+      <NotifyModal
+        title="Cannot Delete Asset"
+        message="Delete failed"
+        isOpen={isOepningNotifyModal}
+        onClose={() => setIsOepningNotifyModal(false)}
+      />
       {clickOnAsset && (
         <AssetInfo
           assetId={assetId}

@@ -15,3 +15,9 @@ export enum AssetStateEnum {
   Recycled = 4,
   Assigned = 5,
 }
+
+export enum AssignmentStateEnum {
+    "Accepted" = 1,
+    "Wating for acceptance" = 2,
+    "Declined" = 3
+}

@@ -68,7 +68,7 @@ export default function AppSelectedInput({ ...props }: Props) {
 
   return (
     <>
-      <Grid width={150} sx={{ ...props.sx }}>
+      <Grid width={160} sx={{ ...props.sx }}>
         <Grid item>
           <Stack
             direction="row"
@@ -103,17 +103,18 @@ export default function AppSelectedInput({ ...props }: Props) {
                     cursor: "pointer"
                   }
                 },
-                minWidth: "180px",
+                minWidth: "190px",
                 maxWidth: "250px",
               }}
             />
-            <div
+            <button
               className="border border-gray-500 border-l-0 rounded-r-md mx-0 hover:cursor-pointer"
-              style={{ margin: 0, padding: "6px" }}
+              style={{ margin: 0, padding: "6px", height: "40px"}}
+              title="Filter"
               onClick={props.onSubmit}
             >
               <FilterAltIcon className="mx-0" />
-            </div>
+            </button>
           </Stack>
         </Grid>
         <Grid item>
@@ -130,7 +131,7 @@ export default function AppSelectedInput({ ...props }: Props) {
               horizontal: "left",
             }}
           >
-            <Grid width={220}>
+            <Grid width={230}>
               <Grid item >
                 <FormControlLabel
                   value={"all"}

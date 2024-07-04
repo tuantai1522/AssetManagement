@@ -24,3 +24,23 @@ export const convertUtcToLocalDate = (
 
   return result;
 };
+
+export const convertDateToString = (
+  dateTime: Date | null | undefined
+): string | null => {
+  if (!dateTime) {
+    return null;
+  }
+
+  const localTime = new Date(
+    new Date(dateTime).getTime()
+  );
+
+  const dayString = String(localTime.getDate()).padStart(2, "0");
+  const monthString = String(localTime.getMonth() + 1).padStart(2, "0");
+  const yearString = localTime.getFullYear();
+
+  const result = `${dayString}/${monthString}/${yearString}`;
+
+  return result;
+};

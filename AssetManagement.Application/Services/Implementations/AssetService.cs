@@ -149,6 +149,26 @@ namespace AssetManagement.Application.Services.Implementations
             await _unitOfWork.SaveChangesAsync();
         }
 
+        public async Task DeleteAssetAsync(Guid Id)
+        {
+            var assetToDelete = await GetAsset(Id);
+
+            //Can't delete asset which have state is Assigned
+            if (assetToDelete.State == AssetState.Assigned)
+                throw new BadRequestException("Can't delete asset which have state is assigned");
+
+            //Can't delete asset which belongs to one or more historical assignments
+            if (assetToDelete.HasAssignments)
+                throw new BadRequestException("Can't delete asset which belongs to one or more historical assignments");
+
+            var userLogin = await GetUserLogined();
+
+            CheckAssetBelongsToLocationOfUser(userLogin, assetToDelete);
+
+            _unitOfWork.AssetRepository.Delete(assetToDelete.Id);
+            await _unitOfWork.SaveChangesAsync();
+
+        }
 
         #region Private methods
         private Func<IQueryable<Asset>, IOrderedQueryable<Asset>> GetOrderByFunction(FilterAssetRequest filter)
@@ -232,7 +252,11 @@ namespace AssetManagement.Application.Services.Implementations
         private async Task<Asset> GetAsset(Guid assetId)
         {
             var asset = await _unitOfWork.AssetRepository
-                                 .FindOne(c => c.Id.Equals(assetId));
+                            .GetQueryableSet()
+                            .Where(a => a.Id.Equals(assetId))
+                            .Include(x => x.Assignments)
+                            .Include(x => x.Category)
+                            .FirstOrDefaultAsync();
 
             if (asset == null)
                 throw new NotFoundException("Can't find asset");
@@ -243,8 +267,10 @@ namespace AssetManagement.Application.Services.Implementations
         private void CheckAssetBelongsToLocationOfUser(AppUser user, Asset asset)
         {
             if (!user.Location!.Equals(asset.Location))
-                throw new UnauthorizedException("This asset doesn't belong to this user");
+                throw new BadRequestException("This asset doesn't belong to this user");
         }
+
+
         #endregion
     }
 
