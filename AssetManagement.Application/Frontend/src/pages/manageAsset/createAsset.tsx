@@ -22,7 +22,7 @@ const CreateAssetPage = () => {
 
     const response: BaseResult<Asset> = await agent.Asset.create(dataRequest);
     if (response.isSuccess) {
-      navigate("/manage-asset", {
+      navigate("/manage-user", {
         state: { passedOrder: "desc", passedOrderBy: "lastUpdate" },
       });
     }

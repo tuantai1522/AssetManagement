@@ -7,6 +7,7 @@ export const updateAssetSchema = yup.object().shape({
   installedDate: yup
     .date()
     .typeError("Invalid Date Type")
-    .required("Please enter the installed date"),
+    .required("Please enter the installed date")
+    .max(new Date(), "Can not select and input future date"),
   state: yup.string().required(),
 });

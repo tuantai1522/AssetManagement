@@ -134,6 +134,9 @@ namespace AssetManagement.Application.Services.Implementations
             if (assetToUpdate.State != AssetState.Available)
                 throw new BadRequestException("Can't edit asset whose state is not Available");
 
+            if (request.InstalledDate > DateTime.Now)
+                throw new BadRequestException("Can not select and input future date");
+
             var userLogin = await GetUserLogined();
 
             CheckAssetBelongsToLocationOfUser(userLogin, assetToUpdate);

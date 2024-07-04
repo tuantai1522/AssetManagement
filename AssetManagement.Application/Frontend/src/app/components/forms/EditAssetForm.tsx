@@ -160,8 +160,6 @@ const EditAssetForm = ({ handleUpdateAsset, assetToUpdate }: Props) => {
                       textField: {
                         size: "small",
                         id: "dateOfBirth-dpk-form",
-                        helperText: error ? error.message : "",
-                        error: !!error,
                       },
                     }}
                   />

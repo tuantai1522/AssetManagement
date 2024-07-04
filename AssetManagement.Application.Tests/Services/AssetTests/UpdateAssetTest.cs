@@ -64,7 +64,41 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
                         .With(x => x.Id, request.AssetId)
                         .With(x => x.State, AssetState.NotAvailable)
                         .Create(),
-                _fixture.Create<Asset>(),
+            };
+
+            _userManagerMock.Setup(m => m.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
+
+            _unitOfWorkMock.Setup(u => u.AssetRepository.GetQueryableSet()).Returns(assets.AsQueryable().BuildMock());
+
+            // Act
+            var ex = await Assert.ThrowsAsync<BadRequestException>(() => _assetService.UpdateAssetAsync(request));
+            Assert.Equal("Can't edit asset whose state is not Available", ex.Message);
+
+            //Assert
+            _unitOfWorkMock.Verify(m => m.AssetRepository.Update(It.IsAny<Asset>()), Times.Never);
+            _unitOfWorkMock.Verify(m => m.SaveChangesAsync(), Times.Never);
+        }
+
+
+        [Fact]
+        public async Task Update_Asset_Which_Installed_Date_Is_Larger_Than_Current_Date()
+        {
+            // Arrange
+            var request = _fixture.Build<AssetUpdateRequest>()
+                                  .With(x => x.InstalledDate, DateTime.Now.AddDays(1))
+                                  .Create();
+                ;
+            var user = _fixture.Build<AppUser>()
+                               .With(x => x.IsDisabled, false)
+                               .Create();
+
+            var assets = new[]
+            {
+                _fixture.Build<Asset>()
+                        .With(x => x.Id, request.AssetId)
+                        .With(x => x.State, AssetState.NotAvailable)
+                        .With(x => x.InstalledDate, request.InstalledDate)
+                        .Create(),
             };
 
             _userManagerMock.Setup(m => m.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
@@ -84,16 +118,17 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
         public async Task Can_Not_Find_User_To_Update_Asset()
         {
             // Arrange
-            var request = _fixture.Create<AssetUpdateRequest>();
-
+            var request = _fixture.Build<AssetUpdateRequest>()
+                                  .With(x => x.InstalledDate, DateTime.Now.AddDays(-1))
+                                  .Create();
             var assets = new[]
             {
                 _fixture.Build<Asset>()
                         .With(x => x.Id, request.AssetId)
                         .With(x => x.State, AssetState.NotAvailable)
+                        .With(x => x.InstalledDate, request.InstalledDate)
                         .Without(x => x.Assignments)
                         .Create(),
-                _fixture.Create<Asset>(),
             };
 
             _userManagerMock.Setup(m => m.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(null as AppUser);
@@ -112,7 +147,10 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
         public async Task User_Disabled_Can_Not_Update_Asset()
         {
             // Arrange
-            var request = _fixture.Create<AssetUpdateRequest>();
+            var request = _fixture.Build<AssetUpdateRequest>()
+                                  .With(x => x.InstalledDate, DateTime.Now.AddDays(-1))
+                                  .Create();
+
             var user = _fixture.Build<AppUser>()
                                .With(x => x.IsDisabled, true)
                                .Create();
@@ -122,9 +160,9 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
                 _fixture.Build<Asset>()
                         .With(x => x.Id, request.AssetId)
                         .With(x => x.State, AssetState.Available)
+                        .With(x => x.InstalledDate, request.InstalledDate)
                         .Without(x => x.Assignments)
                         .Create(),
-                _fixture.Create<Asset>(),
             };
 
             _userManagerMock.Setup(m => m.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
@@ -144,7 +182,10 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
         public async Task User_And_Asset_Are_Different_Location()
         {
             // Arrange
-            var request = _fixture.Create<AssetUpdateRequest>();
+            var request = _fixture.Build<AssetUpdateRequest>()
+                                  .With(x => x.InstalledDate, DateTime.Now.AddDays(-1))
+                                  .Create(); 
+
             var user = _fixture.Build<AppUser>()
                                .With(x => x.IsDisabled, false)
                                .With(x => x.Location, "DifferentLocation")
@@ -156,9 +197,9 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
                         .With(x => x.Id, request.AssetId)
                         .With(x => x.Location, "OtherLocations")
                         .With(x => x.State, AssetState.Available)
+                        .With(x => x.InstalledDate, request.InstalledDate)
                         .Without(x => x.Assignments)
                         .Create(),
-                _fixture.Create<Asset>(),
             };
 
             _userManagerMock.Setup(m => m.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
@@ -178,7 +219,10 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
         public async Task User_Can_Update_Asset()
         {
             // Arrange
-            var request = _fixture.Create<AssetUpdateRequest>();
+            var request = _fixture.Build<AssetUpdateRequest>()
+                                  .With(x => x.InstalledDate, DateTime.Now.AddDays(-1))
+                                  .Create(); 
+
             var user = _fixture.Build<AppUser>()
                                .With(x => x.IsDisabled, false)
                                .With(x => x.Location, "SameLocation")
@@ -190,9 +234,9 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
                         .With(x => x.Id, request.AssetId)
                         .With(x => x.Location, "SameLocation")
                         .With(x => x.State, AssetState.Available)
+                        .With(x => x.InstalledDate, request.InstalledDate)
                         .Without(x => x.Assignments)
                         .Create(),
-                _fixture.Create<Asset>(),
             };
 
             _userManagerMock.Setup(m => m.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
