@@ -7,9 +7,9 @@ using System.Linq.Expressions;
 
 namespace AssetManagement.Application.Tests.Services.AssetTests
 {
-    public class GetAssetByIdTest : SetupAssetServiceTest
+    public class GetAssignmentByIdTest : SetupAssetServiceTest
     {
-        public GetAssetByIdTest()
+        public GetAssignmentByIdTest()
         {
 
         }
@@ -48,7 +48,7 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
                                      Func<IQueryable<Asset>,
                                      IOrderedQueryable<Asset>> orderBy, string includeProperties) =>
                            {
-                               return Enumerable.Empty<Asset>();
+                               return new List<Asset>();
                            });
 
 

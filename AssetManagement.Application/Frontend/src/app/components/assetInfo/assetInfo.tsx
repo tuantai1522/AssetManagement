@@ -41,22 +41,22 @@ const AssetInfo = ({ assetId, onClose }: Props) => {
   return (
     <>
       <div className="fixed w-screen h-screen bg-gray-400 top-0 left-0 opacity-50 "></div>
-      <div className="z-10 shadow-2xl absolute top-1/2 -translate-y-1/2">
+      <div className="z-10 shadow-2xl absolute top-1/2 -translate-y-1/2 rounded-xl">
         {assetData ? (
-          <div className="bg-white rounded-lg border-gray-400 border-2">
-            <div className="bg-slate-100 rounded-t-lg border-b-2 border-gray-400 px-12 py-5 flex justify-between items-center">
-              <h2 className="text-lg font-bold text-primary">
+          <div className="rounded-xl border-black border-2">
+            <div className="bg-slate-200 rounded-t-xl border-b-2 border-black px-12 py-5 flex justify-between items-center">
+              <h2 className="text-xl font-bold text-primary">
                 Detailed Asset Information
               </h2>
               <div
                 onClick={onClose}
-                className="border-2 border-primary rounded-sm text-primary cursor-pointer transition-all hover:text-white hover:bg-primary"
+                className="rounded-md border-4 border-primary text-primary cursor-pointer transition-all hover:text-white hover:bg-primary"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  strokeWidth="4.5"
+                  strokeWidth="5"
                   stroke="currentColor"
                   className="size-4"
                 >
@@ -68,8 +68,8 @@ const AssetInfo = ({ assetId, onClose }: Props) => {
                 </svg>
               </div>
             </div>
-            <div className="w-full h-full px-12 py-7">
-              <div className="grid grid-cols-6 gap-4 text-secondary">
+            <div className="bg-slate-50 rounded-b-xl w-full h-full px-12 py-7">
+              <div className="grid grid-cols-6 gap-4 text-gray-600">
                 <div className="col-span-1">Asset Code</div>
                 <div className="col-span-5">{assetData?.assetCode}</div>
                 <div className="col-span-1">Asset Name</div>

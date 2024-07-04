@@ -5,6 +5,6 @@ namespace AssetManagement.Data.Interfaces
 {
     public interface IAssignmentRepository : IGenericRepository<Assignment>
     {
-
-    }
+		public Task<Assignment?> GetAssignmentByIdAsync(Guid id);
+	}
 }

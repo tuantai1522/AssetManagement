@@ -6,7 +6,8 @@ namespace AssetManagement.Application.Services.Interfaces
 {
     public interface IAssignmentService
     {
-        Task<Guid> CreateAssignmentAsync(AssignmentCreationRequest request);
         Task<PagingDto<FilterAssignmentResponse>> FilterAssignmentAsync(FilterAssignmentRequest filter);
+        Task<AssignmentDetailResponse> GetAssignmentByIdAsync(Guid assignmentId);
+        Task<Guid> CreateAssignmentAsync(AssignmentCreationRequest request);
     }
 }

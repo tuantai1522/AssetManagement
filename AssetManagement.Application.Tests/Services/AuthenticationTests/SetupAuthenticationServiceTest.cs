@@ -8,18 +8,13 @@ using Microsoft.AspNetCore.Identity;
 using Moq;
 
 namespace AssetManagement.Application.Tests.Services.AuthenticationTests;
-public class SetupAuthenticationServiceTest
+public class SetupAuthenticationServiceTest : SetupTest
 {
-    protected readonly IFixture _fixture;
     protected IAuthService _authService;
-    protected readonly Mock<UserManager<AppUser>> _userManagerMock;
     protected readonly Mock<IJwtTokenGenerator> _tokenGeneratorMock;
 
-    public SetupAuthenticationServiceTest()
+    public SetupAuthenticationServiceTest() : base()
     {
-        _fixture = new Fixture().Customize(new AutoMoqCustomization());
-        _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
-        _userManagerMock = _fixture.Freeze<Mock<UserManager<AppUser>>>();
         _tokenGeneratorMock = _fixture.Freeze<Mock<IJwtTokenGenerator>>();
         _authService = new AuthService(_userManagerMock.Object, _tokenGeneratorMock.Object);
     }

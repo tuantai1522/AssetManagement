@@ -66,7 +66,7 @@ export default function AssignmentList(props: AssignmentListProp) {
             disablePadding: false,
             label: "Assigned to",
             className: "font-bold ",
-            minWidth: "120px",
+            minWidth: "130px",
             style: {
                 border: "none",
                 borderBottom: "none",
@@ -79,7 +79,7 @@ export default function AssignmentList(props: AssignmentListProp) {
             disablePadding: false,
             label: "Assigned by",
             className: "font-bold ",
-            minWidth: "120px",
+            minWidth: "130px",
             style: {
                 border: "none",
                 borderBottom: "none",
@@ -92,7 +92,7 @@ export default function AssignmentList(props: AssignmentListProp) {
             disablePadding: false,
             label: "Assigned date",
             className: "font-bold ",
-            minWidth: "120px",
+            minWidth: "130px",
             style: {
                 border: "none",
                 borderBottom: "none",

@@ -11,16 +11,17 @@ using Microsoft.AspNetCore.Mvc;
 namespace AssetManagement.Application.Controllers {
     [Route("api/assignment")]
     [ApiController]
-    public class AssignmentController : ControllerBase {
+    public class AssignmentController : ControllerBase
+    {
         private readonly IAssignmentService _assignmentService;
-
-        public AssignmentController(IAssignmentService assignmentService) {
-            _assignmentService = assignmentService;
+        public AssignmentController(IAssignmentService assignment)
+        {
+            _assignmentService = assignment;
         }
-
         [HttpGet]
         [Authorize(Roles = $"{RoleConstant.AdminRole}")]
-        public async Task<ActionResult<BaseResult<PagingDto<FilterAssignmentResponse>>>> GetAllAsync([FromQuery] FilterAssignmentRequest request) {
+        public async Task<ActionResult<BaseResult<PagingDto<FilterAssignmentResponse>>>> GetAllAsync([FromQuery] FilterAssignmentRequest request) 
+        {
             var data = await _assignmentService.FilterAssignmentAsync(request);
             PaginationMetaData metaData = new PaginationMetaData(data.TotalItemCount, data.PageSize, data.CurrentPage);
             Response.AddPaginationHeader(metaData);
@@ -33,10 +34,23 @@ namespace AssetManagement.Application.Controllers {
             };
             return Ok(result);
         }
-
+        [HttpGet("{id}")]
+        [Authorize]
+        public async Task<ActionResult<BaseResult<AssignmentDetailResponse>>> GetAssignmentByIdAsync([FromRoute]Guid id)
+        {
+            var data = await _assignmentService.GetAssignmentByIdAsync(id);
+            var result = new BaseResult<AssignmentDetailResponse>()
+            {
+                IsSuccess = true,
+                Result = data,
+                Error = null
+            };
+            return Ok(result);
+        }
         [HttpPost("create")]
         [Authorize(Roles = $"{RoleConstant.AdminRole}")]
-        public async Task<ActionResult<BaseResult<bool>>> CreateAssignmentAsync([FromBody] AssignmentCreationRequest request) {
+        public async Task<ActionResult<BaseResult<bool>>> CreateAssignmentAsync([FromBody] AssignmentCreationRequest request) 
+        {
             var newAssignmentId = await _assignmentService.CreateAssignmentAsync(request);
             var result = new BaseResult<bool>()
             {
