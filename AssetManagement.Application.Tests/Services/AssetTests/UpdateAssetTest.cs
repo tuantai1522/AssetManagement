@@ -4,6 +4,7 @@ using AssetManagement.Domain.Enums;
 using AssetManagement.Domain.Exceptions;
 using AutoFixture;
 using Microsoft.AspNetCore.Routing;
+using MockQueryable.Moq;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -29,10 +30,15 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
             var user = _fixture.Build<AppUser>()
                                .With(x => x.IsDisabled, false)
                                .Create();
+            var assets = new[]
+{
+                _fixture.Create<Asset>(),
+                _fixture.Create<Asset>(),
+            };
 
             _userManagerMock.Setup(m => m.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
-            _unitOfWorkMock.Setup(m => m.AssetRepository.FindOne(It.IsAny<Expression<Func<Asset, bool>>>()))
-                           .ReturnsAsync(null as Asset);
+
+            _unitOfWorkMock.Setup(u => u.AssetRepository.GetQueryableSet()).Returns(assets.AsQueryable().BuildMock());
 
             // Act
             var ex = await Assert.ThrowsAsync<NotFoundException>(() => _assetService.UpdateAssetAsync(request));
@@ -52,13 +58,18 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
                                .With(x => x.IsDisabled, false)
                                .Create();
 
-            var asset = _fixture.Build<Asset>()
-                   .With(x => x.State, AssetState.NotAvailable)
-                   .Create();
+            var assets = new[]
+            {
+                _fixture.Build<Asset>()
+                        .With(x => x.Id, request.AssetId)
+                        .With(x => x.State, AssetState.NotAvailable)
+                        .Create(),
+                _fixture.Create<Asset>(),
+            };
 
             _userManagerMock.Setup(m => m.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
-            _unitOfWorkMock.Setup(m => m.AssetRepository.FindOne(It.IsAny<Expression<Func<Asset, bool>>>()))
-                           .ReturnsAsync(asset);
+
+            _unitOfWorkMock.Setup(u => u.AssetRepository.GetQueryableSet()).Returns(assets.AsQueryable().BuildMock());
 
             // Act
             var ex = await Assert.ThrowsAsync<BadRequestException>(() => _assetService.UpdateAssetAsync(request));
@@ -75,17 +86,22 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
             // Arrange
             var request = _fixture.Create<AssetUpdateRequest>();
 
-            var asset = _fixture.Build<Asset>()
-                       .With(x => x.State, AssetState.Available)
-                       .Create();
+            var assets = new[]
+            {
+                _fixture.Build<Asset>()
+                        .With(x => x.Id, request.AssetId)
+                        .With(x => x.State, AssetState.NotAvailable)
+                        .Without(x => x.Assignments)
+                        .Create(),
+                _fixture.Create<Asset>(),
+            };
 
             _userManagerMock.Setup(m => m.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(null as AppUser);
-            _unitOfWorkMock.Setup(m => m.AssetRepository.FindOne(It.IsAny<Expression<Func<Asset, bool>>>()))
-               .ReturnsAsync(asset);
+            _unitOfWorkMock.Setup(u => u.AssetRepository.GetQueryableSet()).Returns(assets.AsQueryable().BuildMock());
 
             // Act
-            var ex = await Assert.ThrowsAsync<NotFoundException>(() => _assetService.UpdateAssetAsync(request));
-            Assert.Equal("User is not found!", ex.Message);
+            var ex = await Assert.ThrowsAsync<BadRequestException>(() => _assetService.UpdateAssetAsync(request));
+            Assert.Equal("Can't edit asset whose state is not Available", ex.Message);
 
             //Assert
             _unitOfWorkMock.Verify(m => m.AssetRepository.Update(It.IsAny<Asset>()), Times.Never);
@@ -101,13 +117,20 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
                                .With(x => x.IsDisabled, true)
                                .Create();
 
-            var asset = _fixture.Build<Asset>()
-                               .With(x => x.State, AssetState.Available)
-                               .Create();
+            var assets = new[]
+            {
+                _fixture.Build<Asset>()
+                        .With(x => x.Id, request.AssetId)
+                        .With(x => x.State, AssetState.Available)
+                        .Without(x => x.Assignments)
+                        .Create(),
+                _fixture.Create<Asset>(),
+            };
 
             _userManagerMock.Setup(m => m.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
-            _unitOfWorkMock.Setup(m => m.AssetRepository.FindOne(It.IsAny<Expression<Func<Asset, bool>>>()))
-                .ReturnsAsync(asset);
+            _unitOfWorkMock.Setup(u => u.AssetRepository.GetQueryableSet()).Returns(assets.AsQueryable().BuildMock());
+
+
             // Act
             var ex = await Assert.ThrowsAsync<BadRequestException>(() => _assetService.UpdateAssetAsync(request));
             Assert.Equal("Your account is disabled!", ex.Message);
@@ -127,17 +150,23 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
                                .With(x => x.Location, "DifferentLocation")
                                .Create();
 
-            var asset = _fixture.Build<Asset>()
-                               .With(x => x.Location, "OtherLocations")
-                               .With(x => x.State, AssetState.Available)
-                               .Create();
+            var assets = new[]
+{
+                _fixture.Build<Asset>()
+                        .With(x => x.Id, request.AssetId)
+                        .With(x => x.Location, "OtherLocations")
+                        .With(x => x.State, AssetState.Available)
+                        .Without(x => x.Assignments)
+                        .Create(),
+                _fixture.Create<Asset>(),
+            };
 
             _userManagerMock.Setup(m => m.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
 
-            _unitOfWorkMock.Setup(m => m.AssetRepository.FindOne(It.IsAny<Expression<Func<Asset, bool>>>()))
-               .ReturnsAsync(asset);
+            _unitOfWorkMock.Setup(u => u.AssetRepository.GetQueryableSet()).Returns(assets.AsQueryable().BuildMock());
+
             // Act
-            var ex = await Assert.ThrowsAsync<UnauthorizedException>(() => _assetService.UpdateAssetAsync(request));
+            var ex = await Assert.ThrowsAsync<BadRequestException>(() => _assetService.UpdateAssetAsync(request));
             Assert.Equal("This asset doesn't belong to this user", ex.Message);
 
             //Assert
@@ -155,15 +184,20 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
                                .With(x => x.Location, "SameLocation")
                                .Create();
 
-            var asset = _fixture.Build<Asset>()
-                               .With(x => x.Location, "SameLocation")
-                               .With(x => x.State, AssetState.Available)
-                               .Create();
+            var assets = new[]
+{
+                _fixture.Build<Asset>()
+                        .With(x => x.Id, request.AssetId)
+                        .With(x => x.Location, "SameLocation")
+                        .With(x => x.State, AssetState.Available)
+                        .Without(x => x.Assignments)
+                        .Create(),
+                _fixture.Create<Asset>(),
+            };
 
             _userManagerMock.Setup(m => m.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
 
-            _unitOfWorkMock.Setup(m => m.AssetRepository.FindOne(It.IsAny<Expression<Func<Asset, bool>>>()))
-               .ReturnsAsync(asset);
+            _unitOfWorkMock.Setup(u => u.AssetRepository.GetQueryableSet()).Returns(assets.AsQueryable().BuildMock());
 
             // Act
             await _assetService.UpdateAssetAsync(request);

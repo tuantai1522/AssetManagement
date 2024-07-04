@@ -232,7 +232,11 @@ namespace AssetManagement.Application.Services.Implementations
         private async Task<Asset> GetAsset(Guid assetId)
         {
             var asset = await _unitOfWork.AssetRepository
-                                 .FindOne(c => c.Id.Equals(assetId));
+                            .GetQueryableSet()
+                            .Where(a => a.Id.Equals(assetId))
+                            .Include(x => x.Assignments)
+                            .Include(x => x.Category)
+                            .FirstOrDefaultAsync();
 
             if (asset == null)
                 throw new NotFoundException("Can't find asset");
@@ -243,7 +247,7 @@ namespace AssetManagement.Application.Services.Implementations
         private void CheckAssetBelongsToLocationOfUser(AppUser user, Asset asset)
         {
             if (!user.Location!.Equals(asset.Location))
-                throw new UnauthorizedException("This asset doesn't belong to this user");
+                throw new BadRequestException("This asset doesn't belong to this user");
         }
         #endregion
     }
