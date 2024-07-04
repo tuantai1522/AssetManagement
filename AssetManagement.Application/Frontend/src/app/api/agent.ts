@@ -46,7 +46,7 @@ axios.interceptors.response.use(
     return response;
   },
   (error: AxiosError) => {
-    const result = error.response!.data as BaseResult<any>;
+    const result = error.response!.data as BaseResult<any> || error.response;
     const errorStatus = result.error ? result.error.status : result.status;
     let isShowToastError = true;
     if (
@@ -55,7 +55,7 @@ axios.interceptors.response.use(
     ) {
       isShowToastError = false;
     }
-
+    debugger;
     if (isShowToastError) {
       switch (errorStatus) {
         case 400:
@@ -83,8 +83,9 @@ axios.interceptors.response.use(
           eventEmitter.emit("notification", result.error.message, "error");
           break;
         case 403:
-          console.log(result.error.message);
-          eventEmitter.emit("notification", result.error.message, "error");
+          debugger;
+          const errorStringDefault = "Your account does not have sufficient permissions!"
+          eventEmitter.emit("notification", result.error ? result.error.message : errorStringDefault, "error");
           break;
         case 404:
           console.log(result.error.message);
