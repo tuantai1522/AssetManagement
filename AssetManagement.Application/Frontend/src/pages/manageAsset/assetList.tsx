@@ -5,6 +5,7 @@ import AppTable, {
 } from "../../app/components/table/sortTable";
 import { AssetState } from "../../app/models/asset/Asset";
 import { useNavigate } from "react-router-dom";
+import { Dispatch, SetStateAction } from "react";
 
 export interface AssetRowData {
   id: string;
@@ -29,6 +30,9 @@ export interface AssetListProp {
   orderBy: any;
   setOrderBy: (orderBy: any) => void;
   handleClick: (event: any, rowId: string) => void;
+
+  setIsOpenDeletingModal: Dispatch<SetStateAction<boolean>>;
+  setCurrentDeletingId: Dispatch<SetStateAction<string>>;
 }
 
 export default function AssetList(props: AssetListProp) {
@@ -109,7 +113,7 @@ export default function AssetList(props: AssetListProp) {
               AssetState[params?.state as keyof typeof AssetState]
             }
             color="primary"
-            className={` ${
+            className={`text-gray-500 ${
               AssetState.Available !==
               AssetState[params?.state as keyof typeof AssetState]
                 ? "opacity-50 cursor-not-allowed"
@@ -136,19 +140,20 @@ export default function AssetList(props: AssetListProp) {
 
           <button
             disabled={
-              AssetState.Available !==
+              AssetState.Assigned ===
               AssetState[params?.state as keyof typeof AssetState]
             }
             color="primary"
-            className={` ${
-              AssetState.Available !==
+            className={`text-red-500 ${
+              AssetState.Assigned ===
               AssetState[params?.state as keyof typeof AssetState]
                 ? "opacity-50 cursor-not-allowed"
                 : ""
             }`}
             onClick={(e) => {
               e.stopPropagation();
-              alert(params?.id);
+              props.setCurrentDeletingId(params?.id);
+              props.setIsOpenDeletingModal(true);
             }}
           >
             <HighlightOff />

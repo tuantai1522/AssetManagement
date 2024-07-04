@@ -24,7 +24,8 @@ import CategoryFilter from "./categoryFilter";
 import SelectedItem from "../../app/models/SelectedItem";
 import { Category } from "../../app/models/category/Category";
 import AssetInfo from "../../app/components/assetInfo/assetInfo";
-import { AssetUpdationRequest } from "../../app/models/asset/UpdateAssetRequest";
+import ConfirmModal from "../../app/components/confirmModal";
+import NotifyModal from "../../app/components/notifyModal";
 
 function setFilterSearchParam(
   query: FilterAssetRequest,
@@ -125,6 +126,26 @@ export default function ManagementAssetPage() {
     isLoading: categoryLoading,
     error: categoryError,
   } = agent.Category.all();
+
+  //delete asset
+  const [isDeletingModalOpen, setIsDeletingModalOpen] = useState(false);
+  const [currentDeletingId, setCurrentDeletingId] = useState("");
+
+  const [isOepningNotifyModal, setIsOepningNotifyModal] = useState(false);
+
+  const handleDelete = async (id: string) => {
+    try {
+      await agent.Asset.delete(id).then(mutate);
+    } catch (error: any) {
+      if (
+        error.message ===
+        `Can't delete asset which belongs to one or more historical assignments`
+      ) {
+        setIsOepningNotifyModal(true);
+        console.log(error);
+      }
+    }
+  };
 
   useEffect(() => {
     if (!isLoading) {
@@ -314,6 +335,8 @@ export default function ManagementAssetPage() {
             setOrder={setOrder}
             orderBy={query?.orderBy}
             setOrderBy={setOrderBy}
+            setCurrentDeletingId={setCurrentDeletingId}
+            setIsOpenDeletingModal={setIsDeletingModalOpen}
             handleClick={(event, rowId) => handleClickOnAsset(rowId)}
           />
 
@@ -330,6 +353,23 @@ export default function ManagementAssetPage() {
           </Stack>
         </div>
       </div>
+      <ConfirmModal
+        message="Do you want to delete this asset?"
+        confirmMessage="Delete"
+        isOpen={isDeletingModalOpen}
+        onClose={() => setIsDeletingModalOpen(false)}
+        onConfirm={() => {
+          setIsDeletingModalOpen(false);
+          handleDelete(currentDeletingId);
+        }}
+      />
+
+      <NotifyModal
+        title="Cannot Delete Asset"
+        message="Delete failed"
+        isOpen={isOepningNotifyModal}
+        onClose={() => setIsOepningNotifyModal(false)}
+      />
       {clickOnAsset && (
         <AssetInfo
           assetId={assetId}

@@ -42,9 +42,9 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
 
             // Act
             var ex = await Assert.ThrowsAsync<NotFoundException>(() => _assetService.UpdateAssetAsync(request));
-            Assert.Equal("Can't find asset", ex.Message);
 
             //Assert
+            Assert.Equal("Can't find asset", ex.Message);
             _unitOfWorkMock.Verify(m => m.AssetRepository.Update(It.IsAny<Asset>()), Times.Never);
             _unitOfWorkMock.Verify(m => m.SaveChangesAsync(), Times.Never);
         }

@@ -178,6 +178,7 @@ const Asset = {
   details: (id: string) => requests.get(`/api/asset/getAssetById?Id=${id}`),
   update: (params: AssetUpdationRequest) =>
     requests.put(`api/asset/updateAssetById`, params),
+  delete: (id: string) => requests.delete(`api/asset/delete/${id}`),
 };
 
 const Assignment = {
@@ -194,7 +195,7 @@ const agent = {
   Users,
   Category,
   Asset,
-  Assignment
+  Assignment,
 };
 
 export default agent;

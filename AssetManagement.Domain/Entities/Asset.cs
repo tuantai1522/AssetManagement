@@ -18,5 +18,7 @@ namespace AssetManagement.Domain.Entities
         public Category? Category { get; set; }
         public virtual ICollection<Assignment> Assignments { get; set; } = [];
 
+        public bool HasAssignments => Assignments != null && Assignments.Count != 0;
+
     }
 }
