@@ -15,9 +15,9 @@ export const createUserSchema = yup.object().shape({
         .required("Please Select Date of Birth")
         .olderThan18('User is under 18. Please select a\ndifferent date'),
     joinedDate: yup.date()
-        .required("Please Select Joined Date")
+        .required("Please Select Joined Date")  
         .typeError("Invalid Date Type")
-        .requireDoB('dateOfBirth', "Please Select Date of Birth First")
+        .requireDoB('dateOfBirth', "Please Select Date of Birth")
         .afterDoB('dateOfBirth', 'User under the age of 18 may not join\ncompany. Please select a different date')
         .notWeekend('Joined date is Saturday or Sunday.\nPlease select a different date'),
     gender: yup

@@ -1,6 +1,24 @@
 import { Order } from "../../components/table/sortTable";
 import { AssignmentStateEnum } from "../../types/enum";
 
+export enum AssignmentState {
+  "Waiting for acceptance" = 1,
+  "Accepted" = 2,
+  "Declined" = 3,
+}
+
+export interface AssignmentDetailResponse {
+  id: string;
+  assetCode: string;
+  assetName: string;
+  specification: string;
+  assignedTo: string;
+  assignedBy: string;
+  assignedDate: Date;
+  state: AssignmentState;
+  note: string;
+}
+
 export interface FilterAssignmentResponse {
   id: string;
   assetCode?: string;
@@ -84,6 +102,5 @@ export function getAssignmentQueryString(filter?: FilterAssignmentRequest) {
   const sizeParam = `pageSize=${filter.pageSize ?? 5}`;
 
   const queryString = `${searchParam}${statesParam}${assignedDateParam}${sortOption}${pageParam}${sizeParam}`;
-  console.log(`Query string: ${queryString}`);
   return queryString;
 }

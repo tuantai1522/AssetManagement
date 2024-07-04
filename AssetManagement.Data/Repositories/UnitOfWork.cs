@@ -6,18 +6,16 @@ namespace AssetManagement.Data.Repositories;
 public class UnitOfWork : IUnitOfWork, IAsyncDisposable
 {
     private readonly AssetManagementDbContext _dbContext;
-    private readonly ILogger<UnitOfWork> _logger;
     public IAssetRepository AssetRepository { get; private set; }
     public ICategoryRepository CategoryRepository { get; private set; }
     public IAssignmentRepository AssignmentRepository { get; private set; }
 
-    public UnitOfWork(AssetManagementDbContext dbContext, ILogger<UnitOfWork> logger)
+    public UnitOfWork(AssetManagementDbContext dbContext)
     {
         _dbContext = dbContext;
-        _logger = logger;
         AssetRepository = new AssetRepository(dbContext);
         CategoryRepository = new CategoryRepository(dbContext);
-        AssignmentRepository = new AssignmentRepository(dbContext);
+        AssignmentRepository = new AssignmentRepository(dbContext); 
     }
 
     public async Task SaveChangesAsync()

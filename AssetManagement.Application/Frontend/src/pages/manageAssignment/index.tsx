@@ -1,6 +1,6 @@
 import { Stack } from "@mui/material";
 import AssignmentList, { AssignmentRowData } from "./assignmentList";
-import { FilterAssignmentRequest, FilterAssignmentResponse, OrderByFieldName } from "../../app/models/assigment/Assignment";
+import { FilterAssignmentRequest, FilterAssignmentResponse, OrderByFieldName } from "../../app/models/assignment/Assignment";
 import { AssignmentStateEnum } from "../../app/types/enum";
 import { SetURLSearchParams, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { FormEvent, useState } from "react";
@@ -14,6 +14,7 @@ import AppButton from "../../app/components/buttons/Button";
 import AssignmentStateFilter from "./asignmentState";
 import { AssignDateFilter } from "./assignedDateFilter";
 import dayjs, { Dayjs } from "dayjs";
+import AssignmentInfo from "../../app/components/assignmentInfo/AssignmentInfo";
 
 function setFilterSearchParam(
   query: FilterAssignmentRequest,
@@ -59,7 +60,8 @@ function setFilterSearchParam(
 
 export default function ManagementAssignmentPage() {
 
-
+  const [clickOnAssignment, setClickOnAssignment] = useState<boolean>(false);
+  const [assignmentId, setAssignmentId] = useState<string>("");
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const location = useLocation();
@@ -93,6 +95,10 @@ export default function ManagementAssignmentPage() {
       initAssignedDateInput = null;
     }
   }
+  const handleClickOnAssignment = (rowId: string) => {
+    setClickOnAssignment(true);
+    setAssignmentId(data.items.result[rowId].id);
+  };
 
   const [states, setStates] = useState<string[]>(initStates);
 
@@ -256,6 +262,7 @@ export default function ManagementAssignmentPage() {
             <AppButton
               content="Create new assignment"
               className="py-[6px] min-w-52"
+              onClickOn={() => {navigate('create-assignment')}}
             />
           </Stack>
         </Stack>
@@ -286,7 +293,7 @@ export default function ManagementAssignmentPage() {
             setOrder={setOrder}
             orderBy={query?.orderBy}
             setOrderBy={setOrderBy}
-            handleClick={(event, rowId) => { }}
+            handleClick={(event, rowId) => { handleClickOnAssignment(rowId)} }
           />
           <Stack
             direction="row"
@@ -301,7 +308,14 @@ export default function ManagementAssignmentPage() {
           </Stack>
         </div>
       </div>
-
+      {clickOnAssignment && (
+        <AssignmentInfo
+          assignmentId={assignmentId}
+          onClose={() => {
+            setClickOnAssignment(false);
+          }}
+        />
+      )}
     </div>
   );
 }

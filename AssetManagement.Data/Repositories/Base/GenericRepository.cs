@@ -15,8 +15,8 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         dbSet = context.Set<T>();
     }
 
-    public virtual IEnumerable<T> Get(
-           Expression<Func<T, bool>> filter,
+    public virtual List<T> Get(
+           Expression<Func<T, bool>>? filter = null,
            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
            string includeProperties = "")
     {
