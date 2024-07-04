@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import agent from "../../app/api/agent";
 import { Order } from "../../app/components/table/sortTable";
 import UserInfo from "../../app/components/userInfo/userInfo";
@@ -121,7 +121,8 @@ export default function ManagementUserPage() {
     setSearchInput(value);
   };
 
-  const handleSerchSubmit = () => {
+  const handleSerchSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     const newQuery = {
       ...query,
       pageNumber: 1,
@@ -171,29 +172,32 @@ export default function ManagementUserPage() {
             alignItems="center"
             spacing={4}
           >
-            <Stack
-              direction="row"
-              justifyContent="flex-start"
-              alignItems="center"
-              spacing={2}
-            >
-              <AppSearchInput
-                type="text"
-                placeholder="Search"
-                name="name"
-                value={searchInput}
-                onChange={handleQueryInputChange}
-                className="!rounded-l-md !border !border-gray-400 !border-r-0"
-              />
-
-              <div
-                onClick={handleSerchSubmit}
-                className="border border-gray-500 border-l-0 rounded-r-md mx-0 hover:cursor-pointer"
-                style={{ margin: 0, padding: "6px" }}
+            <form onSubmit={handleSerchSubmit}>
+              <Stack
+                direction="row"
+                justifyContent="flex-start"
+                alignItems="center"
+                spacing={2}
               >
-                <Search className="mx-0" />
-              </div>
-            </Stack>
+                <AppSearchInput
+                  type="text"
+                  placeholder="Search"
+                  name="name"
+                  value={searchInput}
+                  onChange={handleQueryInputChange}
+                  className="!rounded-l-md !border !border-gray-400 !border-r-0"
+                />
+
+                <button
+                  // onClick={handleSerchSubmit}
+                  type="submit"
+                  className="border border-gray-500 border-l-0 rounded-r-md mx-0 hover:cursor-pointer"
+                  style={{ margin: 0, padding: "6px", height: "40px" }}
+                >
+                  <Search className="mx-0" />
+                </button>
+              </Stack>
+            </form>
             <AppButton
               content="Create new user"
               className="py-[6px] min-w-40"

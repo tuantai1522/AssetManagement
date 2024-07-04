@@ -3,6 +3,7 @@ import {
   Box,
   Chip,
   Stack,
+  SxProps,
   Table,
   TableBody,
   TableCell,
@@ -35,6 +36,7 @@ export interface ColumnDefinition {
   bodyStyle?: React.CSSProperties;
   renderCell?: (data: any) => JSX.Element;
   minWidth?: string;
+  maxWidth?: string;
 }
 export interface RowDefinition<T> {
   id: any;
@@ -53,6 +55,7 @@ export interface AppTableCell {
   value?: any;
   renderCell?: JSX.Element;
   minWidth?: string;
+  maxWidth?: string;
 }
 
 export interface AppTableProp<T> {
@@ -64,6 +67,7 @@ export interface AppTableProp<T> {
   columns: ColumnDefinition[];
   rows: Array<T>;
   isLoading?: boolean;
+  tableStyle?: SxProps;
 }
 
 function CustomTableHead(props: CustomTableHeadProp) {
@@ -95,7 +99,7 @@ function CustomTableHead(props: CustomTableHeadProp) {
                   IconComponent={ArrowDropUp}
                   className={`font-bold ${column.className} ${column.rowRatio}`}
                   classes={column.classNames}
-                  sx={{ ...column.style, minWidth: column.minWidth }}
+                  sx={{ ...column.style, minWidth: column.minWidth, maxWidth: column.maxWidth }}
                   disabled={column.disableSort ?? false}
                 >
                   {column.label}
@@ -130,6 +134,7 @@ function mapToAppTableRows<T>(
         ratio: column.rowRatio,
         bodyStyle: column.bodyStyle,
         minWidth: column.minWidth,
+        maxWidth: column.maxWidth,
       };
     });
 
@@ -183,6 +188,7 @@ export function AppTable<T>(props: AppTableProp<T>) {
               borderBottom: "1px solid black",
               fontWeight: "bold",
             },
+            ...props.tableStyle
             
           }}
           aria-labelledby="tableTitle"
@@ -213,7 +219,7 @@ export function AppTable<T>(props: AppTableProp<T>) {
                             align="left"
                             className={item.ratio ?? ""}
                             key={index}
-                            sx={{ ...item.bodyStyle, minWidth: item.minWidth }}
+                            sx={{ ...item.bodyStyle, minWidth: item.minWidth, maxWidth: item.maxWidth }}
                           >
                             {item.renderCell ?? item.value ?? ""}
                           </TableCell>
