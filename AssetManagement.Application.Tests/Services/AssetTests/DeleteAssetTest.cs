@@ -22,7 +22,7 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
         public async Task Delete_Asset_Which_Can_Not_Found()
         {
             // Arrange
-            var request = _fixture.Create<AssetDeleteRequest>();
+            var request = _fixture.Create<Guid>();
 
             var assets = new[]
             {
@@ -44,12 +44,12 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
         public async Task Delete_Asset_Which_Is_Being_Assigned()
         {
             // Arrange
-            var request = _fixture.Create<AssetDeleteRequest>();
+            var request = _fixture.Create<Guid>();
 
             var assets = new[]
             {
                 _fixture.Build<Asset>()
-                        .With(x => x.Id, request.Id)
+                        .With(x => x.Id, request)
                         .With(x => x.State, AssetState.Assigned)
                         .Create(),
                 _fixture.Create<Asset>(),
@@ -69,17 +69,17 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
         public async Task Delete_Asset_Which_Has_Historical_Assignment()
         {
             // Arrange
-            var request = _fixture.Create<AssetDeleteRequest>();
+            var request = _fixture.Create<Guid>();
 
             var assignments = new[]
             {
                 _fixture.Create<Assignment>(),
             };
-            
+
             var assets = new[]
             {
                 _fixture.Build<Asset>()
-                        .With(x => x.Id, request.Id)
+                        .With(x => x.Id, request)
                         .With(x => x.Assignments, assignments)
                         .Create(),
                 _fixture.Create<Asset>(),
@@ -99,12 +99,12 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
         public async Task Can_Not_Find_User_To_Delete_Asset()
         {
             // Arrange
-            var request = _fixture.Create<AssetDeleteRequest>();
+            var request = _fixture.Create<Guid>();
 
             var assets = new[]
             {
                 _fixture.Build<Asset>()
-                        .With(x => x.Id, request.Id)
+                        .With(x => x.Id, request)
                         .Without(x => x.Assignments)
                         .Create(),
                 _fixture.Create<Asset>(),
@@ -125,12 +125,12 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
         public async Task User_Disabled_Can_Not_Delete_Asset()
         {
             // Arrange
-            var request = _fixture.Create<AssetDeleteRequest>();
+            var request = _fixture.Create<Guid>();
 
             var assets = new[]
             {
                 _fixture.Build<Asset>()
-                        .With(x => x.Id, request.Id)
+                        .With(x => x.Id, request)
                         .Without(x => x.Assignments)
                         .Create(),
                 _fixture.Create<Asset>(),
@@ -156,12 +156,12 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
         public async Task User_And_Asset_Are_Different_Location()
         {
             // Arrange
-            var request = _fixture.Create<AssetDeleteRequest>();
+            var request = _fixture.Create<Guid>();
 
             var assets = new[]
             {
                 _fixture.Build<Asset>()
-                        .With(x => x.Id, request.Id)
+                        .With(x => x.Id, request)
                         .Without(x => x.Assignments)
                         .Create(),
                 _fixture.Create<Asset>(),
@@ -187,12 +187,12 @@ namespace AssetManagement.Application.Tests.Services.AssetTests
         public async Task User_Can_Delete_Asset()
         {
             // Arrange
-            var request = _fixture.Create<AssetDeleteRequest>();
+            var request = _fixture.Create<Guid>();
 
             var assets = new[]
             {
                 _fixture.Build<Asset>()
-                        .With(x => x.Id, request.Id)
+                        .With(x => x.Id, request)
                         .With(x => x.Location, "SameLocation")
                         .Without(x => x.Assignments)
                         .Create(),
