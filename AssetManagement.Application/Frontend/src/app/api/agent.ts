@@ -9,12 +9,17 @@ import { EditUserRequest } from "../models/user/EditUserRequest";
 import { CreateUserRequest } from "../models/user/CreateUserRequest";
 import eventEmitter from "../hooks/EventMitter";
 import { IgnoreErrorMessage } from "../constants/IgnoreErrorMessage";
+import { AssignmentRespondRequest } from "../models/assignment/AssignmentRespondRequest";
 import { AssignmentCreationRequest } from "../models/assignment/AssignmentCreationRequest";
 import { AssetUpdationRequest } from "../models/asset/UpdateAssetRequest";
 import {
   FilterAssignmentRequest,
   getAssignmentQueryString,
 } from "../models/assignment/Assignment";
+import {
+  FilterMyAssignmentRequest,
+  getMyAssignmentQueryString,
+} from "../models/myAssignment/myAssignment";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 axios.defaults.headers.post["Content-Type"] = "application/json";
@@ -196,6 +201,15 @@ const Assignment = {
   detail: (id: string) => requests.get(`/api/assignment/${id}`),
   create: (values: AssignmentCreationRequest) =>
     requests.post("api/assignment/create", values),
+  respond: (id: string, values: AssignmentRespondRequest) =>
+    requests.put(`api/assignment/respond/${id}`, values),
+};
+
+const MyAssignment = {
+  filter: (query?: FilterMyAssignmentRequest) => {
+    const queryString = getMyAssignmentQueryString(query);
+    return requests.get(`/api/assignment/account?${queryString}`);
+  },
 };
 
 const agent = {
@@ -205,6 +219,7 @@ const agent = {
   Category,
   Asset,
   Assignment,
+  MyAssignment,
 };
 
 export default agent;

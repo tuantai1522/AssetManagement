@@ -1,5 +1,6 @@
 import agent from "../../api/agent";
-import { AssignmentDetailResponse, AssignmentState } from "../../models/assignment/Assignment";
+import { AssignmentDetailResponse } from "../../models/assignment/Assignment";
+import { AssignmentStateEnum } from "../../types/enum";
 import AppLoader from "../AppLoader";
 
 interface Props {
@@ -65,7 +66,7 @@ const AssignmentInfo = ({ assignmentId, onClose }: Props) => {
                     })}
                   </div>
                   <div className="col-span-3">State</div>
-                  <div className="col-span-6">{AssignmentState[assignmentDetailData.state]}</div>
+                  <div className="col-span-6">{AssignmentStateEnum[assignmentDetailData.state]}</div>
                   <div className="col-span-3">Note</div>
                   <div className="col-span-6">{assignmentDetailData.note}</div>
                 </div>

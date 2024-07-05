@@ -3,7 +3,7 @@ import { AssignmentStateEnum } from "../../app/types/enum";
 
 const items = [
     { id: AssignmentStateEnum[AssignmentStateEnum.Accepted], name: "Accepted" },
-    { id: AssignmentStateEnum[AssignmentStateEnum["Wating for acceptance"]], name: "Wating for acceptance" },
+    { id: AssignmentStateEnum[AssignmentStateEnum["Waiting for acceptance"]], name: "Waiting for acceptance" },
     { id: AssignmentStateEnum[AssignmentStateEnum.Declined], name: "Declined" },
 ];
 
