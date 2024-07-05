@@ -44,6 +44,9 @@ const EditAssetPage = () => {
       (currentStates as FilterAssetRequest).states!.push(stateEnum);
 
     if (response.isSuccess) {
+      (currentStates as FilterAssetRequest).order = "desc";
+      (currentStates as FilterAssetRequest).orderBy = "lastUpdate";
+      (currentStates as FilterAssetRequest).pageNumber = 1;
       navigate("/manage-asset", {
         state: {
           currentStates: currentStates,

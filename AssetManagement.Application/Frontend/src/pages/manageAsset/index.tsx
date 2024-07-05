@@ -91,6 +91,7 @@ export default function ManagementAssetPage() {
         AssetState[AssetState["Not available"]],
       ]
     : searchParams.getAll("states");
+
   const initCategories =
     currentStatesPassed?.categories ?? searchParams.getAll("categories");
   const initOrder =

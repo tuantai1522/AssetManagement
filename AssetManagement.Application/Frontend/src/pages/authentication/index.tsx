@@ -96,11 +96,7 @@ const LoginPage = () => {
             backgroundColor: "#EFF1F5",
           }}
         >
-          <Typography
-            className="text-primary"
-            fontWeight="bold"
-            variant="h6"
-          >
+          <Typography className="text-primary" fontWeight="bold" variant="h6">
             Welcome to Online Asset Management
           </Typography>
         </Box>
@@ -123,7 +119,7 @@ const LoginPage = () => {
             <Grid container alignItems="center">
               <Grid item xs={5}>
                 <Typography variant="subtitle1">
-                  Username <span style={{ color: 'red' }}>*</span>
+                  Username <span style={{ color: "red" }}>*</span>
                 </Typography>
               </Grid>
               <Grid item xs={7}>
@@ -147,7 +143,7 @@ const LoginPage = () => {
             <Grid container alignItems="center">
               <Grid item xs={5}>
                 <Typography variant="subtitle1">
-                  Password <span style={{ color: 'red' }}>*</span>
+                  Password <span style={{ color: "red" }}>*</span>
                 </Typography>
               </Grid>
               <Grid item xs={7}>
@@ -178,9 +174,8 @@ const LoginPage = () => {
           <Grid container alignItems="center" justifyContent="flex-end">
             <AppButton
               content="Log in"
+              isDisabled={!isValid}
               isFormSubmit={!isValid || isSubmitting ? false : true}
-              className={`bg-primary px-2 py-1 rounded hover:bg-red-600 ${!isValid || isSubmitting ? "opacity-50 cursor-not-allowed" : ""
-                }`}
             ></AppButton>
           </Grid>
         </Box>
