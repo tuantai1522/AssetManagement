@@ -36,7 +36,6 @@ export default function AppSelectedInput({ ...props }: Props) {
   const open = Boolean(anchorEl);
 
   //Work with selected box
-  console.log(props.checked);
   const [checkedItems, setCheckedItems] = useState(
     props.checked && props.checked?.length > 0
       ? props.checked
