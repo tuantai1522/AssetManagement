@@ -7,6 +7,7 @@ using AssetManagement.Contracts.Dtos.AssignmentDtos.Responses;
 using AssetManagement.Contracts.Dtos.PaginationDtos;
 using AssetManagement.Contracts.Enums;
 using AssetManagement.Data.Interfaces;
+using AssetManagement.Domain.Constants;
 using AssetManagement.Domain.Entities;
 using AssetManagement.Domain.Enums;
 using AssetManagement.Domain.Exceptions;
@@ -68,10 +69,10 @@ namespace AssetManagement.Application.Services.Implementations
             .Select(a => new FilterAssignmentResponse()
             {
                 Id = a.Id,
-                AssetCode = a.Asset.AssetCode,
+                AssetCode = a.Asset!.AssetCode,
                 AssetName = a.Asset.Name,
-                AssignedBy = a.AssignedByUser.UserName,
-                AssignedTo = a.AssignedToUser.UserName,
+                AssignedBy = a.AssignedByUser!.UserName,
+                AssignedTo = a.AssignedToUser!.UserName,
                 AssignedDate = a.AssignedDate,
                 State = a.State,
             }).ToListAsync();
@@ -120,9 +121,93 @@ namespace AssetManagement.Application.Services.Implementations
             await _unitOfWork.SaveChangesAsync();
             return newAssignment.Id;
         }
-        
+        public async Task<PagingDto<FilterMyAssignmentResponse>> FilterMyAssignmentAsync(FilterMyAssignmentRequest filter)
+        {
+            _logger.LogInformation("*********************Filter My Assignment Async*********************");
+            var currentUser = _currentUser;
+            var user = await _userManager.Users
+                .Where(u => _currentUser.UserId.Equals(u.Id))
+                .FirstOrDefaultAsync() ?? throw new NotFoundException(ErrorStrings.USER_NOT_FOUND);
+
+            var assignments = await _unitOfWork.AssignmentRepository.GetQueryableSet().ToListAsync();
+
+            var queryable = _unitOfWork.AssignmentRepository.GetQueryableSet().Include(q => q.Asset).Include(q => q.AssignedToUser).Include(q => q.AssignedByUser);
+            //set default page size
+            if (!filter.PageNumber.HasValue || !filter.PageSize.HasValue
+                || filter.PageNumber.Value <= 0 || filter.PageSize.Value <= 0)
+            {
+                filter.PageNumber = 1;
+                filter.PageSize = 5;
+            }
+
+            var filteredQueryable = queryable.Where(q => q.AssignedToId == user.Id && (q.State == AssignmentState.Accepted || q.State == AssignmentState.WaitingForAcceptance));
+            var orderBy = GetOrderByFunction(filter);
+            var finalQueryable = orderBy(filteredQueryable);
+            var result = await finalQueryable
+           .AsNoTracking()
+           .Skip((filter.PageNumber.Value - 1) * filter.PageSize.Value)
+           .Take(filter.PageSize.Value)
+           .Select(u => new FilterMyAssignmentResponse()
+           {
+               Id = u.Id,
+               AssetCode = u.Asset!.AssetCode,
+               Name = u.Asset!.Name,
+               Category = u.Asset!.Category != null ? u.Asset!.Category.Name : string.Empty,
+               AssignedDate = u.AssignedDate!,
+               State = u.State,
+           }).ToListAsync();
+            int totalRecord = await filteredQueryable.CountAsync();
+            return new PagingDto<FilterMyAssignmentResponse>()
+            {
+                CurrentPage = filter.PageNumber.Value,
+                TotalItemCount = totalRecord,
+                PageSize = filter.PageSize.Value,
+                Data = result
+            };
+        }
+		public async Task<bool> RespondAsync(string assignmentId, RespondAssignmentRequest request)
+        {
+            var currentUserId = _currentUser.UserId;
+            var user = await _userManager.FindByIdAsync(currentUserId.ToString()) ?? throw new BadRequestException(ErrorStrings.USER_NOT_FOUND);
+
+            var assignment = await _unitOfWork.AssignmentRepository.FindOne(x => x.Id.ToString() == assignmentId)
+                ?? throw new BadRequestException(ErrorStrings.ASSIGNMENT_NOT_FOUND);
+            if (assignment.State != AssignmentState.WaitingForAcceptance) throw new BadRequestException(ErrorStrings.INVALID_ASSIGNMENT_STATE_FOR_RESPONDING);
+            if (!currentUserId.Equals(assignment.AssignedToId) && !user.UserRoles.Any(x => x.Role.Name == RoleConstant.AdminRole))
+                throw new BadRequestException(ErrorStrings.UNAUTHORIZED_ASSIGNMENT_RESPONDING);
+
+            var asset = await _unitOfWork.AssetRepository.FindOne(x => x.Id == assignment.AssetId)
+                ?? throw new BadRequestException(ErrorStrings.ASSET_NOT_FOUND);
+            if (asset.State != AssetState.NotAvailable) throw new BadRequestException(ErrorStrings.INVALID_ASSET_STATE_FOR_RESPONDING);
+
+            assignment.State = request.IsAccepted ? AssignmentState.Accepted : AssignmentState.Declined;
+            asset.State = request.IsAccepted ? AssetState.Assigned : AssetState.Available;
+            await _unitOfWork.SaveChangesAsync();
+            return true;
+        }
         #region private methods
-        private Func<IQueryable<Assignment>, IOrderedQueryable<Assignment>> GetOrderBy(FilterAssignmentRequest filter) {
+		private Func<IQueryable<Assignment>, IOrderedQueryable<Assignment>> GetOrderByFunction(FilterMyAssignmentRequest filter)
+		{
+			return filter switch
+			{
+				{ SortAssetCode: SortOption.Asc } => q => q.OrderBy(a => a.Asset!.AssetCode),
+				{ SortAssetCode: SortOption.Desc } => q => q.OrderByDescending(a => a.Asset!.AssetCode),
+
+				{ SortAssetName: SortOption.Asc } => q => q.OrderBy(a => a.Asset!.Name),
+				{ SortAssetName: SortOption.Desc } => q => q.OrderByDescending(a => a.Asset!.Name),
+
+				{ SortCategory: SortOption.Asc } => q => q.OrderBy(a => a.Asset!.Category!.Name),
+				{ SortCategory: SortOption.Desc } => q => q.OrderByDescending(a => a.Asset!.Category!.Name),
+
+				{ SortAssignedDate: SortOption.Asc } => q => q.OrderBy(a => a.AssignedDate),
+				{ SortAssignedDate: SortOption.Desc } => q => q.OrderByDescending(a => a.AssignedDate),
+				{ State: SortOption.Asc } => q => q.OrderBy(a => a.State),
+				{ State: SortOption.Desc } => q => q.OrderByDescending(a => a.State),
+
+				_ => q => q.OrderBy(a => a.Asset!.Name)
+			};
+		}
+		private Func<IQueryable<Assignment>, IOrderedQueryable<Assignment>> GetOrderBy(FilterAssignmentRequest filter) {
             return filter switch
             {
                 { SortAssetCode: SortOption.Asc } => q => q.OrderBy(a => a.Asset!.AssetCode),

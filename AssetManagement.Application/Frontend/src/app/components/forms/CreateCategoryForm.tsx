@@ -80,7 +80,6 @@ const CreateCategoryForm = ({ refetchCategories }: Props) => {
                     disabled={isSubmitting}
                     onKeyDown={(e: { stopPropagation: () => any }) => {
                       if (isFormVisible) {
-                        console.log("hehe");
                         e.stopPropagation();
                       }
                     }}
@@ -102,7 +101,6 @@ const CreateCategoryForm = ({ refetchCategories }: Props) => {
                     value={getValues().categoryPrefix?.toUpperCase()}
                     onKeyDown={(e: { stopPropagation: () => any }) => {
                       if (isFormVisible) {
-                        console.log("hehe");
                         e.stopPropagation();
                       }
                     }}

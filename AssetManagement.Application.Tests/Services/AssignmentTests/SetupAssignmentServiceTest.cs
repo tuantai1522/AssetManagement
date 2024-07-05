@@ -17,6 +17,5 @@ public class SetupAssignmentServiceTest : SetupTest
 		_mockLogger = new Mock<ILogger<AssignmentService>>();
         
 		_assignmentService = new AssignmentService(_mockLogger.Object, _unitOfWorkMock.Object, _currentUserMock.Object, _mapperConfig, _userManagerMock.Object);
-        _assetRepositoryMock = new Mock<IAssetRepository>();
     }
 }

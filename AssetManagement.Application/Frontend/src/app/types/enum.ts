@@ -17,7 +17,7 @@ export enum AssetStateEnum {
 }
 
 export enum AssignmentStateEnum {
-    "Accepted" = 1,
-    "Wating for acceptance" = 2,
+    "Waiting for acceptance" = 1,
+    "Accepted" = 2,
     "Declined" = 3
 }

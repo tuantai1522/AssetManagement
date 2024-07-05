@@ -27,37 +27,46 @@ builder.Services.AddSpaStaticFiles(configuration =>
     configuration.RootPath = "Frontend/build";
 });
 
+
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 builder.Services.AddAuthentication(builder.Configuration);
 
 var app = builder.Build();
 
+//app.UseDeveloperExceptionPage();
 app.UseExceptionHandler(_ => { });
-// Configure the HTTP request pipeline.
-//
-app.UseSwagger();
-app.UseSwaggerUI(c =>
-{
-    c.ConfigObject.AdditionalItems.Add("persistAuthorization", "true");
-});
-//
 
-app.UseSpaStaticFiles();
+// Configure the HTTP request pipeline.
+app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseSpaStaticFiles();
 
 app.UseRouting();
 app.UseCors("CorsPolicy");
 
 app.UseAuthentication();
+
+app.UseMiddleware<UserValidationMiddleware>();
+
 app.UseAuthorization();
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
+
+
 
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
 });
+
+
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.ConfigObject.AdditionalItems.Add("persistAuthorization", "true");
+});
+
 
 app.UseSpa(spa =>
 {

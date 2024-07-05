@@ -1,5 +1,4 @@
 import agent from "../../api/agent";
-import { BaseResult } from "../../models/BaseResult";
 import { UserInfoResponse } from "../../models/login/UserInfoResponse";
 
 interface Props {
@@ -17,7 +16,7 @@ const UserInfo = ({ userId, onClose }: Props) => {
       <div className="fixed w-screen h-screen bg-gray-400 top-0 left-0 opacity-50 "></div>
       <div className="z-10 shadow-2xl absolute top-1/2 -translate-y-1/2 rounded-xl min-w-[35rem]">
         <div className="rounded-xl border-black border-2">
-          <div className="bg-slate-200 rounded-t-xl border-b-2 border-black px-12 py-5 flex justify-between items-center">
+          <div className="bg-[#EFF1F5] rounded-t-xl border-b-2 border-black px-12 py-5 flex justify-between items-center">
             <h2 className="text-xl font-bold text-primary">
               Detailed User Information
             </h2>
@@ -41,7 +40,7 @@ const UserInfo = ({ userId, onClose }: Props) => {
               </svg>
             </div>
           </div>
-          <div className="bg-slate-50 rounded-b-xl w-full h-full px-12 py-7">
+          <div className="bg-[#FAFCFC] rounded-b-xl w-full h-full px-12 py-7">
             {userData ? (
               <div className="grid grid-cols-7 gap-4 text-gray-600">
                 <div className="col-span-2">Staff Code</div>

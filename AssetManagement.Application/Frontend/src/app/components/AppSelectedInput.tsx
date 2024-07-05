@@ -36,16 +36,16 @@ export default function AppSelectedInput({ ...props }: Props) {
   const open = Boolean(anchorEl);
 
   //Work with selected box
-  const [checkedItems, setCheckedItems] = useState(props.checked || []);
+  const [checkedItems, setCheckedItems] = useState(
+    props.checked && props.checked?.length > 0
+      ? props.checked
+      : ["all", ...props?.items?.map((i, index) => i.id)]
+  );
 
   const handleChecked = (value: string) => {
     let newChecked: string[] = [];
     if (value === "all") {
-      if (props?.items?.length > checkedItems?.length - 1) {
-        newChecked = ["all", ...props?.items?.map((i, index) => i.id) ?? []];
-      } else {
-        newChecked = [];
-      }
+      newChecked = ["all", ...(props?.items?.map((i, index) => i.id) ?? [])];
     } else {
       const currentIndex = checkedItems.findIndex((item) => item === value);
 
@@ -53,7 +53,7 @@ export default function AppSelectedInput({ ...props }: Props) {
       if (currentIndex === -1) {
         newChecked = [...checkedItems, value];
         if (newChecked.length === props.items.length) {
-          newChecked = ["all", ...newChecked]
+          newChecked = ["all", ...newChecked];
         }
       }
       //đã chọn trước đó => bỏ chọn
@@ -61,6 +61,11 @@ export default function AppSelectedInput({ ...props }: Props) {
         newChecked = checkedItems.filter((i) => i !== value && i !== "all");
       }
     }
+
+    newChecked =
+      newChecked.length === 0
+        ? ["all", ...(props?.items?.map((i, index) => i.id) ?? [])]
+        : newChecked;
 
     setCheckedItems(newChecked);
     props.onChangeSelectedBox(newChecked);
@@ -88,20 +93,20 @@ export default function AppSelectedInput({ ...props }: Props) {
               className="hover:text-red-600"
               onClick={handleClick}
               sx={{
-                '& .MuiOutlinedInput-root': {
-                  '& > fieldset': {
+                "& .MuiOutlinedInput-root": {
+                  "& > fieldset": {
                     border: "1px solid gray",
                     borderRadius: "6px 0  0 6px",
                   },
-                  '&.Mui-focused fieldset': {
-                    border: "2px solid #cf2338",
-                    borderRadius: "6px 0  0 6px"
-                  },
-                  '&.Mui-focused fieldset:hover': {
+                  "&.Mui-focused fieldset": {
                     border: "2px solid #cf2338",
                     borderRadius: "6px 0  0 6px",
-                    cursor: "pointer"
-                  }
+                  },
+                  "&.Mui-focused fieldset:hover": {
+                    border: "2px solid #cf2338",
+                    borderRadius: "6px 0  0 6px",
+                    cursor: "pointer",
+                  },
                 },
                 minWidth: "190px",
                 maxWidth: "250px",
@@ -109,7 +114,7 @@ export default function AppSelectedInput({ ...props }: Props) {
             />
             <button
               className="border border-gray-500 border-l-0 rounded-r-md mx-0 hover:cursor-pointer"
-              style={{ margin: 0, padding: "6px", height: "40px"}}
+              style={{ margin: 0, padding: "6px", height: "40px" }}
               title="Filter"
               onClick={props.onSubmit}
             >
@@ -132,18 +137,18 @@ export default function AppSelectedInput({ ...props }: Props) {
             }}
           >
             <Grid width={230}>
-              <Grid item >
+              <Grid item>
                 <FormControlLabel
                   value={"all"}
                   sx={{ padding: 1 }}
                   control={
                     <Checkbox
                       sx={{
-                        '&.Mui-checked': {
+                        "&.Mui-checked": {
                           color: "#CF2338",
                         },
                       }}
-                      checked={props.checked?.indexOf("all") !== -1 ?? false}
+                      checked={checkedItems?.indexOf("all") !== -1 ?? false}
                       onClick={() => handleChecked("all")}
                     />
                   }
@@ -159,10 +164,12 @@ export default function AppSelectedInput({ ...props }: Props) {
                     }}
                     control={
                       <Checkbox
-                        checked={props.checked?.indexOf(option.id) !== -1 ?? false}
+                        checked={
+                          checkedItems?.indexOf(option.id) !== -1 ?? false
+                        }
                         onClick={() => handleChecked(option.id)}
                         sx={{
-                          '&.Mui-checked': {
+                          "&.Mui-checked": {
                             color: "#CF2338",
                           },
                         }}
