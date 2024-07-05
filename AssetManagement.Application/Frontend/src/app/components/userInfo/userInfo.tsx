@@ -1,5 +1,4 @@
 import agent from "../../api/agent";
-import { BaseResult } from "../../models/BaseResult";
 import { UserInfoResponse } from "../../models/login/UserInfoResponse";
 
 interface Props {

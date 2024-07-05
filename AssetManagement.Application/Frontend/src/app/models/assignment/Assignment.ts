@@ -1,12 +1,6 @@
 import { Order } from "../../components/table/sortTable";
 import { AssignmentStateEnum } from "../../types/enum";
 
-export enum AssignmentState {
-  "Waiting for acceptance" = 1,
-  "Accepted" = 2,
-  "Declined" = 3,
-}
-
 export interface AssignmentDetailResponse {
   id: string;
   assetCode: string;
@@ -15,7 +9,7 @@ export interface AssignmentDetailResponse {
   assignedTo: string;
   assignedBy: string;
   assignedDate: Date;
-  state: AssignmentState;
+  state: AssignmentStateEnum;
   note: string;
 }
 

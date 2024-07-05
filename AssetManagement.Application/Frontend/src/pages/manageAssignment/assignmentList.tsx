@@ -129,7 +129,7 @@ export default function AssignmentList(props: AssignmentListProp) {
             renderCell: (params) => {
                 const isDisable = params?.state !== AssignmentStateEnum[AssignmentStateEnum["Wating for acceptance"]];
                 return (
-                    <div className="flex w-fit justify-end items-center space-x-2">
+                    <div className="flex w-fit justify-end items-center">
                         <button
                             disabled={isDisable}
                             color="primary"

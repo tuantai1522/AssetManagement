@@ -5,6 +5,7 @@ using AssetManagement.Contracts.Dtos.AssignmentDtos.Requests;
 using AssetManagement.Contracts.Dtos.AssignmentDtos.Responses;
 using AssetManagement.Contracts.Dtos.PaginationDtos;
 using AssetManagement.Domain.Constants;
+using AssetManagement.Contracts.Dtos.UserDtos.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -44,6 +45,22 @@ namespace AssetManagement.Application.Controllers {
                 IsSuccess = true,
                 Result = data,
                 Error = null
+            };
+            return Ok(result);
+        }
+        [HttpGet("account")]
+        [Authorize]
+        public async Task<ActionResult<BaseResult<List<FilterUserResponse>>>> GetAllAsync([FromQuery] FilterMyAssignmentRequest request)
+        {
+            var data = await _assignmentService.FilterMyAssignmentAsync(request);
+            PaginationMetaData metaData = new PaginationMetaData(data.TotalItemCount, data.PageSize, data.CurrentPage);
+            Response.AddPaginationHeader(metaData);
+
+            var result = new BaseResult<List<FilterMyAssignmentResponse>>()
+            {
+                IsSuccess = true,
+                Error = null,
+                Result = data.Data
             };
             return Ok(result);
         }

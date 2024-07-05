@@ -9,5 +9,6 @@ namespace AssetManagement.Application.Services.Interfaces
         Task<PagingDto<FilterAssignmentResponse>> FilterAssignmentAsync(FilterAssignmentRequest filter);
         Task<AssignmentDetailResponse> GetAssignmentByIdAsync(Guid assignmentId);
         Task<Guid> CreateAssignmentAsync(AssignmentCreationRequest request);
+        Task<PagingDto<FilterMyAssignmentResponse>> FilterMyAssignmentAsync(FilterMyAssignmentRequest filter);
     }
 }
