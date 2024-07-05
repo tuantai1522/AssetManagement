@@ -1,5 +1,5 @@
 import { Order } from "../../components/table/sortTable";
-import { AssignmentState } from "../assignment/Assignment";
+import { AssignmentStateEnum } from "../../types/enum";
 
 export type OrderByFieldNameMyAssignment = "assetCode" | "name" | "category" | "assignedDate" | "state" | "lastUpdate";
   
@@ -11,7 +11,7 @@ export interface MyAssignmentDetailResponse {
     assignedTo: string;
     assignedBy: string;
     assignedDate: Date;
-    state: AssignmentState;
+    state: AssignmentStateEnum;
     note: string;
 }
 
@@ -28,7 +28,7 @@ export interface FilterMyAssignmentResponse {
     name?: string;
     category?: string;
     assignedDate: Date;
-    state?: AssignmentState;
+    state?: AssignmentStateEnum;
 }
 
 export function getMyAssignmentQueryString(filter?: FilterMyAssignmentRequest) {

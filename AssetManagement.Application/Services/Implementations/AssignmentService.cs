@@ -7,6 +7,7 @@ using AssetManagement.Contracts.Dtos.AssignmentDtos.Responses;
 using AssetManagement.Contracts.Dtos.PaginationDtos;
 using AssetManagement.Contracts.Enums;
 using AssetManagement.Data.Interfaces;
+using AssetManagement.Domain.Constants;
 using AssetManagement.Domain.Entities;
 using AssetManagement.Domain.Enums;
 using AssetManagement.Domain.Exceptions;
@@ -68,10 +69,10 @@ namespace AssetManagement.Application.Services.Implementations
             .Select(a => new FilterAssignmentResponse()
             {
                 Id = a.Id,
-                AssetCode = a.Asset.AssetCode,
+                AssetCode = a.Asset!.AssetCode,
                 AssetName = a.Asset.Name,
-                AssignedBy = a.AssignedByUser.UserName,
-                AssignedTo = a.AssignedToUser.UserName,
+                AssignedBy = a.AssignedByUser!.UserName,
+                AssignedTo = a.AssignedToUser!.UserName,
                 AssignedDate = a.AssignedDate,
                 State = a.State,
             }).ToListAsync();
@@ -164,7 +165,27 @@ namespace AssetManagement.Application.Services.Implementations
                 Data = result
             };
         }
-		#region private methods
+		public async Task<bool> RespondAsync(string assignmentId, RespondAssignmentRequest request)
+        {
+            var currentUserId = _currentUser.UserId;
+            var user = await _userManager.FindByIdAsync(currentUserId.ToString()) ?? throw new BadRequestException(ErrorStrings.USER_NOT_FOUND);
+
+            var assignment = await _unitOfWork.AssignmentRepository.FindOne(x => x.Id.ToString() == assignmentId)
+                ?? throw new BadRequestException(ErrorStrings.ASSIGNMENT_NOT_FOUND);
+            if (assignment.State != AssignmentState.WaitingForAcceptance) throw new BadRequestException(ErrorStrings.INVALID_ASSIGNMENT_STATE_FOR_RESPONDING);
+            if (!currentUserId.Equals(assignment.AssignedToId) && !user.UserRoles.Any(x => x.Role.Name == RoleConstant.AdminRole))
+                throw new BadRequestException(ErrorStrings.UNAUTHORIZED_ASSIGNMENT_RESPONDING);
+
+            var asset = await _unitOfWork.AssetRepository.FindOne(x => x.Id == assignment.AssetId)
+                ?? throw new BadRequestException(ErrorStrings.ASSET_NOT_FOUND);
+            if (asset.State != AssetState.NotAvailable) throw new BadRequestException(ErrorStrings.INVALID_ASSET_STATE_FOR_RESPONDING);
+
+            assignment.State = request.IsAccepted ? AssignmentState.Accepted : AssignmentState.Declined;
+            asset.State = request.IsAccepted ? AssetState.Assigned : AssetState.Available;
+            await _unitOfWork.SaveChangesAsync();
+            return true;
+        }
+        #region private methods
 		private Func<IQueryable<Assignment>, IOrderedQueryable<Assignment>> GetOrderByFunction(FilterMyAssignmentRequest filter)
 		{
 			return filter switch

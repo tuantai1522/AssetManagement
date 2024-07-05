@@ -33,7 +33,13 @@
         public const string INVALID_CATEGORY_PREFIX_CHARACTERS = "Category prefix can only contain alphabet characters and numbers";
         public const string CATEGORY_PREFIX_ALREADY_EXISTS = "Prefix is already existed. Please enter a different prefix";
 
+        //Asset
+        public const string ASSET_NOT_FOUND = "Asset cannot be found";
+
 		//Assignment
-		public const string ASSIGNMENT_NOT_FOUND = "Assignment not found";
+		public const string ASSIGNMENT_NOT_FOUND = "Assignment cannot be found";
+        public const string UNAUTHORIZED_ASSIGNMENT_RESPONDING = "Only assigned user or users with administrative roles can respond to this assignment";
+        public const string INVALID_ASSIGNMENT_STATE_FOR_RESPONDING = "Assignment with current state cannot accept response";
+        public const string INVALID_ASSET_STATE_FOR_RESPONDING = "Asset with current state cannot accept response";
 	}
 }

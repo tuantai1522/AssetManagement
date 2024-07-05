@@ -1,11 +1,15 @@
-import ReplayIcon from '@mui/icons-material/Replay';
-import CloseIcon from '@mui/icons-material/Close';
-import CheckIcon from '@mui/icons-material/Check';
+import ReplayIcon from "@mui/icons-material/Replay";
+import CloseIcon from "@mui/icons-material/Close";
+import CheckIcon from "@mui/icons-material/Check";
 import AppTable, {
   ColumnDefinition,
   Order,
 } from "../../app/components/table/sortTable";
-import { AssignmentStateEnum } from '../../app/types/enum';
+import { AssignmentStateEnum } from "../../app/types/enum";
+import { AssignmentRespondRequest } from "../../app/models/assignment/AssignmentRespondRequest";
+import { useState } from "react";
+import agent from "../../app/api/agent";
+import ConfirmModal from "../../app/components/confirmModal";
 
 export interface MyAssignmentRowData {
   id: string;
@@ -29,6 +33,7 @@ export interface MyAssignmentListProp {
   orderBy: any;
   setOrderBy: (orderBy: any) => void;
   handleClick: (event: any, rowId: string) => void;
+  refetchData: () => void;
 }
 
 export default function MyAssignmentList(props: MyAssignmentListProp) {
@@ -95,7 +100,14 @@ export default function MyAssignmentList(props: MyAssignmentListProp) {
               }`}
             onClick={(e) => {
               e.stopPropagation();
-              alert(params?.id);
+              setCurrentRespondId(params?.id);
+              setResponseStates({
+                ...responseStates,
+                isAccepted: true,
+                respondModalMessage: "Do you want to accept this assignment?",
+                isRespondModalOpen: true,
+                confirmButtonMessage: "Accept",
+              });
             }}
           >
             {" "}
@@ -115,7 +127,14 @@ export default function MyAssignmentList(props: MyAssignmentListProp) {
               }`}
             onClick={(e) => {
               e.stopPropagation();
-              alert(params?.id);
+              setCurrentRespondId(params?.id);
+              setResponseStates({
+                ...responseStates,
+                isAccepted: false,
+                respondModalMessage: "Do you want to decline this assignment?",
+                isRespondModalOpen: true,
+                confirmButtonMessage: "Decline",
+              });
             }}
           >
             {" "}
@@ -147,22 +166,60 @@ export default function MyAssignmentList(props: MyAssignmentListProp) {
             />
           </button>
         </div>
-      )
+      ),
     },
   ];
 
+  const [currentRespondId, setCurrentRespondId] = useState("");
+  const [responseStates, setResponseStates] = useState({
+    isRespondModalOpen: false,
+    respondModalMessage: "",
+    isAccepted: true,
+    confirmButtonMessage: "Accept",
+  });
+
+  const onConfirmResponse = async (isAccepted: boolean) => {
+    const request: AssignmentRespondRequest = {
+      isAccepted: isAccepted,
+    };
+    await agent.Assignment.respond(currentRespondId, request)
+      .then(() => {})
+      .catch((e: any) => {
+        console.log(e);
+      })
+      .finally(() => {
+        props.refetchData();
+      });
+  };
+
   return (
-    <div className="min-h-60">
-      <AppTable<MyAssignmentRowData>
-        order={props.order}
-        setOrder={props.setOrder}
-        orderByFieldName={props.orderBy}
-        setOrderByFieldName={props.setOrderBy}
-        columns={columns}
-        rows={props.data}
-        handleClick={props.handleClick}
-        isLoading={props.isLoading}
-      />
-    </div>
+    <>
+      <div className="min-h-60">
+        <AppTable<MyAssignmentRowData>
+          order={props.order}
+          setOrder={props.setOrder}
+          orderByFieldName={props.orderBy}
+          setOrderByFieldName={props.setOrderBy}
+          columns={columns}
+          rows={props.data}
+          handleClick={props.handleClick}
+          isLoading={props.isLoading}
+        />
+      </div>
+      <div className="flex justify-center h-full">
+        <ConfirmModal
+          message={responseStates.respondModalMessage}
+          isOpen={responseStates.isRespondModalOpen}
+          confirmMessage={responseStates.confirmButtonMessage}
+          onClose={() =>
+            setResponseStates({ ...responseStates, isRespondModalOpen: false })
+          }
+          onConfirm={() => {
+            setResponseStates({ ...responseStates, isRespondModalOpen: false });
+            onConfirmResponse(responseStates.isAccepted);
+          }}
+        />
+      </div>
+    </>
   );
 }

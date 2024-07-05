@@ -9,6 +9,7 @@ import { EditUserRequest } from "../models/user/EditUserRequest";
 import { CreateUserRequest } from "../models/user/CreateUserRequest";
 import eventEmitter from "../hooks/EventMitter";
 import { IgnoreErrorMessage } from "../constants/IgnoreErrorMessage";
+import { AssignmentRespondRequest } from "../models/assignment/AssignmentRespondRequest";
 import { AssignmentCreationRequest } from "../models/assignment/AssignmentCreationRequest";
 import { AssetUpdationRequest } from "../models/asset/UpdateAssetRequest";
 import { FilterAssignmentRequest, getAssignmentQueryString } from "../models/assignment/Assignment";
@@ -56,7 +57,6 @@ axios.interceptors.response.use(
     ) {
       isShowToastError = false;
     }
-    debugger;
     if (isShowToastError) {
       switch (errorStatus) {
         case 400:
@@ -84,9 +84,8 @@ axios.interceptors.response.use(
           eventEmitter.emit("notification", result.error.message, "error");
           break;
         case 403:
-          debugger;
-          const errorStringDefault = "Your account does not have sufficient permissions!"
-          eventEmitter.emit("notification", result.error ? result.error.message : errorStringDefault, "error");
+          console.log(result.error.message);
+          eventEmitter.emit("notification", result.error.message, "error");
           break;
         case 404:
           console.log(result.error.message);
@@ -190,13 +189,16 @@ const Assignment = {
   },
   detail: (id: string) => requests.get(`/api/assignment/${id}`),
   create: (values: AssignmentCreationRequest) => requests.post("api/assignment/create", values),
+  respond: (id: string, values: AssignmentRespondRequest) =>
+    requests.put(`api/assignment/respond/${id}`, values),
 };
+
 const MyAssignment = {
   filter: (query?: FilterMyAssignmentRequest) => {
     const queryString = getMyAssignmentQueryString(query);
     return requests.get(`/api/assignment/account?${queryString}`);
   }
-}
+};
 
 const agent = {
   Product,

@@ -3,15 +3,18 @@ import { useEffect, useState } from "react";
 import agent from "../../app/api/agent";
 import { Order } from "../../app/components/table/sortTable";
 import { Stack } from "@mui/material";
-import {
-  SetURLSearchParams,
-  useSearchParams,
-} from "react-router-dom";
+import { SetURLSearchParams, useSearchParams } from "react-router-dom";
 import AppPagination from "../../app/components/paginationButtons/paginationButtons";
 import AssignmentInfo from "../../app/components/assignmentInfo/AssignmentInfo";
-import { FilterMyAssignmentRequest, FilterMyAssignmentResponse, OrderByFieldNameMyAssignment } from "../../app/models/myAssignment/myAssignment";
-import { convertUtcToLocalDate } from "../../app/utils/dateUtils";
+import {
+  FilterMyAssignmentRequest,
+  FilterMyAssignmentResponse,
+  OrderByFieldNameMyAssignment,
+} from "../../app/models/myAssignment/myAssignment";
 import { AssignmentStateEnum } from "../../app/types/enum";
+import { number } from "yup";
+import { convertUtcToLocalDate } from "../../app/utils/dateUtils";
+import ConfirmModal from "../../app/components/confirmModal";
 
 function setFilterSearchParam(
   query: FilterMyAssignmentRequest,
@@ -122,6 +125,7 @@ export default function HomePage() {
             orderBy={query?.orderBy}
             setOrderBy={setOrderBy}
             handleClick={(event, rowId) => handleClickOnAssignment(rowId)}
+            refetchData={mutate}
           />
 
           <Stack
@@ -137,14 +141,14 @@ export default function HomePage() {
           </Stack>
         </div>
       </div>
-        {clickOnAssignment && (
-          <AssignmentInfo
-            assignmentId={assignmentId}
-            onClose={() => {
-              setClickOnAssignment(false);
-            }}
-          />
-        )}
+      {clickOnAssignment && (
+        <AssignmentInfo
+          assignmentId={assignmentId}
+          onClose={() => {
+            setClickOnAssignment(false);
+          }}
+        />
+      )}
     </div>
   );
 }
