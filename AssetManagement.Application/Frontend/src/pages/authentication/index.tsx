@@ -88,8 +88,10 @@ const LoginPage = () => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            border: "1px solid #ccc",
-            borderRadius: 2,
+            border: "2px solid #737679",
+            borderBottom: "none",
+            borderTopLeftRadius: 7,
+            borderTopRightRadius: 7,
             padding: 2,
             backgroundColor: "#EFF1F5",
           }}
@@ -97,13 +99,11 @@ const LoginPage = () => {
           <Typography
             className="text-primary"
             fontWeight="bold"
-            variant="subtitle1"
+            variant="h6"
           >
             Welcome to Online Asset Management
           </Typography>
         </Box>
-      </Container>
-      <Container sx={{ width: 500 }} component="main">
         <Box
           component="form"
           onSubmit={handleSubmit(submitForm)}
@@ -111,9 +111,10 @@ const LoginPage = () => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            border: "1px solid #ccc",
+            border: "2px solid #737679",
             padding: 4,
-            borderRadius: 2,
+            borderBottomLeftRadius: 7,
+            borderBottomRightRadius: 7,
             gap: 2,
             backgroundColor: "#FAFCFC",
           }}
@@ -121,7 +122,9 @@ const LoginPage = () => {
           <Grid container>
             <Grid container alignItems="center">
               <Grid item xs={5}>
-                <Typography variant="subtitle1">Username</Typography>
+                <Typography variant="subtitle1">
+                  Username <span style={{ color: 'red' }}>*</span>
+                </Typography>
               </Grid>
               <Grid item xs={7}>
                 <Controller
@@ -143,7 +146,9 @@ const LoginPage = () => {
           <Grid container>
             <Grid container alignItems="center">
               <Grid item xs={5}>
-                <Typography variant="subtitle1">Password</Typography>
+                <Typography variant="subtitle1">
+                  Password <span style={{ color: 'red' }}>*</span>
+                </Typography>
               </Grid>
               <Grid item xs={7}>
                 <Controller
@@ -174,9 +179,8 @@ const LoginPage = () => {
             <AppButton
               content="Log in"
               isFormSubmit={!isValid || isSubmitting ? false : true}
-              className={`bg-primary px-2 py-1 rounded hover:bg-red-600 ${
-                !isValid || isSubmitting ? "opacity-50 cursor-not-allowed" : ""
-              }`}
+              className={`bg-primary px-2 py-1 rounded hover:bg-red-600 ${!isValid || isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+                }`}
             ></AppButton>
           </Grid>
         </Box>
