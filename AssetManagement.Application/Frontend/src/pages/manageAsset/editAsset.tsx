@@ -7,13 +7,14 @@ import {
 } from "../../app/models/asset/UpdateAssetRequest";
 import EditAssetForm from "../../app/components/forms/EditAssetForm";
 import { states } from "../../app/utils/helper";
+import { AssetState, FilterAssetRequest } from "../../app/models/asset/Asset";
+import { off } from "process";
 
 const EditAssetPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { assetToUpdate: data } = location.state || {}; // Default to empty object if state is undefined
-
+  const { assetToUpdate: data, currentStates } = location.state || {}; // Default to empty object if state is undefined
   const handleSubmit = async (data: AssetUpdationForm) => {
     const idxState =
       states.findIndex(
@@ -36,11 +37,18 @@ const EditAssetPage = () => {
 
     const response: BaseResult<null> = await agent.Asset.update(dataRequest);
 
-    const orderValue = valueToOrder?.label.split(" ").join("+");
+    const orderValue = valueToOrder?.label;
+    const stateEnum = AssetState[orderValue as keyof typeof AssetState];
+    //Update states
+    if (currentStates.states && currentStates.states.length > 0)
+      (currentStates as FilterAssetRequest).states!.push(stateEnum);
+
     if (response.isSuccess) {
-      navigate(
-        `/manage-asset?states=${orderValue}&orderBy=lastUpdate&order=desc`
-      );
+      navigate("/manage-asset", {
+        state: {
+          currentStates: currentStates,
+        },
+      });
     }
   };
 

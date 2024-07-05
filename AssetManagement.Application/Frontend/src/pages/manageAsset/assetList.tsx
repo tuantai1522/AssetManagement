@@ -3,7 +3,7 @@ import AppTable, {
   ColumnDefinition,
   Order,
 } from "../../app/components/table/sortTable";
-import { AssetState } from "../../app/models/asset/Asset";
+import { AssetState, FilterAssetRequest } from "../../app/models/asset/Asset";
 import { useNavigate } from "react-router-dom";
 import { Dispatch, SetStateAction } from "react";
 
@@ -30,14 +30,13 @@ export interface AssetListProp {
   orderBy: any;
   setOrderBy: (orderBy: any) => void;
   handleClick: (event: any, rowId: string) => void;
+  currentStates?: FilterAssetRequest;
 
   setIsOpenDeletingModal: Dispatch<SetStateAction<boolean>>;
   setCurrentDeletingId: Dispatch<SetStateAction<string>>;
 }
-
 export default function AssetList(props: AssetListProp) {
   const navigate = useNavigate();
-
   const columns: ColumnDefinition[] = [
     {
       id: "assetCode",
@@ -131,7 +130,10 @@ export default function AssetList(props: AssetListProp) {
               };
 
               navigate("/manage-asset/edit-asset", {
-                state: { assetToUpdate: data },
+                state: {
+                  assetToUpdate: data,
+                  currentStates: props.currentStates,
+                },
               });
             }}
           >
