@@ -12,8 +12,14 @@ import { IgnoreErrorMessage } from "../constants/IgnoreErrorMessage";
 import { AssignmentRespondRequest } from "../models/assignment/AssignmentRespondRequest";
 import { AssignmentCreationRequest } from "../models/assignment/AssignmentCreationRequest";
 import { AssetUpdationRequest } from "../models/asset/UpdateAssetRequest";
-import { FilterAssignmentRequest, getAssignmentQueryString } from "../models/assignment/Assignment";
-import { FilterMyAssignmentRequest, getMyAssignmentQueryString } from "../models/myAssignment/myAssignment";
+import {
+  FilterAssignmentRequest,
+  getAssignmentQueryString,
+} from "../models/assignment/Assignment";
+import {
+  FilterMyAssignmentRequest,
+  getMyAssignmentQueryString,
+} from "../models/myAssignment/myAssignment";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 axios.defaults.headers.post["Content-Type"] = "application/json";
@@ -48,7 +54,7 @@ axios.interceptors.response.use(
     return response;
   },
   (error: AxiosError) => {
-    const result = error.response!.data as BaseResult<any> || error.response;
+    const result = (error.response!.data as BaseResult<any>) || error.response;
     const errorStatus = result.error ? result.error.status : result.status;
     let isShowToastError = true;
     if (
@@ -84,8 +90,13 @@ axios.interceptors.response.use(
           eventEmitter.emit("notification", result.error.message, "error");
           break;
         case 403:
-          console.log(result.error.message);
-          eventEmitter.emit("notification", result.error.message, "error");
+          const errorStringDefault =
+            "Your account does not have sufficient permissions!";
+          eventEmitter.emit(
+            "notification",
+            result.error ? result.error.message : errorStringDefault,
+            "error"
+          );
           break;
         case 404:
           console.log(result.error.message);
@@ -188,7 +199,8 @@ const Assignment = {
     return requests.get(`/api/assignment?${queryString}`);
   },
   detail: (id: string) => requests.get(`/api/assignment/${id}`),
-  create: (values: AssignmentCreationRequest) => requests.post("api/assignment/create", values),
+  create: (values: AssignmentCreationRequest) =>
+    requests.post("api/assignment/create", values),
   respond: (id: string, values: AssignmentRespondRequest) =>
     requests.put(`api/assignment/respond/${id}`, values),
 };
@@ -197,7 +209,7 @@ const MyAssignment = {
   filter: (query?: FilterMyAssignmentRequest) => {
     const queryString = getMyAssignmentQueryString(query);
     return requests.get(`/api/assignment/account?${queryString}`);
-  }
+  },
 };
 
 const agent = {

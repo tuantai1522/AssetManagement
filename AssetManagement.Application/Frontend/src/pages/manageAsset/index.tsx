@@ -75,20 +75,24 @@ export default function ManagementAssetPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const location = useLocation();
-  let { passedOrder, passedOrderBy } = location.state || {};
-
-  const initSearch = searchParams.get("search") ?? "";
+  let { passedOrder, passedOrderBy, currentStates } = location.state || {};
+  const currentStatesPassed = currentStates as FilterAssetRequest;
+  const initSearch =
+    currentStatesPassed?.search ?? searchParams.get("search") ?? "";
   const initPageNumber = Number(searchParams.get("pageNumber") ?? "1");
   const initPageSize = Number(searchParams.get("pageSize") ?? "5");
-  const initStates =
-    searchParams.getAll("states")?.length === 0
-      ? [
-          AssetState[AssetState.Assigned],
-          AssetState[AssetState.Available],
-          AssetState[AssetState["Not available"]],
-        ]
-      : searchParams.getAll("states");
-  const initCategories = searchParams.getAll("categories");
+
+  const initStates = currentStatesPassed?.states
+    ? currentStatesPassed?.states?.map((state) => AssetState[state])
+    : searchParams.getAll("states")?.length === 0
+    ? [
+        AssetState[AssetState.Assigned],
+        AssetState[AssetState.Available],
+        AssetState[AssetState["Not available"]],
+      ]
+    : searchParams.getAll("states");
+  const initCategories =
+    currentStatesPassed?.categories ?? searchParams.getAll("categories");
   const initOrder =
     passedOrder ?? (searchParams.get("order") as Order) ?? "asc";
   const initOrderBy =
@@ -101,22 +105,25 @@ export default function ManagementAssetPage() {
   const [assetId, setAssetId] = useState<string>("0");
 
   const [states, setStates] = useState<string[]>(initStates);
+
   const [categories, setCategories] = useState<string[]>(initCategories);
 
-  const [query, setQuery] = useState<FilterAssetRequest>({
-    search: initSearch,
-    states:
-      initStates
-        ?.map((state) => AssetState[state as keyof typeof AssetState])
-        ?.filter(
-          (mappedState) => mappedState !== undefined && mappedState !== null
-        ) ?? [],
-    categories: initCategories,
-    pageNumber: initPageNumber > 0 ? initPageNumber : 1,
-    pageSize: initPageSize > 0 ? initPageSize : 5,
-    order: initOrder,
-    orderBy: initOrderBy,
-  });
+  const [query, setQuery] = useState<FilterAssetRequest>(
+    currentStatesPassed ?? {
+      search: initSearch,
+      states:
+        initStates
+          ?.map((state) => AssetState[state as keyof typeof AssetState])
+          ?.filter(
+            (mappedState) => mappedState !== undefined && mappedState !== null
+          ) ?? [],
+      categories: initCategories,
+      pageNumber: initPageNumber > 0 ? initPageNumber : 1,
+      pageSize: initPageSize > 0 ? initPageSize : 5,
+      order: initOrder,
+      orderBy: initOrderBy,
+    }
+  );
 
   const [searchInput, setSearchInput] = useState<string>(initSearch);
 
@@ -210,7 +217,7 @@ export default function ManagementAssetPage() {
           .filter(
             (mappedState) => mappedState !== undefined && mappedState !== null
           ),
-        pageNumber: 1
+        pageNumber: 1,
       };
       setQuery(newQuery);
       setFilterSearchParam(newQuery, setSearchParams);
@@ -256,10 +263,10 @@ export default function ManagementAssetPage() {
             />
             <CategoryFilter
               items={
-                categoryData?.items?.result?.map((item: Category) => ({
+                (categoryData?.items?.result?.map((item: Category) => ({
                   id: item.name ?? "",
                   name: item.name ?? "",
-                })) as SelectedItem[]
+                })) as SelectedItem[]) ?? []
               }
               categories={categories}
               setcategories={setCategories}
@@ -272,7 +279,7 @@ export default function ManagementAssetPage() {
             alignItems="center"
             spacing={4}
           >
-            <form onSubmit={handleSearchSubmit} >
+            <form onSubmit={handleSearchSubmit}>
               <Stack
                 direction="row"
                 justifyContent="flex-start"
@@ -338,6 +345,7 @@ export default function ManagementAssetPage() {
             setCurrentDeletingId={setCurrentDeletingId}
             setIsOpenDeletingModal={setIsDeletingModalOpen}
             handleClick={(event, rowId) => handleClickOnAsset(rowId)}
+            currentStates={query}
           />
 
           <Stack
