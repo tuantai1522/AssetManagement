@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   AssetState,
   FilterAssetRequest,
@@ -41,7 +41,8 @@ export default function AssetModal({
   const [searchInput, setSearchInput] = useState<string>();
 
   const { data, isLoading, error, mutate } = agent.Asset.filter(query);
-
+  const modalRef = useRef<HTMLDivElement>(null);
+  
   const setOrderBy = (orderBy: OrderByFieldName) => {
     setQuery((pre) => ({ ...pre, orderBy: orderBy }));
   };
@@ -73,10 +74,17 @@ export default function AssetModal({
     setQuery(newQuery);
   };
 
+  useEffect(() => {
+    if (modalRef.current) {
+      modalRef.current.focus();
+    }
+  }, []);
   return (
     <div
-      className={`flex justify-center absolute bg-white z-10 ${style}`}
+      className={`flex justify-center absolute bg-white z-10 ${style} focus:outline-none`}
       onClick={(e) => e.stopPropagation()}
+      ref={modalRef}
+      tabIndex={-1}
     >
       <div className="container w-max p-5 border-[1px] border-gray-800 min-h-96">
         <Stack

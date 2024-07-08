@@ -20,6 +20,7 @@ interface Props extends UseControllerProps {
   onKeyDown?: any;
   onChange?: any;
   isApplyHelperText?: boolean;
+  inputRef?: any;
 }
 
 export default function AppSearchInput({
@@ -49,6 +50,7 @@ export default function AppSearchInput({
         maxWidth: "350px",
         ...props.sx
       }}
+      inputRef={props.inputRef}
       multiline={props.multiline}
       rows={props.rows}
       maxRows={props.maxRows}

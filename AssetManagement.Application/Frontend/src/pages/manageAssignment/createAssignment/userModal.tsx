@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import agent from "../../../app/api/agent";
 import { Stack } from "@mui/material";
 import { Search } from "@mui/icons-material";
@@ -36,7 +36,8 @@ export default function UserModal({
   });
 
   const [searchInput, setSearchInput] = useState<string>();
-
+  const modalRef = useRef<HTMLDivElement>(null);
+  
   const { data, isLoading, error, mutate } = agent.Users.filter(query);
 
   const setOrderBy = (orderBy: OrderByFieldName) => {
@@ -71,10 +72,18 @@ export default function UserModal({
     setQuery(newQuery);
   };
 
+  useEffect(() => {
+    if (modalRef.current) {
+      modalRef.current.focus();
+    }
+  }, []);
+
   return (
     <div
-      className={`flex justify-center absolute bg-white z-10 ${style} cursor-default`}
+      className={`flex justify-center absolute bg-white z-10 ${style} cursor-default focus:outline-none`}
       onClick={(e) => e.stopPropagation()}
+      ref={modalRef}
+      tabIndex={-1}
     >
       <div className="container w-max p-5 border-[1px] border-gray-800 min-h-96">
         <Stack
@@ -91,6 +100,7 @@ export default function UserModal({
             justifyContent="flex-start"
             alignItems="center"
             spacing={2}
+            
           >
             <AppSearchInput
               type="text"
