@@ -101,7 +101,8 @@ export default function AssetModal({
               value={searchInput}
               onChange={handleSearchInputChange}
               onKeyDown={(event: any) => {
-                if (event.code === "Enter") {
+                if (event.code === "Enter" || event.code === 'NumpadEnter') {
+                  event.preventDefault();
                   handleSearchSubmit();
                 }
               }}
