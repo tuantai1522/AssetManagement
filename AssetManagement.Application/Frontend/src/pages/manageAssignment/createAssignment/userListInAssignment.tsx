@@ -26,7 +26,6 @@ export default function UserListInAssignment(props: UserListProp) {
       event.stopPropagation();
     }
   };
-  console.log("UserListInAssignment seelctedValue: ", props.selectedValue)
 
   const columns: ColumnDefinition[] = [
     {
