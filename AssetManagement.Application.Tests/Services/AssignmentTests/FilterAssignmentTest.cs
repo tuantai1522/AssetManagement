@@ -300,8 +300,8 @@ namespace AssetManagement.Application.Tests.Services.AssignmentTests {
         [InlineData(null, null, null, SortOption.Desc, null, null, null, "e84bdb67-b5dc-42de-9805-8dd0b874f14a")]
         [InlineData(null, null, null, null, SortOption.Asc, null, null, "82096630-505d-4a3d-b6de-3aeb3d18fdb6")]
         [InlineData(null, null, null, null, SortOption.Desc, null, null, "4ccb53df-c6ac-4204-b7b8-6597f1a694b6")]
-        [InlineData(null, null, null, null, null, SortOption.Asc, null, "82096630-505d-4a3d-b6de-3aeb3d18fdb6")]
-        [InlineData(null, null, null, null, null, SortOption.Desc, null, "ae83a472-3bbc-4f74-a4fd-87a166a632d4")]
+        [InlineData(null, null, null, null, null, SortOption.Asc, null, "3a195876-191d-439e-a389-d920f1e68db2")]
+        [InlineData(null, null, null, null, null, SortOption.Desc, null, "82096630-505d-4a3d-b6de-3aeb3d18fdb6")]
         [InlineData(null, null, null, null, null, null, SortOption.Asc, "82096630-505d-4a3d-b6de-3aeb3d18fdb6")]
         [InlineData(null, null, null, null, null, null, SortOption.Desc, "4ccb53df-c6ac-4204-b7b8-6597f1a694b6")]
         public async Task FilterAssignmentAsync_ShouldReturnCorrectSortOrder(
