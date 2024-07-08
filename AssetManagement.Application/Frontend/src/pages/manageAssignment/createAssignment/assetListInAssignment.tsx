@@ -28,6 +28,12 @@ export interface AssetListProp {
 
 
 export default function AssetListInAssignment(props: AssetListProp) {
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  };
   const columns: ColumnDefinition[] = [
     {
       id: "action",
@@ -48,6 +54,7 @@ export default function AssetListInAssignment(props: AssetListProp) {
               e.stopPropagation();
               props.handleClick(params)
             }}
+            onKeyDown={handleKeyPress}
           >
             <Radio
               checked = {params.id === props.selectedValue?.id}
