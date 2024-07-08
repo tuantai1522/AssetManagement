@@ -201,8 +201,8 @@ namespace AssetManagement.Application.Services.Implementations
 
 				{ SortAssignedDate: SortOption.Asc } => q => q.OrderBy(a => a.AssignedDate),
 				{ SortAssignedDate: SortOption.Desc } => q => q.OrderByDescending(a => a.AssignedDate),
-				{ State: SortOption.Asc } => q => q.OrderBy(a => a.State),
-				{ State: SortOption.Desc } => q => q.OrderByDescending(a => a.State),
+				{ State: SortOption.Asc } => q => q.OrderBy(a => a.State == AssignmentState.Accepted ? 0 : a.State == AssignmentState.Declined ? 1 : 2),
+				{ State: SortOption.Desc } => q => q.OrderByDescending(a => a.State == AssignmentState.Accepted ? 0 : a.State == AssignmentState.Declined ? 1 : 2),
 
 				_ => q => q.OrderBy(a => a.Asset!.Name)
 			};

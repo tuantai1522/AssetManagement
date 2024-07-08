@@ -52,7 +52,7 @@ export function getMyAssignmentQueryString(filter?: FilterMyAssignmentRequest) {
         break;
         }
         case "state": {
-        sortOption = `sortState=${filter?.order === "asc" ? 1 : 2}&`;
+        sortOption = `state=${filter?.order === "asc" ? 1 : 2}&`;
         break;
         }
         case "assignedDate": {
