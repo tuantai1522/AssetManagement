@@ -42,10 +42,6 @@ export default function UserListInAssignment(props: UserListProp) {
           <button
             color="primary"
             className="text-red-500"
-            onClick={(e) => {
-              e.stopPropagation();
-              props.handleClick(params)
-            }}
             onKeyDown={handleKeyPress}
           >
             <Radio
