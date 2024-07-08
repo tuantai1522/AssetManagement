@@ -1,6 +1,6 @@
 import { FilterAlt } from "@mui/icons-material";
 import { Stack } from "@mui/material";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { DatePicker, LocalizationProvider, PickersActionBarProps } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
 import { FormEvent, useState } from "react";
@@ -48,6 +48,9 @@ export function AssignDateFilter(props: AssignDateFilterProp) {
                                 size: 'small',
                                 id: 'assignment-dpk-filter',
                             },
+                            actionBar: {
+                                actions: ['clear']
+                            }
                         }}
                     />
                 </LocalizationProvider>
