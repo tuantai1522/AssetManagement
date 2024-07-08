@@ -19,6 +19,15 @@ export interface UserListProp {
 
 
 export default function UserListInAssignment(props: UserListProp) {
+
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  };
+  console.log("UserListInAssignment seelctedValue: ", props.selectedValue)
+
   const columns: ColumnDefinition[] = [
     {
       id: "action",
@@ -38,6 +47,7 @@ export default function UserListInAssignment(props: UserListProp) {
               e.stopPropagation();
               props.handleClick(params)
             }}
+            onKeyDown={handleKeyPress}
           >
             <Radio
               checked = {params.id === props.selectedValue?.id}

@@ -57,6 +57,7 @@ export default function UserModal({
   const handleSearchInputChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
+    debugger;
     const { name, value } = event.target;
     setSearchInput(value);
   };
@@ -98,7 +99,8 @@ export default function UserModal({
               value={searchInput}
               onChange={handleSearchInputChange}
               onKeyDown={(event: any) => {
-                if (event.code === "Enter") {
+                if (event.code === "Enter" || event.code === 'NumpadEnter') {
+                  event.preventDefault();
                   handleSearchSubmit();
                 }
               }}
