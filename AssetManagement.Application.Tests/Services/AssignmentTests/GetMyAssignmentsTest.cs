@@ -306,8 +306,8 @@ namespace AssetManagement.Application.Tests.Services.AssignmentTests
         [InlineData(null, SortOption.Desc, null, null, null, "4ccb53df-c6ac-4204-b7b8-6597f1a694b6")]
         [InlineData(null, null, null, SortOption.Asc, null, "82096630-505d-4a3d-b6de-3aeb3d18fdb6")]
         [InlineData(null, null, null, SortOption.Desc, null, "4ccb53df-c6ac-4204-b7b8-6597f1a694b6")]
-        [InlineData(null, null, null, null, SortOption.Asc, "82096630-505d-4a3d-b6de-3aeb3d18fdb6")]
-        [InlineData(null, null, null, null, SortOption.Desc, "3a195876-191d-439e-a389-d920f1e68db2")]
+        [InlineData(null, null, null, null, SortOption.Asc, "3a195876-191d-439e-a389-d920f1e68db2")]
+        [InlineData(null, null, null, null, SortOption.Desc, "82096630-505d-4a3d-b6de-3aeb3d18fdb6")]
         public async Task FilterMyAssignmentAsync_ShouldReturnCorrectSortOrder(
             SortOption? sortAssetCode,
             SortOption? sortAssetName,

@@ -16,24 +16,21 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace AssetManagement.Application.Services.Implementations
-{
-	public class AssignmentService : IAssignmentService
-	{
-		private readonly ILogger<AssignmentService> _logger;
-		private readonly IUnitOfWork _unitOfWork;
-		private readonly ICurrentUser _currentUser;
-		private readonly UserManager<AppUser> _userManager;
-		private readonly IMapper _mapper;
-		public AssignmentService(ILogger<AssignmentService> logger, IUnitOfWork unitOfWork, ICurrentUser currentUser, IMapper mapper, UserManager<AppUser> userManager)
-		{
-			_logger = logger;
-			_unitOfWork = unitOfWork;
-			_currentUser = currentUser;
-			_userManager = userManager;
-			_mapper = mapper;
-		}
-		public async Task<PagingDto<FilterAssignmentResponse>> FilterAssignmentAsync(FilterAssignmentRequest filter) {
+namespace AssetManagement.Application.Services.Implementations {
+    public class AssignmentService : IAssignmentService {
+        private readonly ILogger<AssignmentService> _logger;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly ICurrentUser _currentUser;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly IMapper _mapper;
+        public AssignmentService(ILogger<AssignmentService> logger, IUnitOfWork unitOfWork, ICurrentUser currentUser, IMapper mapper, UserManager<AppUser> userManager) {
+            _logger = logger;
+            _unitOfWork = unitOfWork;
+            _currentUser = currentUser;
+            _userManager = userManager;
+            _mapper = mapper;
+        }
+        public async Task<PagingDto<FilterAssignmentResponse>> FilterAssignmentAsync(FilterAssignmentRequest filter) {
             var currentUser = await _userManager.Users
                 .Where(u => _currentUser.UserId.Equals(u.Id))
                 .Select(u => new AppUser()
@@ -87,16 +84,14 @@ namespace AssetManagement.Application.Services.Implementations
                 Data = result
             };
         }
-		public async Task<AssignmentDetailResponse> GetAssignmentByIdAsync(Guid assignmentId)
-		{
-			_logger.LogInformation("*********************GetAssignmentByIdAsync*********************");
-			Assignment? assignment = await _unitOfWork.AssignmentRepository.GetAssignmentByIdAsync(assignmentId) 
+        public async Task<AssignmentDetailResponse> GetAssignmentByIdAsync(Guid assignmentId) {
+            _logger.LogInformation("*********************GetAssignmentByIdAsync*********************");
+            Assignment? assignment = await _unitOfWork.AssignmentRepository.GetAssignmentByIdAsync(assignmentId)
                 ?? throw new NotFoundException(ErrorStrings.ASSIGNMENT_NOT_FOUND);
-			
-			return _mapper.Map<AssignmentDetailResponse>(assignment);
-		}
-		public async Task<Guid> CreateAssignmentAsync(AssignmentCreationRequest request)
-        {
+
+            return _mapper.Map<AssignmentDetailResponse>(assignment);
+        }
+        public async Task<Guid> CreateAssignmentAsync(AssignmentCreationRequest request) {
             var userAssignedTo = await GetUserAssignedById(request.UserId);
 
             var asset = await GetAssetById(request.AssetId);
@@ -121,8 +116,7 @@ namespace AssetManagement.Application.Services.Implementations
             await _unitOfWork.SaveChangesAsync();
             return newAssignment.Id;
         }
-        public async Task<PagingDto<FilterMyAssignmentResponse>> FilterMyAssignmentAsync(FilterMyAssignmentRequest filter)
-        {
+        public async Task<PagingDto<FilterMyAssignmentResponse>> FilterMyAssignmentAsync(FilterMyAssignmentRequest filter) {
             _logger.LogInformation("*********************Filter My Assignment Async*********************");
             var currentUser = _currentUser;
             var user = await _userManager.Users
@@ -134,8 +128,7 @@ namespace AssetManagement.Application.Services.Implementations
             var queryable = _unitOfWork.AssignmentRepository.GetQueryableSet().Include(q => q.Asset).Include(q => q.AssignedToUser).Include(q => q.AssignedByUser);
             //set default page size
             if (!filter.PageNumber.HasValue || !filter.PageSize.HasValue
-                || filter.PageNumber.Value <= 0 || filter.PageSize.Value <= 0)
-            {
+                || filter.PageNumber.Value <= 0 || filter.PageSize.Value <= 0) {
                 filter.PageNumber = 1;
                 filter.PageSize = 5;
             }
@@ -165,8 +158,7 @@ namespace AssetManagement.Application.Services.Implementations
                 Data = result
             };
         }
-		public async Task<bool> RespondAsync(string assignmentId, RespondAssignmentRequest request)
-        {
+        public async Task<bool> RespondAsync(string assignmentId, RespondAssignmentRequest request) {
             var currentUserId = _currentUser.UserId;
             var user = await _userManager.FindByIdAsync(currentUserId.ToString()) ?? throw new BadRequestException(ErrorStrings.USER_NOT_FOUND);
 
@@ -186,28 +178,27 @@ namespace AssetManagement.Application.Services.Implementations
             return true;
         }
         #region private methods
-		private Func<IQueryable<Assignment>, IOrderedQueryable<Assignment>> GetOrderByFunction(FilterMyAssignmentRequest filter)
-		{
-			return filter switch
-			{
-				{ SortAssetCode: SortOption.Asc } => q => q.OrderBy(a => a.Asset!.AssetCode),
-				{ SortAssetCode: SortOption.Desc } => q => q.OrderByDescending(a => a.Asset!.AssetCode),
+        private Func<IQueryable<Assignment>, IOrderedQueryable<Assignment>> GetOrderByFunction(FilterMyAssignmentRequest filter) {
+            return filter switch
+            {
+                { SortAssetCode: SortOption.Asc } => q => q.OrderBy(a => a.Asset!.AssetCode),
+                { SortAssetCode: SortOption.Desc } => q => q.OrderByDescending(a => a.Asset!.AssetCode),
 
-				{ SortAssetName: SortOption.Asc } => q => q.OrderBy(a => a.Asset!.Name),
-				{ SortAssetName: SortOption.Desc } => q => q.OrderByDescending(a => a.Asset!.Name),
+                { SortAssetName: SortOption.Asc } => q => q.OrderBy(a => a.Asset!.Name),
+                { SortAssetName: SortOption.Desc } => q => q.OrderByDescending(a => a.Asset!.Name),
 
-				{ SortCategory: SortOption.Asc } => q => q.OrderBy(a => a.Asset!.Category!.Name),
-				{ SortCategory: SortOption.Desc } => q => q.OrderByDescending(a => a.Asset!.Category!.Name),
+                { SortCategory: SortOption.Asc } => q => q.OrderBy(a => a.Asset!.Category!.Name),
+                { SortCategory: SortOption.Desc } => q => q.OrderByDescending(a => a.Asset!.Category!.Name),
 
-				{ SortAssignedDate: SortOption.Asc } => q => q.OrderBy(a => a.AssignedDate),
-				{ SortAssignedDate: SortOption.Desc } => q => q.OrderByDescending(a => a.AssignedDate),
-				{ State: SortOption.Asc } => q => q.OrderBy(a => a.State),
-				{ State: SortOption.Desc } => q => q.OrderByDescending(a => a.State),
+                { SortAssignedDate: SortOption.Asc } => q => q.OrderBy(a => a.AssignedDate),
+                { SortAssignedDate: SortOption.Desc } => q => q.OrderByDescending(a => a.AssignedDate),
+                { State: SortOption.Asc } => q => q.OrderBy(a => a.State == AssignmentState.Accepted ? 0 : a.State == AssignmentState.Declined ? 1 : 2),
+                { State: SortOption.Desc } => q => q.OrderByDescending(a => a.State == AssignmentState.Accepted ? 0 : a.State == AssignmentState.Declined ? 1 : 2),
 
-				_ => q => q.OrderBy(a => a.Asset!.Name)
-			};
-		}
-		private Func<IQueryable<Assignment>, IOrderedQueryable<Assignment>> GetOrderBy(FilterAssignmentRequest filter) {
+                _ => q => q.OrderBy(a => a.Asset!.Name)
+            };
+        }
+        private Func<IQueryable<Assignment>, IOrderedQueryable<Assignment>> GetOrderBy(FilterAssignmentRequest filter) {
             return filter switch
             {
                 { SortAssetCode: SortOption.Asc } => q => q.OrderBy(a => a.Asset!.AssetCode),
@@ -220,8 +211,16 @@ namespace AssetManagement.Application.Services.Implementations
                 { SortAssignedBy: SortOption.Desc } => q => q.OrderByDescending(a => a.AssignedByUser!.UserName),
                 { SortAssignedDate: SortOption.Asc } => q => q.OrderBy(a => a.AssignedDate),
                 { SortAssignedDate: SortOption.Desc } => q => q.OrderByDescending(a => a.AssignedDate),
-                { SortState: SortOption.Asc } => q => q.OrderBy(a => a.State),
-                { SortState: SortOption.Desc } => q => q.OrderByDescending(a => a.State),
+                { SortState: SortOption.Asc } => q => q.OrderBy(a =>
+                a.State == AssignmentState.Accepted ? 0
+                : (a.State == AssignmentState.Declined ? 1
+                : (a.State == AssignmentState.WaitingForAcceptance ? 2 : 3))
+                ),
+                { SortState: SortOption.Desc } => q => q.OrderByDescending(a =>
+                a.State == AssignmentState.Accepted ? 0
+                : (a.State == AssignmentState.Declined ? 1
+                : (a.State == AssignmentState.WaitingForAcceptance ? 2 : 3))
+                ),
                 { SortLastUpdate: SortOption.Asc } => q => q.OrderBy(a => a.LastUpdated),
                 { SortLastUpdate: SortOption.Desc } => q => q.OrderByDescending(a => a.LastUpdated),
                 _ => q => q.OrderByDescending(a => a.AssignedDate)
@@ -247,33 +246,27 @@ namespace AssetManagement.Application.Services.Implementations
             }
             return filterSpecification;
         }
-        private async Task<AppUser> GetUserAssignedById(Guid userId)
-        {
+        private async Task<AppUser> GetUserAssignedById(Guid userId) {
             var user = await _userManager.FindByIdAsync(userId.ToString());
-            if (user == null)
-            {
+            if (user == null) {
                 throw new NotFoundException("User to assigned is not found!");
             }
-            else if (user.IsDisabled)
-            {
+            else if (user.IsDisabled) {
                 throw new BadRequestException("User to assigned is disabled!");
             }
             return user;
         }
 
-        private async Task<Asset> GetAssetById(Guid assetId)
-        {
+        private async Task<Asset> GetAssetById(Guid assetId) {
             var asset = await _unitOfWork.AssetRepository.FindOne(a => a.Id.Equals(assetId));
-            if (asset == null)
-            {
+            if (asset == null) {
                 throw new NotFoundException("Asset to assigned is not found!");
             }
-            else if (AssetState.Available != asset.State)
-            {
+            else if (AssetState.Available != asset.State) {
                 throw new BadRequestException("Asset is not available to assigned!");
             }
             return asset;
         }
         #endregion
-	}
+    }
 }

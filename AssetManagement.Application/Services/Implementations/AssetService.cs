@@ -184,8 +184,8 @@ namespace AssetManagement.Application.Services.Implementations
                 { SortAssetName: SortOption.Desc } => q => q.OrderByDescending(a => a.Name),
                 { SortCategory: SortOption.Asc } => q => q.OrderBy(a => a.Category!.Name),
                 { SortCategory: SortOption.Desc } => q => q.OrderByDescending(a => a.Category!.Name),
-                { SortState: SortOption.Asc } => q => q.OrderBy(a => a.State),
-                { SortState: SortOption.Desc } => q => q.OrderByDescending(a => a.State),
+                { SortState: SortOption.Asc } => q => q.OrderBy(a => a.State == AssetState.Assigned ? 0 : a.State == AssetState.Available ? 1 : a.State == AssetState.NotAvailable ? 2 : a.State == AssetState.Recycled ? 3 : 4),
+                { SortState: SortOption.Desc } => q => q.OrderByDescending(a => a.State == AssetState.Assigned ? 0 : a.State == AssetState.Available ? 1 : a.State == AssetState.NotAvailable ? 2 : a.State == AssetState.Recycled ? 3 : 4),
                 { SortLastUpdate: SortOption.Asc } => q => q.OrderBy(a => a.LastUpdated),
                 { SortLastUpdate: SortOption.Desc } => q => q.OrderByDescending(a => a.LastUpdated),
                 _ => q => q.OrderBy(a => a.Name)
