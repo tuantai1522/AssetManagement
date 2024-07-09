@@ -103,7 +103,7 @@ export default function MyAssignmentList(props: MyAssignmentListProp) {
             }`}
             onClick={(e) => {
               e.stopPropagation();
-              setCurrentRespondId(params?.id);
+              setCurrentAssignmentId(params?.id);
               setResponseStates({
                 ...responseStates,
                 isAccepted: true,
@@ -133,7 +133,7 @@ export default function MyAssignmentList(props: MyAssignmentListProp) {
             }`}
             onClick={(e) => {
               e.stopPropagation();
-              setCurrentRespondId(params?.id);
+              setCurrentAssignmentId(params?.id);
               setResponseStates({
                 ...responseStates,
                 isAccepted: false,
@@ -159,7 +159,7 @@ export default function MyAssignmentList(props: MyAssignmentListProp) {
             }`}
             onClick={(e) => {
               e.stopPropagation();
-              setCurrentRespondId(params?.id);
+              setCurrentAssignmentId(params?.id);
               setResponseStates({
                 ...responseStates,
                 isOpenReturnModal: true,
@@ -179,7 +179,7 @@ export default function MyAssignmentList(props: MyAssignmentListProp) {
     },
   ];
 
-  const [currentRespondId, setCurrentRespondId] = useState("");
+  const [currentAssignmentId, setCurrentAssignmentId] = useState("");
   const [responseStates, setResponseStates] = useState({
     isRespondModalOpen: false,
     respondModalMessage: "",
@@ -195,7 +195,7 @@ export default function MyAssignmentList(props: MyAssignmentListProp) {
     const request: AssignmentRespondRequest = {
       isAccepted: isAccepted,
     };
-    await agent.Assignment.respond(currentRespondId, request)
+    await agent.Assignment.respond(currentAssignmentId, request)
       .then(() => {})
       .catch((e: any) => {
         console.log(e);
@@ -206,8 +206,14 @@ export default function MyAssignmentList(props: MyAssignmentListProp) {
   };
 
   const onConfirmReturn = async () => {
-    alert("On Confirm Return");
-    setResponseStates({ ...responseStates, isRespondModalOpen: false });
+    try {
+      if (!currentAssignmentId) return;
+      await agent.RequestReturn.userCreateRequest(currentAssignmentId);
+      setResponseStates({ ...responseStates, isOpenReturnModal: false });
+      props.refetchData();
+    } catch (error) {
+      console.log("Error when confirm return: ", error);
+    }
   };
 
   return (
