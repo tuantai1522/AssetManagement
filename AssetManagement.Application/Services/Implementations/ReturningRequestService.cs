@@ -61,11 +61,11 @@ namespace AssetManagement.Application.Services.Implementations {
             .Select(a => new FilterReturningResponse()
             {
                 Id = a.Id,
-                AssetCode = a.Assignment!.Asset!.AssetCode,
-                AssetName = a.Assignment.Asset.Name,
-                RequestedBy = a.RequestedByUser.UserName,
-                AcceptedBy = a.AcceptedByUser!.UserName,
-                AssignedDate = a.Assignment.AssignedDate,
+                AssetCode = a.Assignment != null ? (a.Assignment.Asset != null ? a.Assignment.Asset.AssetCode : null) : null,
+                AssetName = a.Assignment != null ? (a.Assignment.Asset != null ? a.Assignment.Asset.Name : null) : null,
+                RequestedBy = a.RequestedByUser != null ? a.RequestedByUser.UserName : null,
+                AcceptedBy = a.AcceptedByUser != null ? a.AcceptedByUser!.UserName : null,
+                AssignedDate = a.Assignment != null ? a.Assignment.AssignedDate : null,
                 ReturnedDate = a.ReturnedDate,
                 State = a.State
             }).ToListAsync();
@@ -111,13 +111,13 @@ namespace AssetManagement.Application.Services.Implementations {
                 { SortAssetCode: SortOption.Desc } => q => q.OrderByDescending(r => r.Assignment.Asset!.AssetCode),
                 { SortAssetName: SortOption.Asc } => q => q.OrderBy(r => r.Assignment.Asset!.Name),
                 { SortAssetName: SortOption.Desc } => q => q.OrderByDescending(r => r.Assignment.Asset!.Name),
-                { SortRequestedBy: SortOption.Asc } => q => q.OrderBy(r => r.RequestedByUser!.UserName),
-                { SortRequestedBy: SortOption.Desc } => q => q.OrderByDescending(r => r.RequestedByUser!.UserName),
+                { SortRequestedBy: SortOption.Asc } => q => q.OrderBy(r => r.RequestedByUser == null ? null : r.RequestedByUser.UserName),
+                { SortRequestedBy: SortOption.Desc } => q => q.OrderByDescending(r => r.RequestedByUser == null ? null : r.RequestedByUser.UserName),
                 { SortAssignedDate: SortOption.Asc } => q => q.OrderBy(r => r.Assignment.AssignedDate),
                 { SortAssignedDate: SortOption.Desc } => q => q.OrderByDescending(r => r.Assignment.AssignedDate),
-                { SortAcceptedBy: SortOption.Asc } => q => q.OrderBy(r => r.AcceptedByUser!.UserName),
-                { SortAcceptedBy: SortOption.Desc } => q => q.OrderByDescending(r => r.AcceptedByUser!.UserName),
-                { SortReturnedDate: SortOption.Asc } => q => q.OrderBy(a => a.ReturnedDate),
+                { SortAcceptedBy: SortOption.Asc } => q => q.OrderBy(r => r.AcceptedByUser == null ? null : r.AcceptedByUser!.UserName),
+                { SortAcceptedBy: SortOption.Desc } => q => q.OrderByDescending(r => r.AcceptedByUser == null ? null : r.AcceptedByUser!.UserName),
+                { SortReturnedDate: SortOption.Asc } => q => q.OrderBy(a => a.ReturnedDate == null),
                 { SortReturnedDate: SortOption.Desc } => q => q.OrderByDescending(a => a.ReturnedDate),
                 { SortState: SortOption.Asc } => q => q.OrderBy(a =>
                 a.State == ReturningRequestState.Completed ? 0

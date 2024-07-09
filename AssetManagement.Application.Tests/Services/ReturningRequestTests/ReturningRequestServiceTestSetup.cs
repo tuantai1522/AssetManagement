@@ -1,18 +1,22 @@
 ﻿using AssetManagement.Application.Services.Implementations;
 using AssetManagement.Application.Services.Interfaces;
+using AssetManagement.Data.Interfaces;
 using AssetManagement.Domain.Entities;
 using AssetManagement.Domain.Enums;
+using Moq;
 
 namespace AssetManagement.Application.Tests.Services.ReturningRequestTests {
     public class ReturningRequestServiceTestSetup : SetupTest {
 
         protected readonly IReturningRequestService _service;
+        protected readonly Mock<IReturningRequestRepository> _returningRequestRepositoryMock;
         protected static List<AppUser> _users;
         protected static List<Asset> _assets;
         protected static List<Assignment> _assignments;
         protected static List<ReturningRequest> _returningRequests;
         public ReturningRequestServiceTestSetup() : base() {
             _service = new ReturningRequestService(_unitOfWorkMock.Object, _userManagerMock.Object, _currentUserMock.Object);
+            _returningRequestRepositoryMock = new Mock<IReturningRequestRepository>();
             Setup();
         }
 
@@ -131,8 +135,8 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests {
                 {
                     Id = new Guid("82096630-505d-4a3d-b6de-3aeb3d18fdb6"),
                     AssetId = Guid.NewGuid(),
-                    AssignedToId = Guid.NewGuid(),
-                    AssignedById = Guid.NewGuid(),
+                    AssignedToId = _users[1].Id,
+                    AssignedById = _users[0].Id,
                     Note = "Assignment 1",
                     State = AssignmentState.WaitingForAcceptance,
                     AssignedDate = new DateTime(2023, 6, 1),
@@ -145,8 +149,8 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests {
                 {
                     Id = new Guid("3a195876-191d-439e-a389-d920f1e68db2"),
                     AssetId = Guid.NewGuid(),
-                    AssignedToId = Guid.NewGuid(),
-                    AssignedById = Guid.NewGuid(),
+                    AssignedToId = _users[2].Id,
+                    AssignedById = _users[3].Id,
                     Note = "Assignment 2",
                     State = AssignmentState.Accepted,
                     AssignedDate = new DateTime(2023, 6, 2),
@@ -159,8 +163,8 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests {
                 {
                     Id = new Guid("e84bdb67-b5dc-42de-9805-8dd0b874f14a"),
                     AssetId = Guid.NewGuid(),
-                    AssignedToId = Guid.NewGuid(),
-                    AssignedById = Guid.NewGuid(),
+                    AssignedToId = _users[4].Id,
+                    AssignedById = _users[1].Id,
                     Note = "Assignment 3",
                     State = AssignmentState.WaitingForAcceptance,
                     AssignedDate = new DateTime(2023, 6, 3),
@@ -173,8 +177,8 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests {
                 {
                     Id = new Guid("953e5b82-3ccf-446f-a146-cb23b62bb73a"),
                     AssetId = Guid.NewGuid(),
-                    AssignedToId = Guid.NewGuid(),
-                    AssignedById = Guid.NewGuid(),
+                    AssignedToId = _users[3].Id,
+                    AssignedById = _users[1].Id,
                     Note = "Assignment 4",
                     State = AssignmentState.Accepted,
                     AssignedDate = new DateTime(2023, 6, 4),
@@ -187,8 +191,8 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests {
                 {
                     Id = new Guid("ae83a472-3bbc-4f74-a4fd-87a166a632d4"),
                     AssetId = Guid.NewGuid(),
-                    AssignedToId = Guid.NewGuid(),
-                    AssignedById = Guid.NewGuid(),
+                    AssignedToId = _users[2].Id,
+                    AssignedById = _users[0].Id,
                     Note = "Assignment 5",
                     State = AssignmentState.Declined,
                     AssignedDate = new DateTime(2023, 6, 5),
@@ -201,8 +205,8 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests {
                 {
                     Id = new Guid("0405d4f8-c1b7-427d-8810-3db5b074f4a4"),
                     AssetId = Guid.NewGuid(),
-                    AssignedToId = Guid.NewGuid(),
-                    AssignedById = Guid.NewGuid(),
+                    AssignedToId = _users[0].Id,
+                    AssignedById = _users[1].Id,
                     Note = "Assignment 6",
                     State = AssignmentState.Accepted,
                     AssignedDate = new DateTime(2023, 6, 6),
@@ -215,8 +219,8 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests {
                 {
                     Id = new Guid("57de5e0c-4d67-4d81-b9b1-315f6d091752"),
                     AssetId = Guid.NewGuid(),
-                    AssignedToId = Guid.NewGuid(),
-                    AssignedById = Guid.NewGuid(),
+                    AssignedToId = _users[2].Id,
+                    AssignedById = _users[3].Id,
                     Note = "Assignment 7",
                     State = AssignmentState.Accepted,
                     AssignedDate = new DateTime(2023, 6, 7),
@@ -229,8 +233,8 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests {
                 {
                     Id = new Guid("9393462e-1478-4aed-8e99-cae595d84212"),
                     AssetId = Guid.NewGuid(),
-                    AssignedToId = Guid.NewGuid(),
-                    AssignedById = Guid.NewGuid(),
+                    AssignedToId = _users[4].Id,
+                    AssignedById = _users[1].Id,
                     Note = "Assignment 8",
                     State = AssignmentState.Accepted,
                     AssignedDate = new DateTime(2023, 6, 8),
@@ -243,8 +247,8 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests {
                 {
                     Id = new Guid("4ccb53df-c6ac-4204-b7b8-6597f1a694b6"),
                     AssetId = Guid.NewGuid(),
-                    AssignedToId = Guid.NewGuid(),
-                    AssignedById = Guid.NewGuid(),
+                    AssignedToId = _users[4].Id,
+                    AssignedById = _users[1].Id,
                     Note = "Assignment 9",
                     State = AssignmentState.Accepted,
                     AssignedDate = new DateTime(2023, 6, 9),
