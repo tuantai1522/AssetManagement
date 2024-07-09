@@ -1,7 +1,12 @@
-﻿namespace AssetManagement.Application.Services.Interfaces
-{
-    public interface IReturningRequestService
-    {
+﻿using AssetManagement.Contracts.Dtos.PaginationDtos;
+using AssetManagement.Contracts.Dtos.ReturningRequestDtos.Requests;
+using AssetManagement.Contracts.Dtos.ReturningRequestDtos.Responses;
+using System.Threading.Tasks;
+using System;
+
+namespace AssetManagement.Application.Services.Interfaces {
+    public interface IReturningRequestService {
+        Task<PagingDto<FilterReturningResponse>> FilterReturningAsync(FilterReturningRequest filter);
         Task CreateRequestByAdminAsync(Guid id);
     }
 }
