@@ -175,8 +175,8 @@ const ManagementRequestForReturningPage = () => {
     event.preventDefault();
     let newQuery: FilterReturningRequestRequest;
     if (returnedDate != null) {
-      const newAssignedDate = dayjs(returnedDate).format('YYYY-MM-DD');
-      newQuery = { ...query, returnedDate: newAssignedDate, pageNumber: 1 };
+      const newReturnedDate = dayjs(returnedDate).format('YYYY-MM-DD');
+      newQuery = { ...query, returnedDate: newReturnedDate, pageNumber: 1 };
       setQuery(newQuery);
       setFilterSearchParam(newQuery, setSearchParams);
     } else {
@@ -260,6 +260,7 @@ const ManagementRequestForReturningPage = () => {
                 assetName: item.assetName,
                 requestedBy: item.requestedBy,
                 acceptedBy: item.acceptedBy,
+                assignedDate: convertDateToString(item.assignedDate),
                 returnedDate: convertDateToString(item.returnedDate),
                 state:
                   item.state !== undefined ? ReturningRequestStateEnum[item.state] : undefined,
