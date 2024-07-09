@@ -34,34 +34,16 @@ namespace AssetManagement.Application.Services.Implementations
             if (assignment.AssignedToUser!.Equals(user.Id))
                 throw new NotFoundException("This assignment doesn't belong to this user");
 
-            // To check whether this assignment has state "Accepted" or not
-            if (assignment.State != AssignmentState.Accepted)
-                throw new BadRequestException("Can't create request with assignment's state is not Accepted");
 
-
-            assignment.State = AssignmentState.WaitingForReturning;
-
-            var requestReturning = new ReturningRequest
-            {
-                State = ReturningRequestState.WaitingForReturning,
-                AssignmentId = assignmentId,
-                AcceptedByUserId = user.Id,
-            };
-
-            _unitOfWork.ReturningRequestRepository.Add(requestReturning);
-
-            await _unitOfWork.SaveChangesAsync();
+            await CreateRequestByAccountAsync(assignment, user);
         }
 
         #region Private methods
 
-        private async Task CreateRequestByAccountAsync(Guid assignmentId)
+        private async Task CreateRequestByAccountAsync(Assignment assignment, AppUser user)
         {
-            var assignment = await GetAssignment(assignmentId);
-            var user = await GetUserLogined();
-
             // To check whether this assignment belongs to this user or not
-            if (assignment.AssignedToUser!.Equals(user.Id))
+            if (!assignment.AssignedToId.Equals(user.Id))
                 throw new NotFoundException("This assignment doesn't belong to this user");
 
             // To check whether this assignment has state "Accepted" or not
@@ -74,7 +56,7 @@ namespace AssetManagement.Application.Services.Implementations
             var requestReturning = new ReturningRequest
             {
                 State = ReturningRequestState.WaitingForReturning,
-                AssignmentId = assignmentId,
+                AssignmentId = assignment.Id,
                 AcceptedByUserId = user.Id,
             };
 
