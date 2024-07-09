@@ -13,6 +13,7 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests {
         protected static List<ReturningRequest> _returningRequests;
         public ReturningRequestServiceTestSetup() : base() {
             _service = new ReturningRequestService(_unitOfWorkMock.Object, _userManagerMock.Object, _currentUserMock.Object);
+            Setup();
         }
 
         #region Set up 
