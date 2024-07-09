@@ -41,5 +41,9 @@
         public const string UNAUTHORIZED_ASSIGNMENT_RESPONDING = "Only assigned user or users with administrative roles can respond to this assignment";
         public const string INVALID_ASSIGNMENT_STATE_FOR_RESPONDING = "Assignment with current state cannot accept response";
         public const string INVALID_ASSET_STATE_FOR_RESPONDING = "Asset with current state cannot accept response";
+
+        //Request
+        public const string REQUEST_NOT_FOUND = "Request cannot be found";
+		public const string INVALID_REQUEST_STATE = "Request's state is invalid";
 	}
 }

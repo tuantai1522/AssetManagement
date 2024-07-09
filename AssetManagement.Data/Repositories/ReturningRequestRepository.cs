@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AssetManagement.Data.Repositories {
     public class ReturningRequestRepository : GenericRepository<ReturningRequest>, IReturningRequestRepository {
-		private readonly AssetManagementDbContext _context;
+		//private readonly AssetManagementDbContext _context;
         public ReturningRequestRepository(AssetManagementDbContext context) : base(context) {
-			_context = context;
+			//_context = context;
 		}
 
 		public async Task<ReturningRequest?> GetRequestByIdAsync(Guid id)
