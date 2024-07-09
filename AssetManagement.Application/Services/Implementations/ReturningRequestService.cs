@@ -31,7 +31,7 @@ namespace AssetManagement.Application.Services.Implementations
             var user = await GetUserLogined();
 
             // To check whether this assignment belongs to this user or not
-            if (assignment.AssignedToUser!.Equals(user.Id))
+            if (!assignment.AssignedToId.Equals(user.Id))
                 throw new NotFoundException("This assignment doesn't belong to this user");
 
 
@@ -42,10 +42,6 @@ namespace AssetManagement.Application.Services.Implementations
 
         private async Task CreateRequestByAccountAsync(Assignment assignment, AppUser user)
         {
-            // To check whether this assignment belongs to this user or not
-            if (!assignment.AssignedToId.Equals(user.Id))
-                throw new NotFoundException("This assignment doesn't belong to this user");
-
             // To check whether this assignment has state "Accepted" or not
             if (assignment.State != AssignmentState.Accepted)
                 throw new BadRequestException("Can't create request with assignment's state is not Accepted");
