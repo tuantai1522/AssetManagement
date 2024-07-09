@@ -21,10 +21,8 @@ using System.Text.Json;
 
 namespace AssetManagement.Application.Extensions;
 
-public static class ServiceExtension
-{
-    public static void ConfigureDatabase(this IServiceCollection services, AppSetting appsetting)
-    {
+public static class ServiceExtension {
+    public static void ConfigureDatabase(this IServiceCollection services, AppSetting appsetting) {
         services.AddDbContextPool<AssetManagementDbContext>(options => { options.UseSqlServer(appsetting.ConnectionStrings.DefaultConnection); });
 
         //add identity
@@ -62,8 +60,7 @@ public static class ServiceExtension
 
     public static void ConfigureAutoMapper(this IServiceCollection services) => services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
-    public static void ConfigureSwagger(this IServiceCollection services)
-    {
+    public static void ConfigureSwagger(this IServiceCollection services) {
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(options =>
         {
@@ -113,8 +110,7 @@ public static class ServiceExtension
         });
     }
 
-    public static void AddPaginationHeader(this HttpResponse response, PaginationMetaData pagination)
-    {
+    public static void AddPaginationHeader(this HttpResponse response, PaginationMetaData pagination) {
         var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
         response.Headers.Append("Access-Control-Allow-Origin", "*");
@@ -122,8 +118,7 @@ public static class ServiceExtension
         response.Headers.Append("Access-Control-Expose-Headers", "X-Pagination");
     }
 
-    public static void RegisterServiceDependencies(this IServiceCollection services)
-    {
+    public static void RegisterServiceDependencies(this IServiceCollection services) {
         //Add service DI
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
@@ -132,6 +127,7 @@ public static class ServiceExtension
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IAssetService, AssetService>();
         services.AddScoped<IAssignmentService, AssignmentService>();
+        services.AddScoped<IReturningRequestService, ReturningRequestService>();
 
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddScoped<ICurrentUser, CurrentUser>();
@@ -139,16 +135,14 @@ public static class ServiceExtension
 
     }
 
-    public static void RegisterRepositoryDependencies(this IServiceCollection services)
-    {
+    public static void RegisterRepositoryDependencies(this IServiceCollection services) {
         //Add repository DI
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         services.AddScoped<IUnitOfWork, UnitOfWork>();
     }
 
     public static void AddAuthentication(this IServiceCollection services,
-                                      IConfiguration config)
-    {
+                                      IConfiguration config) {
         var JwtSettings = new JwtSettings();
         config.Bind(JwtSettings.Section, JwtSettings);
 
