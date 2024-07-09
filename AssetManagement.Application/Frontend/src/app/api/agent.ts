@@ -212,6 +212,10 @@ const MyAssignment = {
   },
 };
 
+const RequestReturn = {
+  adminCreateRequest: (assignmentId: string) => requests.post(`api/return-request/admin-create-request/${assignmentId}`, {}),
+}
+
 const agent = {
   Product,
   Authentication,
@@ -220,6 +224,7 @@ const agent = {
   Asset,
   Assignment,
   MyAssignment,
+  RequestReturn
 };
 
 export default agent;

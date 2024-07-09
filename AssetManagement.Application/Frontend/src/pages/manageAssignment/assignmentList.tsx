@@ -8,6 +8,7 @@ import { AssetState } from "../../app/models/asset/Asset";
 import { AssignmentStateEnum } from "../../app/types/enum";
 import { useState } from "react";
 import ConfirmModal from "../../app/components/confirmModal";
+import agent from "../../app/api/agent";
 
 export interface AssignmentRowData {
   id: string;
@@ -32,10 +33,11 @@ export interface AssignmentListProp {
   orderBy: any;
   setOrderBy: (orderBy: any) => void;
   handleClick: (event: any, rowId: string) => void;
+  refetchData: () => void;
 }
 
 export default function AssignmentList(props: AssignmentListProp) {
-  const [currentId, setCurrentId] = useState("");
+  const [currentAssignmentId, setCurrentAssignmentId] = useState("");
   const [responseStates, setResponseStates] = useState({
     isOpenReturnModal: false,
     returnModalMessage:
@@ -44,8 +46,14 @@ export default function AssignmentList(props: AssignmentListProp) {
   });
 
   const onConfirmReturn = async () => {
-    setResponseStates({ ...responseStates, isOpenReturnModal: false });
-    alert("Returning");
+    try {
+      if (!currentAssignmentId) return;
+      await agent.RequestReturn.adminCreateRequest(currentAssignmentId);
+      setResponseStates({ ...responseStates, isOpenReturnModal: false });
+      props.refetchData();
+    } catch (error) {
+      console.log("Error when confirm return: ", error);
+    }
   };
 
   const columns: ColumnDefinition[] = [
@@ -172,7 +180,7 @@ export default function AssignmentList(props: AssignmentListProp) {
               className="text-blue-600"
               onClick={(e) => {
                 e.stopPropagation();
-                setCurrentId(params?.id);
+                setCurrentAssignmentId(params?.id);
                 setResponseStates({
                   ...responseStates,
                   isOpenReturnModal: true,
