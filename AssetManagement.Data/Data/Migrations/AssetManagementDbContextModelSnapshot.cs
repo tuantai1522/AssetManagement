@@ -214,9 +214,9 @@ namespace AssetManagement.Data.Data.Migrations
                             Id = new Guid("ab64f62d-71a0-4520-9522-2bbbebbc1c7b"),
                             AssetId = new Guid("81436c8d-4090-4abf-a926-14d061f1f9c9"),
                             AssignedById = new Guid("4c196276-54f0-48ae-acc9-abeb0cb598f5"),
-                            AssignedDate = new DateTime(2024, 7, 9, 12, 14, 7, 124, DateTimeKind.Local).AddTicks(2840),
+                            AssignedDate = new DateTime(2024, 7, 9, 13, 53, 55, 739, DateTimeKind.Local).AddTicks(2849),
                             AssignedToId = new Guid("48bc2207-ec50-455d-99e4-990995f809e0"),
-                            LastUpdated = new DateTime(2024, 7, 9, 12, 14, 7, 124, DateTimeKind.Local).AddTicks(2840),
+                            LastUpdated = new DateTime(2024, 7, 9, 13, 53, 55, 739, DateTimeKind.Local).AddTicks(2849),
                             Note = "Assignment 11",
                             State = 5
                         },
@@ -225,9 +225,9 @@ namespace AssetManagement.Data.Data.Migrations
                             Id = new Guid("1f01cf21-4609-41d8-be82-446f42f6dd68"),
                             AssetId = new Guid("f673f337-c449-4ff1-97cd-366b79cf3a63"),
                             AssignedById = new Guid("4c196276-54f0-48ae-acc9-abeb0cb598f5"),
-                            AssignedDate = new DateTime(2024, 7, 9, 12, 14, 7, 124, DateTimeKind.Local).AddTicks(2846),
+                            AssignedDate = new DateTime(2024, 7, 9, 13, 53, 55, 739, DateTimeKind.Local).AddTicks(2855),
                             AssignedToId = new Guid("ede0c1cd-5d7e-422c-a787-8f473c45123b"),
-                            LastUpdated = new DateTime(2024, 7, 9, 12, 14, 7, 124, DateTimeKind.Local).AddTicks(2846),
+                            LastUpdated = new DateTime(2024, 7, 9, 13, 53, 55, 739, DateTimeKind.Local).AddTicks(2856),
                             Note = "Assignment 12",
                             State = 5
                         },
@@ -236,9 +236,9 @@ namespace AssetManagement.Data.Data.Migrations
                             Id = new Guid("26c42587-dd3c-4546-a1e5-e286ca0bc2a2"),
                             AssetId = new Guid("f0dff85d-6cc7-496b-8437-40b50298e62c"),
                             AssignedById = new Guid("4c196276-54f0-48ae-acc9-abeb0cb598f5"),
-                            AssignedDate = new DateTime(2024, 7, 9, 12, 14, 7, 124, DateTimeKind.Local).AddTicks(2851),
+                            AssignedDate = new DateTime(2024, 7, 9, 13, 53, 55, 739, DateTimeKind.Local).AddTicks(2860),
                             AssignedToId = new Guid("256a9cef-7479-4563-a104-8b310e16ffe0"),
-                            LastUpdated = new DateTime(2024, 7, 9, 12, 14, 7, 124, DateTimeKind.Local).AddTicks(2852),
+                            LastUpdated = new DateTime(2024, 7, 9, 13, 53, 55, 739, DateTimeKind.Local).AddTicks(2861),
                             Note = "Assignment 13",
                             State = 5
                         },
@@ -247,9 +247,9 @@ namespace AssetManagement.Data.Data.Migrations
                             Id = new Guid("a50232d9-c3da-44d6-81a1-da151617d805"),
                             AssetId = new Guid("0eab77a8-ed89-4483-9d98-6ccafa74d450"),
                             AssignedById = new Guid("2c484448-b14e-46f3-957e-a8719f14bbd6"),
-                            AssignedDate = new DateTime(2024, 7, 9, 12, 14, 7, 124, DateTimeKind.Local).AddTicks(2856),
+                            AssignedDate = new DateTime(2024, 7, 9, 13, 53, 55, 739, DateTimeKind.Local).AddTicks(2866),
                             AssignedToId = new Guid("2450bc08-8b39-41cf-90e9-7b10510c557e"),
-                            LastUpdated = new DateTime(2024, 7, 9, 12, 14, 7, 124, DateTimeKind.Local).AddTicks(2857),
+                            LastUpdated = new DateTime(2024, 7, 9, 13, 53, 55, 739, DateTimeKind.Local).AddTicks(2866),
                             Note = "Assignment 14",
                             State = 5
                         });
@@ -278,13 +278,13 @@ namespace AssetManagement.Data.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("AcceptedByUserId")
+                    b.Property<Guid?>("AcceptedByUserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("AssignmentId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("ReturnedDate")
+                    b.Property<DateTime?>("ReturnedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("State")
@@ -301,34 +301,34 @@ namespace AssetManagement.Data.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("a93a8fc4-eae3-4782-b636-32ecc228fb4f"),
+                            Id = new Guid("310d7095-14ab-4db5-80e8-342edade11ed"),
                             AcceptedByUserId = new Guid("4c196276-54f0-48ae-acc9-abeb0cb598f5"),
                             AssignmentId = new Guid("ab64f62d-71a0-4520-9522-2bbbebbc1c7b"),
-                            ReturnedDate = new DateTime(2024, 7, 9, 12, 14, 7, 124, DateTimeKind.Local).AddTicks(2894),
+                            ReturnedDate = new DateTime(2024, 7, 9, 13, 53, 55, 739, DateTimeKind.Local).AddTicks(2903),
                             State = 1
                         },
                         new
                         {
-                            Id = new Guid("4ed4e959-644e-4e06-ab6b-768d9f1b49c5"),
+                            Id = new Guid("a1746cd6-d446-4304-931c-dc135c70fa1a"),
                             AcceptedByUserId = new Guid("4c196276-54f0-48ae-acc9-abeb0cb598f5"),
                             AssignmentId = new Guid("1f01cf21-4609-41d8-be82-446f42f6dd68"),
-                            ReturnedDate = new DateTime(2024, 7, 9, 12, 14, 7, 124, DateTimeKind.Local).AddTicks(2901),
+                            ReturnedDate = new DateTime(2024, 7, 9, 13, 53, 55, 739, DateTimeKind.Local).AddTicks(2909),
                             State = 1
                         },
                         new
                         {
-                            Id = new Guid("29ea0a42-3c69-4c86-93a8-98179a0b0766"),
+                            Id = new Guid("46702563-2808-41b1-892d-3b7b26d9737b"),
                             AcceptedByUserId = new Guid("4c196276-54f0-48ae-acc9-abeb0cb598f5"),
                             AssignmentId = new Guid("26c42587-dd3c-4546-a1e5-e286ca0bc2a2"),
-                            ReturnedDate = new DateTime(2024, 7, 9, 12, 14, 7, 124, DateTimeKind.Local).AddTicks(2904),
+                            ReturnedDate = new DateTime(2024, 7, 9, 13, 53, 55, 739, DateTimeKind.Local).AddTicks(2913),
                             State = 1
                         },
                         new
                         {
-                            Id = new Guid("b40b0eba-8dec-4e3e-b1dd-f95e2dd87412"),
+                            Id = new Guid("8621630b-f5fe-4861-8b70-f0617d08668e"),
                             AcceptedByUserId = new Guid("2c484448-b14e-46f3-957e-a8719f14bbd6"),
                             AssignmentId = new Guid("a50232d9-c3da-44d6-81a1-da151617d805"),
-                            ReturnedDate = new DateTime(2024, 7, 9, 12, 14, 7, 124, DateTimeKind.Local).AddTicks(2908),
+                            ReturnedDate = new DateTime(2024, 7, 9, 13, 53, 55, 739, DateTimeKind.Local).AddTicks(2917),
                             State = 1
                         });
                 });
@@ -536,9 +536,7 @@ namespace AssetManagement.Data.Data.Migrations
                 {
                     b.HasOne("AssetManagement.Domain.Entities.AppUser", "AcceptedByUser")
                         .WithMany()
-                        .HasForeignKey("AcceptedByUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AcceptedByUserId");
 
                     b.HasOne("AssetManagement.Domain.Entities.Assignment", "Assignment")
                         .WithMany()

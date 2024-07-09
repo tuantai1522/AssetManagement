@@ -9,7 +9,6 @@ namespace AssetManagement.Data.Data.Migrations {
     public partial class ReturningRequestSeedsData : Migration {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder) {
-
             migrationBuilder.DeleteData(
                 table: "Assignment",
                 keyColumn: "Id",
@@ -33,9 +32,9 @@ namespace AssetManagement.Data.Data.Migrations {
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     State = table.Column<int>(type: "int", nullable: false),
-                    ReturnedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ReturnedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     AssignmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AcceptedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    AcceptedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -44,8 +43,7 @@ namespace AssetManagement.Data.Data.Migrations {
                         name: "FK_ReturningRequest_AspNetUsers_AcceptedByUserId",
                         column: x => x.AcceptedByUserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_ReturningRequest_Assignment_AssignmentId",
                         column: x => x.AssignmentId,
@@ -59,10 +57,10 @@ namespace AssetManagement.Data.Data.Migrations {
                 columns: new[] { "Id", "AssetId", "AssignedById", "AssignedDate", "AssignedToId", "LastUpdated", "Note", "State" },
                 values: new object[,]
                 {
-                    { new Guid("1f01cf21-4609-41d8-be82-446f42f6dd68"), new Guid("f673f337-c449-4ff1-97cd-366b79cf3a63"), new Guid("4c196276-54f0-48ae-acc9-abeb0cb598f5"), new DateTime(2024, 7, 9, 12, 14, 7, 124, DateTimeKind.Local).AddTicks(2846), new Guid("ede0c1cd-5d7e-422c-a787-8f473c45123b"), new DateTime(2024, 7, 9, 12, 14, 7, 124, DateTimeKind.Local).AddTicks(2846), "Assignment 12", 5 },
-                    { new Guid("26c42587-dd3c-4546-a1e5-e286ca0bc2a2"), new Guid("f0dff85d-6cc7-496b-8437-40b50298e62c"), new Guid("4c196276-54f0-48ae-acc9-abeb0cb598f5"), new DateTime(2024, 7, 9, 12, 14, 7, 124, DateTimeKind.Local).AddTicks(2851), new Guid("256a9cef-7479-4563-a104-8b310e16ffe0"), new DateTime(2024, 7, 9, 12, 14, 7, 124, DateTimeKind.Local).AddTicks(2852), "Assignment 13", 5 },
-                    { new Guid("a50232d9-c3da-44d6-81a1-da151617d805"), new Guid("0eab77a8-ed89-4483-9d98-6ccafa74d450"), new Guid("2c484448-b14e-46f3-957e-a8719f14bbd6"), new DateTime(2024, 7, 9, 12, 14, 7, 124, DateTimeKind.Local).AddTicks(2856), new Guid("2450bc08-8b39-41cf-90e9-7b10510c557e"), new DateTime(2024, 7, 9, 12, 14, 7, 124, DateTimeKind.Local).AddTicks(2857), "Assignment 14", 5 },
-                    { new Guid("ab64f62d-71a0-4520-9522-2bbbebbc1c7b"), new Guid("81436c8d-4090-4abf-a926-14d061f1f9c9"), new Guid("4c196276-54f0-48ae-acc9-abeb0cb598f5"), new DateTime(2024, 7, 9, 12, 14, 7, 124, DateTimeKind.Local).AddTicks(2840), new Guid("48bc2207-ec50-455d-99e4-990995f809e0"), new DateTime(2024, 7, 9, 12, 14, 7, 124, DateTimeKind.Local).AddTicks(2840), "Assignment 11", 5 }
+                    { new Guid("1f01cf21-4609-41d8-be82-446f42f6dd68"), new Guid("f673f337-c449-4ff1-97cd-366b79cf3a63"), new Guid("4c196276-54f0-48ae-acc9-abeb0cb598f5"), new DateTime(2024, 7, 9, 13, 53, 55, 739, DateTimeKind.Local).AddTicks(2855), new Guid("ede0c1cd-5d7e-422c-a787-8f473c45123b"), new DateTime(2024, 7, 9, 13, 53, 55, 739, DateTimeKind.Local).AddTicks(2856), "Assignment 12", 5 },
+                    { new Guid("26c42587-dd3c-4546-a1e5-e286ca0bc2a2"), new Guid("f0dff85d-6cc7-496b-8437-40b50298e62c"), new Guid("4c196276-54f0-48ae-acc9-abeb0cb598f5"), new DateTime(2024, 7, 9, 13, 53, 55, 739, DateTimeKind.Local).AddTicks(2860), new Guid("256a9cef-7479-4563-a104-8b310e16ffe0"), new DateTime(2024, 7, 9, 13, 53, 55, 739, DateTimeKind.Local).AddTicks(2861), "Assignment 13", 5 },
+                    { new Guid("a50232d9-c3da-44d6-81a1-da151617d805"), new Guid("0eab77a8-ed89-4483-9d98-6ccafa74d450"), new Guid("2c484448-b14e-46f3-957e-a8719f14bbd6"), new DateTime(2024, 7, 9, 13, 53, 55, 739, DateTimeKind.Local).AddTicks(2866), new Guid("2450bc08-8b39-41cf-90e9-7b10510c557e"), new DateTime(2024, 7, 9, 13, 53, 55, 739, DateTimeKind.Local).AddTicks(2866), "Assignment 14", 5 },
+                    { new Guid("ab64f62d-71a0-4520-9522-2bbbebbc1c7b"), new Guid("81436c8d-4090-4abf-a926-14d061f1f9c9"), new Guid("4c196276-54f0-48ae-acc9-abeb0cb598f5"), new DateTime(2024, 7, 9, 13, 53, 55, 739, DateTimeKind.Local).AddTicks(2849), new Guid("48bc2207-ec50-455d-99e4-990995f809e0"), new DateTime(2024, 7, 9, 13, 53, 55, 739, DateTimeKind.Local).AddTicks(2849), "Assignment 11", 5 }
                 });
 
             migrationBuilder.InsertData(
@@ -70,10 +68,10 @@ namespace AssetManagement.Data.Data.Migrations {
                 columns: new[] { "Id", "AcceptedByUserId", "AssignmentId", "ReturnedDate", "State" },
                 values: new object[,]
                 {
-                    { new Guid("29ea0a42-3c69-4c86-93a8-98179a0b0766"), new Guid("4c196276-54f0-48ae-acc9-abeb0cb598f5"), new Guid("26c42587-dd3c-4546-a1e5-e286ca0bc2a2"), new DateTime(2024, 7, 9, 12, 14, 7, 124, DateTimeKind.Local).AddTicks(2904), 1 },
-                    { new Guid("4ed4e959-644e-4e06-ab6b-768d9f1b49c5"), new Guid("4c196276-54f0-48ae-acc9-abeb0cb598f5"), new Guid("1f01cf21-4609-41d8-be82-446f42f6dd68"), new DateTime(2024, 7, 9, 12, 14, 7, 124, DateTimeKind.Local).AddTicks(2901), 1 },
-                    { new Guid("a93a8fc4-eae3-4782-b636-32ecc228fb4f"), new Guid("4c196276-54f0-48ae-acc9-abeb0cb598f5"), new Guid("ab64f62d-71a0-4520-9522-2bbbebbc1c7b"), new DateTime(2024, 7, 9, 12, 14, 7, 124, DateTimeKind.Local).AddTicks(2894), 1 },
-                    { new Guid("b40b0eba-8dec-4e3e-b1dd-f95e2dd87412"), new Guid("2c484448-b14e-46f3-957e-a8719f14bbd6"), new Guid("a50232d9-c3da-44d6-81a1-da151617d805"), new DateTime(2024, 7, 9, 12, 14, 7, 124, DateTimeKind.Local).AddTicks(2908), 1 }
+                    { new Guid("310d7095-14ab-4db5-80e8-342edade11ed"), new Guid("4c196276-54f0-48ae-acc9-abeb0cb598f5"), new Guid("ab64f62d-71a0-4520-9522-2bbbebbc1c7b"), new DateTime(2024, 7, 9, 13, 53, 55, 739, DateTimeKind.Local).AddTicks(2903), 1 },
+                    { new Guid("46702563-2808-41b1-892d-3b7b26d9737b"), new Guid("4c196276-54f0-48ae-acc9-abeb0cb598f5"), new Guid("26c42587-dd3c-4546-a1e5-e286ca0bc2a2"), new DateTime(2024, 7, 9, 13, 53, 55, 739, DateTimeKind.Local).AddTicks(2913), 1 },
+                    { new Guid("8621630b-f5fe-4861-8b70-f0617d08668e"), new Guid("2c484448-b14e-46f3-957e-a8719f14bbd6"), new Guid("a50232d9-c3da-44d6-81a1-da151617d805"), new DateTime(2024, 7, 9, 13, 53, 55, 739, DateTimeKind.Local).AddTicks(2917), 1 },
+                    { new Guid("a1746cd6-d446-4304-931c-dc135c70fa1a"), new Guid("4c196276-54f0-48ae-acc9-abeb0cb598f5"), new Guid("1f01cf21-4609-41d8-be82-446f42f6dd68"), new DateTime(2024, 7, 9, 13, 53, 55, 739, DateTimeKind.Local).AddTicks(2909), 1 }
                 });
 
             migrationBuilder.CreateIndex(
