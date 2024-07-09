@@ -54,7 +54,7 @@ namespace AssetManagement.Application.Controllers
         }
 
         [HttpPost("user-create-request/{assignmentId}")]
-        [Authorize(Roles = $"{RoleConstant.StaffRole}")]
+        [Authorize]
         public async Task<ActionResult<BaseResult<object>>> CreateRequestByUserAsync([FromRoute] Guid assignmentId)
         {
             await _returningRequestService.CreateRequestByUserAsync(assignmentId);

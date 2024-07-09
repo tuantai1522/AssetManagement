@@ -208,7 +208,7 @@ export default function MyAssignmentList(props: MyAssignmentListProp) {
   const onConfirmReturn = async () => {
     try {
       if (!currentAssignmentId) return;
-      await agent.RequestReturn.userCreateRequest(currentAssignmentId);
+      await agent.ReturningRequest.userCreateRequest(currentAssignmentId);
       setResponseStates({ ...responseStates, isOpenReturnModal: false });
       props.refetchData();
     } catch (error) {
