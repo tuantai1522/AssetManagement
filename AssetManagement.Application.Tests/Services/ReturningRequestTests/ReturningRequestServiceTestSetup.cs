@@ -261,6 +261,8 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests {
                     Id = new Guid("77bb2f45-1187-4924-b8ff-00f7bc42fef7"),
                     Assignment = _assignments[0],
                     AssignmentId = _assignments[0].Id,
+                    RequestedByUserId = _users[0].Id,
+                    RequestedByUser = _users[0],
                     AcceptedByUser = _users[3],
                     AcceptedByUserId = _users[3].Id,
                     State = ReturningRequestState.Completed,
@@ -271,6 +273,8 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests {
                     Id = new Guid("b998ae03-f261-4957-b597-07a5b6db3ad1"),
                     Assignment = _assignments[1],
                     AssignmentId = _assignments[1].Id,
+                    RequestedByUserId = _users[1].Id,
+                    RequestedByUser = _users[1],
                     AcceptedByUser = _users[3],
                     AcceptedByUserId = _users[3].Id,
                     State = ReturningRequestState.Completed,
@@ -281,6 +285,8 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests {
                     Id = new Guid("345ce54d-1b11-4aca-ab35-2ab1fe3858a3"),
                     Assignment = _assignments[2],
                     AssignmentId = _assignments[2].Id,
+                    RequestedByUserId = _users[1].Id,
+                    RequestedByUser = _users[1],
                     State = ReturningRequestState.WaitingForReturning,
                 },
                 new ReturningRequest
@@ -290,6 +296,8 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests {
                     AssignmentId = _assignments[3].Id,
                     AcceptedByUser = _users[4],
                     AcceptedByUserId = _users[4].Id,
+                    RequestedByUserId = _users[2].Id,
+                    RequestedByUser = _users[2],
                     State = ReturningRequestState.Completed,
                     ReturnedDate = new DateTime(2024, 7, 9)
                 },
@@ -299,7 +307,30 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests {
                     Id = new Guid("cae4e9aa-f91a-4bb0-9e7d-f9c22bfe2eaf"),
                     Assignment = _assignments[4],
                     AssignmentId = _assignments[4].Id,
+                    RequestedByUserId = _users[1].Id,
+                    RequestedByUser = _users[1],
                     State = ReturningRequestState.WaitingForReturning,
+                },
+                new ReturningRequest
+                {
+                    Id = new Guid("c57d03b0-c899-4027-bee1-80a367917ccc"),
+                    Assignment = _assignments[5],
+                    AssignmentId = _assignments[5].Id,
+                    RequestedByUserId = _users[4].Id,
+                    RequestedByUser = _users[4],
+                    State = ReturningRequestState.WaitingForReturning,
+                },
+                new ReturningRequest
+                {
+                    Id = new Guid("4c082762-48da-402a-a26b-15f1025e5fab"),
+                    Assignment = _assignments[6],
+                    AssignmentId = _assignments[6].Id,
+                    AcceptedByUser = _users[2],
+                    AcceptedByUserId = _users[2].Id,
+                    RequestedByUserId = _users[4].Id,
+                    RequestedByUser = _users[4],
+                    State = ReturningRequestState.Completed,
+                    ReturnedDate = new DateTime(2024, 7, 8)
                 },
             };
         }
