@@ -19,5 +19,11 @@ export enum AssetStateEnum {
 export enum AssignmentStateEnum {
     "Waiting for acceptance" = 1,
     "Accepted" = 2,
-    "Declined" = 3
+    "Declined" = 3,
+    "Waiting For Returning" = 4
+}
+
+export enum ReturningRequestStateEnum {
+  "Completed" = 1,
+  "Waiting For Returning" = 2
 }
