@@ -3,6 +3,7 @@ namespace AssetManagement.Domain.Enums {
         WaitingForAcceptance = 1,
         Accepted = 2,
         Declined = 3,
-        WaitingForReturning = 4
+        WaitingForReturning = 4,
+        Returned = 5,
     }
 }
