@@ -1,5 +1,4 @@
 ﻿using AssetManagement.Application.Common.Credential;
-using AssetManagement.Application.Services.Implementations;
 using AssetManagement.Data.Interfaces;
 using AssetManagement.Domain.Entities;
 using AssetManagement.Domain.Enums;
@@ -7,7 +6,6 @@ using AutoFixture.AutoMoq;
 using AutoFixture;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
 using Moq;
 using AssetManagement.Application.Extensions;
 
@@ -61,7 +59,7 @@ namespace AssetManagement.Application.Tests.Services
 			];
 
 			Users = [
-			   new AppUser (){
+				 new AppUser (){
 			Id = Guid.NewGuid(),
 			FirstName = "Admin",
 			LastName = "1",
@@ -142,7 +140,7 @@ namespace AssetManagement.Application.Tests.Services
 						CategoryId = Categories[0].Id,
 						CreatedAt = DateTime.Now,
 						InstalledDate = DateTime.Now,
-						LastUpdated = DateTime.Now,	
+						LastUpdated = DateTime.Now,
 						Location = Location.HCM.ToString(),
 						Specification = $"Specification of {i}",
 						State = AssetState.Available,

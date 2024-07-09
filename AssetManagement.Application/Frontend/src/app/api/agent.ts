@@ -20,6 +20,10 @@ import {
   FilterMyAssignmentRequest,
   getMyAssignmentQueryString,
 } from "../models/myAssignment/myAssignment";
+import {
+  FilterReturningRequestRequest,
+  getReturningRequestQueryString,
+} from "../models/returningRequest/ReturningRequest";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 axios.defaults.headers.post["Content-Type"] = "application/json";
@@ -212,10 +216,19 @@ const MyAssignment = {
   },
 };
 
-const RequestReturn = {
-  userCreateRequest: (assignmentId: string) => requests.post(`api/return-request/user-create-request/${assignmentId}`, {}),
-}
-
+const ReturningRequest = {
+  filter: (query?: FilterReturningRequestRequest) => {
+    const queryString = getReturningRequestQueryString(query);
+    return requests.get(`/api/return-request?${queryString}`);
+  },
+  adminCreateRequest: (assignmentId: string) =>
+    requests.post(
+      `api/return-request/admin-create-request/${assignmentId}`,
+      {}
+    ),
+  userCreateRequest: (assignmentId: string) =>
+    requests.post(`api/return-request/user-create-request/${assignmentId}`, {}),
+};
 const agent = {
   Product,
   Authentication,
@@ -224,7 +237,7 @@ const agent = {
   Asset,
   Assignment,
   MyAssignment,
-  RequestReturn
+  ReturningRequest,
 };
 
 export default agent;
