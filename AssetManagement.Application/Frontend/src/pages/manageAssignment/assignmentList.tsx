@@ -3,8 +3,6 @@ import AppTable, {
   ColumnDefinition,
   Order,
 } from "../../app/components/table/sortTable";
-import { IconButton, Stack } from "@mui/material";
-import { AssetState } from "../../app/models/asset/Asset";
 import { AssignmentStateEnum } from "../../app/types/enum";
 import { useState } from "react";
 import ConfirmModal from "../../app/components/confirmModal";
@@ -48,7 +46,7 @@ export default function AssignmentList(props: AssignmentListProp) {
   const onConfirmReturn = async () => {
     try {
       if (!currentAssignmentId) return;
-      await agent.RequestReturn.adminCreateRequest(currentAssignmentId);
+      await agent.ReturningRequest.adminCreateRequest(currentAssignmentId);
       setResponseStates({ ...responseStates, isOpenReturnModal: false });
       props.refetchData();
     } catch (error) {

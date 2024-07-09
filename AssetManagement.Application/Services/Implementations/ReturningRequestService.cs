@@ -1,6 +1,5 @@
 ﻿using AssetManagement.Application.Common.Credential;
 using AssetManagement.Application.Common.Constants;
-using AssetManagement.Application.Common.Credential;
 using AssetManagement.Application.Common.ExpressionBuilder;
 using AssetManagement.Application.Services.Interfaces;
 using AssetManagement.Contracts.Dtos.PaginationDtos;
@@ -13,11 +12,7 @@ using AssetManagement.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using AssetManagement.Domain.Entities;
-using AssetManagement.Domain.Enums;
 using AssetManagement.Domain.Exceptions;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace AssetManagement.Application.Services.Implementations
 {
@@ -34,7 +29,8 @@ namespace AssetManagement.Application.Services.Implementations
             _currentUser = currentUser;
         }
 
-        public async Task<PagingDto<FilterReturningResponse>> FilterReturningAsync(FilterReturningRequest filter) {
+        public async Task<PagingDto<FilterReturningResponse>> FilterReturningAsync(FilterReturningRequest filter)
+        {
             var currentUser = await _userManager.Users
                 .Where(u => _currentUser.UserId.Equals(u.Id))
                 .Select(u => new AppUser()
@@ -46,14 +42,16 @@ namespace AssetManagement.Application.Services.Implementations
                 .FirstOrDefaultAsync()
                 .ContinueWith(t => t.Result ?? throw new UnauthorizedAccessException(ErrorStrings.USER_NOT_LOGIN));
 
-            if (currentUser.IsDisabled) {
+            if (currentUser.IsDisabled)
+            {
                 throw new UnauthorizedAccessException(ErrorStrings.USER_IS_DISABLED);
             }
 
             var queryable = _unitOfWork.ReturningRequestRepository.GetQueryableSet();
             //set default page size
             if (!filter.PageNumber.HasValue || !filter.PageSize.HasValue
-                || filter.PageNumber.Value <= 0 || filter.PageSize.Value <= 0) {
+                || filter.PageNumber.Value <= 0 || filter.PageSize.Value <= 0)
+            {
                 filter.PageNumber = 1;
                 filter.PageSize = 5;
             }
@@ -90,30 +88,47 @@ namespace AssetManagement.Application.Services.Implementations
             };
         }
 
+        public async Task CreateRequestByAdminAsync(Guid assignmentId)
+        {
+            var assignment = await GetAssignment(assignmentId);
+            var user = await GetUserLogined();
+
+            // To check whether this assignment belongs to location of user or not
+            if (!assignment.AssignedByUser!.Location!.Equals(user.Location))
+                throw new BadRequestException("Location of this assignment is different from location of current user");
+
+            await CreateRequestByAccountAsync(assignment, user);
+
+        }
+
         #region Private methods
-        private Expression<Func<ReturningRequest, bool>> GetSpecification(FilterReturningRequest filter, AppUser currentUser) {
+        private Expression<Func<ReturningRequest, bool>> GetSpecification(FilterReturningRequest filter, AppUser currentUser)
+        {
             Expression<Func<ReturningRequest, bool>> filterSpecification = PredicateBuilder.True<ReturningRequest>();
             filterSpecification = filterSpecification.And(a => a.Assignment != null && a.Assignment.Asset != null && a.Assignment.Asset.Location == currentUser.Location);
 
-            if (!string.IsNullOrWhiteSpace(filter.Search)) {
+            if (!string.IsNullOrWhiteSpace(filter.Search))
+            {
                 filterSpecification = filterSpecification.And(
                     r => (r.Assignment != null && r.Assignment.Asset != null && r.Assignment.Asset.Name != null && r.Assignment.Asset.Name.ToLower().Contains(filter.Search.Trim().ToLower()))
                     || (r.Assignment != null && r.Assignment.Asset != null && r.Assignment.Asset.AssetCode != null && r.Assignment.Asset.AssetCode.ToLower().Contains(filter.Search.Trim().ToLower()))
                     || (r.RequestedByUser != null && r.RequestedByUser.UserName != null && r.RequestedByUser.UserName.ToLower().Contains(filter.Search.Trim().ToLower())));
             }
 
-            if (filter.States != null && filter.States.Length > 0) {
+            if (filter.States != null && filter.States.Length > 0)
+            {
                 filterSpecification = filterSpecification.And(r => filter.States.Any(s => s == r.State));
             }
 
-            if (filter.ReturnedDate.HasValue) {
+            if (filter.ReturnedDate.HasValue)
+            {
                 filterSpecification = filterSpecification.And(r => r.ReturnedDate.HasValue && r.ReturnedDate.Value.Date == filter.ReturnedDate.Value.Date);
             }
             return filterSpecification;
         }
 
-
-        private Func<IQueryable<ReturningRequest>, IOrderedQueryable<ReturningRequest>> GetOrderBy(FilterReturningRequest filter) {
+        private Func<IQueryable<ReturningRequest>, IOrderedQueryable<ReturningRequest>> GetOrderBy(FilterReturningRequest filter)
+        {
             return filter switch
             {
                 { SortAssetCode: SortOption.Asc } => q => q.OrderBy(r => r.Assignment.Asset!.AssetCode),
@@ -137,25 +152,6 @@ namespace AssetManagement.Application.Services.Implementations
                 _ => q => q.OrderByDescending(a => a.ReturnedDate)
             };
         }
-        #endregion
-            _currentUser = currentUser;
-            _userManager = userManager;
-        }
-
-        public async Task CreateRequestByAdminAsync(Guid assignmentId)
-        {
-            var assignment = await GetAssignment(assignmentId);
-            var user = await GetUserLogined();
-
-            // To check whether this assignment belongs to location of user or not
-            if (!assignment.AssignedByUser!.Location!.Equals(user.Location))
-                throw new BadRequestException("Location of this assignment is different from location of current user");
-
-            await CreateRequestByAccountAsync(assignment, user);
-
-        }
-
-        #region Private methods
 
         private async Task CreateRequestByAccountAsync(Assignment assignment, AppUser user)
         {

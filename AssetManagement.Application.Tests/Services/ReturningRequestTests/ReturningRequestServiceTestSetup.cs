@@ -15,7 +15,7 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests {
         protected static List<Assignment> _assignments;
         protected static List<ReturningRequest> _returningRequests;
         public ReturningRequestServiceTestSetup() : base() {
-            _service = new ReturningRequestService(_unitOfWorkMock.Object, _userManagerMock.Object, _currentUserMock.Object);
+            _service = new ReturningRequestService(_unitOfWorkMock.Object, _currentUserMock.Object ,_userManagerMock.Object );
             _returningRequestRepositoryMock = new Mock<IReturningRequestRepository>();
             Setup();
         }

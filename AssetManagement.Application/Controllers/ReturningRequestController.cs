@@ -1,5 +1,4 @@
 ﻿using AssetManagement.Application.Common;
-using AssetManagement.Application.Common;
 using AssetManagement.Application.Extensions;
 using AssetManagement.Application.Services.Interfaces;
 using AssetManagement.Domain.Constants;
@@ -7,8 +6,6 @@ using Microsoft.AspNetCore.Authorization;
 using AssetManagement.Contracts.Dtos.PaginationDtos;
 using AssetManagement.Contracts.Dtos.ReturningRequestDtos.Requests;
 using AssetManagement.Contracts.Dtos.ReturningRequestDtos.Responses;
-using AssetManagement.Domain.Constants;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AssetManagement.Application.Controllers
@@ -27,7 +24,7 @@ namespace AssetManagement.Application.Controllers
 
         [HttpPost("admin-create-request/{assignmentId}")]
         [Authorize(Roles = $"{RoleConstant.AdminRole}")]
-        public async Task<ActionResult<BaseResult<object>>> CreateRequestByUserAsync([FromRoute] Guid assignmentId)
+        public async Task<ActionResult<BaseResult<object>>> CreateRequestByAdminAsync([FromRoute] Guid assignmentId)
         {
             await _returningRequestService.CreateRequestByAdminAsync(assignmentId);
             var result = new BaseResult<object>()
@@ -41,7 +38,8 @@ namespace AssetManagement.Application.Controllers
 
         [HttpGet]
         [Authorize(Roles = $"{RoleConstant.AdminRole}")]
-        public async Task<ActionResult<BaseResult<PagingDto<FilterReturningResponse>>>> GetAllAsync([FromQuery] FilterReturningRequest request) {
+        public async Task<ActionResult<BaseResult<PagingDto<FilterReturningResponse>>>> GetAllAsync([FromQuery] FilterReturningRequest request)
+        {
             var data = await _returningRequestService.FilterReturningAsync(request);
             PaginationMetaData metaData = new PaginationMetaData(data.TotalItemCount, data.PageSize, data.CurrentPage);
             Response.AddPaginationHeader(metaData);
