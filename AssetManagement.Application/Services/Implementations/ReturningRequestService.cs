@@ -32,7 +32,7 @@ namespace AssetManagement.Application.Services.Implementations
 
             // To check whether this assignment belongs to location of user or not
             if (!assignment.AssignedByUser!.Location!.Equals(user.Location))
-                throw new NotFoundException("Location of this assignment is different from location of current user");
+                throw new BadRequestException("Location of this assignment is different from location of current user");
 
             await CreateRequestByAccountAsync(assignment, user);
 
