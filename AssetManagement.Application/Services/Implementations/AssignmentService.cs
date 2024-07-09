@@ -16,21 +16,25 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace AssetManagement.Application.Services.Implementations {
-    public class AssignmentService : IAssignmentService {
+namespace AssetManagement.Application.Services.Implementations
+{
+    public class AssignmentService : IAssignmentService
+    {
         private readonly ILogger<AssignmentService> _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICurrentUser _currentUser;
         private readonly UserManager<AppUser> _userManager;
         private readonly IMapper _mapper;
-        public AssignmentService(ILogger<AssignmentService> logger, IUnitOfWork unitOfWork, ICurrentUser currentUser, IMapper mapper, UserManager<AppUser> userManager) {
+        public AssignmentService(ILogger<AssignmentService> logger, IUnitOfWork unitOfWork, ICurrentUser currentUser, IMapper mapper, UserManager<AppUser> userManager)
+        {
             _logger = logger;
             _unitOfWork = unitOfWork;
             _currentUser = currentUser;
             _userManager = userManager;
             _mapper = mapper;
         }
-        public async Task<PagingDto<FilterAssignmentResponse>> FilterAssignmentAsync(FilterAssignmentRequest filter) {
+        public async Task<PagingDto<FilterAssignmentResponse>> FilterAssignmentAsync(FilterAssignmentRequest filter)
+        {
             var currentUser = await _userManager.Users
                 .Where(u => _currentUser.UserId.Equals(u.Id))
                 .Select(u => new AppUser()
@@ -42,14 +46,16 @@ namespace AssetManagement.Application.Services.Implementations {
                 .FirstOrDefaultAsync()
                 .ContinueWith(t => t.Result ?? throw new UnauthorizedAccessException(ErrorStrings.USER_NOT_LOGIN));
 
-            if (currentUser.IsDisabled) {
+            if (currentUser.IsDisabled)
+            {
                 throw new UnauthorizedAccessException(ErrorStrings.USER_IS_DISABLED);
             }
 
             var queryable = _unitOfWork.AssignmentRepository.GetQueryableSet();
             //set default page size
             if (!filter.PageNumber.HasValue || !filter.PageSize.HasValue
-                || filter.PageNumber.Value <= 0 || filter.PageSize.Value <= 0) {
+                || filter.PageNumber.Value <= 0 || filter.PageSize.Value <= 0)
+            {
                 filter.PageNumber = 1;
                 filter.PageSize = 5;
             }
@@ -84,14 +90,16 @@ namespace AssetManagement.Application.Services.Implementations {
                 Data = result
             };
         }
-        public async Task<AssignmentDetailResponse> GetAssignmentByIdAsync(Guid assignmentId) {
+        public async Task<AssignmentDetailResponse> GetAssignmentByIdAsync(Guid assignmentId)
+        {
             _logger.LogInformation("*********************GetAssignmentByIdAsync*********************");
             Assignment? assignment = await _unitOfWork.AssignmentRepository.GetAssignmentByIdAsync(assignmentId)
                 ?? throw new NotFoundException(ErrorStrings.ASSIGNMENT_NOT_FOUND);
 
             return _mapper.Map<AssignmentDetailResponse>(assignment);
         }
-        public async Task<Guid> CreateAssignmentAsync(AssignmentCreationRequest request) {
+        public async Task<Guid> CreateAssignmentAsync(AssignmentCreationRequest request)
+        {
             var userAssignedTo = await GetUserAssignedById(request.UserId);
 
             var asset = await GetAssetById(request.AssetId);
@@ -116,7 +124,8 @@ namespace AssetManagement.Application.Services.Implementations {
             await _unitOfWork.SaveChangesAsync();
             return newAssignment.Id;
         }
-        public async Task<PagingDto<FilterMyAssignmentResponse>> FilterMyAssignmentAsync(FilterMyAssignmentRequest filter) {
+        public async Task<PagingDto<FilterMyAssignmentResponse>> FilterMyAssignmentAsync(FilterMyAssignmentRequest filter)
+        {
             _logger.LogInformation("*********************Filter My Assignment Async*********************");
             var currentUser = _currentUser;
             var user = await _userManager.Users
@@ -128,12 +137,13 @@ namespace AssetManagement.Application.Services.Implementations {
             var queryable = _unitOfWork.AssignmentRepository.GetQueryableSet().Include(q => q.Asset).Include(q => q.AssignedToUser).Include(q => q.AssignedByUser);
             //set default page size
             if (!filter.PageNumber.HasValue || !filter.PageSize.HasValue
-                || filter.PageNumber.Value <= 0 || filter.PageSize.Value <= 0) {
+                || filter.PageNumber.Value <= 0 || filter.PageSize.Value <= 0)
+            {
                 filter.PageNumber = 1;
                 filter.PageSize = 5;
             }
 
-            var filteredQueryable = queryable.Where(q => q.AssignedToId == user.Id && (q.State == AssignmentState.Accepted || q.State == AssignmentState.WaitingForAcceptance));
+            var filteredQueryable = queryable.Where(q => q.AssignedToId == user.Id && (q.State == AssignmentState.Accepted || q.State == AssignmentState.WaitingForAcceptance || q.State == AssignmentState.WaitingForReturning));
             var orderBy = GetOrderByFunction(filter);
             var finalQueryable = orderBy(filteredQueryable);
             var result = await finalQueryable
@@ -158,7 +168,8 @@ namespace AssetManagement.Application.Services.Implementations {
                 Data = result
             };
         }
-        public async Task<bool> RespondAsync(string assignmentId, RespondAssignmentRequest request) {
+        public async Task<bool> RespondAsync(string assignmentId, RespondAssignmentRequest request)
+        {
             var currentUserId = _currentUser.UserId;
             var user = await _userManager.FindByIdAsync(currentUserId.ToString()) ?? throw new BadRequestException(ErrorStrings.USER_NOT_FOUND);
 
@@ -178,7 +189,8 @@ namespace AssetManagement.Application.Services.Implementations {
             return true;
         }
         #region private methods
-        private Func<IQueryable<Assignment>, IOrderedQueryable<Assignment>> GetOrderByFunction(FilterMyAssignmentRequest filter) {
+        private Func<IQueryable<Assignment>, IOrderedQueryable<Assignment>> GetOrderByFunction(FilterMyAssignmentRequest filter)
+        {
             return filter switch
             {
                 { SortAssetCode: SortOption.Asc } => q => q.OrderBy(a => a.Asset!.AssetCode),
@@ -198,7 +210,8 @@ namespace AssetManagement.Application.Services.Implementations {
                 _ => q => q.OrderBy(a => a.Asset!.Name)
             };
         }
-        private Func<IQueryable<Assignment>, IOrderedQueryable<Assignment>> GetOrderBy(FilterAssignmentRequest filter) {
+        private Func<IQueryable<Assignment>, IOrderedQueryable<Assignment>> GetOrderBy(FilterAssignmentRequest filter)
+        {
             return filter switch
             {
                 { SortAssetCode: SortOption.Asc } => q => q.OrderBy(a => a.Asset!.AssetCode),
@@ -226,43 +239,53 @@ namespace AssetManagement.Application.Services.Implementations {
                 _ => q => q.OrderByDescending(a => a.AssignedDate)
             };
         }
-        private Expression<Func<Assignment, bool>> GetSpecification(FilterAssignmentRequest filter, AppUser currentUser) {
+        private Expression<Func<Assignment, bool>> GetSpecification(FilterAssignmentRequest filter, AppUser currentUser)
+        {
             Expression<Func<Assignment, bool>> filterSpecification = PredicateBuilder.True<Assignment>();
             filterSpecification = filterSpecification.And(a => a.Asset != null && a.Asset!.Location == currentUser.Location);
 
-            if (!string.IsNullOrWhiteSpace(filter.Search)) {
+            if (!string.IsNullOrWhiteSpace(filter.Search))
+            {
                 filterSpecification = filterSpecification.And(
                     a => (a.Asset != null && a.Asset.Name != null && a.Asset.Name.ToLower().Contains(filter.Search.Trim().ToLower()))
                     || (a.Asset != null && a.Asset.AssetCode != null && a.Asset.AssetCode.ToLower().Contains(filter.Search.Trim().ToLower()))
                     || (a.AssignedToUser != null && a.AssignedToUser.UserName != null && a.AssignedToUser.UserName.ToLower().Contains(filter.Search.Trim().ToLower())));
             }
 
-            if (filter.States != null && filter.States.Length > 0) {
+            if (filter.States != null && filter.States.Length > 0)
+            {
                 filterSpecification = filterSpecification.And(a => filter.States.Any(s => s == a.State));
             }
 
-            if (filter.AssignedDate.HasValue) {
+            if (filter.AssignedDate.HasValue)
+            {
                 filterSpecification = filterSpecification.And(a => a.AssignedDate.Date == filter.AssignedDate.Value.Date);
             }
             return filterSpecification;
         }
-        private async Task<AppUser> GetUserAssignedById(Guid userId) {
+        private async Task<AppUser> GetUserAssignedById(Guid userId)
+        {
             var user = await _userManager.FindByIdAsync(userId.ToString());
-            if (user == null) {
+            if (user == null)
+            {
                 throw new NotFoundException("User to assigned is not found!");
             }
-            else if (user.IsDisabled) {
+            else if (user.IsDisabled)
+            {
                 throw new BadRequestException("User to assigned is disabled!");
             }
             return user;
         }
 
-        private async Task<Asset> GetAssetById(Guid assetId) {
+        private async Task<Asset> GetAssetById(Guid assetId)
+        {
             var asset = await _unitOfWork.AssetRepository.FindOne(a => a.Id.Equals(assetId));
-            if (asset == null) {
+            if (asset == null)
+            {
                 throw new NotFoundException("Asset to assigned is not found!");
             }
-            else if (AssetState.Available != asset.State) {
+            else if (AssetState.Available != asset.State)
+            {
                 throw new BadRequestException("Asset is not available to assigned!");
             }
             return asset;
