@@ -18,11 +18,11 @@ namespace AssetManagement.Application.Controllers
             _returningRequestService = returningRequestService;
         }
 
-        [HttpPost("user-create-request")]
+        [HttpPost("user-create-request/{assignmentId}")]
         [Authorize(Roles = $"{RoleConstant.StaffRole}")]
-        public async Task<ActionResult<BaseResult<object>>> CreateRequestByUserAsync(Guid id)
+        public async Task<ActionResult<BaseResult<object>>> CreateRequestByUserAsync([FromRoute] Guid assignmentId)
         {
-            await _returningRequestService.CreateRequestByUserAsync(id);
+            await _returningRequestService.CreateRequestByUserAsync(assignmentId);
             var result = new BaseResult<object>()
             {
                 IsSuccess = true,
