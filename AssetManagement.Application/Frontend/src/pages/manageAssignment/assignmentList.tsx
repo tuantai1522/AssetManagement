@@ -168,7 +168,7 @@ export default function AssignmentList(props: AssignmentListProp) {
     ];
 
     return (
-        <div className="min-h-60">
+        <div className="min-h-60 mb-4 overflow-x-auto">
             <AppTable<AssignmentRowData>
                 order={props.order}
                 setOrder={props.setOrder}
