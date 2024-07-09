@@ -20,7 +20,8 @@ export enum AssignmentStateEnum {
     "Waiting for acceptance" = 1,
     "Accepted" = 2,
     "Declined" = 3,
-    "Waiting For Returning" = 4
+    "Waiting For Returning" = 4,
+    "Returned" = 5
 }
 
 export enum ReturningRequestStateEnum {
