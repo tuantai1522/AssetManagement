@@ -20,6 +20,7 @@ import {
   FilterMyAssignmentRequest,
   getMyAssignmentQueryString,
 } from "../models/myAssignment/myAssignment";
+import { FilterReturningRequestRequest, getReturningRequestQueryString } from "../models/returningRequest/ReturningRequest";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 axios.defaults.headers.post["Content-Type"] = "application/json";
@@ -212,6 +213,13 @@ const MyAssignment = {
   },
 };
 
+const ReturningRequest = {
+  filter: (query?: FilterReturningRequestRequest) => {
+    const queryString = getReturningRequestQueryString(query);
+    return requests.get(`/api/return-request?${queryString}`);
+  },
+}
+
 const agent = {
   Product,
   Authentication,
@@ -220,6 +228,7 @@ const agent = {
   Asset,
   Assignment,
   MyAssignment,
+  ReturningRequest,
 };
 
 export default agent;

@@ -13,7 +13,7 @@ namespace AssetManagement.Data.Data.SeedDatabase {
                     AssignedById = new Guid("4C196276-54F0-48AE-ACC9-ABEB0CB598F5"),
                     Note = "Assignment 11",
                     State = AssignmentState.Returned,
-                    AssignedDate = DateTime.Now,
+                    AssignedDate = new DateTime(2024,7,7),
                     LastUpdated = DateTime.Now
                 },
                 new Assignment {
@@ -23,7 +23,7 @@ namespace AssetManagement.Data.Data.SeedDatabase {
                     AssignedById = new Guid("4C196276-54F0-48AE-ACC9-ABEB0CB598F5"),
                     Note = "Assignment 12",
                     State = AssignmentState.Returned,
-                    AssignedDate = DateTime.Now,
+                    AssignedDate = new DateTime(2024,7,8),
                     LastUpdated = DateTime.Now
                 },
                 new Assignment
@@ -34,7 +34,7 @@ namespace AssetManagement.Data.Data.SeedDatabase {
                     AssignedById = new Guid("4C196276-54F0-48AE-ACC9-ABEB0CB598F5"),
                     Note = "Assignment 13",
                     State = AssignmentState.Returned,
-                    AssignedDate = DateTime.Now,
+                    AssignedDate = new DateTime(2024,7,5),
                     LastUpdated = DateTime.Now
                 },
                 new Assignment
@@ -45,7 +45,7 @@ namespace AssetManagement.Data.Data.SeedDatabase {
                     AssignedById = new Guid("2C484448-B14E-46F3-957E-A8719F14BBD6"),
                     Note = "Assignment 14",
                     State = AssignmentState.Returned,
-                    AssignedDate = DateTime.Now,
+                    AssignedDate = new DateTime(2024,7,9),
                     LastUpdated = DateTime.Now
                 },
             ];
@@ -56,6 +56,7 @@ namespace AssetManagement.Data.Data.SeedDatabase {
                 {
                     Id = Guid.NewGuid(),
                     AssignmentId = new Guid("ab64f62d-71a0-4520-9522-2bbbebbc1c7b"),
+                    RequestedByUserId = new Guid("59339CDA-7D6D-4CBF-833C-367D7DB965E1"),
                     AcceptedByUserId = new Guid("4C196276-54F0-48AE-ACC9-ABEB0CB598F5"),
                     ReturnedDate = DateTime.Now,
                     State = ReturningRequestState.Completed
@@ -64,6 +65,7 @@ namespace AssetManagement.Data.Data.SeedDatabase {
                 {
                     Id = Guid.NewGuid(),
                     AssignmentId = new Guid("1f01cf21-4609-41d8-be82-446f42f6dd68"),
+                    RequestedByUserId = new Guid("5A1C0199-F674-408D-84FE-37E2A890D93B"),
                     AcceptedByUserId = new Guid("4C196276-54F0-48AE-ACC9-ABEB0CB598F5"),
                     ReturnedDate = DateTime.Now,
                     State = ReturningRequestState.Completed
@@ -72,6 +74,7 @@ namespace AssetManagement.Data.Data.SeedDatabase {
                 {
                     Id = Guid.NewGuid(),
                     AssignmentId = new Guid("26c42587-dd3c-4546-a1e5-e286ca0bc2a2"),
+                    RequestedByUserId = new Guid("60C17FCB-178E-4181-AD50-3690524F5190"),
                     AcceptedByUserId = new Guid("4C196276-54F0-48AE-ACC9-ABEB0CB598F5"),
                     ReturnedDate = DateTime.Now,
                     State = ReturningRequestState.Completed
@@ -80,7 +83,8 @@ namespace AssetManagement.Data.Data.SeedDatabase {
                 {
                     Id = Guid.NewGuid(),
                     AssignmentId = new Guid("a50232d9-c3da-44d6-81a1-da151617d805"),
-                    AcceptedByUserId = new Guid("2C484448-B14E-46F3-957E-A8719F14BBD6"),
+                    RequestedByUserId = new Guid("06F00EB0-B413-4096-AC54-8A501D96D3DA"),
+                    AcceptedByUserId = new Guid("4C196276-54F0-48AE-ACC9-ABEB0CB598F5"),
                     ReturnedDate = DateTime.Now,
                     State = ReturningRequestState.Completed
                 },

@@ -1,4 +1,11 @@
-﻿using AssetManagement.Application.Services.Interfaces;
+﻿using AssetManagement.Application.Common;
+using AssetManagement.Application.Extensions;
+using AssetManagement.Application.Services.Interfaces;
+using AssetManagement.Contracts.Dtos.PaginationDtos;
+using AssetManagement.Contracts.Dtos.ReturningRequestDtos.Requests;
+using AssetManagement.Contracts.Dtos.ReturningRequestDtos.Responses;
+using AssetManagement.Domain.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AssetManagement.Application.Controllers {
@@ -10,6 +17,22 @@ namespace AssetManagement.Application.Controllers {
 
         public ReturningRequestController(IReturningRequestService returningRequestService) {
             _returningRequestService = returningRequestService;
+        }
+
+        [HttpGet]
+        [Authorize(Roles = $"{RoleConstant.AdminRole}")]
+        public async Task<ActionResult<BaseResult<PagingDto<FilterReturningResponse>>>> GetAllAsync([FromQuery] FilterReturningRequest request) {
+            var data = await _returningRequestService.FilterReturningAsync(request);
+            PaginationMetaData metaData = new PaginationMetaData(data.TotalItemCount, data.PageSize, data.CurrentPage);
+            Response.AddPaginationHeader(metaData);
+
+            var result = new BaseResult<List<FilterReturningResponse>>()
+            {
+                IsSuccess = true,
+                Error = null,
+                Result = data.Data
+            };
+            return Ok(result);
         }
     }
 }
