@@ -210,6 +210,7 @@ export default function ManagementAssignmentPage() {
           direction="row"
           justifyContent="space-between"
           alignItems="center"
+          spacing={12}
           className="mt-3"
         >
           <Stack

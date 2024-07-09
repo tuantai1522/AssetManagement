@@ -135,7 +135,7 @@ export default function UserList(props: UserListProp) {
   ];
 
   return (
-    <div className="min-h-60 mb-4 overflow-x-auto">
+    <div className="min-h-60">
       <AppTable<FilterUser>
         order={props.order}
         setOrder={props.setOrder}
