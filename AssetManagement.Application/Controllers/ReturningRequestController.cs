@@ -14,14 +14,13 @@ namespace AssetManagement.Application.Controllers {
     public class ReturningRequestController : ControllerBase {
 
         private readonly IReturningRequestService _returningRequestService;
-
         public ReturningRequestController(IReturningRequestService returningRequestService) 
         {
             _returningRequestService = returningRequestService;
         }
         [HttpGet]
         [Authorize(Roles = $"{RoleConstant.AdminRole}")]
-        public async Task<ActionResult<BaseResult<PagingDto<FilterReturningResponse>>>> GetAllAsync([FromQuery] FilterReturningRequest request) \
+        public async Task<ActionResult<BaseResult<PagingDto<FilterReturningResponse>>>> GetAllAsync([FromQuery] FilterReturningRequest request) 
         {
             var data = await _returningRequestService.FilterReturningAsync(request);
             PaginationMetaData metaData = new PaginationMetaData(data.TotalItemCount, data.PageSize, data.CurrentPage);
