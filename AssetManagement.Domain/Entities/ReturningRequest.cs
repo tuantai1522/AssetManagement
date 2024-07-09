@@ -15,8 +15,11 @@ namespace AssetManagement.Domain.Entities
                 public virtual Assignment Assignment { get; set; } = null!;
                 public Guid AssignmentId { get; set; }
 
-                public virtual AppUser? AcceptedByUser { get; set; }
-                public Guid? AcceptedByUserId { get; set; }
+        public virtual AppUser RequestedByUser { get; set; } = null!;
+        public Guid RequestedByUserId { get; set; }
+
+        public virtual AppUser? AcceptedByUser { get; set; }
+        public Guid? AcceptedByUserId { get; set; }
 
         }
 }
