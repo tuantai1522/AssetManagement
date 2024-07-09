@@ -4,6 +4,7 @@ using AssetManagement.Data.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AssetManagement.Data.Data.Migrations
 {
     [DbContext(typeof(AssetManagementDbContext))]
-    partial class AssetManagementDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240709065356_ReturningRequestSeedsData")]
+    partial class ReturningRequestSeedsData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -214,9 +217,9 @@ namespace AssetManagement.Data.Data.Migrations
                             Id = new Guid("ab64f62d-71a0-4520-9522-2bbbebbc1c7b"),
                             AssetId = new Guid("81436c8d-4090-4abf-a926-14d061f1f9c9"),
                             AssignedById = new Guid("4c196276-54f0-48ae-acc9-abeb0cb598f5"),
-                            AssignedDate = new DateTime(2024, 7, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AssignedDate = new DateTime(2024, 7, 9, 13, 53, 55, 739, DateTimeKind.Local).AddTicks(2849),
                             AssignedToId = new Guid("48bc2207-ec50-455d-99e4-990995f809e0"),
-                            LastUpdated = new DateTime(2024, 7, 9, 15, 49, 28, 667, DateTimeKind.Local).AddTicks(233),
+                            LastUpdated = new DateTime(2024, 7, 9, 13, 53, 55, 739, DateTimeKind.Local).AddTicks(2849),
                             Note = "Assignment 11",
                             State = 5
                         },
@@ -225,9 +228,9 @@ namespace AssetManagement.Data.Data.Migrations
                             Id = new Guid("1f01cf21-4609-41d8-be82-446f42f6dd68"),
                             AssetId = new Guid("f673f337-c449-4ff1-97cd-366b79cf3a63"),
                             AssignedById = new Guid("4c196276-54f0-48ae-acc9-abeb0cb598f5"),
-                            AssignedDate = new DateTime(2024, 7, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AssignedDate = new DateTime(2024, 7, 9, 13, 53, 55, 739, DateTimeKind.Local).AddTicks(2855),
                             AssignedToId = new Guid("ede0c1cd-5d7e-422c-a787-8f473c45123b"),
-                            LastUpdated = new DateTime(2024, 7, 9, 15, 49, 28, 667, DateTimeKind.Local).AddTicks(239),
+                            LastUpdated = new DateTime(2024, 7, 9, 13, 53, 55, 739, DateTimeKind.Local).AddTicks(2856),
                             Note = "Assignment 12",
                             State = 5
                         },
@@ -236,9 +239,9 @@ namespace AssetManagement.Data.Data.Migrations
                             Id = new Guid("26c42587-dd3c-4546-a1e5-e286ca0bc2a2"),
                             AssetId = new Guid("f0dff85d-6cc7-496b-8437-40b50298e62c"),
                             AssignedById = new Guid("4c196276-54f0-48ae-acc9-abeb0cb598f5"),
-                            AssignedDate = new DateTime(2024, 7, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AssignedDate = new DateTime(2024, 7, 9, 13, 53, 55, 739, DateTimeKind.Local).AddTicks(2860),
                             AssignedToId = new Guid("256a9cef-7479-4563-a104-8b310e16ffe0"),
-                            LastUpdated = new DateTime(2024, 7, 9, 15, 49, 28, 667, DateTimeKind.Local).AddTicks(244),
+                            LastUpdated = new DateTime(2024, 7, 9, 13, 53, 55, 739, DateTimeKind.Local).AddTicks(2861),
                             Note = "Assignment 13",
                             State = 5
                         },
@@ -247,9 +250,9 @@ namespace AssetManagement.Data.Data.Migrations
                             Id = new Guid("a50232d9-c3da-44d6-81a1-da151617d805"),
                             AssetId = new Guid("0eab77a8-ed89-4483-9d98-6ccafa74d450"),
                             AssignedById = new Guid("2c484448-b14e-46f3-957e-a8719f14bbd6"),
-                            AssignedDate = new DateTime(2024, 7, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AssignedDate = new DateTime(2024, 7, 9, 13, 53, 55, 739, DateTimeKind.Local).AddTicks(2866),
                             AssignedToId = new Guid("2450bc08-8b39-41cf-90e9-7b10510c557e"),
-                            LastUpdated = new DateTime(2024, 7, 9, 15, 49, 28, 667, DateTimeKind.Local).AddTicks(249),
+                            LastUpdated = new DateTime(2024, 7, 9, 13, 53, 55, 739, DateTimeKind.Local).AddTicks(2866),
                             Note = "Assignment 14",
                             State = 5
                         });
@@ -284,9 +287,6 @@ namespace AssetManagement.Data.Data.Migrations
                     b.Property<Guid>("AssignmentId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("RequestedByUserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime?>("ReturnedDate")
                         .HasColumnType("datetime2");
 
@@ -299,45 +299,39 @@ namespace AssetManagement.Data.Data.Migrations
 
                     b.HasIndex("AssignmentId");
 
-                    b.HasIndex("RequestedByUserId");
-
                     b.ToTable("ReturningRequest");
 
                     b.HasData(
                         new
                         {
-                            Id = new Guid("d65a4de9-e65b-4df8-a4ca-937b0e2945a3"),
+                            Id = new Guid("310d7095-14ab-4db5-80e8-342edade11ed"),
                             AcceptedByUserId = new Guid("4c196276-54f0-48ae-acc9-abeb0cb598f5"),
                             AssignmentId = new Guid("ab64f62d-71a0-4520-9522-2bbbebbc1c7b"),
-                            RequestedByUserId = new Guid("59339cda-7d6d-4cbf-833c-367d7db965e1"),
-                            ReturnedDate = new DateTime(2024, 7, 9, 15, 49, 28, 667, DateTimeKind.Local).AddTicks(287),
+                            ReturnedDate = new DateTime(2024, 7, 9, 13, 53, 55, 739, DateTimeKind.Local).AddTicks(2903),
                             State = 1
                         },
                         new
                         {
-                            Id = new Guid("d892c782-34de-401f-abd8-145f2682b463"),
+                            Id = new Guid("a1746cd6-d446-4304-931c-dc135c70fa1a"),
                             AcceptedByUserId = new Guid("4c196276-54f0-48ae-acc9-abeb0cb598f5"),
                             AssignmentId = new Guid("1f01cf21-4609-41d8-be82-446f42f6dd68"),
-                            RequestedByUserId = new Guid("5a1c0199-f674-408d-84fe-37e2a890d93b"),
-                            ReturnedDate = new DateTime(2024, 7, 9, 15, 49, 28, 667, DateTimeKind.Local).AddTicks(294),
+                            ReturnedDate = new DateTime(2024, 7, 9, 13, 53, 55, 739, DateTimeKind.Local).AddTicks(2909),
                             State = 1
                         },
                         new
                         {
-                            Id = new Guid("d229472a-9bab-4105-b4e7-7e63d9c0c50a"),
+                            Id = new Guid("46702563-2808-41b1-892d-3b7b26d9737b"),
                             AcceptedByUserId = new Guid("4c196276-54f0-48ae-acc9-abeb0cb598f5"),
                             AssignmentId = new Guid("26c42587-dd3c-4546-a1e5-e286ca0bc2a2"),
-                            RequestedByUserId = new Guid("60c17fcb-178e-4181-ad50-3690524f5190"),
-                            ReturnedDate = new DateTime(2024, 7, 9, 15, 49, 28, 667, DateTimeKind.Local).AddTicks(298),
+                            ReturnedDate = new DateTime(2024, 7, 9, 13, 53, 55, 739, DateTimeKind.Local).AddTicks(2913),
                             State = 1
                         },
                         new
                         {
-                            Id = new Guid("2e8c9694-c0d6-4252-8d4c-8d9cb2608297"),
-                            AcceptedByUserId = new Guid("4c196276-54f0-48ae-acc9-abeb0cb598f5"),
+                            Id = new Guid("8621630b-f5fe-4861-8b70-f0617d08668e"),
+                            AcceptedByUserId = new Guid("2c484448-b14e-46f3-957e-a8719f14bbd6"),
                             AssignmentId = new Guid("a50232d9-c3da-44d6-81a1-da151617d805"),
-                            RequestedByUserId = new Guid("06f00eb0-b413-4096-ac54-8a501d96d3da"),
-                            ReturnedDate = new DateTime(2024, 7, 9, 15, 49, 28, 667, DateTimeKind.Local).AddTicks(303),
+                            ReturnedDate = new DateTime(2024, 7, 9, 13, 53, 55, 739, DateTimeKind.Local).AddTicks(2917),
                             State = 1
                         });
                 });
@@ -553,17 +547,9 @@ namespace AssetManagement.Data.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("AssetManagement.Domain.Entities.AppUser", "RequestedByUser")
-                        .WithMany()
-                        .HasForeignKey("RequestedByUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("AcceptedByUser");
 
                     b.Navigation("Assignment");
-
-                    b.Navigation("RequestedByUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

@@ -1,9 +1,7 @@
 using AssetManagement.Domain.Enums;
 
-namespace AssetManagement.Domain.Entities
-{
-    public class Assignment
-    {
+namespace AssetManagement.Domain.Entities {
+    public class Assignment {
         public Guid Id { get; set; }
         public Guid AssetId { get; set; }
         public Guid AssignedToId { get; set; }
