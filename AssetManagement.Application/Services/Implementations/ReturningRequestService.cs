@@ -63,7 +63,7 @@ namespace AssetManagement.Application.Services.Implementations {
                 Id = a.Id,
                 AssetCode = a.Assignment!.Asset!.AssetCode,
                 AssetName = a.Assignment.Asset.Name,
-                RequestedBy = a.Assignment!.AssignedToUser!.UserName,
+                RequestedBy = a.RequestedByUser.UserName,
                 AcceptedBy = a.AcceptedByUser!.UserName,
                 AssignedDate = a.Assignment.AssignedDate,
                 ReturnedDate = a.ReturnedDate,
@@ -81,7 +81,6 @@ namespace AssetManagement.Application.Services.Implementations {
             };
         }
 
-
         #region Private methods
         private Expression<Func<ReturningRequest, bool>> GetSpecification(FilterReturningRequest filter, AppUser currentUser) {
             Expression<Func<ReturningRequest, bool>> filterSpecification = PredicateBuilder.True<ReturningRequest>();
@@ -91,7 +90,7 @@ namespace AssetManagement.Application.Services.Implementations {
                 filterSpecification = filterSpecification.And(
                     r => (r.Assignment != null && r.Assignment.Asset != null && r.Assignment.Asset.Name != null && r.Assignment.Asset.Name.ToLower().Contains(filter.Search.Trim().ToLower()))
                     || (r.Assignment != null && r.Assignment.Asset != null && r.Assignment.Asset.AssetCode != null && r.Assignment.Asset.AssetCode.ToLower().Contains(filter.Search.Trim().ToLower()))
-                    || (r.Assignment != null && r.Assignment.AssignedToUser != null && r.Assignment.AssignedToUser.UserName != null && r.Assignment.AssignedToUser.UserName.ToLower().Contains(filter.Search.Trim().ToLower())));
+                    || (r.RequestedByUser != null && r.RequestedByUser.UserName != null && r.RequestedByUser.UserName.ToLower().Contains(filter.Search.Trim().ToLower())));
             }
 
             if (filter.States != null && filter.States.Length > 0) {
@@ -112,8 +111,8 @@ namespace AssetManagement.Application.Services.Implementations {
                 { SortAssetCode: SortOption.Desc } => q => q.OrderByDescending(r => r.Assignment.Asset!.AssetCode),
                 { SortAssetName: SortOption.Asc } => q => q.OrderBy(r => r.Assignment.Asset!.Name),
                 { SortAssetName: SortOption.Desc } => q => q.OrderByDescending(r => r.Assignment.Asset!.Name),
-                { SortRequestedBy: SortOption.Asc } => q => q.OrderBy(r => r.Assignment.AssignedToUser!.UserName),
-                { SortRequestedBy: SortOption.Desc } => q => q.OrderByDescending(r => r.Assignment.AssignedToUser!.UserName),
+                { SortRequestedBy: SortOption.Asc } => q => q.OrderBy(r => r.RequestedByUser!.UserName),
+                { SortRequestedBy: SortOption.Desc } => q => q.OrderByDescending(r => r.RequestedByUser!.UserName),
                 { SortAssignedDate: SortOption.Asc } => q => q.OrderBy(r => r.Assignment.AssignedDate),
                 { SortAssignedDate: SortOption.Desc } => q => q.OrderByDescending(r => r.Assignment.AssignedDate),
                 { SortAcceptedBy: SortOption.Asc } => q => q.OrderBy(r => r.AcceptedByUser!.UserName),
