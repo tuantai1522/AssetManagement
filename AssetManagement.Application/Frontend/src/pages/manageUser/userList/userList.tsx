@@ -5,7 +5,7 @@ import AppTable, {
 } from "../../../app/components/table/sortTable";
 import { FilterUser } from "../../../app/models/user/User";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import EditIcon from '@mui/icons-material/Edit';
+import EditIcon from "@mui/icons-material/Edit";
 import { useNavigate } from "react-router-dom";
 export interface UserListProp {
   data: FilterUser[];
@@ -25,43 +25,41 @@ export default function UserList(props: UserListProp) {
 
   const columns: ColumnDefinition[] = [
     {
-      id: 'staffCode',
-        fieldName: "staffCode",
-        disablePadding: true,
-        label: 'Staff Code',
-        className: "font-bold",
-        rowRatio: "w-1/12",
-        minWidth: "100px",
-        style: {
-            border: "none",
-            borderBottom: "none",
-            
-        }
+      id: "staffCode",
+      fieldName: "staffCode",
+      disablePadding: true,
+      label: "Staff Code",
+      className: "font-bold",
+      rowRatio: "w-1/12",
+      minWidth: "100px",
+      style: {
+        border: "none",
+        borderBottom: "none",
+      },
     },
     {
-      id: 'fullName',
-      fieldName: 'fullName',
+      id: "fullName",
+      fieldName: "fullName",
       disablePadding: false,
-      label: 'Full Name',
+      label: "Full Name",
       className: "font-bold",
       minWidth: "250px",
       style: {
-          border: "none",
-          borderBottom: "none",
-          
+        border: "none",
+        borderBottom: "none",
       },
 
       rowRatio: "w-4/12",
     },
     {
-      id: 'username',
-      fieldName: 'username',
+      id: "username",
+      fieldName: "username",
       disablePadding: false,
-      label: 'Username',
+      label: "Username",
       className: "font-bold ",
       style: {
-          border: "none",
-          borderBottom: "none"
+        border: "none",
+        borderBottom: "none",
       },
       rowRatio: "w-2/12",
       disableSort: true,
@@ -70,7 +68,7 @@ export default function UserList(props: UserListProp) {
       id: "joinedDate",
       fieldName: "joinedDate",
       disablePadding: false,
-      label: 'Joined Date',
+      label: "Joined Date",
       className: "font-bold ",
       minWidth: "120px",
       style: {
@@ -80,15 +78,15 @@ export default function UserList(props: UserListProp) {
       rowRatio: "w-2/12",
     },
     {
-      id: 'type',
-      fieldName: 'types',
+      id: "type",
+      fieldName: "types",
       disablePadding: false,
-      label: 'Type',
+      label: "Type",
       className: "font-bold ",
       minWidth: "80px",
       style: {
-          border: "none",
-          borderBottom: "none",
+        border: "none",
+        borderBottom: "none",
       },
       rowRatio: "w-2/12",
     },
@@ -105,7 +103,7 @@ export default function UserList(props: UserListProp) {
       minWidth: "40px",
       disableSort: true,
       renderCell: (params) => (
-        <div className="flex w-fit justify-end items-center">
+        <div className="flex w-fit justify-end items-center gap-2">
           <button
             color="primary"
             className="text-gray-500"
