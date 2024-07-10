@@ -1,4 +1,4 @@
-using AssetManagement.Contracts.Dtos.PaginationDtos;
+﻿using AssetManagement.Contracts.Dtos.PaginationDtos;
 using AssetManagement.Contracts.Dtos.ReturningRequestDtos.Requests;
 using AssetManagement.Contracts.Dtos.ReturningRequestDtos.Responses;
 using System.Threading.Tasks;
@@ -12,5 +12,6 @@ namespace AssetManagement.Application.Services.Interfaces
         Task<PagingDto<FilterReturningResponse>> FilterReturningAsync(FilterReturningRequest filter);
         Task CreateRequestByAdminAsync(Guid id);
         Task CreateRequestByUserAsync(Guid id);
+        Task CancelReturningRequest(Guid id);
     }
 }

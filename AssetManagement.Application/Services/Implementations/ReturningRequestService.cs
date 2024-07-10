@@ -9,6 +9,7 @@ using AssetManagement.Contracts.Enums;
 using AssetManagement.Data.Interfaces;
 using AssetManagement.Domain.Entities;
 using AssetManagement.Domain.Enums;
+using AssetManagement.Domain.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -154,6 +155,29 @@ namespace AssetManagement.Application.Services.Implementations
 
 
             await CreateRequestByAccountAsync(assignment, user);
+        }
+        public async Task CancelReturningRequest(Guid id)
+        {
+            var currentUser = await _userManager.Users
+              .Where(u => _currentUser.UserId.Equals(u.Id))
+              .Select(u => new AppUser()
+              {
+                  Id = u.Id,
+                  Location = u.Location,
+              })
+              .FirstOrDefaultAsync();
+
+            var requestReturning = await _unitOfWork.ReturningRequestRepository.GetRequestByIdAsync(id) ?? throw new NotFoundException(ErrorStrings.REQUEST_NOT_FOUND);
+            //Check user if user's location matchs assignment's location
+            if (currentUser!.Location != requestReturning!.Assignment.Asset!.Location)
+                throw new BadRequestException("Can't delete request because the user's location does not match assignment location");
+            //Can't delete asset which have state is Assigned
+            if (requestReturning.State != ReturningRequestState.WaitingForReturning)
+                throw new BadRequestException("Can't delete request which state is not waiting for returning");
+            Assignment assignment = requestReturning.Assignment;
+            assignment.State = AssignmentState.Accepted;
+            _unitOfWork.ReturningRequestRepository.Delete(id);
+            await _unitOfWork.SaveChangesAsync();
         }
 
         #region Private methods

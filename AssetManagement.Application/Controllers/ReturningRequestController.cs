@@ -80,5 +80,20 @@ namespace AssetManagement.Application.Controllers
             };
             return Ok(result);
         }
+
+        [HttpPut]
+        [Route("cancel/{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult> CancelRequestForReturningAsset(Guid id)
+        {
+            await _returningRequestService.CancelReturningRequest(id);
+            var result = new BaseResult<Object>()
+            {
+                IsSuccess = true,
+                Error = null,
+                Result = { },
+            };
+            return Ok(result);
+        }
     }
 }
