@@ -90,99 +90,117 @@ export default function MyAssignmentList(props: MyAssignmentListProp) {
       label: "",
       minWidth: "40px",
       disableSort: true,
-      renderCell: (params) => (
-        <div className="flex justify-end">
-          <button
-            disabled={params?.state !== AssignmentStateEnum['Waiting for acceptance']}
-            className={`text-red-600 mr-2 ${params?.state !== AssignmentStateEnum['Waiting for acceptance']
-              ? "opacity-40"
-              : ""
+      renderCell: (params) => {
+        const isDisableReturning =
+          params?.state !== AssignmentStateEnum.Accepted;
+        return (
+          <div className="flex justify-end gap-1">
+            <button
+              disabled={
+                params?.state !== AssignmentStateEnum["Waiting for acceptance"]
+              }
+              className={`text-red-600 ${
+                params?.state !== AssignmentStateEnum["Waiting for acceptance"]
+                  ? "opacity-40"
+                  : ""
               }`}
-            onClick={(e) => {
-              e.stopPropagation();
-              setCurrentRespondId(params?.id);
-              setResponseStates({
-                ...responseStates,
-                isAccepted: true,
-                respondModalMessage: "Do you want to accept this assignment?",
-                isRespondModalOpen: true,
-                confirmButtonMessage: "Accept",
-              });
-            }}
-          >
-            {" "}
-            <CheckIcon
-              sx={{
-                stroke: 'currentColor',  // Use the current color for stroke
-                strokeWidth: 1,          // Adjust stroke width as needed
+              onClick={(e) => {
+                e.stopPropagation();
+                setCurrentAssignmentId(params?.id);
+                setResponseStates({
+                  ...responseStates,
+                  isAccepted: true,
+                  respondModalMessage: "Do you want to accept this assignment?",
+                  isRespondModalOpen: true,
+                  confirmButtonMessage: "Accept",
+                });
               }}
-            />
-          </button>
+            >
+              {" "}
+              <CheckIcon
+                sx={{
+                  stroke: "currentColor", // Use the current color for stroke
+                  strokeWidth: 1, // Adjust stroke width as needed
+                }}
+              />
+            </button>
 
-          <button
-            disabled={params?.state !== AssignmentStateEnum['Waiting for acceptance']}
-            className={`text-black mr-2 ${params?.state !== AssignmentStateEnum['Waiting for acceptance']
-              ? "opacity-40"
-              : ""
+            <button
+              disabled={
+                params?.state !== AssignmentStateEnum["Waiting for acceptance"]
+              }
+              className={`text-black  ${
+                params?.state !== AssignmentStateEnum["Waiting for acceptance"]
+                  ? "opacity-40"
+                  : ""
               }`}
-            onClick={(e) => {
-              e.stopPropagation();
-              setCurrentRespondId(params?.id);
-              setResponseStates({
-                ...responseStates,
-                isAccepted: false,
-                respondModalMessage: "Do you want to decline this assignment?",
-                isRespondModalOpen: true,
-                confirmButtonMessage: "Decline",
-              });
-            }}
-          >
-            {" "}
-            <CloseIcon
-              sx={{
-                stroke: 'currentColor',  // Use the current color for stroke
-                strokeWidth: 1,          // Adjust stroke width as needed
+              onClick={(e) => {
+                e.stopPropagation();
+                setCurrentAssignmentId(params?.id);
+                setResponseStates({
+                  ...responseStates,
+                  isAccepted: false,
+                  respondModalMessage:
+                    "Do you want to decline this assignment?",
+                  isRespondModalOpen: true,
+                  confirmButtonMessage: "Decline",
+                });
               }}
-            />
-          </button>
+            >
+              {" "}
+              <CloseIcon
+                sx={{
+                  stroke: "currentColor", // Use the current color for stroke
+                  strokeWidth: 1, // Adjust stroke width as needed
+                }}
+              />
+            </button>
 
-          <button
-            disabled={params?.state !== AssignmentStateEnum.Accepted}
-            className={`text-blue-500 ${params?.state !== AssignmentStateEnum.Accepted
-              ? "opacity-40"
-              : ""
-              }`}
-            onClick={(e) => {
-              e.stopPropagation();
-              alert(params?.id);
-            }}
-          >
-            {" "}
-            <ReplayIcon
-              sx={{
-                stroke: 'currentColor',  // Use the current color for stroke
-                strokeWidth: 1,          // Adjust stroke width as needed
+            <button
+              disabled={isDisableReturning}
+              className={`text-blue-500`}
+              onClick={(e) => {
+                e.stopPropagation();
+                setCurrentAssignmentId(params?.id);
+                setResponseStates({
+                  ...responseStates,
+                  isOpenReturnModal: true,
+                });
               }}
-            />
-          </button>
-        </div>
-      ),
+            >
+              {" "}
+              <ReplayIcon
+                color="primary"
+                className={`${isDisableReturning && "opacity-50"}`}
+                sx={{
+                  stroke: "currentColor",
+                  strokeWidth: 1,
+                }}
+              />
+            </button>
+          </div>
+        );
+      },
     },
   ];
 
-  const [currentRespondId, setCurrentRespondId] = useState("");
+  const [currentAssignmentId, setCurrentAssignmentId] = useState("");
   const [responseStates, setResponseStates] = useState({
     isRespondModalOpen: false,
     respondModalMessage: "",
     isAccepted: true,
     confirmButtonMessage: "Accept",
+    isOpenReturnModal: false,
+    returnModalMessage:
+      "Do you want to create a returning request for this asset?",
+    returnButton: "Yes",
   });
 
   const onConfirmResponse = async (isAccepted: boolean) => {
     const request: AssignmentRespondRequest = {
       isAccepted: isAccepted,
     };
-    await agent.Assignment.respond(currentRespondId, request)
+    await agent.Assignment.respond(currentAssignmentId, request)
       .then(() => {})
       .catch((e: any) => {
         console.log(e);
@@ -190,6 +208,17 @@ export default function MyAssignmentList(props: MyAssignmentListProp) {
       .finally(() => {
         props.refetchData();
       });
+  };
+
+  const onConfirmReturn = async () => {
+    try {
+      if (!currentAssignmentId) return;
+      await agent.ReturningRequest.userCreateRequest(currentAssignmentId);
+      setResponseStates({ ...responseStates, isOpenReturnModal: false });
+      props.refetchData();
+    } catch (error) {
+      console.log("Error when confirm return: ", error);
+    }
   };
 
   return (
@@ -218,6 +247,14 @@ export default function MyAssignmentList(props: MyAssignmentListProp) {
             setResponseStates({ ...responseStates, isRespondModalOpen: false });
             onConfirmResponse(responseStates.isAccepted);
           }}
+        />
+        <ConfirmModal
+          isOpen={responseStates.isOpenReturnModal}
+          message={responseStates.returnModalMessage}
+          onClose={() =>
+            setResponseStates({ ...responseStates, isOpenReturnModal: false })
+          }
+          onConfirm={onConfirmReturn}
         />
       </div>
     </>

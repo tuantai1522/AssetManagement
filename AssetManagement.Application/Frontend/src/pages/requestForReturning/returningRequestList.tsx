@@ -1,29 +1,31 @@
-import { Edit, HighlightOff, Replay } from "@mui/icons-material";
+import CloseIcon from "@mui/icons-material/Close";
+import CheckIcon from "@mui/icons-material/Check";
 import AppTable, {
   ColumnDefinition,
   Order,
 } from "../../app/components/table/sortTable";
-import { AssignmentStateEnum } from "../../app/types/enum";
-import { useState } from "react";
+import { ReturningRequestStateEnum } from "../../app/types/enum";
 import ConfirmModal from "../../app/components/confirmModal";
+import { useState } from "react";
 import agent from "../../app/api/agent";
 
-export interface AssignmentRowData {
+export interface ReturningRequestRowData {
   id: string;
   assetCode?: string;
   assetName?: string;
-  assignedTo?: string;
-  assignedBy?: string;
+  requestedBy?: string;
   state?: string;
   assignedDate?: string;
+  acceptedBy?: string;
+  returnedDate?: string;
   action: {
     id: string;
     state?: string;
   };
 }
 
-export interface AssignmentListProp {
-  data: AssignmentRowData[];
+export interface Props {
+  data: ReturningRequestRowData[];
   isLoading: boolean;
   error: any;
   order: Order;
@@ -34,26 +36,7 @@ export interface AssignmentListProp {
   refetchData: () => void;
 }
 
-export default function AssignmentList(props: AssignmentListProp) {
-  const [currentAssignmentId, setCurrentAssignmentId] = useState("");
-  const [responseStates, setResponseStates] = useState({
-    isOpenReturnModal: false,
-    returnModalMessage:
-      "Do you want to create a returning request for this asset?",
-    confirmReturnButtonMessage: "Yes",
-  });
-
-  const onConfirmReturn = async () => {
-    try {
-      if (!currentAssignmentId) return;
-      await agent.ReturningRequest.adminCreateRequest(currentAssignmentId);
-      setResponseStates({ ...responseStates, isOpenReturnModal: false });
-      props.refetchData();
-    } catch (error) {
-      console.log("Error when confirm return: ", error);
-    }
-  };
-
+const ReturningRequestList = (props: Props) => {
   const columns: ColumnDefinition[] = [
     {
       id: "assetCode",
@@ -82,23 +65,10 @@ export default function AssignmentList(props: AssignmentListProp) {
       rowRatio: "w-4/12",
     },
     {
-      id: "assignedTo",
-      fieldName: "assignedTo",
+      id: "requestedBy",
+      fieldName: "requestedBy",
       disablePadding: false,
-      label: "Assigned to",
-      className: "font-bold ",
-      minWidth: "130px",
-      style: {
-        border: "none",
-        borderBottom: "none",
-      },
-      rowRatio: "w-1/12",
-    },
-    {
-      id: "assignedBy",
-      fieldName: "assignedBy",
-      disablePadding: false,
-      label: "Assigned by",
+      label: "Requested by",
       className: "font-bold ",
       minWidth: "130px",
       style: {
@@ -112,6 +82,32 @@ export default function AssignmentList(props: AssignmentListProp) {
       fieldName: "assignedDate",
       disablePadding: false,
       label: "Assigned date",
+      className: "font-bold ",
+      minWidth: "130px",
+      style: {
+        border: "none",
+        borderBottom: "none",
+      },
+      rowRatio: "w-1/12",
+    },
+    {
+      id: "acceptedBy",
+      fieldName: "acceptedBy",
+      disablePadding: false,
+      label: "Accepted by",
+      className: "font-bold ",
+      minWidth: "130px",
+      style: {
+        border: "none",
+        borderBottom: "none",
+      },
+      rowRatio: "w-1/12",
+    },
+    {
+      id: "returnedDate",
+      fieldName: "returnedDate",
+      disablePadding: false,
+      label: "Returned date",
       className: "font-bold ",
       minWidth: "130px",
       style: {
@@ -149,50 +145,42 @@ export default function AssignmentList(props: AssignmentListProp) {
       renderCell: (params) => {
         const isDisable =
           params?.state !==
-          AssignmentStateEnum[AssignmentStateEnum["Waiting for acceptance"]];
-        const isDisableReturning =
-          params?.state !==
-          AssignmentStateEnum[AssignmentStateEnum["Accepted"]];
-
+          ReturningRequestStateEnum[
+            ReturningRequestStateEnum["Waiting for returning"]
+          ];
         return (
-          <div className="flex w-fit justify-end items-center gap-1">
+          <div className="flex w-fit justify-end items-center gap-2">
             <button
               disabled={isDisable}
               color="primary"
-              className={isDisable ? "text-gray-300" : "text-gray-500"}
+              className={`text-red-600 ${isDisable ? "opacity-40" : ""}`}
               onClick={(e) => {
                 e.stopPropagation();
-                alert(params?.id);
-              }}
-            >
-              <Edit />
-            </button>
-            <button
-              disabled={isDisable}
-              color="primary"
-              className={isDisable ? "text-red-200" : "text-red-500"}
-              onClick={(e) => {
-                e.stopPropagation();
-                alert(params?.id);
-              }}
-            >
-              <HighlightOff />
-            </button>
-            <button
-              disabled={isDisableReturning}
-              className="text-blue-600"
-              onClick={(e) => {
-                e.stopPropagation();
-                setCurrentAssignmentId(params?.id);
-                setResponseStates({
-                  ...responseStates,
-                  isOpenReturnModal: true,
+                setCurrentRequestId(params?.id);
+                setCompleteResponseStates({
+                  ...completeResponseStates,
+                  isModalOpen: true,
                 });
               }}
             >
-              <Replay
-                color="primary"
-                className={`${isDisableReturning && "opacity-50"}`}
+              <CheckIcon
+                sx={{
+                  stroke: "currentColor",
+                  strokeWidth: 1,
+                }}
+              />
+            </button>
+            <button
+              disabled={isDisable}
+              color="primary"
+              className={`text-black ${isDisable ? "opacity-40" : ""}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                setCurrentRequestId(params?.id);
+                setIsModalCancelOpen(true);
+              }}
+            >
+              <CloseIcon
                 sx={{
                   stroke: "currentColor",
                   strokeWidth: 1,
@@ -205,10 +193,34 @@ export default function AssignmentList(props: AssignmentListProp) {
     },
   ];
 
+  const [currentRequestId, setCurrentRequestId] = useState("");
+  const [completeResponseStates, setCompleteResponseStates] = useState({
+    isModalOpen: false,
+    modalMessage: "Do you want to mark this returning request as 'Completed'?",
+    confirmMessage: "Yes",
+    cancelMessage: "No",
+  });
+
+  const [isModalCancelOpen, setIsModalCancelOpen] = useState<boolean>(false);
+
+  const onCompleteResponse = async () => {
+    await agent.ReturningRequest.complete(currentRequestId).finally(() => {
+      props.refetchData();
+    });
+  };
+
+  const onCancelResponse = async () => {
+    await agent.ReturningRequest.cancel(currentRequestId)
+      .finally(() => {
+        props.refetchData();
+      });
+  };
+
+
   return (
     <>
       <div className="min-h-60">
-        <AppTable<AssignmentRowData>
+        <AppTable<ReturningRequestRowData>
           order={props.order}
           setOrder={props.setOrder}
           orderByFieldName={props.orderBy}
@@ -222,17 +234,40 @@ export default function AssignmentList(props: AssignmentListProp) {
       </div>
       <div className="flex justify-center h-full">
         <ConfirmModal
-          message={responseStates.returnModalMessage}
-          isOpen={responseStates.isOpenReturnModal}
-          confirmMessage={responseStates.confirmReturnButtonMessage}
+          message={completeResponseStates.modalMessage}
+          isOpen={completeResponseStates.isModalOpen}
+          confirmMessage={completeResponseStates.confirmMessage}
+          cancelMessage={completeResponseStates.cancelMessage}
           onClose={() =>
-            setResponseStates({ ...responseStates, isOpenReturnModal: false })
+            setCompleteResponseStates({
+              ...completeResponseStates,
+              isModalOpen: false,
+            })
           }
           onConfirm={() => {
-            onConfirmReturn();
+            setCompleteResponseStates({
+              ...completeResponseStates,
+              isModalOpen: false,
+            });
+            onCompleteResponse();
+          }}
+        />
+        <ConfirmModal
+          message="Do you want to cancel this returning request"
+          isOpen={isModalCancelOpen}
+          confirmMessage="Yes"
+          cancelMessage="No"
+          onClose={() =>
+            setIsModalCancelOpen(false)
+          }
+          onConfirm={() => {
+            setIsModalCancelOpen(false)
+            onCancelResponse();
           }}
         />
       </div>
     </>
   );
-}
+};
+
+export default ReturningRequestList;

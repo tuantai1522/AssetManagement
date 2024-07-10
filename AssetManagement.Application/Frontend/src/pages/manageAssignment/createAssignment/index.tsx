@@ -7,6 +7,7 @@ import {
   AssignmentCreationForm,
   AssignmentCreationRequest,
 } from "../../../app/models/assignment/AssignmentCreationRequest";
+import dayjs from "dayjs";
 
 const CreateAssignmentPage = () => {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ const CreateAssignmentPage = () => {
   const handleSubmit = async (data: AssignmentCreationForm) => {
     const dataRequest: AssignmentCreationRequest = {
       assetId: data.assetId,
-      assignedDate: data.assignedDate,
+      assignedDate: new Date(dayjs(data.assignedDate).format("YYYY-MM-DD")),
       note: data.note,
       userId: data.userId,
     };
