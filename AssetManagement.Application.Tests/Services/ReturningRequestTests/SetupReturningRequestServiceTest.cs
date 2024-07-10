@@ -3,22 +3,27 @@ using AssetManagement.Application.Services.Interfaces;
 using AssetManagement.Data.Interfaces;
 using AssetManagement.Domain.Entities;
 using AssetManagement.Domain.Enums;
+using Castle.Core.Logging;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace AssetManagement.Application.Tests.Services.ReturningRequestTests
 {
-    public class ReturningRequestServiceTestSetup : SetupTest
+    public class SetupReturningRequestServiceTest : SetupTest
     {
 
-        protected readonly IReturningRequestService _service;
+        protected readonly IReturningRequestService _returningRequestService;
         protected readonly Mock<IReturningRequestRepository> _returningRequestRepositoryMock;
+        protected readonly Mock<ILogger<ReturningRequestService>> _mockLogger;
+
         protected static List<AppUser> _users;
         protected static List<Asset> _assets;
         protected static List<Assignment> _assignments;
         protected static List<ReturningRequest> _returningRequests;
-        public ReturningRequestServiceTestSetup() : base()
+        public SetupReturningRequestServiceTest() : base()
         {
-            _service = new ReturningRequestService(_unitOfWorkMock.Object, _userManagerMock.Object, _currentUserMock.Object);
+            _mockLogger = new Mock<ILogger<ReturningRequestService>>();
+            _returningRequestService = new ReturningRequestService(_unitOfWorkMock.Object, _currentUserMock.Object, _userManagerMock.Object, _mockLogger.Object);
             _returningRequestRepositoryMock = new Mock<IReturningRequestRepository>();
             Setup();
         }

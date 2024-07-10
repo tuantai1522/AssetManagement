@@ -14,10 +14,10 @@ using Xunit;
 
 namespace AssetManagement.Application.Tests.Services.ReturningRequestTests
 {
-    public class CreateRequestByAdminTest : ReturningRequestServiceTestSetup
+    public class CreateRequestByAdminTest : SetupReturningRequestServiceTest
     {
         [Fact]
-        public async Task Create_Request_With_Assignment_Which_Can_Not_Found()
+        public async Task CreateRequestByAdmin_WhenAssignmentIsNotFound_ThrowsNotFoundException()
         {
             // Arrange
             var request = _fixture.Create<Guid>();
@@ -35,7 +35,7 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests
             _unitOfWorkMock.Setup(u => u.AssignmentRepository.GetQueryableSet()).Returns(assignments.AsQueryable().BuildMock());
 
             // Act
-            var ex = await Assert.ThrowsAsync<NotFoundException>(() => _service
+            var ex = await Assert.ThrowsAsync<NotFoundException>(() => _returningRequestService
                                                     .CreateRequestByAdminAsync(request));
 
             //Assert
@@ -45,7 +45,7 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests
         }
 
         [Fact]
-        public async Task Create_Request_With_User_Which_Can_Not_Found()
+        public async Task CreateRequestByAdmin_WhenUserIsNotFound_ThrowsNotFoundException()
         {
             // Arrange
             var request = _fixture.Create<Guid>();
@@ -62,7 +62,7 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests
             _unitOfWorkMock.Setup(u => u.AssignmentRepository.GetQueryableSet()).Returns(assignments.AsQueryable().BuildMock());
 
             // Act
-            var ex = await Assert.ThrowsAsync<NotFoundException>(() => _service.
+            var ex = await Assert.ThrowsAsync<NotFoundException>(() => _returningRequestService.
                                                     CreateRequestByAdminAsync(request));
 
             Assert.Equal("User is not found!", ex.Message);
@@ -73,7 +73,7 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests
         }
 
         [Fact]
-        public async Task Admin_Disabled_Can_Not_Create_Request()
+        public async Task CreateRequestByAdmin_WhenAdminIsDisabled_ThrowsBadRequestException()
         {
             // Arrange
             var request = _fixture.Create<Guid>();
@@ -94,7 +94,7 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests
 
 
             // Act
-            var ex = await Assert.ThrowsAsync<BadRequestException>(() => _service.CreateRequestByAdminAsync(request));
+            var ex = await Assert.ThrowsAsync<BadRequestException>(() => _returningRequestService.CreateRequestByAdminAsync(request));
             Assert.Equal("Your account is disabled!", ex.Message);
 
             //Assert
@@ -103,7 +103,7 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests
         }
 
         [Fact]
-        public async Task Create_Request_When_Location_Is_Different()
+        public async Task CreateRequestByAdmin_WhenLocationIsInvalid_ThrowsBadRequestException()
         {
             // Arrange
             var request = _fixture.Create<Guid>();
@@ -126,7 +126,7 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests
             _unitOfWorkMock.Setup(u => u.AssignmentRepository.GetQueryableSet()).Returns(assignments.AsQueryable().BuildMock());
 
             // Act
-            var ex = await Assert.ThrowsAsync<BadRequestException>(() => _service.CreateRequestByAdminAsync(request));
+            var ex = await Assert.ThrowsAsync<BadRequestException>(() => _returningRequestService.CreateRequestByAdminAsync(request));
             Assert.Equal("Location of this assignment is different from location of current user", ex.Message);
 
             //Assert
@@ -135,7 +135,7 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests
         }
 
         [Fact]
-        public async Task Create_Request_With_State_Is_Not_Accepted()
+        public async Task CreateRequestByAdmin_WhenStateIsInvalid_ThrowsBadRequestException()
         {
             // Arrange
             var request = _fixture.Create<Guid>();
@@ -160,16 +160,16 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests
             _unitOfWorkMock.Setup(u => u.AssignmentRepository.GetQueryableSet()).Returns(assignments.AsQueryable().BuildMock());
 
             // Act
-            var ex = await Assert.ThrowsAsync<BadRequestException>(() => _service.CreateRequestByAdminAsync(request));
+            var ex = await Assert.ThrowsAsync<BadRequestException>(() => _returningRequestService.CreateRequestByAdminAsync(request));
             Assert.Equal("Can't create request with assignment's state is not Accepted", ex.Message);
 
             //Assert
             _unitOfWorkMock.Verify(m => m.AssetRepository.Update(It.IsAny<Asset>()), Times.Never);
             _unitOfWorkMock.Verify(m => m.SaveChangesAsync(), Times.Never);
         }
-   
+
         [Fact]
-        public async Task Admin_Can_Create_Request()
+        public async Task CreateRequestByAdmin_CreateSuccessfully()
         {
             // Arrange
             var request = _fixture.Create<Guid>();
@@ -195,7 +195,7 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests
             _unitOfWorkMock.Setup(u => u.ReturningRequestRepository).Returns(_returningRequestRepositoryMock.Object);
 
             // Act
-            await _service.CreateRequestByAdminAsync(request);
+            await _returningRequestService.CreateRequestByAdminAsync(request);
 
             // Assert
             _unitOfWorkMock.Verify(repo => repo.ReturningRequestRepository.Add(It.IsAny<ReturningRequest>()), Times.Once);
