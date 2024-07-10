@@ -7,8 +7,10 @@ using Castle.Core.Logging;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace AssetManagement.Application.Tests.Services.ReturningRequestTests {
-    public class SetupReturningRequestServiceTest : SetupTest {
+namespace AssetManagement.Application.Tests.Services.ReturningRequestTests
+{
+    public class SetupReturningRequestServiceTest : SetupTest
+    {
 
         protected readonly IReturningRequestService _returningRequestService;
         protected readonly Mock<IReturningRequestRepository> _returningRequestRepositoryMock;
@@ -18,16 +20,17 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests {
         protected static List<Asset> _assets;
         protected static List<Assignment> _assignments;
         protected static List<ReturningRequest> _returningRequests;
-        public SetupReturningRequestServiceTest() : base() 
+        public SetupReturningRequestServiceTest() : base()
         {
             _mockLogger = new Mock<ILogger<ReturningRequestService>>();
-			_returningRequestService = new ReturningRequestService(_unitOfWorkMock.Object, _currentUserMock.Object, _userManagerMock.Object, _mockLogger.Object);
+            _returningRequestService = new ReturningRequestService(_unitOfWorkMock.Object, _currentUserMock.Object, _userManagerMock.Object, _mockLogger.Object);
             _returningRequestRepositoryMock = new Mock<IReturningRequestRepository>();
             Setup();
         }
 
         #region Set up 
-        private static void Setup() {
+        private static void Setup()
+        {
             _users = new List<AppUser>()
              {
                 new AppUser

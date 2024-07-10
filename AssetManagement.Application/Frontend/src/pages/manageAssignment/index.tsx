@@ -1,8 +1,17 @@
 import { Stack } from "@mui/material";
 import AssignmentList, { AssignmentRowData } from "./assignmentList";
-import { FilterAssignmentRequest, FilterAssignmentResponse, OrderByFieldName } from "../../app/models/assignment/Assignment";
+import {
+  FilterAssignmentRequest,
+  FilterAssignmentResponse,
+  OrderByFieldName,
+} from "../../app/models/assignment/Assignment";
 import { AssignmentStateEnum } from "../../app/types/enum";
-import { SetURLSearchParams, useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import {
+  SetURLSearchParams,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import { FormEvent, useState } from "react";
 import { Order } from "../../app/components/table/sortTable";
 import agent from "../../app/api/agent";
@@ -59,7 +68,6 @@ function setFilterSearchParam(
 }
 
 export default function ManagementAssignmentPage() {
-
   const [clickOnAssignment, setClickOnAssignment] = useState<boolean>(false);
   const [assignmentId, setAssignmentId] = useState<string>("");
   const [searchParams, setSearchParams] = useSearchParams();
@@ -85,9 +93,9 @@ export default function ManagementAssignmentPage() {
   const assignedDateParam = searchParams.get("assignedDate");
   if (assignedDateParam) {
     try {
-      initAssignedDateInput = dayjs(assignedDateParam, 'YYYY-MM-DD');
+      initAssignedDateInput = dayjs(assignedDateParam, "YYYY-MM-DD");
       if (initAssignedDateInput.isValid()) {
-        initAssignedDate = initAssignedDateInput.format('YYYY-MM-DD');
+        initAssignedDate = initAssignedDateInput.format("YYYY-MM-DD");
       } else {
         initAssignedDateInput = null;
       }
@@ -107,7 +115,10 @@ export default function ManagementAssignmentPage() {
     assignedDate: initAssignedDate ?? "",
     states:
       initStates
-        ?.map((state) => AssignmentStateEnum[state as keyof typeof AssignmentStateEnum])
+        ?.map(
+          (state) =>
+            AssignmentStateEnum[state as keyof typeof AssignmentStateEnum]
+        )
         ?.filter(
           (mappedState) => mappedState !== undefined && mappedState !== null
         ) ?? [],
@@ -118,9 +129,11 @@ export default function ManagementAssignmentPage() {
   });
 
   const [searchInput, setSearchInput] = useState<string>(initSearch);
-  const [assignedDate, setAssignedDate] = useState<Dayjs | null>(initAssignedDateInput);
+  const [assignedDate, setAssignedDate] = useState<Dayjs | null>(
+    initAssignedDateInput
+  );
 
-  const { data, isLoading, error } = agent.Assignment.filter(query);
+  const { data, isLoading, error, mutate } = agent.Assignment.filter(query);
 
   const setOrderBy = (orderBy: OrderByFieldName) => {
     const newQuery = { ...query, orderBy: orderBy };
@@ -170,11 +183,14 @@ export default function ManagementAssignmentPage() {
       newQuery = {
         ...query,
         states: states
-          .map((state) => AssignmentStateEnum[state as keyof typeof AssignmentStateEnum])
+          .map(
+            (state) =>
+              AssignmentStateEnum[state as keyof typeof AssignmentStateEnum]
+          )
           .filter(
             (mappedState) => mappedState !== undefined && mappedState !== null
           ),
-        pageNumber: 1
+        pageNumber: 1,
       };
       setQuery(newQuery);
       setFilterSearchParam(newQuery, setSearchParams);
@@ -185,7 +201,7 @@ export default function ManagementAssignmentPage() {
     event.preventDefault();
     let newQuery: FilterAssignmentRequest;
     if (assignedDate != null) {
-      const newAssignedDate = dayjs(assignedDate).format('YYYY-MM-DD');
+      const newAssignedDate = dayjs(assignedDate).format("YYYY-MM-DD");
       newQuery = { ...query, assignedDate: newAssignedDate, pageNumber: 1 };
       setQuery(newQuery);
       setFilterSearchParam(newQuery, setSearchParams);
@@ -193,7 +209,7 @@ export default function ManagementAssignmentPage() {
       newQuery = {
         ...query,
         assignedDate: undefined,
-        pageNumber: 1
+        pageNumber: 1,
       };
       setQuery(newQuery);
       setFilterSearchParam(newQuery, setSearchParams);
@@ -225,8 +241,11 @@ export default function ManagementAssignmentPage() {
               onSubmit={handleStateFilterClick}
             />
 
-            <AssignDateFilter assignedDate={assignedDate} handleAssignedDateChange={setAssignedDate} handleFilterClick={handleAssignedDateFilterClick} />
-
+            <AssignDateFilter
+              assignedDate={assignedDate}
+              handleAssignedDateChange={setAssignedDate}
+              handleFilterClick={handleAssignedDateFilterClick}
+            />
           </Stack>
           <Stack
             direction="row"
@@ -234,7 +253,7 @@ export default function ManagementAssignmentPage() {
             alignItems="center"
             spacing={4}
           >
-            <form onSubmit={handleSearchSubmit} >
+            <form onSubmit={handleSearchSubmit}>
               <Stack
                 direction="row"
                 justifyContent="flex-start"
@@ -262,7 +281,9 @@ export default function ManagementAssignmentPage() {
             <AppButton
               content="Create new assignment"
               className="py-[6px] min-w-52"
-              onClickOn={() => {navigate('create-assignment')}}
+              onClickOn={() => {
+                navigate("create-assignment");
+              }}
             />
           </Stack>
         </Stack>
@@ -277,7 +298,9 @@ export default function ManagementAssignmentPage() {
                 assignedBy: item.assignedBy,
                 assignedDate: convertDateToString(item.assignedDate),
                 state:
-                  item.state !== undefined ? AssignmentStateEnum[item.state] : undefined,
+                  item.state !== undefined
+                    ? AssignmentStateEnum[item.state]
+                    : undefined,
                 action: {
                   id: item.id,
                   state:
@@ -287,13 +310,16 @@ export default function ManagementAssignmentPage() {
                 },
               })) as AssignmentRowData[]
             }
+            refetchData={mutate}
             error={error}
             isLoading={isLoading}
             order={query?.order ?? "asc"}
             setOrder={setOrder}
             orderBy={query?.orderBy}
             setOrderBy={setOrderBy}
-            handleClick={(event, rowId) => { handleClickOnAssignment(rowId)} }
+            handleClick={(event, rowId) => {
+              handleClickOnAssignment(rowId);
+            }}
           />
           <Stack
             direction="row"

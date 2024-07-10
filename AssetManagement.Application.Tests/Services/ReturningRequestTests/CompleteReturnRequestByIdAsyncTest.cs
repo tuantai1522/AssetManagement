@@ -14,7 +14,7 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests
 {
 	public class CompleteReturnRequestByIdAsyncTest : SetupReturningRequestServiceTest
 	{
-        public CompleteReturnRequestByIdAsyncTest() : base() { }
+		public CompleteReturnRequestByIdAsyncTest() : base() { }
 		[Fact]
 		public async Task CompleteReturnRequestByIdAsync_ReturningRequestNotFound_ThrowsNotFoundException()
 		{
@@ -25,7 +25,7 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests
 			_userManagerMock.Setup(x => x.Users).Returns(_users.AsQueryable().BuildMockDbSet().Object);
 
 			_unitOfWorkMock.Setup(u => u.ReturningRequestRepository.GetRequestByIdAsync(It.IsAny<Guid>()))
-						   .ReturnsAsync((ReturningRequest)null!);
+							 .ReturnsAsync((ReturningRequest)null!);
 
 			// Act & Assert
 			await Assert.ThrowsAsync<NotFoundException>(() => _returningRequestService.CompleteReturnRequestByIdAsync(Guid.NewGuid()));
@@ -60,7 +60,7 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests
 			request.State = ReturningRequestState.Completed;
 
 			_unitOfWorkMock.Setup(u => u.ReturningRequestRepository.GetRequestByIdAsync(It.IsAny<Guid>()))
-						   .ReturnsAsync(request);
+							 .ReturnsAsync(request);
 
 			// Act & Assert
 			await Assert.ThrowsAsync<BadRequestException>(() => _returningRequestService.CompleteReturnRequestByIdAsync(request.Id));
@@ -73,13 +73,13 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests
 			_currentUserMock.Setup(c => c.UserId).Returns(userId);
 
 			_userManagerMock.Setup(x => x.Users).Returns(_users.AsQueryable().BuildMockDbSet().Object);
-			
+
 			var returningRequests = _returningRequests.ToList();
 
 			var request = returningRequests.First(r => r.State == ReturningRequestState.WaitingForReturning);
 
 			_unitOfWorkMock.Setup(u => u.ReturningRequestRepository.GetRequestByIdAsync(It.IsAny<Guid>()))
-						   .ReturnsAsync(request);
+							 .ReturnsAsync(request);
 
 			// Act
 			await _returningRequestService.CompleteReturnRequestByIdAsync(request.Id);

@@ -20,7 +20,10 @@ import {
   FilterMyAssignmentRequest,
   getMyAssignmentQueryString,
 } from "../models/myAssignment/myAssignment";
-import { FilterReturningRequestRequest, getReturningRequestQueryString } from "../models/returningRequest/ReturningRequest";
+import {
+  FilterReturningRequestRequest,
+  getReturningRequestQueryString,
+} from "../models/returningRequest/ReturningRequest";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 axios.defaults.headers.post["Content-Type"] = "application/json";
@@ -220,9 +223,13 @@ const ReturningRequest = {
   },
   complete: (id: string) => {
     return requests.put(`/api/return-request/complete/${id}`);
-  }
-}
-
+  },
+  adminCreateRequest: (assignmentId: string) =>
+    requests.post(
+      `api/return-request/admin-create-request/${assignmentId}`,
+      {}
+    ),
+};
 const agent = {
   Product,
   Authentication,

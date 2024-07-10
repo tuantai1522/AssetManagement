@@ -1,5 +1,5 @@
-﻿using AssetManagement.Application.Common.Constants;
-using AssetManagement.Application.Common.Credential;
+﻿using AssetManagement.Application.Common.Credential;
+using AssetManagement.Application.Common.Constants;
 using AssetManagement.Application.Common.ExpressionBuilder;
 using AssetManagement.Application.Services.Interfaces;
 using AssetManagement.Contracts.Dtos.PaginationDtos;
@@ -70,6 +70,20 @@ namespace AssetManagement.Application.Services.Implementations
             await _unitOfWork.SaveChangesAsync();
             return;
         }
+
+        public async Task CreateRequestByAdminAsync(Guid assignmentId)
+        {
+            var assignment = await GetAssignment(assignmentId);
+            var user = await GetUserLogined();
+
+            // To check whether this assignment belongs to location of user or not
+            if (!assignment.AssignedByUser!.Location!.Equals(user.Location))
+                throw new BadRequestException("Location of this assignment is different from location of current user");
+
+            await CreateRequestByAccountAsync(assignment, user);
+
+        }
+
         public async Task<PagingDto<FilterReturningResponse>> FilterReturningAsync(FilterReturningRequest filter)
         {
             var currentUser = await _userManager.Users
@@ -128,32 +142,35 @@ namespace AssetManagement.Application.Services.Implementations
                 Data = result
             };
         }
-		#region Private methods
-		private Expression<Func<ReturningRequest, bool>> GetSpecification(FilterReturningRequest filter, AppUser currentUser)
-		{
-			Expression<Func<ReturningRequest, bool>> filterSpecification = PredicateBuilder.True<ReturningRequest>();
-			filterSpecification = filterSpecification.And(a => a.Assignment != null && a.Assignment.Asset != null && a.Assignment.Asset.Location == currentUser.Location);
 
-			if (!string.IsNullOrWhiteSpace(filter.Search))
-			{
-				filterSpecification = filterSpecification.And(
-					r => (r.Assignment != null && r.Assignment.Asset != null && r.Assignment.Asset.Name != null && r.Assignment.Asset.Name.ToLower().Contains(filter.Search.Trim().ToLower()))
-					|| (r.Assignment != null && r.Assignment.Asset != null && r.Assignment.Asset.AssetCode != null && r.Assignment.Asset.AssetCode.ToLower().Contains(filter.Search.Trim().ToLower()))
-					|| (r.RequestedByUser != null && r.RequestedByUser.UserName != null && r.RequestedByUser.UserName.ToLower().Contains(filter.Search.Trim().ToLower())));
-			}
+        #region Private methods
+        private Expression<Func<ReturningRequest, bool>> GetSpecification(FilterReturningRequest filter, AppUser currentUser)
+        {
+            Expression<Func<ReturningRequest, bool>> filterSpecification = PredicateBuilder.True<ReturningRequest>();
+            filterSpecification = filterSpecification.And(a => a.Assignment != null && a.Assignment.Asset != null && a.Assignment.Asset.Location == currentUser.Location);
 
-			if (filter.States != null && filter.States.Length > 0)
-			{
-				filterSpecification = filterSpecification.And(r => filter.States.Any(s => s == r.State));
-			}
+            if (!string.IsNullOrWhiteSpace(filter.Search))
+            {
+                filterSpecification = filterSpecification.And(
+                    r => (r.Assignment != null && r.Assignment.Asset != null && r.Assignment.Asset.Name != null && r.Assignment.Asset.Name.ToLower().Contains(filter.Search.Trim().ToLower()))
+                    || (r.Assignment != null && r.Assignment.Asset != null && r.Assignment.Asset.AssetCode != null && r.Assignment.Asset.AssetCode.ToLower().Contains(filter.Search.Trim().ToLower()))
+                    || (r.RequestedByUser != null && r.RequestedByUser.UserName != null && r.RequestedByUser.UserName.ToLower().Contains(filter.Search.Trim().ToLower())));
+            }
 
-			if (filter.ReturnedDate.HasValue)
-			{
-				filterSpecification = filterSpecification.And(r => r.ReturnedDate.HasValue && r.ReturnedDate.Value.Date == filter.ReturnedDate.Value.Date);
-			}
-			return filterSpecification;
-		}
-		private Func<IQueryable<ReturningRequest>, IOrderedQueryable<ReturningRequest>> GetOrderBy(FilterReturningRequest filter)
+            if (filter.States != null && filter.States.Length > 0)
+            {
+                filterSpecification = filterSpecification.And(r => filter.States.Any(s => s == r.State));
+            }
+
+            if (filter.ReturnedDate.HasValue)
+            {
+                filterSpecification = filterSpecification.And(r => r.ReturnedDate.HasValue && r.ReturnedDate.Value.Date == filter.ReturnedDate.Value.Date);
+            }
+            return filterSpecification;
+        }
+
+
+        private Func<IQueryable<ReturningRequest>, IOrderedQueryable<ReturningRequest>> GetOrderBy(FilterReturningRequest filter)
         {
             return filter switch
             {
@@ -177,6 +194,51 @@ namespace AssetManagement.Application.Services.Implementations
                 : (a.State == ReturningRequestState.WaitingForReturning ? 1 : 2)),
                 _ => q => q.OrderByDescending(a => a.ReturnedDate)
             };
+        }
+
+        private async Task CreateRequestByAccountAsync(Assignment assignment, AppUser user)
+        {
+            // To check whether this assignment has state "Accepted" or not
+            if (assignment.State != AssignmentState.Accepted)
+                throw new BadRequestException("Can't create request with assignment's state is not Accepted");
+
+            assignment.State = AssignmentState.WaitingForReturning;
+
+            var requestReturning = new ReturningRequest
+            {
+                AssignmentId = assignment.Id,
+                RequestedByUserId = user.Id,
+            };
+
+            _unitOfWork.ReturningRequestRepository.Add(requestReturning);
+
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        private async Task<Assignment> GetAssignment(Guid assignmentId)
+        {
+            var assignment = await _unitOfWork.AssignmentRepository
+                            .GetQueryableSet()
+                            .Where(a => a.Id.Equals(assignmentId))
+                            .Include(x => x.Asset)
+                            .Include(x => x.AssignedToUser)
+                            .Include(x => x.AssignedByUser)
+                            .FirstOrDefaultAsync() ?? throw new NotFoundException("Can't find assignment");
+
+            return assignment;
+        }
+        private async Task<AppUser> GetUserLogined()
+        {
+            var userLogin = await _userManager.FindByIdAsync(_currentUser.UserId.ToString());
+            if (userLogin == null)
+            {
+                throw new NotFoundException("User is not found!");
+            }
+            else if (userLogin.IsDisabled)
+            {
+                throw new BadRequestException("Your account is disabled!");
+            }
+            return userLogin;
         }
         #endregion
     }
