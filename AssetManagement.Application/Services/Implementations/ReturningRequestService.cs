@@ -12,20 +12,66 @@ using AssetManagement.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using AssetManagement.Domain.Exceptions;
 
-namespace AssetManagement.Application.Services.Implementations {
-    public class ReturningRequestService : IReturningRequestService {
+namespace AssetManagement.Application.Services.Implementations
+{
+    public class ReturningRequestService : IReturningRequestService
+    {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly UserManager<AppUser> _userManager;
         private readonly ICurrentUser _currentUser;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly ILogger<ReturningRequestService> _logger;
 
-        public ReturningRequestService(IUnitOfWork unitOfWork, UserManager<AppUser> userManager, ICurrentUser currentUser) {
+        public ReturningRequestService(IUnitOfWork unitOfWork, ICurrentUser currentUser, UserManager<AppUser> userManager, ILogger<ReturningRequestService> logger)
+        {
             _unitOfWork = unitOfWork;
-            _userManager = userManager;
             _currentUser = currentUser;
+            _userManager = userManager;
+            _logger = logger;
         }
 
-        public async Task<PagingDto<FilterReturningResponse>> FilterReturningAsync(FilterReturningRequest filter) {
+        public async Task CompleteReturnRequestByIdAsync(Guid requestId)
+        {
+            _logger.LogInformation("*********************CompleteReturnRequestByIdAsync*********************");
+            var currentUser = await _userManager.Users
+                .Where(u => _currentUser.UserId.Equals(u.Id))
+                .Select(u => new AppUser()
+                {
+                    Id = u.Id,
+                    Location = u.Location,
+                })
+                .FirstOrDefaultAsync();
+
+            //Validation
+            var request = await _unitOfWork.ReturningRequestRepository.GetRequestByIdAsync(requestId);
+            if (request == null)
+            {
+                _logger.LogWarning("Returning request not found for request ID: {RequestId}", requestId);
+                throw new NotFoundException(ErrorStrings.REQUEST_NOT_FOUND);
+            }
+            if (request.Assignment.Asset!.Location != currentUser!.Location)
+            {
+                _logger.LogWarning("Invalid location for asset ID: {AssetId}. Expected: {ExpectedLocation}, Actual: {ActualLocation}",
+                    request.Assignment.Asset.Id, currentUser.Location, request.Assignment.Asset.Location);
+                throw new BadRequestException(ErrorStrings.INVALID_LOCATION);
+            }
+            if (request.State != ReturningRequestState.WaitingForReturning)
+            {
+                _logger.LogWarning("Invalid state for returning request ID: {RequestId}. Expected: {ExpectedState}, Actual: {ActualState}",
+                    requestId, ReturningRequestState.WaitingForReturning, request.State);
+                throw new BadRequestException(ErrorStrings.INVALID_REQUEST_STATE);
+            }
+            request.State = ReturningRequestState.Completed;
+            request.ReturnedDate = DateTime.Now;
+            request.Assignment.State = AssignmentState.Returned;
+            request.Assignment.Asset.State = AssetState.Available;
+            request.AcceptedByUserId = currentUser.Id;
+            await _unitOfWork.SaveChangesAsync();
+            return;
+        }
+        public async Task<PagingDto<FilterReturningResponse>> FilterReturningAsync(FilterReturningRequest filter)
+        {
             var currentUser = await _userManager.Users
                 .Where(u => _currentUser.UserId.Equals(u.Id))
                 .Select(u => new AppUser()
@@ -37,14 +83,16 @@ namespace AssetManagement.Application.Services.Implementations {
                 .FirstOrDefaultAsync()
                 .ContinueWith(t => t.Result ?? throw new UnauthorizedAccessException(ErrorStrings.USER_NOT_LOGIN));
 
-            if (currentUser.IsDisabled) {
+            if (currentUser.IsDisabled)
+            {
                 throw new UnauthorizedAccessException(ErrorStrings.USER_IS_DISABLED);
             }
 
             var queryable = _unitOfWork.ReturningRequestRepository.GetQueryableSet();
             //set default page size
             if (!filter.PageNumber.HasValue || !filter.PageSize.HasValue
-                || filter.PageNumber.Value <= 0 || filter.PageSize.Value <= 0) {
+                || filter.PageNumber.Value <= 0 || filter.PageSize.Value <= 0)
+            {
                 filter.PageNumber = 1;
                 filter.PageSize = 5;
             }
@@ -80,31 +128,33 @@ namespace AssetManagement.Application.Services.Implementations {
                 Data = result
             };
         }
+		#region Private methods
+		private Expression<Func<ReturningRequest, bool>> GetSpecification(FilterReturningRequest filter, AppUser currentUser)
+		{
+			Expression<Func<ReturningRequest, bool>> filterSpecification = PredicateBuilder.True<ReturningRequest>();
+			filterSpecification = filterSpecification.And(a => a.Assignment != null && a.Assignment.Asset != null && a.Assignment.Asset.Location == currentUser.Location);
 
-        #region Private methods
-        private Expression<Func<ReturningRequest, bool>> GetSpecification(FilterReturningRequest filter, AppUser currentUser) {
-            Expression<Func<ReturningRequest, bool>> filterSpecification = PredicateBuilder.True<ReturningRequest>();
-            filterSpecification = filterSpecification.And(a => a.Assignment != null && a.Assignment.Asset != null && a.Assignment.Asset.Location == currentUser.Location);
+			if (!string.IsNullOrWhiteSpace(filter.Search))
+			{
+				filterSpecification = filterSpecification.And(
+					r => (r.Assignment != null && r.Assignment.Asset != null && r.Assignment.Asset.Name != null && r.Assignment.Asset.Name.ToLower().Contains(filter.Search.Trim().ToLower()))
+					|| (r.Assignment != null && r.Assignment.Asset != null && r.Assignment.Asset.AssetCode != null && r.Assignment.Asset.AssetCode.ToLower().Contains(filter.Search.Trim().ToLower()))
+					|| (r.RequestedByUser != null && r.RequestedByUser.UserName != null && r.RequestedByUser.UserName.ToLower().Contains(filter.Search.Trim().ToLower())));
+			}
 
-            if (!string.IsNullOrWhiteSpace(filter.Search)) {
-                filterSpecification = filterSpecification.And(
-                    r => (r.Assignment != null && r.Assignment.Asset != null && r.Assignment.Asset.Name != null && r.Assignment.Asset.Name.ToLower().Contains(filter.Search.Trim().ToLower()))
-                    || (r.Assignment != null && r.Assignment.Asset != null && r.Assignment.Asset.AssetCode != null && r.Assignment.Asset.AssetCode.ToLower().Contains(filter.Search.Trim().ToLower()))
-                    || (r.RequestedByUser != null && r.RequestedByUser.UserName != null && r.RequestedByUser.UserName.ToLower().Contains(filter.Search.Trim().ToLower())));
-            }
+			if (filter.States != null && filter.States.Length > 0)
+			{
+				filterSpecification = filterSpecification.And(r => filter.States.Any(s => s == r.State));
+			}
 
-            if (filter.States != null && filter.States.Length > 0) {
-                filterSpecification = filterSpecification.And(r => filter.States.Any(s => s == r.State));
-            }
-
-            if (filter.ReturnedDate.HasValue) {
-                filterSpecification = filterSpecification.And(r => r.ReturnedDate.HasValue && r.ReturnedDate.Value.Date == filter.ReturnedDate.Value.Date);
-            }
-            return filterSpecification;
-        }
-
-
-        private Func<IQueryable<ReturningRequest>, IOrderedQueryable<ReturningRequest>> GetOrderBy(FilterReturningRequest filter) {
+			if (filter.ReturnedDate.HasValue)
+			{
+				filterSpecification = filterSpecification.And(r => r.ReturnedDate.HasValue && r.ReturnedDate.Value.Date == filter.ReturnedDate.Value.Date);
+			}
+			return filterSpecification;
+		}
+		private Func<IQueryable<ReturningRequest>, IOrderedQueryable<ReturningRequest>> GetOrderBy(FilterReturningRequest filter)
+        {
             return filter switch
             {
                 { SortAssetCode: SortOption.Asc } => q => q.OrderBy(r => r.Assignment.Asset!.AssetCode),

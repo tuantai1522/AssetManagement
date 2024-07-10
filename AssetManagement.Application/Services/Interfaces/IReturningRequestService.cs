@@ -4,6 +4,7 @@ using AssetManagement.Contracts.Dtos.ReturningRequestDtos.Responses;
 
 namespace AssetManagement.Application.Services.Interfaces {
     public interface IReturningRequestService {
+        Task CompleteReturnRequestByIdAsync(Guid requestId);
         Task<PagingDto<FilterReturningResponse>> FilterReturningAsync(FilterReturningRequest filter);
     }
 }
