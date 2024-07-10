@@ -5,8 +5,10 @@ using AssetManagement.Domain.Entities;
 using AssetManagement.Domain.Enums;
 using Moq;
 
-namespace AssetManagement.Application.Tests.Services.ReturningRequestTests {
-    public class ReturningRequestServiceTestSetup : SetupTest {
+namespace AssetManagement.Application.Tests.Services.ReturningRequestTests
+{
+    public class ReturningRequestServiceTestSetup : SetupTest
+    {
 
         protected readonly IReturningRequestService _service;
         protected readonly Mock<IReturningRequestRepository> _returningRequestRepositoryMock;
@@ -14,14 +16,16 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests {
         protected static List<Asset> _assets;
         protected static List<Assignment> _assignments;
         protected static List<ReturningRequest> _returningRequests;
-        public ReturningRequestServiceTestSetup() : base() {
-            _service = new ReturningRequestService(_unitOfWorkMock.Object, _currentUserMock.Object ,_userManagerMock.Object );
+        public ReturningRequestServiceTestSetup() : base()
+        {
+            _service = new ReturningRequestService(_unitOfWorkMock.Object, _userManagerMock.Object, _currentUserMock.Object);
             _returningRequestRepositoryMock = new Mock<IReturningRequestRepository>();
             Setup();
         }
 
         #region Set up 
-        private static void Setup() {
+        private static void Setup()
+        {
             _users = new List<AppUser>()
              {
                 new AppUser

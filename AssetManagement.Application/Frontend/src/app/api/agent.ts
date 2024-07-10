@@ -147,7 +147,7 @@ export const requests = {
       body instanceof FormData ? { "Content-Type": "multipart/form-data" } : {};
     return axios.post(url, body, { headers }).then(responseBody);
   },
-  put: (url: string, body: {}) => axios.put(url, body).then(responseBody),
+  put: (url: string, body?: {}) => axios.put(url, body).then(responseBody),
   patch: (url: string, body: {}) => axios.patch(url, body).then(responseBody),
   delete: (url: string) => axios.delete(url).then(responseBody),
 };
@@ -221,6 +221,9 @@ const ReturningRequest = {
     const queryString = getReturningRequestQueryString(query);
     return requests.get(`/api/return-request?${queryString}`);
   },
+  complete: (id: string) => {
+    return requests.put(`/api/return-request/complete/${id}`);
+  }
   adminCreateRequest: (assignmentId: string) =>
     requests.post(
       `api/return-request/admin-create-request/${assignmentId}`,
