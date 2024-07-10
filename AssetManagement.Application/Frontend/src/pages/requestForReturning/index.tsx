@@ -110,7 +110,7 @@ const ManagementRequestForReturningPage = () => {
   const [searchInput, setSearchInput] = useState<string>(initSearch);
   const [returnedDate, setReturnedDate] = useState<Dayjs | null>(initReturnedDateInput);
 
-  const { data, isLoading, error } = agent.ReturningRequest.filter(query);
+  const { data, isLoading, error, mutate } = agent.ReturningRequest.filter(query);
 
   const setOrderBy = (orderBy: OrderByFieldName) => {
     const newQuery = { ...query, orderBy: orderBy };
@@ -279,7 +279,8 @@ const ManagementRequestForReturningPage = () => {
             setOrder={setOrder}
             orderBy={query?.orderBy}
             setOrderBy={setOrderBy}
-            handleClick={(event, rowId) => { } }
+            handleClick={(event, rowId) => { }}
+            refetchData={mutate}
           />
           <Stack
             direction="row"

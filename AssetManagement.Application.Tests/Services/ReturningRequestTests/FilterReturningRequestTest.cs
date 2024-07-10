@@ -2,9 +2,12 @@
 using AssetManagement.Contracts.Enums;
 using MockQueryable.Moq;
 
-namespace AssetManagement.Application.Tests.Services.ReturningRequestTests {
-    public class FilterReturningRequestTest : ReturningRequestServiceTestSetup {
-        public FilterReturningRequestTest() : base() {
+namespace AssetManagement.Application.Tests.Services.ReturningRequestTests
+{
+    public class FilterReturningRequestTest : SetupReturningRequestServiceTest
+    {
+        public FilterReturningRequestTest() : base()
+        {
         }
 
         [Theory]
@@ -14,7 +17,8 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests {
         [InlineData(1, 0)]
         [InlineData(1, -1)]
         [InlineData(null, 4)]
-        public async Task FilterReturningAsync_ShouldReturnPagingDto_WithFilteredAssignments(int? pageNumber, int? pageSize) {
+        public async Task FilterReturningAsync_ShouldReturnPagingDto_WithFilteredAssignments(int? pageNumber, int? pageSize)
+        {
             // Arrange
 
             var filter = new FilterReturningRequest()
@@ -31,7 +35,7 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests {
                 .Returns(_returningRequests.BuildMock);
 
             // Act
-            var result = await _service.FilterReturningAsync(filter);
+            var result = await _returningRequestService.FilterReturningAsync(filter);
 
             //Assert
             Assert.NotNull(result);
@@ -62,7 +66,8 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests {
             SortOption? sortRequestedBy,
             SortOption? sortState,
             SortOption? sortReturnedDate,
-            string expected) {
+            string expected)
+        {
             //Arrange
             var filter = new FilterReturningRequest()
             {
@@ -87,7 +92,7 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests {
             var mock = _assignments.AsQueryable().BuildMock();
 
             //Act
-            var result = await _service.FilterReturningAsync(filter);
+            var result = await _returningRequestService.FilterReturningAsync(filter);
 
             //Assert
             Assert.NotNull(result);

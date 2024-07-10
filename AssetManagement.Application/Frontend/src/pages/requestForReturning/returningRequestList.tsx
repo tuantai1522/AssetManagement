@@ -5,6 +5,9 @@ import AppTable, {
   Order,
 } from "../../app/components/table/sortTable";
 import { ReturningRequestStateEnum } from "../../app/types/enum";
+import ConfirmModal from "../../app/components/confirmModal";
+import { useState } from "react";
+import agent from "../../app/api/agent";
 
 export interface ReturningRequestRowData {
   id: string;
@@ -30,6 +33,7 @@ export interface Props {
   orderBy: any;
   setOrderBy: (orderBy: any) => void;
   handleClick: (event: any, rowId: string) => void;
+  refetchData: () => void;
 }
 
 const ReturningRequestList = (props: Props) => {
@@ -140,8 +144,7 @@ const ReturningRequestList = (props: Props) => {
       disableSort: true,
       renderCell: (params) => {
         const isDisable =
-          params?.state !==
-          ReturningRequestStateEnum[ReturningRequestStateEnum["Waiting for returning"]];
+          params?.state !== ReturningRequestStateEnum[ReturningRequestStateEnum["Waiting for returning"]];
         return (
           <div className="flex w-fit justify-end items-center">
             <button
@@ -150,7 +153,11 @@ const ReturningRequestList = (props: Props) => {
               className={`text-red-600 ${isDisable ? "opacity-40" : ""}`}
               onClick={(e) => {
                 e.stopPropagation();
-                alert(params?.id);
+                setCurrentRequestId(params?.id);
+                setCompleteResponseStates({
+                  ...completeResponseStates,
+                  isModalOpen: true,
+                });
               }}
             >
               <CheckIcon />
@@ -172,20 +179,52 @@ const ReturningRequestList = (props: Props) => {
     },
   ];
 
+  const [currentRequestId, setCurrentRequestId] = useState("");
+  const [completeResponseStates, setCompleteResponseStates] = useState({
+    isModalOpen: false,
+    modalMessage: "Do you want to mark this returning request as 'Completed'?",
+    confirmMessage: "Yes",
+    cancelMessage: "No",
+  });
+
+  const onCompleteResponse = async () => {
+    await agent.ReturningRequest.complete(currentRequestId)
+      .finally(() => {
+        props.refetchData();
+      });
+  };
+
   return (
-    <div className="min-h-60">
-      <AppTable<ReturningRequestRowData>
-        order={props.order}
-        setOrder={props.setOrder}
-        orderByFieldName={props.orderBy}
-        setOrderByFieldName={props.setOrderBy}
-        columns={columns}
-        rows={props.data}
-        handleClick={props.handleClick}
-        isLoading={props.isLoading}
-        tableStyle={{ minWidth: 600 }}
-      />
-    </div>
+    <>
+      <div className="min-h-60">
+        <AppTable<ReturningRequestRowData>
+          order={props.order}
+          setOrder={props.setOrder}
+          orderByFieldName={props.orderBy}
+          setOrderByFieldName={props.setOrderBy}
+          columns={columns}
+          rows={props.data}
+          handleClick={props.handleClick}
+          isLoading={props.isLoading}
+          tableStyle={{ minWidth: 600 }}
+        />
+      </div>
+      <div className="flex justify-center h-full">
+        <ConfirmModal
+          message={completeResponseStates.modalMessage}
+          isOpen={completeResponseStates.isModalOpen}
+          confirmMessage={completeResponseStates.confirmMessage}
+          cancelMessage={completeResponseStates.cancelMessage}
+          onClose={() =>
+            setCompleteResponseStates({ ...completeResponseStates, isModalOpen: false })
+          }
+          onConfirm={() => {
+            setCompleteResponseStates({ ...completeResponseStates, isModalOpen: false });
+            onCompleteResponse();
+          }}
+        />
+      </div>
+    </>
   );
 };
 
