@@ -1,11 +1,11 @@
 ﻿using AssetManagement.Application.Common;
 using AssetManagement.Application.Extensions;
 using AssetManagement.Application.Services.Interfaces;
-using AssetManagement.Domain.Constants;
-using Microsoft.AspNetCore.Authorization;
 using AssetManagement.Contracts.Dtos.PaginationDtos;
 using AssetManagement.Contracts.Dtos.ReturningRequestDtos.Requests;
 using AssetManagement.Contracts.Dtos.ReturningRequestDtos.Responses;
+using AssetManagement.Domain.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AssetManagement.Application.Controllers
@@ -84,7 +84,7 @@ namespace AssetManagement.Application.Controllers
         [HttpPut]
         [Route("cancel/{id}")]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult> CancelRequestForReturningAsset(Guid id)
+        public async Task<ActionResult<BaseResult<Object>>> CancelRequestForReturningAssignment([FromRoute] Guid id)
         {
             await _returningRequestService.CancelReturningRequest(id);
             var result = new BaseResult<Object>()
