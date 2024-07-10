@@ -52,6 +52,20 @@ namespace AssetManagement.Application.Controllers
             };
             return Ok(result);
         }
+        [HttpPut]
+        [Route("complete/{id}")]
+        [Authorize(Roles = $"{RoleConstant.AdminRole}")]
+        public async Task<ActionResult<BaseResult<Object>>> CompleteRequestRequestByIdAsync(Guid id)
+        {
+            await _returningRequestService.CompleteReturnRequestByIdAsync(id);
+            var result = new BaseResult<object>()
+            {
+                IsSuccess = true,
+                Error = null,
+                Result = new object()
+            };
+            return Ok(result);
+        }
 
         [HttpPost("user-create-request/{assignmentId}")]
         [Authorize]

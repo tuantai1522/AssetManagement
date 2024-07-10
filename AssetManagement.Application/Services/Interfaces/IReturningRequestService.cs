@@ -8,6 +8,7 @@ namespace AssetManagement.Application.Services.Interfaces
 {
     public interface IReturningRequestService
     {
+        Task CompleteReturnRequestByIdAsync(Guid requestId);
         Task<PagingDto<FilterReturningResponse>> FilterReturningAsync(FilterReturningRequest filter);
         Task CreateRequestByAdminAsync(Guid id);
         Task CreateRequestByUserAsync(Guid id);
