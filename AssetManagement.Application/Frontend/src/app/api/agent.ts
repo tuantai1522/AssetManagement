@@ -224,6 +224,9 @@ const ReturningRequest = {
   complete: (id: string) => {
     return requests.put(`/api/return-request/complete/${id}`);
   },
+  cancel: (id: string) => {
+    return requests.put(`/api/return-request/cancel/${id}`);
+  },
   adminCreateRequest: (assignmentId: string) =>
     requests.post(
       `api/return-request/admin-create-request/${assignmentId}`,

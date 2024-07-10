@@ -176,7 +176,8 @@ const ReturningRequestList = (props: Props) => {
               className={`text-black ${isDisable ? "opacity-40" : ""}`}
               onClick={(e) => {
                 e.stopPropagation();
-                alert(params?.id);
+                setCurrentRequestId(params?.id);
+                setIsModalCancelOpen(true);
               }}
             >
               <CloseIcon
@@ -200,11 +201,21 @@ const ReturningRequestList = (props: Props) => {
     cancelMessage: "No",
   });
 
+  const [isModalCancelOpen, setIsModalCancelOpen] = useState<boolean>(false);
+
   const onCompleteResponse = async () => {
     await agent.ReturningRequest.complete(currentRequestId).finally(() => {
       props.refetchData();
     });
   };
+
+  const onCancelResponse = async () => {
+    await agent.ReturningRequest.cancel(currentRequestId)
+      .finally(() => {
+        props.refetchData();
+      });
+  };
+
 
   return (
     <>
@@ -239,6 +250,19 @@ const ReturningRequestList = (props: Props) => {
               isModalOpen: false,
             });
             onCompleteResponse();
+          }}
+        />
+        <ConfirmModal
+          message="Do you want to cancel this returning request"
+          isOpen={isModalCancelOpen}
+          confirmMessage="Yes"
+          cancelMessage="No"
+          onClose={() =>
+            setIsModalCancelOpen(false)
+          }
+          onConfirm={() => {
+            setIsModalCancelOpen(false)
+            onCancelResponse();
           }}
         />
       </div>
