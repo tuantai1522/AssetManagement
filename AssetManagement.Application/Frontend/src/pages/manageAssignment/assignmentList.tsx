@@ -225,6 +225,7 @@ export default function AssignmentList(props: AssignmentListProp) {
           message={responseStates.returnModalMessage}
           isOpen={responseStates.isOpenReturnModal}
           confirmMessage={responseStates.confirmReturnButtonMessage}
+          cancelMessage="No"
           onClose={() =>
             setResponseStates({ ...responseStates, isOpenReturnModal: false })
           }
