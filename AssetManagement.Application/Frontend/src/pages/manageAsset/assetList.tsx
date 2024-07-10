@@ -105,7 +105,7 @@ export default function AssetList(props: AssetListProp) {
       },
       disableSort: true,
       renderCell: (params) => (
-        <div className="flex w-fit justify-end items-center">
+        <div className="flex w-fit justify-end items-center gap-2">
           <button
             disabled={
               AssetState.Available !==
