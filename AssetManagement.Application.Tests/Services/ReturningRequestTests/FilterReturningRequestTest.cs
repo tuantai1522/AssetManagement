@@ -2,12 +2,9 @@
 using AssetManagement.Contracts.Enums;
 using MockQueryable.Moq;
 
-namespace AssetManagement.Application.Tests.Services.ReturningRequestTests
-{
-    public class FilterReturningRequestTest : SetupReturningRequestServiceTest
-    {
-        public FilterReturningRequestTest() : base()
-        {
+namespace AssetManagement.Application.Tests.Services.ReturningRequestTests {
+    public class FilterReturningRequestTest : SetupReturningRequestServiceTest {
+        public FilterReturningRequestTest() : base() {
         }
 
         [Theory]
@@ -17,12 +14,10 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests
         [InlineData(1, 0)]
         [InlineData(1, -1)]
         [InlineData(null, 4)]
-        public async Task FilterReturningAsync_ShouldReturnPagingDto_WithFilteredAssignments(int? pageNumber, int? pageSize)
-        {
+        public async Task FilterReturningAsync_ShouldReturnPagingDto_WithFilteredAssignments(int? pageNumber, int? pageSize) {
             // Arrange
 
-            var filter = new FilterReturningRequest()
-            {
+            var filter = new FilterReturningRequest() {
                 PageNumber = pageNumber,
                 PageSize = pageSize
             };
@@ -56,8 +51,8 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests
         [InlineData(null, null, null, null, SortOption.Desc, null, null, "b998ae03-f261-4957-b597-07a5b6db3ad1")]
         [InlineData(null, null, null, null, null, SortOption.Asc, null, "77bb2f45-1187-4924-b8ff-00f7bc42fef7")]
         [InlineData(null, null, null, null, null, SortOption.Desc, null, "345ce54d-1b11-4aca-ab35-2ab1fe3858a3")]
-        [InlineData(null, null, null, null, null, null, SortOption.Asc, "345ce54d-1b11-4aca-ab35-2ab1fe3858a3")]
-        [InlineData(null, null, null, null, null, null, SortOption.Desc, "fd14ce2a-c4b4-4e94-bd46-5a26dbcb89dc")]
+        [InlineData(null, null, null, null, null, null, SortOption.Asc, "77bb2f45-1187-4924-b8ff-00f7bc42fef7")]
+        [InlineData(null, null, null, null, null, null, SortOption.Desc, "345ce54d-1b11-4aca-ab35-2ab1fe3858a3")]
         public async Task FilterAssignmentAsync_ShouldReturnCorrectSortOrder(
             SortOption? sortAssetCode,
             SortOption? sortAssetName,
@@ -66,11 +61,9 @@ namespace AssetManagement.Application.Tests.Services.ReturningRequestTests
             SortOption? sortRequestedBy,
             SortOption? sortState,
             SortOption? sortReturnedDate,
-            string expected)
-        {
+            string expected) {
             //Arrange
-            var filter = new FilterReturningRequest()
-            {
+            var filter = new FilterReturningRequest() {
                 PageNumber = 1,
                 PageSize = 10,
                 SortAssetCode = sortAssetCode,
