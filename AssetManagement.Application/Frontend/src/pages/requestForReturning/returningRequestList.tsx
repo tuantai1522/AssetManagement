@@ -210,12 +210,10 @@ const ReturningRequestList = (props: Props) => {
   };
 
   const onCancelResponse = async () => {
-    await agent.ReturningRequest.cancel(currentRequestId)
-      .finally(() => {
-        props.refetchData();
-      });
+    await agent.ReturningRequest.cancel(currentRequestId).finally(() => {
+      props.refetchData();
+    });
   };
-
 
   return (
     <>
@@ -253,15 +251,13 @@ const ReturningRequestList = (props: Props) => {
           }}
         />
         <ConfirmModal
-          message="Do you want to cancel this returning request"
+          message="Do you want to cancel this returning request?"
           isOpen={isModalCancelOpen}
           confirmMessage="Yes"
           cancelMessage="No"
-          onClose={() =>
-            setIsModalCancelOpen(false)
-          }
+          onClose={() => setIsModalCancelOpen(false)}
           onConfirm={() => {
-            setIsModalCancelOpen(false)
+            setIsModalCancelOpen(false);
             onCancelResponse();
           }}
         />
