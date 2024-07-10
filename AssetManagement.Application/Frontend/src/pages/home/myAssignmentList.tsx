@@ -93,14 +93,17 @@ export default function MyAssignmentList(props: MyAssignmentListProp) {
       renderCell: (params) => (
         <div className="flex justify-end">
           <button
-            disabled={params?.state !== AssignmentStateEnum['Waiting for acceptance']}
-            className={`text-red-600 mr-2 ${params?.state !== AssignmentStateEnum['Waiting for acceptance']
-              ? "opacity-40"
-              : ""
-              }`}
+            disabled={
+              params?.state !== AssignmentStateEnum["Waiting for acceptance"]
+            }
+            className={`text-red-600 mr-2 ${
+              params?.state !== AssignmentStateEnum["Waiting for acceptance"]
+                ? "opacity-40"
+                : ""
+            }`}
             onClick={(e) => {
               e.stopPropagation();
-              setCurrentRespondId(params?.id);
+              setCurrentAssignmentId(params?.id);
               setResponseStates({
                 ...responseStates,
                 isAccepted: true,
@@ -113,21 +116,24 @@ export default function MyAssignmentList(props: MyAssignmentListProp) {
             {" "}
             <CheckIcon
               sx={{
-                stroke: 'currentColor',  // Use the current color for stroke
-                strokeWidth: 1,          // Adjust stroke width as needed
+                stroke: "currentColor", // Use the current color for stroke
+                strokeWidth: 1, // Adjust stroke width as needed
               }}
             />
           </button>
 
           <button
-            disabled={params?.state !== AssignmentStateEnum['Waiting for acceptance']}
-            className={`text-black mr-2 ${params?.state !== AssignmentStateEnum['Waiting for acceptance']
-              ? "opacity-40"
-              : ""
-              }`}
+            disabled={
+              params?.state !== AssignmentStateEnum["Waiting for acceptance"]
+            }
+            className={`text-black mr-2 ${
+              params?.state !== AssignmentStateEnum["Waiting for acceptance"]
+                ? "opacity-40"
+                : ""
+            }`}
             onClick={(e) => {
               e.stopPropagation();
-              setCurrentRespondId(params?.id);
+              setCurrentAssignmentId(params?.id);
               setResponseStates({
                 ...responseStates,
                 isAccepted: false,
@@ -140,28 +146,31 @@ export default function MyAssignmentList(props: MyAssignmentListProp) {
             {" "}
             <CloseIcon
               sx={{
-                stroke: 'currentColor',  // Use the current color for stroke
-                strokeWidth: 1,          // Adjust stroke width as needed
+                stroke: "currentColor", // Use the current color for stroke
+                strokeWidth: 1, // Adjust stroke width as needed
               }}
             />
           </button>
 
           <button
             disabled={params?.state !== AssignmentStateEnum.Accepted}
-            className={`text-blue-500 ${params?.state !== AssignmentStateEnum.Accepted
-              ? "opacity-40"
-              : ""
-              }`}
+            className={`text-blue-500 ${
+              params?.state !== AssignmentStateEnum.Accepted ? "opacity-40" : ""
+            }`}
             onClick={(e) => {
               e.stopPropagation();
-              alert(params?.id);
+              setCurrentAssignmentId(params?.id);
+              setResponseStates({
+                ...responseStates,
+                isOpenReturnModal: true,
+              });
             }}
           >
             {" "}
             <ReplayIcon
               sx={{
-                stroke: 'currentColor',  // Use the current color for stroke
-                strokeWidth: 1,          // Adjust stroke width as needed
+                stroke: "currentColor", // Use the current color for stroke
+                strokeWidth: 1, // Adjust stroke width as needed
               }}
             />
           </button>
@@ -170,19 +179,23 @@ export default function MyAssignmentList(props: MyAssignmentListProp) {
     },
   ];
 
-  const [currentRespondId, setCurrentRespondId] = useState("");
+  const [currentAssignmentId, setCurrentAssignmentId] = useState("");
   const [responseStates, setResponseStates] = useState({
     isRespondModalOpen: false,
     respondModalMessage: "",
     isAccepted: true,
     confirmButtonMessage: "Accept",
+    isOpenReturnModal: false,
+    returnModalMessage:
+      "Do you want to create a returning request for this asset?",
+    returnButton: "Yes",
   });
 
   const onConfirmResponse = async (isAccepted: boolean) => {
     const request: AssignmentRespondRequest = {
       isAccepted: isAccepted,
     };
-    await agent.Assignment.respond(currentRespondId, request)
+    await agent.Assignment.respond(currentAssignmentId, request)
       .then(() => {})
       .catch((e: any) => {
         console.log(e);
@@ -190,6 +203,17 @@ export default function MyAssignmentList(props: MyAssignmentListProp) {
       .finally(() => {
         props.refetchData();
       });
+  };
+
+  const onConfirmReturn = async () => {
+    try {
+      if (!currentAssignmentId) return;
+      await agent.ReturningRequest.userCreateRequest(currentAssignmentId);
+      setResponseStates({ ...responseStates, isOpenReturnModal: false });
+      props.refetchData();
+    } catch (error) {
+      console.log("Error when confirm return: ", error);
+    }
   };
 
   return (
@@ -218,6 +242,14 @@ export default function MyAssignmentList(props: MyAssignmentListProp) {
             setResponseStates({ ...responseStates, isRespondModalOpen: false });
             onConfirmResponse(responseStates.isAccepted);
           }}
+        />
+        <ConfirmModal
+          isOpen={responseStates.isOpenReturnModal}
+          message={responseStates.returnModalMessage}
+          onClose={() =>
+            setResponseStates({ ...responseStates, isOpenReturnModal: false })
+          }
+          onConfirm={onConfirmReturn}
         />
       </div>
     </>

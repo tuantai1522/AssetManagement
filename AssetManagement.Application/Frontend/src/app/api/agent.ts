@@ -229,6 +229,8 @@ const ReturningRequest = {
       `api/return-request/admin-create-request/${assignmentId}`,
       {}
     ),
+  userCreateRequest: (assignmentId: string) =>
+    requests.post(`api/return-request/user-create-request/${assignmentId}`, {}),
 };
 const agent = {
   Product,

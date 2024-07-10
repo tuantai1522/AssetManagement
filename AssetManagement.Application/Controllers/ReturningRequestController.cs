@@ -66,5 +66,19 @@ namespace AssetManagement.Application.Controllers
             };
             return Ok(result);
         }
+
+        [HttpPost("user-create-request/{assignmentId}")]
+        [Authorize]
+        public async Task<ActionResult<BaseResult<object>>> CreateRequestByUserAsync([FromRoute] Guid assignmentId)
+        {
+            await _returningRequestService.CreateRequestByUserAsync(assignmentId);
+            var result = new BaseResult<object>()
+            {
+                IsSuccess = true,
+                Error = null,
+                Result = null,
+            };
+            return Ok(result);
+        }
     }
 }

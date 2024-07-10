@@ -143,6 +143,19 @@ namespace AssetManagement.Application.Services.Implementations
             };
         }
 
+        public async Task CreateRequestByUserAsync(Guid assignmentId)
+        {
+            var assignment = await GetAssignment(assignmentId);
+            var user = await GetUserLogined();
+
+            // To check whether this assignment belongs to this user or not
+            if (!assignment.AssignedToId.Equals(user.Id))
+                throw new NotFoundException("This assignment doesn't belong to this user");
+
+
+            await CreateRequestByAccountAsync(assignment, user);
+        }
+
         #region Private methods
         private Expression<Func<ReturningRequest, bool>> GetSpecification(FilterReturningRequest filter, AppUser currentUser)
         {
