@@ -1,5 +1,5 @@
-﻿using AssetManagement.Application.Common.Credential;
-using AssetManagement.Application.Common.Constants;
+﻿using AssetManagement.Application.Common.Constants;
+using AssetManagement.Application.Common.Credential;
 using AssetManagement.Application.Common.ExpressionBuilder;
 using AssetManagement.Application.Services.Interfaces;
 using AssetManagement.Contracts.Dtos.PaginationDtos;
@@ -13,7 +13,6 @@ using AssetManagement.Domain.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using AssetManagement.Domain.Exceptions;
 
 namespace AssetManagement.Application.Services.Implementations
 {
@@ -221,15 +220,15 @@ namespace AssetManagement.Application.Services.Implementations
                 { SortAssignedDate: SortOption.Desc } => q => q.OrderByDescending(r => r.Assignment.AssignedDate),
                 { SortAcceptedBy: SortOption.Asc } => q => q.OrderBy(r => r.AcceptedByUser == null ? null : r.AcceptedByUser!.UserName),
                 { SortAcceptedBy: SortOption.Desc } => q => q.OrderByDescending(r => r.AcceptedByUser == null ? null : r.AcceptedByUser!.UserName),
-                { SortReturnedDate: SortOption.Asc } => q => q.OrderBy(a => a.ReturnedDate),
-                { SortReturnedDate: SortOption.Desc } => q => q.OrderByDescending(a => a.ReturnedDate),
+                { SortReturnedDate: SortOption.Asc } => q => q.OrderBy(a => a.ReturnedDate == null ? 1 : 0).ThenBy(a => a.ReturnedDate),
+                { SortReturnedDate: SortOption.Desc } => q => q.OrderByDescending(a => a.ReturnedDate == null ? 1 : 0).ThenByDescending(a => a.ReturnedDate),
                 { SortState: SortOption.Asc } => q => q.OrderBy(a =>
                 a.State == ReturningRequestState.Completed ? 0
                 : (a.State == ReturningRequestState.WaitingForReturning ? 1 : 2)),
                 { SortState: SortOption.Desc } => q => q.OrderByDescending(a =>
                 a.State == ReturningRequestState.Completed ? 0
                 : (a.State == ReturningRequestState.WaitingForReturning ? 1 : 2)),
-                _ => q => q.OrderByDescending(a => a.ReturnedDate)
+                _ => q => q.OrderByDescending(a => a.ReturnedDate == null ? 1 : 0).ThenByDescending(a => a.ReturnedDate)
             };
         }
 
