@@ -254,6 +254,8 @@ export default function MyAssignmentList(props: MyAssignmentListProp) {
           onClose={() =>
             setResponseStates({ ...responseStates, isOpenReturnModal: false })
           }
+          confirmMessage="Yes"
+          cancelMessage="No"
           onConfirm={onConfirmReturn}
         />
       </div>
