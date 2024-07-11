@@ -150,8 +150,12 @@ export default function AssignmentList(props: AssignmentListProp) {
         const isDisable =
           params?.state !==
           AssignmentStateEnum[AssignmentStateEnum["Waiting for acceptance"]];
+        const isDisableReturning =
+          params?.state !==
+          AssignmentStateEnum[AssignmentStateEnum["Accepted"]];
+
         return (
-          <div className="flex w-fit justify-end items-center">
+          <div className="flex w-fit justify-end items-center gap-1">
             <button
               disabled={isDisable}
               color="primary"
@@ -175,6 +179,7 @@ export default function AssignmentList(props: AssignmentListProp) {
               <HighlightOff />
             </button>
             <button
+              disabled={isDisableReturning}
               className="text-blue-600"
               onClick={(e) => {
                 e.stopPropagation();
@@ -185,7 +190,14 @@ export default function AssignmentList(props: AssignmentListProp) {
                 });
               }}
             >
-              <Replay color="primary" />
+              <Replay
+                color="primary"
+                className={`${isDisableReturning && "opacity-50"}`}
+                sx={{
+                  stroke: "currentColor",
+                  strokeWidth: 1,
+                }}
+              />
             </button>
           </div>
         );
@@ -213,6 +225,7 @@ export default function AssignmentList(props: AssignmentListProp) {
           message={responseStates.returnModalMessage}
           isOpen={responseStates.isOpenReturnModal}
           confirmMessage={responseStates.confirmReturnButtonMessage}
+          cancelMessage="No"
           onClose={() =>
             setResponseStates({ ...responseStates, isOpenReturnModal: false })
           }

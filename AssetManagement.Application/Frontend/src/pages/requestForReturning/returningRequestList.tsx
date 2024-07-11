@@ -144,9 +144,12 @@ const ReturningRequestList = (props: Props) => {
       disableSort: true,
       renderCell: (params) => {
         const isDisable =
-          params?.state !== ReturningRequestStateEnum[ReturningRequestStateEnum["Waiting for returning"]];
+          params?.state !==
+          ReturningRequestStateEnum[
+            ReturningRequestStateEnum["Waiting for returning"]
+          ];
         return (
-          <div className="flex w-fit justify-end items-center">
+          <div className="flex w-fit justify-end items-center gap-2">
             <button
               disabled={isDisable}
               color="primary"
@@ -160,7 +163,12 @@ const ReturningRequestList = (props: Props) => {
                 });
               }}
             >
-              <CheckIcon />
+              <CheckIcon
+                sx={{
+                  stroke: "currentColor",
+                  strokeWidth: 1,
+                }}
+              />
             </button>
             <button
               disabled={isDisable}
@@ -172,7 +180,12 @@ const ReturningRequestList = (props: Props) => {
                 setIsModalCancelOpen(true);
               }}
             >
-              <CloseIcon />
+              <CloseIcon
+                sx={{
+                  stroke: "currentColor",
+                  strokeWidth: 1,
+                }}
+              />
             </button>
           </div>
         );
@@ -191,19 +204,16 @@ const ReturningRequestList = (props: Props) => {
   const [isModalCancelOpen, setIsModalCancelOpen] = useState<boolean>(false);
 
   const onCompleteResponse = async () => {
-    await agent.ReturningRequest.complete(currentRequestId)
-      .finally(() => {
-        props.refetchData();
-      });
+    await agent.ReturningRequest.complete(currentRequestId).finally(() => {
+      props.refetchData();
+    });
   };
 
   const onCancelResponse = async () => {
-    await agent.ReturningRequest.cancel(currentRequestId)
-      .finally(() => {
-        props.refetchData();
-      });
+    await agent.ReturningRequest.cancel(currentRequestId).finally(() => {
+      props.refetchData();
+    });
   };
-
 
   return (
     <>
@@ -227,23 +237,27 @@ const ReturningRequestList = (props: Props) => {
           confirmMessage={completeResponseStates.confirmMessage}
           cancelMessage={completeResponseStates.cancelMessage}
           onClose={() =>
-            setCompleteResponseStates({ ...completeResponseStates, isModalOpen: false })
+            setCompleteResponseStates({
+              ...completeResponseStates,
+              isModalOpen: false,
+            })
           }
           onConfirm={() => {
-            setCompleteResponseStates({ ...completeResponseStates, isModalOpen: false });
+            setCompleteResponseStates({
+              ...completeResponseStates,
+              isModalOpen: false,
+            });
             onCompleteResponse();
           }}
         />
         <ConfirmModal
-          message="Do you want to cancel this returning request"
+          message="Do you want to cancel this returning request?"
           isOpen={isModalCancelOpen}
           confirmMessage="Yes"
           cancelMessage="No"
-          onClose={() =>
-            setIsModalCancelOpen(false)
-          }
+          onClose={() => setIsModalCancelOpen(false)}
           onConfirm={() => {
-            setIsModalCancelOpen(false)
+            setIsModalCancelOpen(false);
             onCancelResponse();
           }}
         />
