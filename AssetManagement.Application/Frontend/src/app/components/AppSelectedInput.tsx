@@ -9,7 +9,7 @@ import {
 import { UseControllerProps } from "react-hook-form";
 
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SelectedItem from "../models/SelectedItem";
 
 interface Props extends UseControllerProps {
@@ -39,8 +39,14 @@ export default function AppSelectedInput({ ...props }: Props) {
   const [checkedItems, setCheckedItems] = useState(
     props.checked && props.checked?.length > 0
       ? props.checked
-      : ["all", ...props?.items?.map((i, index) => i.id)]
+      : ["all", ...props?.items?.map((i) => i.id)]
   );
+
+  useEffect(() => {
+    setCheckedItems(props.checked && props.checked?.length > 0
+      ? props.checked
+      : ["all", ...props?.items?.map((i) => i.id)])
+  }, [props.items])
 
   const handleChecked = (value: string) => {
     let newChecked: string[] = [];
