@@ -56,7 +56,18 @@ export function getAssignmentQueryString(filter?: FilterAssignmentRequest) {
     : "";
 
   if (filter.states && filter.states.length > 0) {
-    statesParam = filter.states.map((state) => `states=${state}&`).join("");
+    statesParam = filter.states
+      .filter((state) => state !== AssignmentStateEnum.Returned)
+      .map((state) => `states=${state}&`)
+      .join("");
+  } else {
+    const defaultStates = [
+      AssignmentStateEnum.Accepted,
+      AssignmentStateEnum["Waiting for acceptance"],
+      AssignmentStateEnum.Declined,
+      AssignmentStateEnum["Waiting for returning"],
+    ];
+    statesParam = defaultStates.map((state) => `states=${state}&`).join("");
   }
 
   switch (filter?.orderBy) {
