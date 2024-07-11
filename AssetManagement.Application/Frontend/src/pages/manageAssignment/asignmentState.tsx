@@ -5,6 +5,7 @@ const items = [
     { id: AssignmentStateEnum[AssignmentStateEnum.Accepted], name: "Accepted" },
     { id: AssignmentStateEnum[AssignmentStateEnum["Waiting for acceptance"]], name: "Waiting for acceptance" },
     { id: AssignmentStateEnum[AssignmentStateEnum.Declined], name: "Declined" },
+    { id: AssignmentStateEnum[AssignmentStateEnum["Waiting for returning"]], name: "Waiting for returning" },
 ];
 
 export interface AssignmentStateFilterProp {
